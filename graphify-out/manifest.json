@@ -1,0 +1,187 @@
+{
+  "Setup/build_audit.py": {
+    "mtime": 1789838442.921012,
+    "ast_hash": "9d80e7f72c911a6982e76491a0f961b3",
+    "semantic_hash": ""
+  },
+  "Setup/configure-worker.py": {
+    "mtime": 1789858570.1876225,
+    "ast_hash": "a18e3e383aaa636c7e302b3018b44b48",
+    "semantic_hash": ""
+  },
+  "Setup/configure.py": {
+    "mtime": 1789839817.9259255,
+    "ast_hash": "265c6c7df6b3d75a85ac710fedfabb7b",
+    "semantic_hash": ""
+  },
+  "Setup/connect-github.py": {
+    "mtime": 1789838656.5967433,
+    "ast_hash": "ad2e9523422534c18fede614410b35f9",
+    "semantic_hash": ""
+  },
+  "Setup/discord-token.py": {
+    "mtime": 1789838656.59775,
+    "ast_hash": "f20bb04d9a2e22bd849de6821d9fb489",
+    "semantic_hash": ""
+  },
+  "Setup/goal-hook.py": {
+    "mtime": 1789839171.3558733,
+    "ast_hash": "f60890c10dbd5475200aab59a758db5d",
+    "semantic_hash": ""
+  },
+  "Setup/install-base.sh": {
+    "mtime": 1789838516.4729748,
+    "ast_hash": "75088a33f19143c06dce4fb0fc8d2651",
+    "semantic_hash": ""
+  },
+  "Setup/install-entrypoint.ps1": {
+    "mtime": 1789858632.0671513,
+    "ast_hash": "075225f01259b13bf2edf5b4e20581ae",
+    "semantic_hash": ""
+  },
+  "Setup/install-worker.ps1": {
+    "mtime": 1789858570.1886218,
+    "ast_hash": "07702d245e18f0a05dd5a2949da4c214",
+    "semantic_hash": ""
+  },
+  "Setup/probe-native.py": {
+    "mtime": 1789838801.6922,
+    "ast_hash": "ea38a11633f1ae1663ce030a9ffdb31a",
+    "semantic_hash": ""
+  },
+  "Setup/site-config.py": {
+    "mtime": 1789839817.926474,
+    "ast_hash": "7d36491b056ccd16c8aee94da7129e74",
+    "semantic_hash": ""
+  },
+  "Setup/trust-hooks.py": {
+    "mtime": 1789858173.8066883,
+    "ast_hash": "ecded83208642cea93dc45669bbb8b8c",
+    "semantic_hash": ""
+  },
+  "Setup/verify-dashboard.py": {
+    "mtime": 1789858325.5222795,
+    "ast_hash": "4289d9336d7a10153b82589bac460454",
+    "semantic_hash": ""
+  },
+  "app/__init__.py": {
+    "mtime": 1789839013.7208107,
+    "ast_hash": "503df7f126f69af3f1a8230fa122e9bb",
+    "semantic_hash": ""
+  },
+  "app/common.py": {
+    "mtime": 1789839013.7213318,
+    "ast_hash": "9850c6dfade5acd4b2b3296cb683475c",
+    "semantic_hash": ""
+  },
+  "app/controller.py": {
+    "mtime": 1789859553.2361565,
+    "ast_hash": "be2e5990485e434aad00b11b38334f06",
+    "semantic_hash": ""
+  },
+  "app/db.py": {
+    "mtime": 1789839033.1216698,
+    "ast_hash": "8f861c9fe88c840627577ea48896b1cc",
+    "semantic_hash": ""
+  },
+  "app/discord_bot.py": {
+    "mtime": 1789858820.5734913,
+    "ast_hash": "ee9792f202e211b53a1b1390ca9cd392",
+    "semantic_hash": ""
+  },
+  "app/main.py": {
+    "mtime": 1789859212.2243364,
+    "ast_hash": "a66ce5f262e269d2361d3d8d6cc177ec",
+    "semantic_hash": ""
+  },
+  "app/native.py": {
+    "mtime": 1789859347.0574589,
+    "ast_hash": "46cbf4e66246fe92dd5abcb49356ddce",
+    "semantic_hash": ""
+  },
+  "app/web.py": {
+    "mtime": 1789858254.7294824,
+    "ast_hash": "8bd7abb757d82c80f9520489dd7ed089",
+    "semantic_hash": ""
+  },
+  "app/web_assets/dashboard.js": {
+    "mtime": 1789839817.9290483,
+    "ast_hash": "a8389526a09fabf0a0285d9155a08f6a",
+    "semantic_hash": ""
+  },
+  "app/windows_worker.py": {
+    "mtime": 1789858500.0358138,
+    "ast_hash": "45d79f8038fe78c817eb31465e575646",
+    "semantic_hash": ""
+  },
+  "app/worker_server.py": {
+    "mtime": 1789858570.1866176,
+    "ast_hash": "c155bb8711ed38ad753cd40e23894173",
+    "semantic_hash": ""
+  },
+  "bin/codexpi": {
+    "mtime": 1789839658.2249532,
+    "ast_hash": "c56412e236568a96b787acf81e4768c9",
+    "semantic_hash": ""
+  },
+  "bin/codexpi-tool": {
+    "mtime": 1789858570.1931462,
+    "ast_hash": "63fe202db38ff716894e412486791525",
+    "semantic_hash": ""
+  },
+  "config/goal-hooks.json": {
+    "mtime": 1789839171.3574092,
+    "ast_hash": "6fff62efecc88ff88d556473ad698a62",
+    "semantic_hash": ""
+  },
+  "docs/requirement-audit.json": {
+    "mtime": 1789838444.4318752,
+    "ast_hash": "37ec24e9678ed2dd3271f10586f7857c",
+    "semantic_hash": ""
+  },
+  "tests/test_core.py": {
+    "mtime": 1789839033.122684,
+    "ast_hash": "267f606fa6731e6ed6005d0147c2ddcf",
+    "semantic_hash": ""
+  },
+  "tests/test_web.py": {
+    "mtime": 1789858254.7294824,
+    "ast_hash": "834c4abfb2f0db43de2754d7b1409a00",
+    "semantic_hash": ""
+  },
+  "tests/test_worker.py": {
+    "mtime": 1789858632.0661464,
+    "ast_hash": "31977c12f3645fe2d16dcebc5d74a40e",
+    "semantic_hash": ""
+  },
+  "app/web_assets/index.html": {
+    "mtime": 1789839529.0552325,
+    "ast_hash": "ed09deb09ec909be26a0820155d2b20e",
+    "semantic_hash": ""
+  },
+  "app/web_assets/login.html": {
+    "mtime": 1789839529.0536888,
+    "ast_hash": "e2906f3eff9c7626df26d9bb30ad0fa2",
+    "semantic_hash": ""
+  },
+  "docs/progress.md": {
+    "mtime": 1789859273.4390037,
+    "ast_hash": "8fae27396ce5972d831b7898c1246355",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1789858570.192142,
+    "ast_hash": "8081e79eaf9c1d1155ccaf11e7bd4a22",
+    "semantic_hash": ""
+  },
+  "templates/AGENTS.md": {
+    "mtime": 1789839658.2234313,
+    "ast_hash": "eb9950a7fc34af870daaa10414bec55c",
+    "semantic_hash": ""
+  },
+  "tests/test_scheduler.py": {
+    "mtime": 1789859393.4392538,
+    "ast_hash": "45344a580bb43c503cdb8c6f82ed12a4",
+    "semantic_hash": ""
+  }
+}

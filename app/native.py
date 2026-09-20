@@ -1,0 +1,201 @@
+"""Native Codex 0.155.1 RPC and the scheduler's local TUI admission gate."""
+import asyncio
+import contextlib
+import importlib.util
+import json
+import time
+from pathlib import Path
+
+from aiohttp import ClientSession, UnixConnector, WSMsgType, web
+
+from .common import NATIVE_STATUS
+
+
+class NativeError(RuntimeError):
+    pass
+
+
+class Native:
+    def __init__(self, socket, event=None):
+        self.socket = str(socket)
+        self.event = event
+        self.pending = {}
+        self.sequence = 0
+        self.client = None
+        self.ws = None
+        self.reader = None
+
+    async def connect(self, initialize=True):
+        self.client = ClientSession(connector=UnixConnector(path=self.socket))
+        try:
+            self.ws = await self.client.ws_connect('http://localhost/', max_msg_size=32 * 1024 * 1024)
+            self.reader = asyncio.create_task(self.read())
+            if initialize:
+                await self.rpc('initialize', {'clientInfo': {'name': 'codexpi', 'version': '0.1'},
+                                             'capabilities': {'experimentalApi': True}})
+                await self.ws.send_json({'method': 'initialized', 'params': {}})
+            return self
+        except BaseException:
+            await self.close()
+            raise
+
+    async def read(self):
+        try:
+            async for packet in self.ws:
+                if packet.type != WSMsgType.TEXT:
+                    continue
+                value = json.loads(packet.data)
+                if 'method' not in value and value.get('id') in self.pending:
+                    future = self.pending.pop(value['id'])
+                    if not future.done():
+                        future.set_result(value)
+                elif self.event:
+                    await self.event(value)
+        finally:
+            for future in self.pending.values():
+                if not future.done():
+                    future.set_exception(NativeError('Native Codex connection closed'))
+            self.pending.clear()
+
+    async def rpc(self, method, params, timeout=90):
+        if self.ws is None or self.ws.closed:
+            raise NativeError('Native Codex is unavailable')
+        self.sequence += 1
+        request_id = 'codexpi-' + str(self.sequence)
+        future = asyncio.get_running_loop().create_future()
+        self.pending[request_id] = future
+        try:
+            await self.ws.send_json({'id': request_id, 'method': method, 'params': params})
+            value = await asyncio.wait_for(future, timeout)
+        finally:
+            self.pending.pop(request_id, None)
+        if 'error' in value:
+            raise NativeError(str(value['error'].get('message', 'Native request failed')))
+        return value.get('result', {})
+
+    async def close(self):
+        if self.ws:
+            await self.ws.close()
+        if self.reader:
+            self.reader.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await self.reader
+        if self.client:
+            await self.client.close()
+
+
+class GoalSource:
+    """Reuse upstream parsing and event comparison; never retain objective text."""
+    def __init__(self, root):
+        script = root / 'Setup/upstream/goal-hooks/hooks/goal_status_report.py'
+        spec = importlib.util.spec_from_file_location('goal_status_report', script)
+        self.upstream = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.upstream)
+        self.upstream.preview_text = lambda *args, **kwargs: ''
+        self.root = root
+        self.state = root / 'state/goal-hooks'
+        self.state.mkdir(parents=True, exist_ok=True)
+
+    def rows(self):
+        paths = [Path('/home/raspberry/.codex/goals_1.sqlite'),
+                 Path('/home/raspberry/.codex/sqlite/goals_1.sqlite')]
+        rows = self.upstream.read_goal_rows(paths, self.state)
+        aliases = {key.lower(): value for key, value in NATIVE_STATUS.items()}
+        aliases.update({'usage_limited': 'usage limited', 'budget_limited': 'limited by budget'})
+        for row in rows.values():
+            status = row['status']
+            if status not in aliases:
+                raise NativeError('Unknown native goal status; scheduler stopped: ' + status)
+            row['status'] = aliases[status]
+            row.pop('objective_preview', None)
+        return rows
+
+
+async def tui_proxy(request):
+    controller = request.app['controller']
+    client = web.WebSocketResponse(max_msg_size=32 * 1024 * 1024)
+    await client.prepare(request)
+    request.app['sockets'].add(client)
+
+    async def event(value):
+        await client.send_json(value)
+
+    upstream = await Native(controller.root / 'state/native.sock', event).connect(initialize=False)
+    tasks = set()
+    resumed = set()
+    connection_id = id(client)
+
+    async def forward(value):
+        request_id = value.get('id')
+        method = value.get('method')
+        params = value.get('params') or {}
+        try:
+            if method in ('thread/start', 'thread/fork'):
+                raise ValueError('New projects must be created using codexpi and /rename')
+            if (method in ('review/start', 'thread/realtime/start', 'thread/archive', 'thread/delete') or
+                    (method and method.startswith('thread/queue/') and method != 'thread/queue/list')):
+                raise ValueError('This operation bypasses the CodexPi single-project queue')
+            if method in ('thread/goal/set', 'turn/start', 'turn/steer', 'thread/resume', 'thread/goal/clear',
+                          'thread/goal/get'):
+                async with controller.lock:
+                    project = controller.db.by_session(params.get('threadId'))
+                    if not project:
+                        raise ValueError('Session is not managed by CodexPi')
+                    if method == 'thread/resume':
+                        if params.get('history') or params.get('path'):
+                            raise ValueError('Resume must use the mapped native session ID')
+                        params = {**params, 'config': {**(params.get('config') or {}), 'features.multi_agent': False}}
+                    selected = controller.db.setting('selected')
+                    if method == 'thread/goal/set':
+                        status = params.get('status')
+                        if status is None:
+                            goal = (await upstream.rpc('thread/goal/get', {'threadId': params['threadId']})).get('goal')
+                            status = goal['status'] if goal else 'active'
+                        if status == 'active':
+                            if controller.db.setting('pause_all', False) or (selected and selected != project['project_id']):
+                                # Store the exact objective but never start a second model turn.
+                                params = {**params, 'status': 'paused'}
+                            else:
+                                controller.select(project['project_id'])
+                    if method in ('turn/start', 'turn/steer') and (selected != project['project_id']
+                            or controller.db.setting('pause_all', False)):
+                        raise ValueError('Project is queued. Use Run now in the dashboard to work on it.')
+                    result = await upstream.rpc(method, params)
+                    if method == 'thread/resume':
+                        resumed.add(project['project_id'])
+                    if method == 'thread/goal/get' and project['project_id'] in resumed:
+                        controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = time.monotonic()
+                    if method == 'thread/goal/set':
+                        if result['goal']['status'] == 'paused':
+                            await controller.wait_idle(project)
+                        controller.record_goal(project, result['goal'])
+                    if method == 'thread/goal/clear':
+                        await controller.wait_idle(project)
+                        controller.db.update(project['project_id'], goal_status='paused')
+                        if selected == project['project_id']:
+                            controller.db.set_setting('selected', None)
+            elif method is not None and request_id is not None:
+                result = await upstream.rpc(method, params)
+            else:
+                await upstream.ws.send_json(value)
+                return
+            await client.send_json({'id': request_id, 'result': result})
+        except Exception as exc:
+            await client.send_json({'id': request_id, 'error': {'code': -32000,
+                                    'message': controller.redactor.clean(str(exc))}})
+
+    try:
+        async for packet in client:
+            if packet.type == WSMsgType.TEXT:
+                task = asyncio.create_task(forward(json.loads(packet.data)))
+                tasks.add(task)
+                task.add_done_callback(tasks.discard)
+    finally:
+        request.app['sockets'].discard(client)
+        for project_id in resumed:
+            controller.tui_connections.get(project_id, {}).pop(connection_id, None)
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        await upstream.close()
+    return client

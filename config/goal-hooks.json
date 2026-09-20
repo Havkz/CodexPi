@@ -1,0 +1,5 @@
+{
+  "signals": {"post_tool_use_update_goal": true, "sqlite_goal_state": true},
+  "macos": {"enabled": false},
+  "ntfy": {"enabled": false}
+}

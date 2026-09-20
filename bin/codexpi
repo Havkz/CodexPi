@@ -1,0 +1,32 @@
+#!/home/raspberry/CodexPi/.venv/bin/python
+"""The only user entrypoint; /rename is mandatory before opening native Codex."""
+import asyncio
+import os
+import sys
+
+from aiohttp import ClientSession, UnixConnector
+
+
+async def choose():
+    if len(sys.argv) != 1:
+        raise SystemExit('Use codexpi without arguments, then /rename <Projektname>.')
+    async with ClientSession(connector=UnixConnector(path='/home/raspberry/CodexPi/state/local.sock')) as client:
+        while True:
+            try:
+                text = input('CodexPi > ').strip()
+            except (EOFError, KeyboardInterrupt):
+                raise SystemExit(0)
+            if not text.startswith('/rename ') or not text[8:].strip():
+                print('Zuerst /rename <Projektname> eingeben.')
+                continue
+            async with client.post('http://localhost/projects/open', json={'name': text[8:].strip()}) as response:
+                result = await response.json()
+                if response.status != 200:
+                    print(result.get('error', 'Projekt konnte nicht geoeffnet werden.'))
+                    continue
+                return result['tmux_session_name']
+
+
+if __name__ == '__main__':
+    name = asyncio.run(choose())
+    os.execvp('tmux', ['tmux', 'attach-session', '-t', '=' + name])
