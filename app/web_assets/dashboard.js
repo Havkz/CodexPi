@@ -1,29 +1,205 @@
-let state, dragging;
+'use strict';
+let state, dragging, refreshing = false, busy = false, connected = false, detailId = null;
 const $ = id => document.getElementById(id);
-function node(tag, text, cls) { const el = document.createElement(tag); el.textContent = text; if(cls) el.className=cls; return el; }
-async function act(action, project_id, extra={}) {
+const node = (tag, text = '', cls = '') => {
+  const el = document.createElement(tag); el.textContent = text; el.className = cls; return el;
+};
+const date = stamp => stamp ? new Date(stamp * 1000).toLocaleString('de-DE') : 'Noch nicht verfügbar';
+const badge = status => node('span', status || 'unknown', 'badge status-' + (status || 'unknown').replaceAll(' ', '-'));
+function button(text, callback, key, cls = '') {
+  const el = node('button', text, cls); el.type = 'button'; el.onclick = callback;
+  if (key) el.dataset.key = key;
+  return el;
+}
+function link(text, url) {
+  const el = node('a', text); el.href = url; el.target = '_blank'; el.rel = 'noopener noreferrer'; return el;
+}
+function metadata(rows) {
+  const dl = node('dl', '', 'metadata');
+  for (const [label, value, technical] of rows) {
+    const entry = node('div'), dd = node('dd'); entry.append(node('dt', label));
+    dd.append(value instanceof Node ? value : node(technical ? 'code' : 'span', value || '—'));
+    entry.append(dd); dl.append(entry);
+  }
+  return dl;
+}
+function repo(p) { return p.github_repo ? link(p.github_repo, 'https://github.com/' + p.github_repo) : '—'; }
+function block(p) {
+  if (!p.block_reason) return null;
+  let reason; try { reason = JSON.parse(p.block_reason); } catch { reason = {reason: p.block_reason}; }
+  const box = node('div', '', 'block-reason'); box.append(node('strong', 'Block Reason'));
+  box.append(node('p', reason.reason || String(p.block_reason)));
+  if (reason.details) box.append(node('p', reason.details));
+  if (reason.requires_user) box.append(node('p', 'Benutzereingabe erforderlich. Kein automatisches Resume.'));
+  return box;
+}
+async function act(action, project_id, extra = {}) {
+  if (busy || !connected) return;
+  busy = true; $('notice').textContent = 'Änderung wird ausgeführt …'; render();
   try {
-    const res=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':state.csrf},body:JSON.stringify({action,project_id,...extra})});
-    if(!res.ok) throw new Error((await res.text()).slice(0,300));
-    if(action==='logout') location.reload(); else await refresh();
-  } catch(err) { $('notice').textContent=err.message; }
+    const res = await fetch('/api/action', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf}, body: JSON.stringify({action, project_id, ...extra})});
+    if (!res.ok) throw new Error((await res.text()).slice(0, 300));
+    if (action === 'logout') { location.reload(); return; }
+    $('notice').textContent = '';
+  } catch (err) { $('notice').textContent = err.message; }
+  finally { busy = false; await refresh(); }
 }
-function projectCard(p) {
-  const card=node('details','','project'); card.append(node('summary',`${p.display_name} · ${p.goal_status}`));
-  for(const [label,value] of [['Blocker',p.block_reason],['Commit',p.last_commit],['CI',p.last_ci_status],['Session',p.codex_session_id],['Pfad',p.project_path],['Discord',p.discord_channel_id],['Letzte Aktivität',p.last_activity?new Date(p.last_activity*1000).toLocaleString():'—']]) card.append(node('p',`${label}: ${value||'—'}`));
-  if(p.github_repo){const link=node('a','GitHub-Repository');link.href='https://github.com/'+p.github_repo;link.target='_blank';link.rel='noopener';card.append(link);}
-  const actions=node('div','','actions');
-  for(const [label,action] of [['Run now','run-now'],['Pause','pause'],['Resume','resume']]){const b=node('button',label);b.onclick=()=>act(action,p.project_id);if(p.goal_status==='complete')b.disabled=true;actions.append(b);}
-  card.append(actions);return card;
+function actions(p, compact = false) {
+  const result = node('div', '', 'actions' + (compact ? ' queue-actions' : ''));
+  const list = compact ? [['Run now', 'run-now']] : [['Run now', 'run-now'], ['Pause', 'pause'], ['Resume', 'resume']];
+  for (const [label, action] of list) {
+    const b = button(label, () => act(action, p.project_id), p.project_id + ':' + action, action === 'run-now' ? 'primary' : '');
+    b.disabled = busy || !connected || p.goal_status === 'complete' || (action === 'pause' && p.goal_status === 'paused');
+    result.append(b);
+  }
+  result.append(button('Details', () => showDetail(p.project_id), p.project_id + ':details'));
+  return result;
 }
-async function refresh(){
-  const response=await fetch('/api/state');if(response.status===401){location.reload();return;}if(!response.ok)throw Error('Dashboard nicht erreichbar');state=await response.json();
-  $('infra').replaceChildren(...[['Pi','online'],['Windows',state.windows_online?'online':'offline'],['Discord',state.discord_online?'online':'offline'],['Unsnooze',state.unsnooze.daemonRunning?'online':'offline'],['GitHub',state.github_account]].map(([a,b])=>node('div',`${a}: ${b}`,'card')));
-  $('projects').replaceChildren(...state.projects.map(projectCard));
-  const active=state.projects.find(p=>p.project_id===state.selected);$('active').replaceChildren(active?projectCard(active):node('p',state.pause_all?'Alle Arbeit pausiert.':'Kein aktives Projekt.'));
-  const queue=state.projects.filter(p=>p.queue_position!==null);$('queue').replaceChildren();
-  const reorder=ids=>act('reorder',null,{ids});
-  queue.forEach((p,i)=>{const row=node('div',`${p.queue_position}. ${p.display_name} · ${p.goal_status}`,'queue-row');row.draggable=true;row.dataset.id=p.project_id;row.ondragstart=()=>{dragging=p.project_id;row.classList.add('dragging');};row.ondragend=()=>{dragging=null;row.classList.remove('dragging');};row.ondragover=e=>e.preventDefault();row.ondrop=e=>{e.preventDefault();const ids=queue.map(p=>p.project_id).filter(id=>id!==dragging);ids.splice(ids.indexOf(p.project_id),0,dragging);if(dragging!==p.project_id)reorder(ids);};const buttons=node('span','');for(const [text,offset] of [['↑',-1],['↓',1]]){const button=node('button',text);button.setAttribute('aria-label',`${p.display_name} ${offset<0?'nach oben':'nach unten'}`);button.disabled=i+offset<0||i+offset>=queue.length;button.onclick=()=>{const ids=queue.map(p=>p.project_id);[ids[i],ids[i+offset]]=[ids[i+offset],ids[i]];reorder(ids);};buttons.append(button);}row.append(buttons);$('queue').append(row);});
-  $('limits').replaceChildren(...(state.unsnooze.sessions||[]).filter(s=>s.status==='stopped').map(s=>node('p',`${s.agent}: ${s.limitType||'Usage limit'} · Reset: ${s.resetAt?new Date(s.resetAt).toLocaleString():'unbekannt'}`)));
+function projectOverview(p) {
+  const body = node('div'), header = node('div', '', 'project-header'), name = node('div', '', 'project-name');
+  name.append(node('h3', p.display_name), badge(p.goal_status)); header.append(name);
+  header.append(node('span', p.queue_position == null ? 'Nicht in Queue' : 'Priority ' + p.queue_position, 'counter')); body.append(header);
+  body.append(metadata([
+    ['Repo', repo(p)], ['Session', p.codex_session_id, true], ['tmux', p.tmux_session_name, true], ['CI', p.last_ci_status || 'unknown'],
+    ['Letzte Aktivität', date(p.last_activity)], ['Commit', p.last_commit?.slice(0, 12), true],
+    ['Windows Requirement', p.windows_required ? 'Required' : 'Nicht angefordert'], ['Discord Channel', p.discord_channel_id, true]
+  ]));
+  const blocker = block(p); if (blocker) body.append(blocker);
+  const controls = actions(p); controls.classList.add('active-actions'); body.append(controls);
+  // Lifecycle actions remain a tracked implementation gap, not misleading working controls.
+  body.append(node('p', 'Rename / Delete: Lifecycle-Implementierung noch offen.', 'action-note'));
+  return body;
 }
-$('pause-all').onclick=()=>act('pause-all');$('logout').onclick=()=>act('logout');refresh().catch(e=>$('notice').textContent=e.message);setInterval(()=>{if(!dragging)refresh().catch(e=>$('notice').textContent=e.message);},5000);
+function renderQueue(queue) {
+  $('queue-count').textContent = queue.length + ' projects'; $('queue-empty').hidden = queue.length > 0;
+  const rows = queue.map((p, index) => {
+    const row = node('tr'); row.dataset.id = p.project_id; row.draggable = connected && !busy;
+    const position = node('td'), controls = node('div', '', 'queue-position'); controls.append(node('span', String(p.queue_position).padStart(2, '0')));
+    for (const [text, offset] of [['↑', -1], ['↓', 1]]) {
+      const b = button(text, () => {
+        const ids = queue.map(item => item.project_id); [ids[index], ids[index + offset]] = [ids[index + offset], ids[index]];
+        act('reorder', null, {ids});
+      }, p.project_id + ':move' + offset);
+      b.setAttribute('aria-label', p.display_name + (offset < 0 ? ' nach oben' : ' nach unten'));
+      b.disabled = busy || !connected || index + offset < 0 || index + offset >= queue.length; controls.append(b);
+    }
+    position.append(controls);
+    const name = node('td'); name.append(button(p.display_name, () => showDetail(p.project_id), p.project_id + ':name', 'queue-name'), node('span', p.github_repo || 'Repo nicht verfügbar', 'queue-repo mono'));
+    const status = node('td'); status.append(badge(p.goal_status));
+    const actionCell = node('td'); actionCell.append(actions(p, true));
+    row.append(position, name, status, node('td', date(p.last_activity), 'muted'), node('td', p.windows_required ? 'Required' : '—'), actionCell);
+    row.ondragstart = event => { dragging = p.project_id; event.dataTransfer.setData('text/plain', dragging); event.dataTransfer.effectAllowed = 'move'; row.classList.add('dragging'); };
+    row.ondragend = () => { dragging = null; row.classList.remove('dragging'); document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target')); };
+    row.ondragover = event => { if (dragging) { event.preventDefault(); row.classList.add('drop-target'); } };
+    row.ondragleave = () => row.classList.remove('drop-target');
+    row.ondrop = event => {
+      event.preventDefault(); row.classList.remove('drop-target');
+      if (!dragging || dragging === p.project_id) return;
+      const ids = queue.map(item => item.project_id), from = ids.indexOf(dragging);
+      if (from < 0) return;
+      ids.splice(from, 1); ids.splice(index, 0, dragging); dragging = null; act('reorder', null, {ids});
+    };
+    return row;
+  });
+  $('queue').replaceChildren(...rows);
+}
+function render() {
+  if (!state) return;
+  const focused = document.activeElement, focus = focused?.dataset.key;
+  const queue = state.projects.filter(p => p.queue_position !== null);
+  const active = state.projects.find(p => p.project_id === state.selected);
+  const stalled = state.projects.filter(p => p.goal_status === 'stalled').length;
+  $('pause-all').disabled = busy || !connected; $('logout').disabled = busy || !connected;
+  const summary = [
+    [String(state.projects.filter(p => p.goal_status === 'active').length), 'Active Project', active?.display_name || 'Kein aktives Projekt'],
+    [String(queue.filter(p => p.project_id !== state.selected).length), 'Queue Length', 'Wartende Projekte'],
+    [state.windows_online ? 'Online' : 'Offline', 'Windows Worker', 'Heartbeat alle 20 Sekunden'],
+    [String(state.projects.filter(p => p.goal_status === 'complete').length), 'Completed Projects', stalled + ' stalled']
+  ];
+  $('summary').replaceChildren(...summary.map(([value, label, note]) => {
+    const card = node('div', '', 'kpi'); card.append(node('div', value, 'kpi-value' + (/\D/.test(value) ? ' word' : '')), node('div', label, 'kpi-label'), node('div', note, 'kpi-note')); return card;
+  }));
+  $('top-status').replaceChildren(...[['Pi', connected], ['Windows', state.windows_online], ['Discord', state.discord_online], ['Unsnooze', state.unsnooze.daemonRunning]].map(([name, online]) => {
+    const item = node('span'), dot = node('i', '', 'dot ' + (online ? 'online' : 'offline')); dot.setAttribute('aria-hidden', 'true'); item.append(dot, document.createTextNode(name + ' ' + (online ? 'online' : 'offline'))); return item;
+  }));
+  $('work-state').textContent = state.pause_all ? 'Alle Arbeit pausiert' : 'Single-worker policy';
+  $('active').replaceChildren(active ? projectOverview(active) : node('p', state.pause_all ? 'Alle Arbeit pausiert. Mit „Run now“ ein Projekt freigeben.' : 'Kein Projekt ausgewählt. Die Queue wartet auf deine Freigabe.', 'empty'));
+  renderQueue(queue);
+  $('projects').replaceChildren(...state.projects.map(p => {
+    const card = node('article', '', 'project-card'); card.append(badge(p.goal_status), node('h3', p.display_name));
+    const repository = node('p', '', 'mono'); repository.append(repo(p)); card.append(repository, node('p', 'CI · ' + (p.last_ci_status || 'unknown'), 'muted'));
+    card.append(actions(p, true)); return card;
+  }));
+  if (!state.projects.length) $('projects').append(node('p', 'Noch keine Projekte. Neue Projekte entstehen über codexpi.', 'empty'));
+  const icons = ['Pi', '>_', 'W', 'git', '#', 'zZ'];
+  $('infra').replaceChildren(...state.infrastructure.map((item, index) => {
+    const card = node('article', '', 'infra-card'), header = node('div', '', 'card-heading');
+    const icon = node('span', icons[index], 'infra-icon'); icon.setAttribute('aria-hidden', 'true');
+    header.append(icon, node('h3', item.name), badge(item.status)); card.append(header, node('p', item.detail));
+    card.append(node('p', 'Geprüft: ' + date(item.checked_at)));
+    if ('heartbeat_age' in item) card.append(node('p', item.heartbeat_age === null ? 'Heartbeat: noch nicht empfangen' : 'Heartbeat: vor ' + Math.floor(item.heartbeat_age) + ' s'));
+    if (item.error) card.append(node('p', item.error, 'error')); return card;
+  }));
+  const limits = (state.unsnooze.sessions || []).filter(s => s.status === 'stopped');
+  $('limits').replaceChildren(...limits.map(item => {
+    const row = node('div', '', 'limit-row'), p = state.projects.find(p => p.codex_session_id === item.sessionId);
+    row.append(badge('usage limited'), node('strong', p?.display_name || item.agent || 'Codex'), node('span', 'Reset: ' + (item.resetAt ? new Date(item.resetAt).toLocaleString('de-DE') : 'unbekannt'), 'muted')); return row;
+  }));
+  for (const p of state.projects.filter(p => p.goal_status === 'limited by budget')) {
+    const row = node('div', '', 'limit-row'); row.append(badge(p.goal_status), node('strong', p.display_name), node('span', 'Manuelle Freigabe erforderlich.', 'muted')); $('limits').append(row);
+  }
+  if (!$('limits').children.length) $('limits').append(node('p', 'Kein Usage-Limit gemeldet. Verbrauchsprozentwerte sind derzeit nicht verfügbar.', 'muted'));
+  if (focus && !focused.isConnected) document.querySelector('[data-key="' + CSS.escape(focus) + '"]')?.focus({preventScroll: true});
+}
+async function refresh() {
+  if (refreshing || dragging) return;
+  refreshing = true;
+  try {
+    const response = await fetch('/api/state');
+    if (response.status === 401) { location.reload(); return; }
+    if (!response.ok) throw new Error('Dashboard nicht erreichbar');
+    state = await response.json(); connected = true;
+    $('freshness').textContent = 'Live · ' + new Date().toLocaleTimeString('de-DE'); render();
+  } catch (err) {
+    connected = false; $('freshness').textContent = 'Verbindung unterbrochen · Daten möglicherweise veraltet';
+    $('notice').textContent = err.message; render();
+  } finally { refreshing = false; }
+}
+async function showDetail(id) {
+  detailId = id; $('detail-title').textContent = state.projects.find(p => p.project_id === id)?.display_name || 'Project';
+  $('detail-body').replaceChildren(node('p', 'Details werden geladen …', 'muted'));
+  if (!$('project-dialog').open) $('project-dialog').showModal();
+  try {
+    const response = await fetch('/api/projects/' + encodeURIComponent(id));
+    if (!response.ok) throw new Error('Projekt-Details nicht verfügbar (' + response.status + ')');
+    const detail = await response.json(); if (detailId !== id) return;
+    const p = detail.project, grid = node('div', '', 'detail-grid');
+    function panel(title, wide = false) { const card = node('section', '', 'panel' + (wide ? ' detail-wide' : '')); card.append(node('h3', title)); grid.append(card); return card; }
+    const overview = panel('Overview', true); overview.append(projectOverview(p));
+    panel('Session / tmux').append(metadata([['Session', p.codex_session_id, true], ['tmux', p.tmux_session_name, true], ['Project path', p.project_path, true], ['Lifecycle', p.lifecycle]]));
+    panel('Integrations').append(metadata([['Repo', repo(p)], ['CI', p.last_ci_status || 'unknown'], ['Discord Channel', p.discord_channel_id, true], ['Windows Worker', state.windows_online ? 'online' : 'offline']]));
+    const commits = panel('Commits', true);
+    for (const commit of detail.commits) {
+      const row = node('div', '', 'event');
+      row.append(link(commit.sha.slice(0, 12), 'https://github.com/' + p.github_repo + '/commit/' + commit.sha), node('p', commit.subject), node('time', new Date(commit.date).toLocaleString('de-DE'))); commits.append(row);
+    }
+    if (!detail.commits.length) commits.append(node('p', detail.git_error || 'Noch keine Commits verfügbar.', 'muted'));
+    const logs = panel('Windows Worker / Logs', true);
+    for (const job of detail.jobs) {
+      const row = node('details', '', 'event'); row.append(node('summary', job.status + ' · ' + job.job_id + ' · Exit ' + (job.exit_code ?? '—')));
+      row.append(node('pre', 'stdout\n' + (job.stdout || '—') + '\n\nstderr\n' + (job.stderr || '—')));
+      if (job.artifacts?.length) row.append(node('pre', JSON.stringify(job.artifacts, null, 2))); logs.append(row);
+    }
+    if (!detail.jobs.length) logs.append(node('p', 'Noch keine Windows-Jobs für dieses Projekt.', 'muted'));
+    const events = panel('Lifecycle Events', true);
+    for (const event of detail.events) {
+      const row = node('details', '', 'event'); row.append(node('summary', event.kind + ' · ' + date(event.created_at)), node('pre', JSON.stringify(event.payload, null, 2))); events.append(row);
+    }
+    if (!detail.events.length) events.append(node('p', 'Noch keine Events erfasst.', 'muted'));
+    $('detail-body').replaceChildren(grid);
+  } catch (err) { if (detailId === id) $('detail-body').replaceChildren(node('p', err.message, 'notice')); }
+}
+$('pause-all').onclick = () => act('pause-all'); $('logout').onclick = () => act('logout');
+$('close-detail').onclick = () => $('project-dialog').close();
+$('project-dialog').addEventListener('close', () => { detailId = null; });
+refresh(); setInterval(() => { if (!dragging && !busy && !document.hidden) refresh(); }, 5000);

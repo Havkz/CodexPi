@@ -25,14 +25,20 @@ async def security(request, handler):
     try:
         response = await authorize(request, handler)
     except web.HTTPException as exc:
-        response = exc
+        response = web.Response(status=exc.status, headers=exc.headers, body=exc.body)
     except (ValueError, KeyError) as exc:
         response = web.json_response({'error': request.app['controller'].redactor.clean(str(exc))}, status=400)
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['Referrer-Policy'] = 'no-referrer'
+    # no-referrer makes Chromium send Origin:null for native form POSTs.
+    # Keep same-origin login provenance, while withholding referrers from external sites.
+    response.headers['Referrer-Policy'] = 'same-origin'
     response.headers['Cache-Control'] = 'no-store'
     response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; form-action 'self'"
+    if isinstance(response, web.HTTPException):
+        normalized = web.Response(status=response.status, headers=response.headers, body=response.body)
+        normalized.cookies.update(response.cookies)
+        return normalized
     return response
 
 
@@ -120,12 +126,82 @@ async def verify_login(request):
 
 async def state(request):
     controller = request.app['controller']
+    now = time.time()
+    native = getattr(controller, 'native', None)
+    native_online = bool(native and native.ws and not native.ws.closed)
+    seen = getattr(controller, 'worker_seen', 0)
+    worker_age = max(0, time.monotonic() - seen) if seen else None
+    git_poll = getattr(controller, 'last_git_poll', 0)
+    unsnooze_poll = getattr(controller, 'last_unsnooze_poll', 0)
+    errors = getattr(controller, 'health_errors', {})
+    infrastructure = [
+        {'name': 'Raspberry Pi', 'status': 'online', 'checked_at': now,
+         'detail': 'CodexPi controller · LAN only', 'error': errors.get('scheduler')},
+        {'name': 'Native Codex Bridge', 'status': 'online' if native_online else 'offline',
+         'checked_at': now, 'detail': 'Local native session connection'},
+        {'name': 'Windows Worker', 'status': 'online' if controller.windows_online else 'offline',
+         'checked_at': now, 'heartbeat_age': worker_age, 'detail': 'Authenticated outbound connection'},
+        {'name': 'GitHub', 'status': 'error' if errors.get('github') else 'connected' if git_poll else 'unknown',
+         'checked_at': now - (time.monotonic() - git_poll) if git_poll else None,
+         'detail': controller.config['github_account'] + ' · private repositories', 'error': errors.get('github')},
+        {'name': 'Discord', 'status': 'online' if controller.bot and controller.bot.is_ready() else 'offline',
+         'checked_at': now, 'detail': 'Project notifications'},
+        {'name': 'Unsnooze', 'status': 'online' if controller.unsnooze.get('daemonRunning') else 'offline',
+         'checked_at': now - (time.monotonic() - unsnooze_poll) if unsnooze_poll else None,
+         'detail': 'Selective wake · queue position 1', 'error': errors.get('unsnooze')},
+    ]
     payload = {'projects': controller.db.all(), 'selected': controller.db.setting('selected'),
         'pause_all': controller.db.setting('pause_all', False), 'windows_online': controller.windows_online,
         'discord_online': bool(controller.bot and controller.bot.is_ready()),
         'unsnooze': controller.unsnooze, 'github_account': controller.config['github_account'],
+        'infrastructure': infrastructure, 'server_time': now,
         'csrf': session(request)['csrf']}
-    return web.Response(text=controller.redactor.clean(json.dumps(payload)), content_type='application/json')
+    return safe_json(controller, payload)
+
+
+def safe_json(controller, value):
+    # Redact before JSON escaping, including quoted/newline-containing secrets.
+    def clean(item):
+        if isinstance(item, str):
+            return controller.redactor.clean(item)
+        if isinstance(item, dict):
+            return {key: clean(val) for key, val in item.items()}
+        if isinstance(item, list):
+            return [clean(val) for val in item]
+        return item
+    return web.json_response(clean(value))
+
+
+async def project_detail(request):
+    from .controller import command
+    controller = request.app['controller']
+    project = controller.db.get(request.match_info['project_id'])
+    events = [dict(row) for row in controller.db.conn.execute(
+        'SELECT event_id,kind,payload,created_at,sent_at FROM events WHERE project_id=? ORDER BY event_id DESC LIMIT 30',
+        (project['project_id'],))]
+    jobs = [dict(row) for row in controller.db.conn.execute(
+        'SELECT job_id,status,result,created_at,updated_at FROM jobs WHERE project_id=? ORDER BY created_at DESC LIMIT 10',
+        (project['project_id'],))]
+    commits, git_error = [], None
+    try:
+        result = await command('git', 'log', '-8', '--format=%H%x00%s%x00%cI',
+                               cwd=project['project_path'], timeout=10)
+        for line in result['stdout'].splitlines():
+            sha, subject, date = line.split('\0', 2)
+            commits.append({'sha': sha, 'subject': subject, 'date': date})
+    except (RuntimeError, OSError, ValueError, TimeoutError) as exc:
+        git_error = str(exc)
+    for event in events:
+        event['payload'] = json.loads(event['payload'])
+    # Project-specific job logs only; global logs can contain other projects' data.
+    for job in jobs:
+        result = json.loads(job.pop('result') or '{}')
+        job['exit_code'] = result.get('exit_code')
+        job['stdout'] = str(result.get('stdout', ''))[-16000:]
+        job['stderr'] = str(result.get('stderr', ''))[-16000:]
+        job['artifacts'] = result.get('artifacts', [])
+    return safe_json(controller, {'project': project, 'events': events, 'jobs': jobs,
+                                 'commits': commits, 'git_error': git_error})
 
 
 async def action(request):
@@ -164,6 +240,7 @@ def make_app(controller):
     app['login_tokens'] = {}
     app['login_lock'] = asyncio.Lock()
     app.add_routes([web.get('/', index), web.post('/login', login),
-                    web.get('/api/state', state), web.post('/api/action', action)])
+                    web.get('/api/state', state), web.post('/api/action', action),
+                    web.get('/api/projects/{project_id}', project_detail)])
     app.router.add_static('/static/', controller.root / 'app/web_assets', show_index=False)
     return app

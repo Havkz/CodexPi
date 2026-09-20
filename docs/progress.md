@@ -36,7 +36,7 @@ because a related file exists. The dashboard password is deliberately omitted.
 - Dashboard at `http://192.168.2.105:8787` passes live authentication,
   wrong-password, cookie, CSRF, Origin, Host, no-secret-state, and logout checks.
   Reproduce with `Setup/verify-dashboard.py` on this Windows machine.
-- Seven local unit tests pass, including concurrent login rate limiting,
+- Eleven local unit tests pass, including concurrent login rate limiting,
   SQLite constraints/rollback/backups, HMAC replay prevention, native Windows
   subprocess output/exit/timeout, interrupted-job handling and DPAPI roundtrip.
   Reproduce: `.venv/Scripts/python -m unittest discover -s tests -v`.
@@ -58,6 +58,11 @@ because a related file exists. The dashboard password is deliberately omitted.
   TUI restart and goal/queue acceptance are still being tested.
 
 ## Work still required
+
+The dark dashboard redesign is deployed and has incremental live desktop/mobile
+and synthetic interaction evidence in `docs/design-verification.md`. A genuine
+browser form-login Origin defect was found and repaired without weakening the
+Origin check. This is not final design or lifecycle acceptance.
 
 The appended design sections 1–36 are mandatory acceptance criteria: unified
 dark design tokens, polished responsive login/dashboard/detail/infrastructure,

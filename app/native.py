@@ -15,6 +15,12 @@ class NativeError(RuntimeError):
     pass
 
 
+def project_thread_config(path):
+    # Scope unattended Git writes to this project's metadata; retain the workspace sandbox.
+    return {'features.multi_agent': False, 'sandbox_workspace_write.network_access': True,
+            'sandbox_workspace_write.writable_roots': [str(Path(path) / '.git')]}
+
+
 class Native:
     def __init__(self, socket, event=None):
         self.socket = str(socket)
@@ -144,7 +150,8 @@ async def tui_proxy(request):
                     if method == 'thread/resume':
                         if params.get('history') or params.get('path'):
                             raise ValueError('Resume must use the mapped native session ID')
-                        params = {**params, 'config': {**(params.get('config') or {}), 'features.multi_agent': False}}
+                        params = {**params, 'cwd': project['project_path'],
+                                  'config': {**(params.get('config') or {}), **project_thread_config(project['project_path'])}}
                     selected = controller.db.setting('selected')
                     if method == 'thread/goal/set':
                         status = params.get('status')

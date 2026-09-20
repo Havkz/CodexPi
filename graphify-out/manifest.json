@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1789859553.2361565,
-    "ast_hash": "be2e5990485e434aad00b11b38334f06",
+    "mtime": 1789900208.6176875,
+    "ast_hash": "531323c9cdeff9fb68cfe35cb34a0a38",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
-    "mtime": 1789858820.5734913,
-    "ast_hash": "ee9792f202e211b53a1b1390ca9cd392",
+    "mtime": 1789899453.1015868,
+    "ast_hash": "733bfffaefc6e372d666fc253ac198ef",
     "semantic_hash": ""
   },
   "app/main.py": {
@@ -95,18 +95,18 @@
     "semantic_hash": ""
   },
   "app/native.py": {
-    "mtime": 1789899074.890977,
-    "ast_hash": "eb1c0cca0a622c6bc23fb4e9998aa3bd",
+    "mtime": 1789899368.5479305,
+    "ast_hash": "8b61fb659b0746a003cfca82a67228c3",
     "semantic_hash": ""
   },
   "app/web.py": {
-    "mtime": 1789858254.7294824,
-    "ast_hash": "8bd7abb757d82c80f9520489dd7ed089",
+    "mtime": 1789926002.4246478,
+    "ast_hash": "5f8ca0377d6fc632a512b1802d3a046b",
     "semantic_hash": ""
   },
   "app/web_assets/dashboard.js": {
-    "mtime": 1789839817.9290483,
-    "ast_hash": "a8389526a09fabf0a0285d9155a08f6a",
+    "mtime": 1789926097.3733473,
+    "ast_hash": "26f96b4f68181bf72f9bbed67e56893c",
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
@@ -145,8 +145,8 @@
     "semantic_hash": ""
   },
   "tests/test_web.py": {
-    "mtime": 1789858254.7294824,
-    "ast_hash": "834c4abfb2f0db43de2754d7b1409a00",
+    "mtime": 1789926002.4261687,
+    "ast_hash": "7951abc2199e25c5987b3ae719fa80ad",
     "semantic_hash": ""
   },
   "tests/test_worker.py": {
@@ -155,18 +155,18 @@
     "semantic_hash": ""
   },
   "app/web_assets/index.html": {
-    "mtime": 1789839529.0552325,
-    "ast_hash": "ed09deb09ec909be26a0820155d2b20e",
+    "mtime": 1789900208.622704,
+    "ast_hash": "90f42ba8dbee982224af24255eab45df",
     "semantic_hash": ""
   },
   "app/web_assets/login.html": {
-    "mtime": 1789839529.0536888,
-    "ast_hash": "e2906f3eff9c7626df26d9bb30ad0fa2",
+    "mtime": 1789900208.6237056,
+    "ast_hash": "9629dd6d15a02f8da01157cf4e483102",
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1789899227.2231982,
-    "ast_hash": "7b300e355e3c4c9dd70623f3627f6173",
+    "mtime": 1789926195.7647033,
+    "ast_hash": "bba734a6b5403119736d93cd6173f209",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -202,6 +202,21 @@
   "docs/windows-worker.md": {
     "mtime": 1789859775.601433,
     "ast_hash": "e5fe9b71fd0fdc352d65d69146ded7eb",
+    "semantic_hash": ""
+  },
+  "Setup/verify-design.py": {
+    "mtime": 1789926195.7631745,
+    "ast_hash": "06fd832f4cfe0dd916f6ec67f0ffefb7",
+    "semantic_hash": ""
+  },
+  "tests/test_discord.py": {
+    "mtime": 1789899508.7933078,
+    "ast_hash": "50aa5533bdc1d198b08aa79521755ba2",
+    "semantic_hash": ""
+  },
+  "docs/design-verification.md": {
+    "mtime": 1789926195.7631745,
+    "ast_hash": "a1ab6160e4a8de6fefd961d75d999d75",
     "semantic_hash": ""
   }
 }

@@ -12,7 +12,7 @@ import uuid
 
 from .common import NATIVE_STATUS, Redactor, atomic_write, slugify
 from .db import Database
-from .native import GoalSource, Native
+from .native import GoalSource, Native, project_thread_config
 
 
 async def command(*args, cwd=None, timeout=90, check=True):
@@ -54,6 +54,7 @@ class Controller:
         self.last_git_poll = 0
         self.last_unsnooze_poll = 0
         self.unsnooze = {}
+        self.health_errors = {}
         self.tui_connections = {}
         self.task = None
 
@@ -164,7 +165,7 @@ class Controller:
         if not project['codex_session_id']:
             result = await self.native.rpc('thread/start', {'cwd': str(path), 'ephemeral': False,
                 'approvalPolicy': 'never', 'sandbox': 'workspace-write',
-                'config': {'features.multi_agent': False}})
+                'config': project_thread_config(path)})
             session = result['thread']['id']
             self.db.update(project['project_id'], codex_session_id=session)
             # Native threads are lazy: persist infrastructure context without starting a model turn
@@ -387,14 +388,21 @@ class Controller:
                     await self.resume_ready()
                     await self.selective_wake()
                 if time.monotonic() - self.last_git_poll > 120:
-                    for project in self.db.all():
-                        await self.refresh_git(project)
+                    try:
+                        for project in self.db.all():
+                            await self.refresh_git(project)
+                    except Exception as exc:
+                        self.health_errors['github'] = self.redactor.clean(str(exc))
+                        raise
+                    self.health_errors.pop('github', None)
                     self.last_git_poll = time.monotonic()
                 if self.bot and self.bot.is_ready():
                     await self.bot.send_pending()
+                self.health_errors.pop('scheduler', None)
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
+                self.health_errors['scheduler'] = self.redactor.clean(str(exc))
                 logging.getLogger('scheduler').error('%s', self.redactor.clean(str(exc)))
             await asyncio.sleep(2)
 
@@ -417,7 +425,12 @@ class Controller:
     async def selective_wake(self):
         if time.monotonic() - self.last_unsnooze_poll < 10:
             return
-        status = await command('unsnooze', 'status', '--json')
+        try:
+            status = await command('unsnooze', 'status', '--json')
+        except Exception as exc:
+            self.health_errors['unsnooze'] = self.redactor.clean(str(exc))
+            raise
+        self.health_errors.pop('unsnooze', None)
         self.unsnooze = json.loads(status['stdout'])
         self.last_unsnooze_poll = time.monotonic()
         selected = self.db.setting('selected')
