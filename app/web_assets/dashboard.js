@@ -1,5 +1,5 @@
 'use strict';
-let state, dragging, refreshing = false, busy = false, connected = false, detailId = null;
+let state, dragging, refreshing = false, busy = false, connected = false, detailId = null, lifecycleIntent;
 const $ = id => document.getElementById(id);
 const node = (tag, text = '', cls = '') => {
   const el = document.createElement(tag); el.textContent = text; el.className = cls; return el;
@@ -36,23 +36,30 @@ function block(p) {
 async function act(action, project_id, extra = {}) {
   if (busy || !connected) return;
   busy = true; $('notice').textContent = 'Änderung wird ausgeführt …'; render();
+  let success = false;
   try {
     const res = await fetch('/api/action', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf}, body: JSON.stringify({action, project_id, ...extra})});
-    if (!res.ok) throw new Error((await res.text()).slice(0, 300));
+    if (!res.ok) { const text = await res.text(); let error; try { error = JSON.parse(text).error; } catch {} throw new Error(error || text.slice(0, 300)); }
     if (action === 'logout') { location.reload(); return; }
     $('notice').textContent = '';
+    success = true;
   } catch (err) { $('notice').textContent = err.message; }
   finally { busy = false; await refresh(); }
+  return success;
 }
 function actions(p, compact = false) {
   const result = node('div', '', 'actions' + (compact ? ' queue-actions' : ''));
   const list = compact ? [['Run now', 'run-now']] : [['Run now', 'run-now'], ['Pause', 'pause'], ['Resume', 'resume']];
   for (const [label, action] of list) {
     const b = button(label, () => act(action, p.project_id), p.project_id + ':' + action, action === 'run-now' ? 'primary' : '');
-    b.disabled = busy || !connected || p.goal_status === 'complete' || (action === 'pause' && p.goal_status === 'paused');
+    b.disabled = busy || !connected || p.lifecycle !== 'ready' || p.goal_status === 'complete' || (action === 'pause' && p.goal_status === 'paused');
     result.append(b);
   }
   result.append(button('Details', () => showDetail(p.project_id), p.project_id + ':details'));
+  if (!compact) for (const action of ['rename', 'delete']) {
+    const b = button(action === 'rename' ? 'Rename' : 'Delete', () => showLifecycle(p, action), p.project_id + ':' + action, action === 'delete' ? 'danger' : '');
+    b.disabled = busy || !connected || p.lifecycle !== 'ready' || Boolean(p.operation); result.append(b);
+  }
   return result;
 }
 function projectOverview(p) {
@@ -66,8 +73,10 @@ function projectOverview(p) {
   ]));
   const blocker = block(p); if (blocker) body.append(blocker);
   const controls = actions(p); controls.classList.add('active-actions'); body.append(controls);
-  // Lifecycle actions remain a tracked implementation gap, not misleading working controls.
-  body.append(node('p', 'Rename / Delete: Lifecycle-Implementierung noch offen.', 'action-note'));
+  if (p.lifecycle !== 'ready') {
+    let operation; try { operation = JSON.parse(p.operation || '{}'); } catch { operation = {}; }
+    body.append(node('p', 'Lifecycle: ' + p.lifecycle + ' · ' + (operation.error || 'Wird ausgeführt. Bei Unterbrechung automatisch fortgesetzt.'), 'notice'));
+  }
   return body;
 }
 function renderQueue(queue) {
@@ -199,6 +208,31 @@ async function showDetail(id) {
     $('detail-body').replaceChildren(grid);
   } catch (err) { if (detailId === id) $('detail-body').replaceChildren(node('p', err.message, 'notice')); }
 }
+function showLifecycle(project, action) {
+  if ($('project-dialog').open) $('project-dialog').close();
+  lifecycleIntent = {project, action};
+  $('lifecycle-title').textContent = action === 'rename' ? 'Project umbenennen' : 'Project löschen';
+  $('lifecycle-description').textContent = action === 'rename'
+    ? 'Das Projekt wird pausiert. Name, Ordner, Repo, Discord und Session-Zuordnung werden konsistent aktualisiert. Anschließend kannst du es wieder starten.'
+    : 'Das Projekt wird gestoppt und aus CodexPi entfernt. Der Discord Channel wird gelöscht. GitHub bleibt erhalten; lokale Pi-Daten bleiben in einem Recovery-Backup. Windows-Checkouts werden nicht gelöscht.';
+  $('lifecycle-label').textContent = action === 'rename' ? 'Neuer Projektname' : 'Zur Bestätigung exakt eingeben: ' + project.display_name;
+  $('lifecycle-input').value = action === 'rename' ? project.display_name : '';
+  $('lifecycle-error').textContent = '';
+  $('lifecycle-submit').textContent = action === 'rename' ? 'Umbenennen' : 'Löschen bestätigen';
+  $('lifecycle-submit').className = action === 'rename' ? 'primary' : 'danger';
+  $('lifecycle-dialog').showModal(); $('lifecycle-input').focus();
+}
+$('lifecycle-cancel').onclick = () => $('lifecycle-dialog').close();
+$('lifecycle-form').onsubmit = async event => {
+  event.preventDefault(); if (busy) return;
+  const {project, action} = lifecycleIntent, value = $('lifecycle-input').value;
+  if (action === 'delete' && value !== project.display_name) { $('lifecycle-error').textContent = 'Der Projektname stimmt nicht überein.'; return; }
+  $('lifecycle-submit').disabled = true; $('lifecycle-cancel').disabled = true;
+  const ok = await act(action, project.project_id, action === 'rename' ? {name: value} : {confirmation: value});
+  $('lifecycle-submit').disabled = false; $('lifecycle-cancel').disabled = false;
+  if (ok) { $('lifecycle-dialog').close(); if (action === 'delete') $('notice').textContent = 'Projekt entfernt. GitHub und das lokale Recovery-Backup bleiben erhalten.'; }
+  else $('lifecycle-error').textContent = $('notice').textContent;
+};
 $('pause-all').onclick = () => act('pause-all'); $('logout').onclick = () => act('logout');
 $('close-detail').onclick = () => $('project-dialog').close();
 $('project-dialog').addEventListener('close', () => { detailId = null; });

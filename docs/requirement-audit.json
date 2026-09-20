@@ -4606,50 +4606,64 @@
       "id": "L1000",
       "section": "20. WEB-DASHBOARD",
       "text": "* SQLite",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1001",
       "section": "20. WEB-DASHBOARD",
       "text": "* Ordnername",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1002",
       "section": "20. WEB-DASHBOARD",
       "text": "* Displayname",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1003",
       "section": "20. WEB-DASHBOARD",
       "text": "* Slug",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1004",
       "section": "20. WEB-DASHBOARD",
       "text": "* GitHub Repo-Name, wenn sicher möglich",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1005",
       "section": "20. WEB-DASHBOARD",
       "text": "* Discord Channel",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1006",
       "section": "20. WEB-DASHBOARD",
       "text": "* tmux-Zuordnung",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1007",
@@ -4676,8 +4690,10 @@
       "id": "L1013",
       "section": "20. WEB-DASHBOARD",
       "text": "Immer Bestätigung.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1015",
@@ -4704,43 +4720,55 @@
       "id": "L1019",
       "section": "20. WEB-DASHBOARD",
       "text": "* tmux/session association entfernen",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1020",
       "section": "20. WEB-DASHBOARD",
       "text": "* Discord Channel löschen",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1021",
       "section": "20. WEB-DASHBOARD",
       "text": "* SQLite-Eintrag entfernen",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1023",
       "section": "20. WEB-DASHBOARD",
       "text": "GitHub-Repo NICHT automatisch endgültig löschen.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1025",
       "section": "20. WEB-DASHBOARD",
       "text": "Nur falls Dashboard dafür zusätzliche explizite zweite Bestätigung anbietet.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1027",
       "section": "20. WEB-DASHBOARD",
       "text": "Standardmäßig bleibt GitHub als Backup bestehen.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle.md: live browser and platform verification 2026-09-20; Setup/test-live-lifecycle.py"
+      ]
     },
     {
       "id": "L1029",

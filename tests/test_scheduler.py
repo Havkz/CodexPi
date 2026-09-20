@@ -35,6 +35,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 codex_session_id,tmux_session_name,created_at,updated_at,queue_position)
                 VALUES (?,?,?,?,?,?,?,?,?)''', (name, name, name, str(path), name, name, time.time(), time.time(),
                                                 1 if name == 'first' else 2))
+            controller.db.update(name, lifecycle='ready')
 
     def tearDown(self):
         self.controller.db.conn.close()

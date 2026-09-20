@@ -119,6 +119,9 @@ dialog { width: min(1080px, calc(100% - 40px)); max-height: calc(100dvh - 48px);
 dialog::backdrop { background: rgb(0 0 0 / .72); }
 .dialog-header { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 24px; }
 .dialog-header h2 { overflow-wrap: anywhere; }
+.lifecycle-dialog { max-width: 520px; }
+.lifecycle-dialog p { margin-block: 18px; }
+.lifecycle-dialog .actions { justify-content: flex-end; margin-top: 20px; }
 .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .detail-grid .metadata { grid-template-columns: 1fr 1fr; }
 .detail-wide { grid-column: 1 / -1; }

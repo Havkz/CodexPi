@@ -97,6 +97,8 @@ class Controller:
                 if project['lifecycle'] == 'ready':
                     await self.attach_ready(project)
                     return project
+                if project['lifecycle'] != 'creating':
+                    raise ValueError('Project lifecycle recovery is still in progress')
             else:
                 if self.db.conn.execute('SELECT 1 FROM projects WHERE slug=?', (slug,)).fetchone():
                     raise ValueError('That name normalizes to an existing project slug')
@@ -186,6 +188,8 @@ class Controller:
         return result['exit_code'] == 0 and result['stdout'].strip() == '0'
 
     async def attach_ready(self, project):
+        if project['lifecycle'] != 'ready':
+            raise ValueError('Project lifecycle recovery must finish before attaching')
         if await self.pane_exists(project):
             return
         args = ['/home/raspberry/.local/bin/unsnooze', '_run', 'codex',
@@ -209,7 +213,7 @@ class Controller:
         await asyncio.sleep(0.25)
         await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Enter')
 
-    async def pause(self, project, release=True):
+    async def pause(self, project, release=True, preserve_operation=False):
         goal = await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})
         if goal.get('goal') and goal['goal']['status'] != 'complete':
             await self.native.rpc('thread/goal/set', {'threadId': project['codex_session_id'], 'status': 'paused'})
@@ -217,7 +221,8 @@ class Controller:
         # Pausing a native goal stops continuation, not its already-running turn.
         # Interrupt that turn and confirm native idleness before releasing the single-worker slot.
         await self.wait_idle(project)
-        self.db.update(project['project_id'], operation=None)
+        if not preserve_operation:
+            self.db.update(project['project_id'], operation=None)
         if release and self.db.setting('selected') == project['project_id']:
             self.db.set_setting('selected', None)
         await self.cancel_wakes(project)
@@ -243,6 +248,8 @@ class Controller:
     async def run_now(self, project_id):
         async with self.lock:
             project = self.db.get(project_id)
+            if project['lifecycle'] != 'ready':
+                raise ValueError('Project lifecycle recovery must finish before resuming')
             if project['goal_status'] == 'complete':
                 raise ValueError('Completed goals are never automatically restarted')
             selected = self.db.setting('selected')
@@ -260,24 +267,32 @@ class Controller:
                 await command('unsnooze', 'cancel', item['key'], check=False)
 
     async def recover(self):
+        from .lifecycle import recover
+        await recover(self)
         rows = self.source.rows()
         selected = self.db.setting('selected')
         if self.db.setting('pause_all', False):
             selected = None
         # Reconcile nonselected native activity first; never violate the one-active DB constraint.
         for project in self.db.all():
+            if project['lifecycle'] != 'ready':
+                continue
             row = rows.get(project['codex_session_id'])
             if row and row['status'] == 'active' and project['project_id'] != selected:
                 await self.pause(project, release=False)
                 row['status'] = 'paused'
         for project in self.db.all():
+            if project['lifecycle'] != 'ready':
+                continue
             row = rows.get(project['codex_session_id'])
             if row:
                 self.db.update(project['project_id'], goal_status=row['status'])
         selected = self.db.setting('selected')
         if selected and not self.db.setting('pause_all', False):
             project = self.db.get(selected)
-            if project['goal_status'] == 'active':
+            if project['lifecycle'] != 'ready':
+                logging.getLogger('recovery').warning('Lifecycle journal retains selected project until quiescent')
+            elif project['goal_status'] == 'active':
                 await self.attach_ready(project)
                 self.db.update(selected, operation=json.dumps({'kind': 'resume', 'requested_at': time.time()}))
             elif project['goal_status'] == 'usage limited':
@@ -287,6 +302,8 @@ class Controller:
     async def poll_goals(self):
         rows = self.source.rows()
         for project in self.db.all():
+            if project['lifecycle'] != 'ready':
+                continue
             row = rows.get(project['codex_session_id'])
             if not row:
                 continue
@@ -372,6 +389,8 @@ class Controller:
                         await self.native.close()
                         self.native = await Native(self.root / 'state/native.sock').connect()
                         await self.recover()
+                    from .lifecycle import recover
+                    await recover(self)
                     await self.poll_goals()
                     if time.monotonic() - self.last_backup > 3600:
                         self.db.backup(self.root / 'backups/sqlite')
@@ -379,7 +398,7 @@ class Controller:
                     selected = self.db.setting('selected')
                     if not selected and self.db.setting('advance_queue', False) and not self.db.setting('pause_all', False):
                         self.db.set_setting('advance_queue', False)
-                        next_project = next((p for p in self.db.all() if p['queue_position'] is not None and
+                        next_project = next((p for p in self.db.all() if p['lifecycle'] == 'ready' and p['queue_position'] is not None and
                                              p['goal_status'] == 'paused' and p['codex_session_id'] in self.source.rows()), None)
                         if next_project:
                             self.select(next_project['project_id'])

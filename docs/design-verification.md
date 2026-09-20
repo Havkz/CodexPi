@@ -45,7 +45,7 @@ Synthetic browser tests (all action requests intercepted, no real project mutati
 
 `Setup/verify-dashboard.py` passes the live authentication, wrong-password,
 HttpOnly/SameSite, CSRF, Origin, Host, secret-state and logout checks.
-`python -m unittest discover -s tests -v` passes 11 tests, including extended
+`python -m unittest discover -s tests -v` passes 13 tests, including extended
 detail access control and redaction in commits, nested events and job logs.
 
 The real browser test uncovered an existing login defect: `Referrer-Policy:
@@ -55,7 +55,8 @@ referrers; Origin validation remains enforced. HTTP-only checks did not catch it
 
 ## Still open — not waived
 
-- Real Rename/Delete and deployment lifecycle with crash-safe recovery.
+- Rename/Delete now have live and crash-simulation evidence in `lifecycle.md`;
+  deployed-service/Windows-checkout integration and live reboot recovery remain open.
 - Complete native account usage data, project controller/Codex log coverage,
   richer lifecycle event recording and refreshed details during actions.
 - All Discord embed types verified in real channels, permissions and Close action.

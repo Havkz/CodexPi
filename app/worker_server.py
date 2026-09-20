@@ -124,7 +124,14 @@ async def unblock_windows(controller):
 
 
 async def submit_job(controller, body):
+    async with controller.lock:
+        return await _submit_job(controller, body)
+
+
+async def _submit_job(controller, body):
     project = controller.db.get(body['project_id'])
+    if project['lifecycle'] != 'ready':
+        raise ValueError('Project lifecycle operation is in progress')
     if not controller.windows_online:
         reason = {'reason': 'Windows offline', 'details': str(body.get('reason', 'Native Windows test required')),
                   'requires_user': False}

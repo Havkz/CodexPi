@@ -147,6 +147,8 @@ async def tui_proxy(request):
                     project = controller.db.by_session(params.get('threadId'))
                     if not project:
                         raise ValueError('Session is not managed by CodexPi')
+                    if project['lifecycle'] != 'ready':
+                        raise ValueError('Project lifecycle operation is in progress')
                     if method == 'thread/resume':
                         if params.get('history') or params.get('path'):
                             raise ValueError('Resume must use the mapped native session ID')

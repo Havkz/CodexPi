@@ -207,18 +207,32 @@ async def project_detail(request):
 async def action(request):
     controller = request.app['controller']
     body = await request.json()
+    if not isinstance(body, dict):
+        raise ValueError('Action payload must be an object')
     action_name = body.get('action')
     ident = body.get('project_id')
-    if action_name in ('run-now', 'resume'):
+    if action_name in ('rename', 'delete'):
+        from .lifecycle import begin
+        try:
+            await begin(controller, ident, action_name, name=body.get('name'), confirmation=body.get('confirmation'))
+        except RuntimeError as exc:
+            response = safe_json(controller, {'error': str(exc),
+                'recovery_pending': controller.db.get(ident)['lifecycle'] != 'ready'})
+            response.set_status(409)
+            return response
+    elif action_name in ('run-now', 'resume'):
         await controller.run_now(ident)
     elif action_name == 'pause':
         async with controller.lock:
-            await controller.pause(controller.db.get(ident))
+            project = controller.db.get(ident)
+            if project['lifecycle'] != 'ready':
+                raise ValueError('Project lifecycle operation is in progress')
+            await controller.pause(project)
     elif action_name == 'pause-all':
         async with controller.lock:
             controller.db.set_setting('pause_all', True)
             for project in controller.db.all():
-                if project['codex_session_id'] and project['goal_status'] in ('active', 'usage limited'):
+                if project['lifecycle'] == 'ready' and project['codex_session_id'] and project['goal_status'] in ('active', 'usage limited'):
                     await controller.pause(project)
     elif action_name == 'reorder':
         async with controller.lock:

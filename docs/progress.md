@@ -36,7 +36,7 @@ because a related file exists. The dashboard password is deliberately omitted.
 - Dashboard at `http://192.168.2.105:8787` passes live authentication,
   wrong-password, cookie, CSRF, Origin, Host, no-secret-state, and logout checks.
   Reproduce with `Setup/verify-dashboard.py` on this Windows machine.
-- Eleven local unit tests pass, including concurrent login rate limiting,
+- Thirteen local unit tests pass, including concurrent login rate limiting,
   SQLite constraints/rollback/backups, HMAC replay prevention, native Windows
   subprocess output/exit/timeout, interrupted-job handling and DPAPI roundtrip.
   Reproduce: `.venv/Scripts/python -m unittest discover -s tests -v`.
@@ -72,7 +72,8 @@ message. Verify 1920x1080, 1440px and 375–430px widths, all embed types/button
 and regression coverage for every security, queue, recovery and lifecycle path.
 No existing functional requirements are replaced by this addition.
 
-Full TUI/goal/queue verification, complete rename/delete/deployment lifecycle,
+Dashboard Rename/Delete have live and simulated-crash evidence in `lifecycle.md`.
+Full TUI/goal/queue verification, remaining rename/delete/deployment integration,
 crash/reboot/worker disconnect tests, final CI and source publication,
 resource measurement, comprehensive documentation and per-line requirement audit.
 The overall goal is not complete. Passing the checks above does not certify

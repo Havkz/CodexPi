@@ -97,9 +97,16 @@ class CloseView(discord.ui.View):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         await interaction.response.defer(ephemeral=True)
-        controller.db.update(project['project_id'], operation=json.dumps({'kind': 'close-channel'}))
-        await interaction.channel.delete(reason='CodexPi completed project closed by user')
-        controller.db.update(project['project_id'], discord_channel_id=None, operation=None)
+        from .lifecycle import finish, record_error
+        async with controller.lock:
+            project = controller.db.get(project['project_id'])
+            if project['lifecycle'] != 'ready' or project['operation']:
+                return
+            controller.db.update(project['project_id'], operation=json.dumps({'kind': 'close-channel'}))
+            try:
+                await finish(controller, controller.db.get(project['project_id']))
+            except Exception as exc:
+                record_error(controller, project['project_id'], exc)
 
 
 class Bot(discord.Client):
