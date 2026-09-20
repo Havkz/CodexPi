@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1789926734.972987,
-    "ast_hash": "190a0f521de5492dcd9f632d2846e7e4",
+    "mtime": 1789945174.988963,
+    "ast_hash": "843b33d450c915e3e5bb52cb4b659f17",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/native.py": {
-    "mtime": 1789926606.5579038,
-    "ast_hash": "8ee8d52c3f6707aa13cd64a1075703fe",
+    "mtime": 1789944261.8892217,
+    "ast_hash": "10f72b1de5e3da99ed97709a82a9ddc2",
     "semantic_hash": ""
   },
   "app/web.py": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1789926606.5624714,
-    "ast_hash": "bc0d59b51465977f95387d1ca9ebf818",
+    "mtime": 1789945118.7564163,
+    "ast_hash": "d6df0064bb2a11eeed7ff98f63db15f8",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -225,8 +225,8 @@
     "semantic_hash": ""
   },
   "app/lifecycle.py": {
-    "mtime": 1789927265.1132226,
-    "ast_hash": "40c85bceba113c5c7a1db14fe9f5cde1",
+    "mtime": 1789944232.9678094,
+    "ast_hash": "1db264ee0723b6faf5cbd5d72886851d",
     "semantic_hash": ""
   },
   "tests/test_lifecycle.py": {
@@ -237,6 +237,16 @@
   "docs/lifecycle.md": {
     "mtime": 1789927403.4285614,
     "ast_hash": "6b43a22ff6b78743d9033d049666dc7d",
+    "semantic_hash": ""
+  },
+  "Setup/verify-live-resume.py": {
+    "mtime": 1789945044.087118,
+    "ast_hash": "3398a549298f2bb2dd363af2f0211a03",
+    "semantic_hash": ""
+  },
+  "docs/unsnooze.md": {
+    "mtime": 1789944929.044115,
+    "ast_hash": "9daae9a1e08fdc7278bcc3ec055c53a2",
     "semantic_hash": ""
   }
 }

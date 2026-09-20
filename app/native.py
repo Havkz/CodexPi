@@ -126,7 +126,12 @@ async def tui_proxy(request):
     async def event(value):
         await client.send_json(value)
 
-    upstream = await Native(controller.root / 'state/native.sock', event).connect(initialize=False)
+    try:
+        upstream = await Native(controller.root / 'state/native.sock', event).connect(initialize=False)
+    except Exception:
+        request.app['sockets'].discard(client)
+        await client.close(code=1011, message=b'Native bridge unavailable')
+        return client
     tasks = set()
     resumed = set()
     connection_id = id(client)
@@ -138,11 +143,24 @@ async def tui_proxy(request):
         try:
             if method in ('thread/start', 'thread/fork'):
                 raise ValueError('New projects must be created using codexpi and /rename')
-            if (method in ('review/start', 'thread/realtime/start', 'thread/archive', 'thread/delete') or
+            if (method in ('review/start', 'thread/realtime/start', 'thread/archive', 'thread/delete',
+                           'thread/unarchive', 'thread/rollback', 'config/value/write', 'config/batchWrite') or
+                    (method and method.startswith(('process/', 'command/exec', 'experimentalFeature/enablement/'))) or
                     (method and method.startswith('thread/queue/') and method != 'thread/queue/list')):
                 raise ValueError('This operation bypasses the CodexPi single-project queue')
-            if method in ('thread/goal/set', 'turn/start', 'turn/steer', 'thread/resume', 'thread/goal/clear',
-                          'thread/goal/get'):
+            if method == 'thread/name/set':
+                project = controller.db.by_session(params.get('threadId'))
+                if not project:
+                    raise ValueError('Session is not managed by CodexPi')
+                if params.get('name') != project['display_name']:
+                    from .lifecycle import begin
+                    await begin(controller, project['project_id'], 'rename', name=params.get('name'), defer=True)
+                    result = {}
+                else:
+                    result = await upstream.rpc(method, params)
+            elif method in ('thread/goal/set', 'turn/start', 'turn/steer', 'thread/resume', 'thread/goal/clear',
+                            'thread/goal/get', 'thread/settings/update', 'thread/compact/start',
+                            'thread/shellCommand', 'thread/inject_items'):
                 async with controller.lock:
                     project = controller.db.by_session(params.get('threadId'))
                     if not project:
@@ -152,8 +170,16 @@ async def tui_proxy(request):
                     if method == 'thread/resume':
                         if params.get('history') or params.get('path'):
                             raise ValueError('Resume must use the mapped native session ID')
-                        params = {**params, 'cwd': project['project_path'],
+                        params = {**params, 'cwd': project['project_path'], 'runtimeWorkspaceRoots': [project['project_path']],
+                                  'approvalPolicy': 'never', 'sandbox': 'workspace-write',
                                   'config': {**(params.get('config') or {}), **project_thread_config(project['project_path'])}}
+                        params.pop('permissions', None)
+                    if method in ('thread/settings/update', 'turn/start'):
+                        params = {**params, 'cwd': project['project_path'], 'approvalPolicy': 'never',
+                            'sandboxPolicy': {'type': 'workspaceWrite',
+                                'writableRoots': [str(Path(project['project_path']) / '.git')], 'networkAccess': True,
+                                'excludeTmpdirEnvVar': False, 'excludeSlashTmp': False}}
+                        params.pop('permissions', None)
                     selected = controller.db.setting('selected')
                     if method == 'thread/goal/set':
                         status = params.get('status')
@@ -166,7 +192,8 @@ async def tui_proxy(request):
                                 params = {**params, 'status': 'paused'}
                             else:
                                 controller.select(project['project_id'])
-                    if method in ('turn/start', 'turn/steer') and (selected != project['project_id']
+                    if method in ('turn/start', 'turn/steer', 'thread/compact/start',
+                                  'thread/shellCommand', 'thread/inject_items') and (selected != project['project_id']
                             or controller.db.setting('pause_all', False)):
                         raise ValueError('Project is queued. Use Run now in the dashboard to work on it.')
                     result = await upstream.rpc(method, params)

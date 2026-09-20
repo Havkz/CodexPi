@@ -57,6 +57,32 @@ because a related file exists. The dashboard password is deliberately omitted.
   initialization instruction, without a model turn or invented user goal.
   TUI restart and goal/queue acceptance are still being tested.
 
+## Verified 2026-09-21 (incremental, not final acceptance)
+
+- Re-read all 2900 source lines, including the 36 mandatory design sections.
+  Source SHA256 remains `23cfddb164d6cb21ce9eb362bbcdbf2d979365c9013f0c1d153223a230e15335`.
+  All 681 nonempty design lines are represented in the existing audit.
+- Unsnooze 1.19.0's asynchronous dead-pane CLI revival was found to use an argv
+  prompt. The controller now journals a due selected wake and reuses its native
+  mapped-TUI resume path; no extra detector, private API adapter, or fork.
+  See `unsnooze.md` for source evidence, regression checks, and limits.
+- Fifteen Windows unit tests pass. On Pi, fourteen pass and Windows DPAPI is
+  skipped. Added coverage includes detached idle-TUI release, TUI RPC admission,
+  deferred TUI rename, native resume clearing stale blockers, and selective wake
+  across simulated SQLite reopen, pause-all, priority change, and missing panes.
+- Live queue E2E resumed the original stored native goal, pushed verified remote
+  SHA `4e630a892c9e17fe18d6bdb3a000e8133ee66214`, completed, released its TUI,
+  and automatically resumed the next original session without a parallel goal.
+- The next CLI project passed Linux tests and GitHub CI at SHA
+  `4138f9930e788ca181c308991c525343d4517a93`, then stalled on Windows Git
+  credential-manager authentication. That specific checkout failure is the
+  next diagnostic target; Windows job completion is not claimed.
+- Existing block-reason cleanup missed native TUI resume because the admission
+  gate recorded active before the poller saw the transition. Both paths now use
+  shared cleanup; stale complete-project blockers are also reconciled.
+- Ponytail review: reused the existing journal and TUI resume; no new runtime
+  dependency or background process. No further safe simplification identified.
+
 ## Work still required
 
 The dark dashboard redesign is deployed and has incremental live desktop/mobile

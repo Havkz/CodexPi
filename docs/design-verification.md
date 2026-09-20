@@ -55,6 +55,14 @@ referrers; Origin validation remains enforced. HTTP-only checks did not catch it
 
 ## Still open — not waived
 
+Incremental live Discord evidence on 2026-09-21: REST readback of actual message
+`1551366894538461298` in the completed queue E2E channel confirmed the native
+`CodexPi — Project Complete` embed, color `14048689`, six vertical indentation
+characters, zero separate inline fields, footer, timestamp, and one `Close`
+button with native danger style 4. This checks delivered structure, not visual
+client rendering, repeated-message randomness, or clicking Close. The live
+dashboard security check also passed again with Discord and Windows connected.
+
 - Rename/Delete now have live and crash-simulation evidence in `lifecycle.md`;
   deployed-service/Windows-checkout integration and live reboot recovery remain open.
 - Complete native account usage data, project controller/Codex log coverage,

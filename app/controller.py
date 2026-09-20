@@ -53,6 +53,7 @@ class Controller:
         self.last_backup = 0
         self.last_git_poll = 0
         self.last_unsnooze_poll = 0
+        self.last_idle_cleanup = 0
         self.unsnooze = {}
         self.health_errors = {}
         self.tui_connections = {}
@@ -84,8 +85,14 @@ class Controller:
             self.db.event(project['project_id'], status, {'reason': project['block_reason']})
         if status == 'active':
             self.db.update(project['project_id'], operation=None)
+            if project['goal_status'] != 'active':
+                self.clear_block(project)
         if status == 'paused' and self.db.setting('selected') == project['project_id']:
             self.db.set_setting('selected', None)
+
+    def clear_block(self, project):
+        (Path(project['project_path']) / '.codexpi/block.json').unlink(missing_ok=True)
+        self.db.update(project['project_id'], block_reason=None, windows_required=0, operation=None)
 
     async def create(self, name):
         name = name.strip()
@@ -192,7 +199,7 @@ class Controller:
             raise ValueError('Project lifecycle recovery must finish before attaching')
         if await self.pane_exists(project):
             return
-        args = ['/home/raspberry/.local/bin/unsnooze', '_run', 'codex',
+        args = ['env', 'UNSNOOZE_AUTO_RESUME=false', '/home/raspberry/.local/bin/unsnooze', '_run', 'codex',
                 '--remote', 'unix://' + str(self.root / 'state/tui.sock'),
                 '--no-alt-screen', 'resume', project['codex_session_id']]
         dead = await command('tmux', 'has-session', '-t', '=' + project['tmux_session_name'], check=False)
@@ -324,6 +331,8 @@ class Controller:
             if status == 'complete':
                 if old != 'complete' or not project['completion_notified']:
                     await self.complete(project)
+                elif reason or block.exists() or project['windows_required']:
+                    self.clear_block(project)
                 continue
             self.db.update(project['project_id'], goal_status=status, block_reason=reason,
                            last_activity=row.get('updated_at_ms', 0) / (1000 if row.get('updated_at_ms', 0) > 1e12 else 1))
@@ -335,9 +344,7 @@ class Controller:
                 await self.wait_idle(project)
                 self.db.set_setting('selected', None)
             if status == 'active' and old != 'active':
-                if block.exists():
-                    block.unlink()
-                self.db.update(project['project_id'], block_reason=None, windows_required=0, operation=None)
+                self.clear_block(project)
 
     async def complete(self, project):
         path = Path(project['project_path'])
@@ -355,6 +362,7 @@ class Controller:
             if project['last_ci_status'] == 'failure':
                 self.db.event(project['project_id'], 'critical', {'message': 'Final CI failed'})
             return
+        self.clear_block(project)
         with self.db.transaction():
             self.db.update(project['project_id'], goal_status='complete', queue_position=None,
                            completion_notified=1, operation=None)
@@ -406,6 +414,7 @@ class Controller:
                             self.db.update(next_project['project_id'], operation=json.dumps({'kind': 'resume', 'requested_at': time.time()}))
                     await self.resume_ready()
                     await self.selective_wake()
+                    await self.release_idle_tuis()
                 if time.monotonic() - self.last_git_poll > 120:
                     try:
                         for project in self.db.all():
@@ -426,12 +435,23 @@ class Controller:
             await asyncio.sleep(2)
 
     async def resume_ready(self):
+        if self.db.setting('pause_all', False):
+            return
         for project in self.db.all():
             operation = json.loads(project['operation']) if project['operation'] else {}
-            if operation.get('kind') != 'resume' or self.db.setting('selected') != project['project_id']:
+            if (project['lifecycle'] != 'ready' or operation.get('kind') != 'resume'
+                    or self.db.setting('selected') != project['project_id']):
                 continue
+            if operation.get('source') == 'unsnooze':
+                if project['queue_position'] != 1:
+                    self.db.update(project['project_id'], operation=None)
+                    continue
+                # Consume the detector record only after journaling the wake. The normal
+                # mapped TUI path survives a missing pane/reboot without an argv prompt.
+                await self.cancel_wakes(project)
             connections = self.tui_connections.get(project['project_id'], {})
             if not connections or time.monotonic() - min(connections.values()) < 1:
+                await self.attach_ready(project)
                 continue
             if operation.get('sent_at'):
                 if time.time() - operation['sent_at'] > 30:
@@ -440,6 +460,30 @@ class Controller:
             await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Escape')
             await self.slash(project, '/goal resume')
             self.db.update(project['project_id'], operation=json.dumps({**operation, 'sent_at': time.time()}))
+
+    async def release_idle_tuis(self):
+        if time.monotonic() - self.last_idle_cleanup < 10:
+            return
+        self.last_idle_cleanup = time.monotonic()
+        goals = self.source.rows()
+        for project in self.db.all():
+            if (project['lifecycle'] != 'ready' or project['operation'] or
+                    project['goal_status'] not in ('paused', 'stalled', 'limited by budget', 'complete') or
+                    project['codex_session_id'] not in goals):
+                continue
+            # Keep an attached user's TUI and a new, not-yet-submitted goal intact.
+            attached = await command('tmux', 'display-message', '-p', '-t',
+                project['tmux_session_name'] + ':0.0', '#{session_attached}', check=False)
+            if attached['exit_code'] or attached['stdout'].strip() != '0':
+                continue
+            thread = (await self.native.rpc('thread/read', {
+                'threadId': project['codex_session_id'], 'includeTurns': False}))['thread']
+            if thread['status']['type'] not in ('idle', 'notLoaded'):
+                continue
+            await self.cancel_wakes(project)
+            await command('tmux', 'kill-session', '-t', '=' + project['tmux_session_name'])
+            await self.native.rpc('thread/unsubscribe', {'threadId': project['codex_session_id']})
+            logging.getLogger('scheduler').info('Released detached inactive TUI for %s', project['slug'])
 
     async def selective_wake(self):
         if time.monotonic() - self.last_unsnooze_poll < 10:
@@ -456,15 +500,20 @@ class Controller:
         if not selected or self.db.setting('pause_all', False):
             return
         project = self.db.get(selected)
-        if project['goal_status'] != 'usage limited' or project['queue_position'] != 1:
+        if (project['lifecycle'] != 'ready' or project['operation'] or
+                project['goal_status'] != 'usage limited' or project['queue_position'] != 1):
             return
         for item in self.unsnooze.get('sessions', []):
             if (item.get('sessionId') == project['codex_session_id'] and item['status'] == 'stopped'
                     and item.get('resetSource') != 'fallback' and item.get('resetAt')
                     and item['resetAt'] <= time.time() * 1000):
-                # Unsnooze detects limits; the same admission gate rechecks at actual wake time.
-                await command('unsnooze', 'message', item['key'], '/goal resume')
-                await command('unsnooze', 'resume-now', item['key'])
+                # 1.19.0 resume-now delegates asynchronously and may revive a lost
+                # pane using `codex resume ID MESSAGE`, bypassing the slash command
+                # and our admission gate. Reuse our durable mapped-TUI resume instead.
+                self.db.update(selected, operation=json.dumps({'kind': 'resume',
+                    'source': 'unsnooze', 'requested_at': time.time(),
+                    'reset_at': item['resetAt'], 'unsnooze_key': item['key']}))
+                break
 
     async def close(self):
         if self.task:

@@ -9,6 +9,7 @@ Type=simple
 WorkingDirectory=/home/raspberry/CodexPi
 Environment=PATH=/home/raspberry/.local/bin:/usr/local/bin:/usr/bin:/bin
 Environment=UNSNOOZE_CODEX_BIN=/home/raspberry/.local/bin/codex
+Environment=UNSNOOZE_AUTO_RESUME=false
 UMask=0077
 ExecStart=/home/raspberry/.local/bin/unsnooze daemon
 Restart=always

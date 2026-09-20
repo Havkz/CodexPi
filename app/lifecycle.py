@@ -67,7 +67,7 @@ def save(controller, project, operation, phase):
     controller.db.update(project['project_id'], operation=json.dumps(operation))
 
 
-async def begin(controller, ident, kind, *, name=None, confirmation=None):
+async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=False):
     async with controller.lock:
         project = controller.db.get(ident)
         if project['lifecycle'] != 'ready' or project['operation']:
@@ -118,6 +118,8 @@ async def begin(controller, ident, kind, *, name=None, confirmation=None):
         await channel(controller, project)  # permission/ownership preflight before any mutation
         controller.db.backup(controller.root / 'backups/sqlite')
         controller.db.update(ident, lifecycle='renaming' if kind == 'rename' else 'deleting', operation=json.dumps(operation))
+        if defer:
+            return {'ok': True}  # TUI receives its acknowledgement before recovery stops its pane.
         try:
             await finish(controller, controller.db.get(ident))
         except Exception as exc:

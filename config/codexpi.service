@@ -9,6 +9,7 @@ Type=simple
 WorkingDirectory=/home/raspberry/CodexPi
 Environment=PATH=/home/raspberry/CodexPi/bin:/home/raspberry/.local/bin:/usr/local/bin:/usr/bin:/bin
 Environment=PYTHONUNBUFFERED=1
+Environment=UNSNOOZE_AUTO_RESUME=false
 UMask=0077
 ExecStart=/home/raspberry/CodexPi/.venv/bin/python -m app.main
 Restart=always
