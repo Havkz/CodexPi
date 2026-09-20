@@ -163,7 +163,6 @@ async def tui_proxy(request):
                     result = await upstream.rpc(method, params)
                     if method == 'thread/resume':
                         resumed.add(project['project_id'])
-                    if method == 'thread/goal/get' and project['project_id'] in resumed:
                         controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = time.monotonic()
                     if method == 'thread/goal/set':
                         if result['goal']['status'] == 'paused':

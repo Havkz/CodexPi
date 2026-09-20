@@ -10,19 +10,30 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit",
-      "community": 9,
-      "community_name": "build_audit.py",
+      "community": 0,
+      "community_name": "common.py",
       "norm_label": "build_audit.py"
+    },
+    {
+      "label": "reconcile()",
+      "file_type": "code",
+      "source_file": "Setup/build_audit.py",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "setup_build_audit_reconcile",
+      "community": 0,
+      "community_name": "common.py",
+      "norm_label": "reconcile()"
     },
     {
       "label": "main()",
       "file_type": "code",
       "source_file": "Setup/build_audit.py",
-      "source_location": "L15",
+      "source_location": "L56",
       "_origin": "ast",
       "id": "setup_build_audit_main",
-      "community": 9,
-      "community_name": "build_audit.py",
+      "community": 0,
+      "community_name": "common.py",
       "norm_label": "main()"
     },
     {
@@ -32,8 +43,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit_rationale_1",
-      "community": 9,
-      "community_name": "build_audit.py",
+      "community": 0,
+      "community_name": "common.py",
       "norm_label": "create a lossless, line-addressed audit from the user's specification.  every no"
     },
     {
@@ -242,8 +253,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe-native.py"
     },
     {
@@ -253,8 +264,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "setup_probe_native_rpc",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "rpc()"
     },
     {
@@ -264,8 +275,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native_rationale_1",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe the installed native protocol without requesting any model work."
     },
     {
@@ -275,8 +286,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "site-config.py"
     },
     {
@@ -286,9 +297,42 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config_rationale_1",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "generate only a password hash from the user-owned specification."
+    },
+    {
+      "label": "test-live-queue.py",
+      "file_type": "code",
+      "source_file": "Setup/test-live-queue.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_test_live_queue",
+      "community": 22,
+      "community_name": "test-live-queue.py",
+      "norm_label": "test-live-queue.py"
+    },
+    {
+      "label": "state()",
+      "file_type": "code",
+      "source_file": "Setup/test-live-queue.py",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "setup_test_live_queue_state",
+      "community": 22,
+      "community_name": "test-live-queue.py",
+      "norm_label": "state()"
+    },
+    {
+      "label": "Exercise the two explicitly named E2E projects through the authenticated dashboa",
+      "file_type": "rationale",
+      "source_file": "Setup/test-live-queue.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_test_live_queue_rationale_1",
+      "community": 22,
+      "community_name": "test-live-queue.py",
+      "norm_label": "exercise the two explicitly named e2e projects through the authenticated dashboa"
     },
     {
       "label": "trust-hooks.py",
@@ -357,6 +401,28 @@
       "norm_label": "read-only live lan checks; obtains password in memory from the user specificatio"
     },
     {
+      "label": "verify-secrets.py",
+      "file_type": "code",
+      "source_file": "Setup/verify-secrets.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_secrets",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "verify-secrets.py"
+    },
+    {
+      "label": "Fail closed if a tracked file contains a configured secret; never print its valu",
+      "file_type": "rationale",
+      "source_file": "Setup/verify-secrets.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_secrets_rationale_1",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "fail closed if a tracked file contains a configured secret; never print its valu"
+    },
+    {
       "label": "__init__.py",
       "file_type": "code",
       "source_file": "app/__init__.py",
@@ -385,8 +451,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_common",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "common.py"
     },
     {
@@ -396,8 +462,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_common_slugify",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "slugify()"
     },
     {
@@ -429,8 +495,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "app_common_password_hash",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "password_hash()"
     },
     {
@@ -440,8 +506,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "app_common_password_valid",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "password_valid()"
     },
     {
@@ -451,8 +517,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "app_common_canonical",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "canonical()"
     },
     {
@@ -462,8 +528,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "app_common_signedchannel",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "signedchannel"
     },
     {
@@ -473,8 +539,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_common_signedchannel_init",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".__init__()"
     },
     {
@@ -484,8 +550,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "app_common_signedchannel_sign",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".sign()"
     },
     {
@@ -495,8 +561,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "app_common_signedchannel_verify",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".verify()"
     },
     {
@@ -528,8 +594,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_common_redactor_clean",
-      "community": 5,
-      "community_name": "Database",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".clean()"
     },
     {
@@ -539,8 +605,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "app_common_rationale_80",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "per-connection random challenge + directional mac + monotonic sequence."
     },
     {
@@ -946,8 +1012,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "app_db_database_event",
-      "community": 5,
-      "community_name": "Database",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".event()"
     },
     {
@@ -957,8 +1023,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "app_db_database_backup",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".backup()"
     },
     {
@@ -1067,8 +1133,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "app_discord_bot_bot_category",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".category()"
     },
     {
@@ -1078,8 +1144,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "app_discord_bot_bot_ensure_channel",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".ensure_channel()"
     },
     {
@@ -1144,8 +1210,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "runtimeerror"
     },
     {
@@ -1721,14 +1787,47 @@
       "norm_label": "main()"
     },
     {
+      "label": "test_audit.py",
+      "file_type": "code",
+      "source_file": "tests/test_audit.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_audit",
+      "community": 0,
+      "community_name": "common.py",
+      "norm_label": "test_audit.py"
+    },
+    {
+      "label": "AuditTests",
+      "file_type": "code",
+      "source_file": "tests/test_audit.py",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "tests_test_audit_audittests",
+      "community": 0,
+      "community_name": "common.py",
+      "norm_label": "audittests"
+    },
+    {
+      "label": ".test_append_preserves_evidence_and_rejects_edits()",
+      "file_type": "code",
+      "source_file": "tests/test_audit.py",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
+      "community": 0,
+      "community_name": "common.py",
+      "norm_label": ".test_append_preserves_evidence_and_rejects_edits()"
+    },
+    {
       "label": "test_core.py",
       "file_type": "code",
       "source_file": "tests/test_core.py",
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_core",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "test_core.py"
     },
     {
@@ -1738,8 +1837,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_core_coretests",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": "coretests"
     },
     {
@@ -1749,8 +1848,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_auth_and_replay",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": ".test_auth_and_replay()"
     },
     {
@@ -1760,8 +1859,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": ".test_db_constraints_rollback_and_backup()"
     },
     {
@@ -1771,8 +1870,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_project_names",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 5,
+      "community_name": "Database",
       "norm_label": ".test_project_names()"
     },
     {
@@ -1966,7 +2065,7 @@
       "label": "Verified 2026-09-19",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L8",
+      "source_location": "L9",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_19",
       "community": 8,
@@ -1977,7 +2076,7 @@
       "label": "Verified 2026-09-20 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_20_incremental_not_final_acceptance",
       "community": 8,
@@ -1988,7 +2087,7 @@
       "label": "Work still required",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L59",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "docs_progress_work_still_required",
       "community": 8,
@@ -1999,12 +2098,67 @@
       "label": "Source references",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L67",
+      "source_location": "L76",
       "_origin": "ast",
       "id": "docs_progress_source_references",
       "community": 8,
       "community_name": "CodexPi installation progress",
       "norm_label": "source references"
+    },
+    {
+      "label": "windows-worker.md",
+      "file_type": "document",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_windows_worker",
+      "community": 9,
+      "community_name": "build_audit.py",
+      "norm_label": "windows-worker.md"
+    },
+    {
+      "label": "Windows worker",
+      "file_type": "document",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_windows_worker_windows_worker",
+      "community": 9,
+      "community_name": "build_audit.py",
+      "norm_label": "windows worker"
+    },
+    {
+      "label": "Installation and autostart",
+      "file_type": "document",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "docs_windows_worker_installation_and_autostart",
+      "community": 9,
+      "community_name": "build_audit.py",
+      "norm_label": "installation and autostart"
+    },
+    {
+      "label": "Protocol and jobs",
+      "file_type": "document",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "docs_windows_worker_protocol_and_jobs",
+      "community": 9,
+      "community_name": "build_audit.py",
+      "norm_label": "protocol and jobs"
+    },
+    {
+      "label": "Verification status",
+      "file_type": "document",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "docs_windows_worker_verification_status",
+      "community": 9,
+      "community_name": "build_audit.py",
+      "norm_label": "verification status"
     },
     {
       "label": "AGENTS.md",
@@ -2031,14 +2185,49 @@
   ],
   "links": [
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/build_audit.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_build_audit",
+      "target": "app_common",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/build_audit.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_build_audit",
+      "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Setup/build_audit.py",
-      "source_location": "L15",
+      "source_location": "L56",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_build_audit",
       "target": "setup_build_audit_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/build_audit.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_build_audit",
+      "target": "setup_build_audit_reconcile",
       "confidence_score": 1.0
     },
     {
@@ -2050,6 +2239,66 @@
       "_origin": "ast",
       "source": "setup_build_audit_rationale_1",
       "target": "setup_build_audit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_audit.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_audit",
+      "target": "setup_build_audit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/build_audit.py",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_build_audit_main",
+      "target": "setup_build_audit_reconcile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_audit.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_audit",
+      "target": "setup_build_audit_reconcile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_audit.py",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
+      "target": "setup_build_audit_reconcile"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/build_audit.py",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_build_audit_main",
+      "target": "app_common_atomic_write",
       "confidence_score": 1.0
     },
     {
@@ -2305,6 +2554,28 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/test-live-queue.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_test_live_queue",
+      "target": "setup_test_live_queue_state",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/test-live-queue.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_test_live_queue_rationale_1",
+      "target": "setup_test_live_queue",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -2394,6 +2665,41 @@
       "_origin": "ast",
       "source": "setup_verify_dashboard_rationale_1",
       "target": "setup_verify_dashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-secrets.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_secrets",
+      "target": "app_common",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-secrets.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_secrets",
+      "target": "app_common_read_env",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-secrets.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_secrets_rationale_1",
+      "target": "setup_verify_secrets",
       "confidence_score": 1.0
     },
     {
@@ -5232,7 +5538,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/native.py",
-      "source_location": "L200",
+      "source_location": "L199",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_native_tui_proxy",
@@ -6237,6 +6543,28 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tests/test_audit.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_audit",
+      "target": "tests_test_audit_audittests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_audit.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_audit_audittests",
+      "target": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "tests/test_core.py",
       "source_location": "L14",
       "weight": 1.0,
@@ -6426,7 +6754,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L67",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -6437,7 +6765,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L8",
+      "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -6448,7 +6776,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -6459,11 +6787,55 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L59",
+      "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
       "target": "docs_progress_work_still_required",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_windows_worker",
+      "target": "docs_windows_worker_windows_worker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_windows_worker_windows_worker",
+      "target": "docs_windows_worker_installation_and_autostart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_windows_worker_windows_worker",
+      "target": "docs_windows_worker_protocol_and_jobs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/windows-worker.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_windows_worker_windows_worker",
+      "target": "docs_windows_worker_verification_status",
       "confidence_score": 1.0
     },
     {
@@ -6478,5 +6850,6 @@
       "confidence_score": 1.0
     }
   ],
-  "hyperedges": []
+  "hyperedges": [],
+  "built_at_commit": "c2f0b9d1efd1063a1e59b9541c43b0409a761a1b"
 }

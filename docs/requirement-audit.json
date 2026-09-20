@@ -1,7 +1,13 @@
 {
   "source": "C:\\CODEXPI_GOAL.md",
-  "source_sha256": "16a54c0a093b2b6e0594cb26d599403fcd5452febec57a6cc6ec035c270c223c",
-  "source_lines": 2032,
+  "source_sha256": "23cfddb164d6cb21ce9eb362bbcdbf2d979365c9013f0c1d153223a230e15335",
+  "source_lines": 2900,
+  "source_revisions": [
+    {
+      "source_sha256": "16a54c0a093b2b6e0594cb26d599403fcd5452febec57a6cc6ec035c270c223c",
+      "source_lines": 2032
+    }
+  ],
   "complete": false,
   "requirements": [
     {
@@ -9437,6 +9443,4773 @@
       "id": "L2032",
       "section": "FINALE COMPLETE-BEDINGUNG",
       "text": "Der Umfang oder die Länge dieses Prompts ist ausdrücklich KEIN Grund, kleinere Anforderungen wegzulassen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2036",
+      "section": "DESIGN: introduction",
+      "text": "Ergänzende verbindliche Design-Anforderung für das bestehende CodexPi-Goal:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2038",
+      "section": "DESIGN: introduction",
+      "text": "Überarbeite das visuelle Design des Web-Dashboards und aller Discord-Nachrichten nach der folgenden Spezifikation. Diese Anforderung ergänzt das bestehende Goal. Sie ersetzt keine bestehende Funktionalität, Architektur-, Security-, Queue-, Recovery-, Unsnooze-, GitHub-, Windows-Worker- oder Discord-Anforderung. Entferne oder vereinfache keine bestehende Funktion. Behandle diese Design-Anforderung beim finalen Requirement-Audit als verbindlich.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2040",
+      "section": "DESIGN: introduction",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2041",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "1. ALLGEMEINE DESIGNRICHTUNG",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2042",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2044",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "Das gesamte CodexPi-Web-Dashboard soll wie eine hochwertige moderne Developer-/Infrastructure-Web-App aussehen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2046",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "Nicht erwünscht:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2047",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- kein Bootstrap-/Standard-Admin-Template-Look",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2048",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- kein buntes Gaming-UI",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2049",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- kein übertriebener Glassmorphism",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2050",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- keine grellen Neonflächen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2051",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- keine unnötigen Animationen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2052",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- keine überladenen Karten",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2053",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- keine zufälligen Stilwechsel zwischen Seiten",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2055",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "Gewünschter Stil:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2056",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- ausschließlich Dark Mode",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2057",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- fast schwarzer Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2058",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- sehr dunkle Anthrazit-/Blau-Grau-Flächen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2059",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- große ruhige Panels",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2060",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- sehr feine Borders",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2061",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- große abgerundete Ecken",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2062",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- hochwertige Typografie",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2063",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- klare Informationshierarchie",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2064",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- viel Luft/Spacing",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2065",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- Farbe nur gezielt als Akzent",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2066",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- modern, technisch, minimalistisch, professionell",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2067",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "- visuell eher Developer-SaaS / Infrastructure-Tool als klassisches Server-Admin-Panel",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2069",
+      "section": "DESIGN: 1. ALLGEMEINE DESIGNRICHTUNG",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2070",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "2. FARBWELT",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2071",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2073",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Nutze eine konsistente dunkle Farbpalette ungefähr in diesem Bereich:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2075",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Page Background:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2076",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- #0d0e12 bis #111217",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2078",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Primary Card Background:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2079",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- #121318 bis #17181d",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2081",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Secondary / Input Background:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2082",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- #1a1b20 bis #202126",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2084",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Border:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2085",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- #292b33 bis #343640",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2086",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- visuell subtil, ungefähr 1 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2088",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Primary Text:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2089",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- #f2f3f5 bis #ffffff",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2091",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Secondary Text:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2092",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- #8b8d98 bis #a2a4ad",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2094",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Muted Text:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2095",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- #62656f bis #777a84",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2097",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Akzentfarben:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2098",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Blau: ca. #5865f2 bis #6470ff",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2099",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Cyan/Blau: ca. #00a8ff",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2100",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Grün/Türkis: ca. #00d6a3",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2101",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Orange/Gelb: ca. #ffb000",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2102",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Rot/Pink: ca. #ff3366",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2103",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Lila: passend dunkel/kräftig, nicht grell",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2105",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Akzentfarben sparsam einsetzen:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2106",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2107",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- kleine Icons",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2108",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Fortschrittsbalken",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2109",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- aktive Controls",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2110",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- relevante Datenwerte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2111",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "- Hover-/Focus-States",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2113",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "Große Flächen bleiben dunkel.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2115",
+      "section": "DESIGN: 2. FARBWELT",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2116",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "3. TYPOGRAFIE",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2117",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2119",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Nutze eine moderne neutrale Sans-Serif-Schrift ähnlich:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2120",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- Inter",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2121",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- Geist",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2122",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- SF Pro",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2123",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- system-ui",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2125",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Hierarchie:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2127",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Seitenüberschriften:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2128",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- groß",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2129",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- weiß",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2130",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- bold/semibold",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2132",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Section Titles:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2133",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- ca. 20–28 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2134",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- semibold/bold",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2136",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Card Titles:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2137",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- ca. 16–19 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2138",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- semibold",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2140",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "KPI-Zahlen:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2141",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- ca. 40–58 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2142",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- bold oder semibold",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2144",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Normale Werte:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2145",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- ca. 14–16 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2147",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Labels / Secondary Text:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2148",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- ca. 12–14 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2149",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- grau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2151",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Technische Inhalte:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2152",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "- Monospace für:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2153",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "  - Session-ID",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2154",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "  - Commit SHA",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2155",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "  - Repo-Slug",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2156",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "  - technische IDs",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2157",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "  - Logs",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2158",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "  - Kommandos",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2160",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Keine unnötige Großschreibung.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2161",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "Uppercase nur für kompakte Labels oder kleine KPI-Beschriftungen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2163",
+      "section": "DESIGN: 3. TYPOGRAFIE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2164",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "4. KARTEN / PANELS",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2165",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2167",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "Alle Karten und Panels sollen konsistent aussehen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2169",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "Design:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2170",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Border Radius ca. 14–18 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2171",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- 1 px dunkle Border",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2172",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Hintergrund minimal heller als Seite",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2173",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Innenabstand meistens ca. 20–32 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2174",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- keine starken Shadows",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2175",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Trennung primär über Border + Helligkeit",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2176",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Hover nur leicht heller",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2177",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- keine grellen Effekte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2179",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "Große KPI-Karten:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2180",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- große Zahl dominant",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2181",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- kleines graues Label darunter",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2182",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- gleichmäßige Höhe",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2183",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- großzügiges Padding",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2184",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- mehrere Karten nebeneinander auf Desktop",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2185",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- sauber untereinander auf Mobile",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2187",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "Normale Status-/Feature-Karten:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2188",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- kleines Icon links oder über Titel",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2189",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Icon in kleinem abgerundetem dunklen Quadrat",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2190",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Icon farbig",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2191",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Titel weiß",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2192",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Beschreibung grau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2193",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "- Status/Actions sauber darunter",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2195",
+      "section": "DESIGN: 4. KARTEN / PANELS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2196",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "5. LAYOUT",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2197",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2199",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "Desktop:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2200",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- großzügige maximale Inhaltsbreite",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2201",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- ca. 40–64 px horizontaler Seitenabstand",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2202",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- ca. 16–24 px Gap zwischen Cards",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2203",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- KPI-Karten in gleichmäßigem Grid",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2204",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- Detailbereiche in 2–4 Spalten, abhängig vom Inhalt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2205",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- große Projekt-/Queue-Sektionen volle Breite",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2207",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "Mobile:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2208",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- Cards sauber untereinander",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2209",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- keine abgeschnittenen Buttons",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2210",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- Actions umbrechen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2211",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- wichtigste Informationen zuerst",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2212",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- Tabellen bei Bedarf horizontal scrollbar oder in Cards umgewandelt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2213",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "- Touch-Flächen ausreichend groß",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2215",
+      "section": "DESIGN: 5. LAYOUT",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2216",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "6. TOP BAR",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2217",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2219",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "Oben eine ruhige kompakte Top Bar.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2221",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "Enthalten:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2222",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "- CodexPi Name/Logo",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2223",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "- aktueller Infrastrukturstatus",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2224",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "- Windows online/offline",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2225",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "- Discord online/offline",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2226",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "- Unsnooze Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2227",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "- optional GitHub Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2228",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "- Logout",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2230",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "Nicht überladen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2232",
+      "section": "DESIGN: 6. TOP BAR",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2233",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "7. KPI / SUMMARY ROW",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2234",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2236",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "Oben unter der Top Bar eine Reihe großer KPI-Karten.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2238",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "Mögliche Werte:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2239",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- Active Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2240",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- Queue Length",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2241",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- Windows Worker Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2242",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- Usage / Reset",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2243",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- Completed Projects",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2244",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- Blocked/Stalled Projects",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2246",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "Darstellung:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2247",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- große dominante Zahl oder kurzer Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2248",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- kleines graues Label",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2249",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- klare Ausrichtung",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2250",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "- keine unnötigen Icons überall",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2252",
+      "section": "DESIGN: 7. KPI / SUMMARY ROW",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2253",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "8. ACTIVE PROJECT SECTION",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2254",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2256",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "Aktuelles Projekt prominent darstellen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2258",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "Zeige:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2259",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Projektname",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2260",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- nativer Goal-Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2261",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Block Reason separat",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2262",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- letzte Aktivität",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2263",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Repo",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2264",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Session-ID",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2265",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- tmux-Session",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2266",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Windows Requirement",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2267",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Discord Channel",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2268",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- CI Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2269",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- relevante Controls",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2271",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "Controls:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2272",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Pause",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2273",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Resume",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2274",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Run now",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2275",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Rename",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2276",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "- Delete",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2278",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "Buttons kompakt halten.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2280",
+      "section": "DESIGN: 8. ACTIVE PROJECT SECTION",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2281",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "9. QUEUE / PROJECTS SECTION",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2282",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2284",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "Projektliste entweder als hochwertige Tabelle oder Card-Liste.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2286",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "Erforderlich:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2287",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- Drag & Drop für Reihenfolge",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2288",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- klare Status-Badges",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2289",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- Projektname",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2290",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2291",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- Priority/Position",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2292",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- letzte Aktivität",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2293",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- Repo",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2294",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- Windows Requirement",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2295",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "- Actions",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2297",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "Keine klassische weiße HTML-Tabelle.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2299",
+      "section": "DESIGN: 9. QUEUE / PROJECTS SECTION",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2300",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "10. TABELLEN",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2301",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2303",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "Tabellenstil:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2304",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- gesamte Tabelle in einer großen abgerundeten Karte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2305",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- Header etwas heller als Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2306",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- Headertext klein und grau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2307",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- großzügige Zellabstände",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2308",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- sehr wenige Linien",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2309",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- Zeilen primär durch Spacing trennen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2310",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- Actions rechts als kleine Icon-/Text-Buttons",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2311",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "- Status als Pills",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2313",
+      "section": "DESIGN: 10. TABELLEN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2314",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "11. SETTINGS / CONTROLS",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2315",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2317",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "Settings-Bereiche:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2318",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- jede Gruppe in eigener großen dunklen Karte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2319",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- links Titel + kurze Beschreibung",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2320",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- rechts oder darunter Controls",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2321",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- Inputs etwas heller als Karte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2322",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- Input Radius ca. 10–12 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2323",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- Focus mit subtiler blauer/lila Border",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2324",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- keine helle Default-Outline",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2325",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- Toggle klein und schlicht",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2326",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- Danger Actions rot/pink",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2327",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "- normale Controls neutral/blau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2329",
+      "section": "DESIGN: 11. SETTINGS / CONTROLS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2330",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "12. BUTTONS",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2331",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2333",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "Primary:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2334",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- dunkler/blauer Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2335",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- helle Schrift",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2336",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- Radius ca. 8–10 px",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2338",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "Secondary:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2339",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- dunkler/transparenter Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2340",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- graue Border",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2341",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- helle Schrift",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2343",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "Danger:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2344",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- dunkelrot/neutraler Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2345",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- rote/pinke Akzentfarbe",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2347",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "Buttons:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2348",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- kompakt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2349",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- keine riesigen Marketing-Buttons",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2350",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "- klare Hover-/Focus-States",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2352",
+      "section": "DESIGN: 12. BUTTONS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2353",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "13. STATUS-BADGES",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2354",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2356",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "Status als kleine abgerundete Pills.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2358",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "Farbsemantik im Web-Dashboard:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2360",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "active:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2361",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- Cyan/Blau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2363",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "paused:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2364",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- Grau/Blau-Grau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2366",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "stalled:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2367",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- Rot/Pink",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2369",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "usage limited:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2370",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- Gelb/Orange",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2372",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "limited by budget:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2373",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- Orange/Rot",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2375",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "complete:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2376",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- Grün/Türkis",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2378",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "Badge:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2379",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- dunkler farblich getönter Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2380",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- farbiger Text",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2381",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- optional kleiner Punkt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2382",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "- nicht grell",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2384",
+      "section": "DESIGN: 13. STATUS-BADGES",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2385",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "14. PROGRESS BARS",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2386",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2388",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "Sehr flach und minimal.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2390",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "Design:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2391",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- dunkler Track",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2392",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- dünne farbige Fill-Line",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2393",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- vollständig abgerundete Enden",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2394",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- Wert rechts oder darüber",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2395",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- keine dicken Balken",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2397",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "Farben:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2398",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- Cyan/Grün für positive Werte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2399",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- Blau/Lila sekundär",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2400",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "- Orange/Rot bei Limits/Problemen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2402",
+      "section": "DESIGN: 14. PROGRESS BARS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2403",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "15. CHARTS",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2404",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2406",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "Falls Charts verwendet werden:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2408",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- dunkler Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2409",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- keine weiße Plotfläche",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2410",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- dezente gestrichelte horizontale Grid-Lines",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2411",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- Axis Labels grau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2412",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- Hauptlinie Blau/Cyan",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2413",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- Fehler-/Problemserie Pink/Rot",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2414",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- leichter transparenter Fill unter Linie",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2415",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- keine 3D-Effekte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2416",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "- keine unnötige Legendenbox",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2418",
+      "section": "DESIGN: 15. CHARTS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2419",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "16. LOGIN-SEITE",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2420",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2422",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "Login-Seite ebenfalls im gleichen Stil:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2424",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- fast schwarzer Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2425",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- zentrierte kleine Card",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2426",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- CodexPi Titel",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2427",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- Passwortfeld",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2428",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- Login Button",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2429",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- keine unnötigen Texte",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2430",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- hochwertige, reduzierte Optik",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2431",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "- gleiche Farben/Radius/Typografie wie Dashboard",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2433",
+      "section": "DESIGN: 16. LOGIN-SEITE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2434",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "17. PROJECT DETAIL VIEW",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2435",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2437",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "Projekt-Detailansicht als strukturierte große Panels.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2439",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "Bereiche:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2440",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Overview",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2441",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Goal Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2442",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Block Reason",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2443",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Repo",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2444",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Commits",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2445",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- CI",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2446",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Discord Channel",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2447",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Session / tmux",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2448",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Windows Worker",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2449",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Logs",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2450",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "- Lifecycle Events",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2452",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "Technische IDs in Monospace.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2454",
+      "section": "DESIGN: 17. PROJECT DETAIL VIEW",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2455",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "18. INFRASTRUCTURE SECTION",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2456",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2458",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "Eigene Cards für:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2459",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Raspberry Pi",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2460",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Native Codex Bridge",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2461",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Windows Worker",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2462",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- GitHub",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2463",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Discord",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2464",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Unsnooze",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2466",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "Jede Card:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2467",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Name",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2468",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2469",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- letzte Aktivität / Heartbeat",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2470",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- Fehler falls vorhanden",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2471",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- kleine Status-Pill",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2472",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "- keine unnötigen Details standardmäßig",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2474",
+      "section": "DESIGN: 18. INFRASTRUCTURE SECTION",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2475",
+      "section": "DESIGN: 19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "text": "19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2476",
+      "section": "DESIGN: 19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2478",
+      "section": "DESIGN: 19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "text": "Alle automatischen CodexPi-Discord-Nachrichten sollen als native Discord Embeds gesendet werden und optisch sehr stark an ein kompaktes technisches Status-Embed erinnern.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2480",
+      "section": "DESIGN: 19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "text": "WICHTIG:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2481",
+      "section": "DESIGN: 19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "text": "Das Design soll NICHT nur normale Discord Fields nebeneinander verwenden.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2483",
+      "section": "DESIGN: 19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "text": "Die Embeds sollen eine klar erkennbare eingerückte Struktur mit vertikalen Linien haben.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2485",
+      "section": "DESIGN: 19. DISCORD – EXAKTES VISUELLES DESIGN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2486",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "20. DISCORD EMBED GRUNDSTIL",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2487",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2489",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "Jedes Embed:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2491",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- native Discord Embed Card",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2492",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- dunkler Discord-Hintergrund",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2493",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- links ein schmaler vertikaler Farbstreifen über die gesamte Embed-Höhe",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2494",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- kurzer fetter weißer Titel oben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2495",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- kompakter Inhalt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2496",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- viel klare Struktur",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2497",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- technische Informationen sauber eingerückt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2498",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- Footer/Timestamp unten",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2499",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- keine Textwände",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2500",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "- keine großen Emoji-Blöcke",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2502",
+      "section": "DESIGN: 20. DISCORD EMBED GRUNDSTIL",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2503",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2504",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2506",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "Die linke Embed-Akzentfarbe soll PRO NACHRICHT zufällig gewählt werden.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2508",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "Erlaubte Farbfamilien:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2509",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Lila",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2510",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Blau",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2511",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Cyan",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2512",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Grün",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2513",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Gelb",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2514",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Orange",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2515",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Rot",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2516",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Pink",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2518",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "Regeln:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2519",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- keine extrem dunklen Farben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2520",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- keine fast weißen Farben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2521",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- keine schlecht lesbaren Farben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2522",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- eine Nachricht = eine konsistente Farbe",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2523",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- verschiedene Nachrichten dürfen unterschiedliche Farben haben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2524",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Statusbedeutung NICHT zwingend an die Farbe koppeln",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2525",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "- Farbe ist primär visuelles Designmerkmal",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2527",
+      "section": "DESIGN: 21. DISCORD – ZUFÄLLIGE EMBED-FARBE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2528",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2529",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2531",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "Die vertikalen Einrückungslinien sind ein VERPFLICHTENDES Designmerkmal.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2533",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "Wichtige Statusblöcke sollen wie eine kleine technische Hierarchie aussehen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2535",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "Beispiel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2537",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "CodexPi — Project Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2539",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "2 Events",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2541",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "Active Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2542",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- Running",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2543",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Project: `my-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2544",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Status: **active**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2545",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Session: `01abc...`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2546",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Repo: `Havkz/my-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2548",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "Windows Worker",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2549",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- Connected",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2550",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ State: **online**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2551",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Last heartbeat: `12s ago`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2552",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Elevated: **yes**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2554",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "CodexPi • 20.09.2026, 01:23",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2556",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "Alternativ darf eine strukturierte Box-Zeichen-Optik verwendet werden:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2558",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "+ Result",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2559",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Project: `my-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2560",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Status: **active**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2561",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "¦ Session: `01abc...`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2562",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "+ Repo: `Havkz/my-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2564",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "WICHTIG:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2565",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- Linie soll durch mehrere Detailzeilen laufen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2566",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- Detailzeilen klar eingerückt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2567",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- nicht zehn getrennte Fields nebeneinander",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2568",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- als zusammenhängender Textblock formatieren",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2569",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- klare Leerzeilen zwischen Abschnitten",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2570",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "- technischer, kompakter Look",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2572",
+      "section": "DESIGN: 22. DISCORD – EINGERÜCKTE VERTIKALE LINIEN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2573",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "23. DISCORD TYPOGRAFIE",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2574",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2576",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Im Embed:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2578",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Titel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2579",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- fett",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2580",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- weiß",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2581",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- kurz",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2583",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Abschnittstitel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2584",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- fett",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2586",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Status:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2587",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- normal oder semibold",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2589",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Technische Werte:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2590",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- `inline code`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2592",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Wichtige Werte:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2593",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- bei Bedarf **bold**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2595",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Nebentext:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2596",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- grau / normal",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2598",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "Footer:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2599",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- klein",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2600",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- unauffällig",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2601",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "- Timestamp oder CodexPi + Timestamp",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2603",
+      "section": "DESIGN: 23. DISCORD TYPOGRAFIE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2604",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "24. DISCORD BEISPIEL – ACTIVE",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2605",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2607",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "Titel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2608",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "CodexPi — Project Status",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2610",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "Body ungefähr:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2612",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "Active Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2613",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "- Running",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2614",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "¦ Project: `example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2615",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "¦ Status: **active**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2616",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "¦ Session: `01abc123`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2617",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "¦ Repo: `Havkz/example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2618",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "¦ Updated: `01:23`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2620",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "Queue",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2621",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "- 2 waiting",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2622",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "¦ Next: `second-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2623",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "¦ Position: `1`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2625",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "Footer:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2626",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "CodexPi • 20.09.2026, 01:23",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2628",
+      "section": "DESIGN: 24. DISCORD BEISPIEL – ACTIVE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2629",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "25. DISCORD BEISPIEL – STALLED",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2630",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2632",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "Titel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2633",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "CodexPi — Project Stalled",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2635",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "Body:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2637",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2638",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "- Attention required",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2639",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "¦ Name: `example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2640",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "¦ Status: **stalled**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2641",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "¦ Reason: Missing user input",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2642",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "¦ Session: `01abc123`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2643",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "¦ Repo: `Havkz/example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2645",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "Required",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2646",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "- User action",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2647",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "¦ Detail: Provide the requested information",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2649",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "Footer:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2650",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "CodexPi • timestamp",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2652",
+      "section": "DESIGN: 25. DISCORD BEISPIEL – STALLED",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2653",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "26. DISCORD BEISPIEL – COMPLETE",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2654",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2656",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "Titel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2657",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "CodexPi — Project Complete",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2659",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "Body:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2661",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2662",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "- Finished",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2663",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "¦ Name: `example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2664",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "¦ Status: **complete**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2665",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "¦ Final Commit: `abcdef1`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2666",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "¦ CI: **passed**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2667",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "¦ Repo: `Havkz/example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2669",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "Queue",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2670",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "- Next project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2671",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "¦ Name: `next-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2673",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "Footer:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2674",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "CodexPi • timestamp",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2676",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "Close/Delete Button weiterhin beibehalten.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2678",
+      "section": "DESIGN: 26. DISCORD BEISPIEL – COMPLETE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2679",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "27. DISCORD BEISPIEL – USAGE LIMITED",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2680",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2682",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "Titel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2683",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "CodexPi — Usage Limited",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2685",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "Body:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2687",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2688",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "- Waiting for reset",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2689",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "¦ Name: `example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2690",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "¦ Status: **usage limited**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2691",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "¦ Reset: `05:44`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2692",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "¦ Session: `01abc123`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2694",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "Resume",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2695",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "- Automatic",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2696",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "¦ Policy: Unsnooze",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2697",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "¦ Queue position: `1`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2699",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "Footer:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2700",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "CodexPi • timestamp",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2702",
+      "section": "DESIGN: 27. DISCORD BEISPIEL – USAGE LIMITED",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2703",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2704",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2706",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "Titel:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2707",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "CodexPi — Windows Worker Offline",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2709",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "Body:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2711",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "Windows Worker",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2712",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "- Offline",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2713",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "¦ Last heartbeat: `64s ago`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2714",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "¦ Required: **yes**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2715",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "¦ Auto resume: **enabled**",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2717",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2718",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "- Waiting",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2719",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "¦ Name: `example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2720",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "¦ Repo: `Havkz/example-project`",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2722",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "Footer:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2723",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "CodexPi • timestamp",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2725",
+      "section": "DESIGN: 28. DISCORD BEISPIEL – WINDOWS OFFLINE",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2726",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "29. DISCORD BUTTONS",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2727",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2729",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "Buttons:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2730",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "- unter Embed",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2731",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "- wenige",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2732",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "- kompakt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2733",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "- native Discord Button Styles",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2735",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "Primary:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2736",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "- wichtige direkte Aktion",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2738",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "Secondary:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2739",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "- normale Aktion",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2741",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "Danger:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2742",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "- Close/Delete",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2744",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "Keine unnötigen Buttons.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2746",
+      "section": "DESIGN: 29. DISCORD BUTTONS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2747",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "30. WEB + DISCORD KONSISTENZ",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2748",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2750",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "Web-Dashboard und Discord sollen dieselben Begriffe verwenden:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2752",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- active",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2753",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- paused",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2754",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- stalled",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2755",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- usage limited",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2756",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- limited by budget",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2757",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- complete",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2759",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "Gleiche Benennung:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2760",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2761",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- Repo",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2762",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- Session",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2763",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- Windows Worker",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2764",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- Queue",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2765",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- Block Reason",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2766",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- CI",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2767",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "- Discord Channel",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2769",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "Statusfarben im Web dürfen semantisch fest sein.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2770",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "Discord Embed-Farbe bleibt dagegen pro Nachricht zufällig.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2772",
+      "section": "DESIGN: 30. WEB + DISCORD KONSISTENZ",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2773",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "31. DESIGN TOKENS / CSS",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2774",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2776",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "Implementiere ein kleines konsistentes Design-System.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2778",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "Nutze CSS Variables / Design Tokens für:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2779",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Backgrounds",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2780",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Card backgrounds",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2781",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Borders",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2782",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Primary text",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2783",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Secondary text",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2784",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Muted text",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2785",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Radius",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2786",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Spacing",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2787",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Statusfarben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2788",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "- Accentfarben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2790",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "Keine duplizierten zufälligen Hex-Werte überall im CSS.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2792",
+      "section": "DESIGN: 31. DESIGN TOKENS / CSS",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2793",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "32. RESPONSIVE DESIGN",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2794",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2796",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "Teste mindestens:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2798",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "Desktop:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2799",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- 1920x1080",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2800",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- typische 1440 px Breite",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2802",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "Mobile:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2803",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- ca. 375–430 px Breite",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2805",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "Anforderungen:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2806",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- keine horizontal abgeschnittenen Controls",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2807",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- Cards sauber stapeln",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2808",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- Buttons umbrechen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2809",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- Tabellen nutzbar bleiben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2810",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "- wichtige Statusinfos bleiben sichtbar",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2812",
+      "section": "DESIGN: 32. RESPONSIVE DESIGN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2813",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "33. ACCESSIBILITY",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2814",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2816",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "Beachte:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2817",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "- ausreichender Kontrast",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2818",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "- sichtbare Focus States",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2819",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "- Buttons klar klickbar",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2820",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "- Inputs mit Labels",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2821",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "- Status nicht nur über Farbe kommunizieren",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2822",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "- sinnvolle aria-labels bei Icon-Buttons",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2824",
+      "section": "DESIGN: 33. ACCESSIBILITY",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2825",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2826",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2828",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "Durch das Redesign dürfen NICHT kaputtgehen:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2830",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Dashboard Login",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2831",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Password Auth",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2832",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- CSRF",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2833",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Host Validation",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2834",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Origin Validation",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2835",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Cookies",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2836",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Rate Limiting",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2837",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Queue",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2838",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Drag & Drop",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2839",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Run now",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2840",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Pause",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2841",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Resume",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2842",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Pause all",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2843",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Rename",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2844",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Delete",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2845",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- GitHub Integration",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2846",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Discord Integration",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2847",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Windows Worker",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2848",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Unsnooze",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2849",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Native Goal States",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2850",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Recovery",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2851",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Reboot Recovery",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2852",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- Session Mapping",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2853",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "- tmux Mapping",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2855",
+      "section": "DESIGN: 34. KEINE FUNKTIONALEN REGRESSIONEN",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2856",
+      "section": "DESIGN: 35. DESIGN ACCEPTANCE CRITERIA",
+      "text": "35. DESIGN ACCEPTANCE CRITERIA",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2857",
+      "section": "DESIGN: 35. DESIGN ACCEPTANCE CRITERIA",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2859",
+      "section": "DESIGN: 35. DESIGN ACCEPTANCE CRITERIA",
+      "text": "Das Design gilt erst als ausreichend, wenn:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2861",
+      "section": "DESIGN: 35. DESIGN ACCEPTANCE CRITERIA",
+      "text": "1. das Dashboard klar wie ein bewusst gestaltetes Produkt wirkt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2862",
+      "section": "DESIGN: 2. Dark Mode vollständig konsistent ist",
+      "text": "2. Dark Mode vollständig konsistent ist",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2863",
+      "section": "DESIGN: 3. Cards, Tabellen, Inputs und Buttons denselben Stil haben",
+      "text": "3. Cards, Tabellen, Inputs und Buttons denselben Stil haben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2864",
+      "section": "DESIGN: 4. KPI-Karten hochwertig und ruhig aussehen",
+      "text": "4. KPI-Karten hochwertig und ruhig aussehen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2865",
+      "section": "DESIGN: 5. Status-Badges konsistent sind",
+      "text": "5. Status-Badges konsistent sind",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2866",
+      "section": "DESIGN: 6. Desktop und Mobile sauber funktionieren",
+      "text": "6. Desktop und Mobile sauber funktionieren",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2867",
+      "section": "DESIGN: 7. Login-Seite zum restlichen Design passt",
+      "text": "7. Login-Seite zum restlichen Design passt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2868",
+      "section": "DESIGN: 8. Project Detail zum restlichen Design passt",
+      "text": "8. Project Detail zum restlichen Design passt",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2869",
+      "section": "DESIGN: 9. Infrastructure Cards konsistent sind",
+      "text": "9. Infrastructure Cards konsistent sind",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2870",
+      "section": "DESIGN: 10. Discord-Embeds die verpflichtenden eingerückten vertikalen Linien verwenden",
+      "text": "10. Discord-Embeds die verpflichtenden eingerückten vertikalen Linien verwenden",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2871",
+      "section": "DESIGN: 11. Discord-Embeds pro Nachricht eine zufällige gut lesbare Akzentfarbe links haben",
+      "text": "11. Discord-Embeds pro Nachricht eine zufällige gut lesbare Akzentfarbe links haben",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2872",
+      "section": "DESIGN: 12. Discord-Embeds kompakt und technisch aussehen",
+      "text": "12. Discord-Embeds kompakt und technisch aussehen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2873",
+      "section": "DESIGN: 12. Discord-Embeds kompakt und technisch aussehen",
+      "text": "13. keine bestehende Funktion entfernt oder vereinfacht wurde",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2874",
+      "section": "DESIGN: 12. Discord-Embeds kompakt und technisch aussehen",
+      "text": "14. keine Security-Anforderung regressiert ist",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2876",
+      "section": "DESIGN: 12. Discord-Embeds kompakt und technisch aussehen",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2877",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "36. FINALE VERIFIKATION",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2878",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "==================================================",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2880",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "Vor dem Markieren des bestehenden Goals als complete:",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2882",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Dashboard Desktop",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2883",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Dashboard Mobile",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2884",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Login",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2885",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Active Project",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2886",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Queue",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2887",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Project Detail",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2888",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Infrastructure",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2889",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Settings/Controls",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2890",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Status-Badges",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2891",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Tabellen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2892",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Charts falls vorhanden",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2893",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe alle Discord-Embed-Typen",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2894",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Random Accent Color pro Discord-Nachricht",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2895",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe die verpflichtenden vertikalen Einrückungslinien in Discord",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2896",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- prüfe Buttons unter Discord-Embeds",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2897",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- führe vorhandene Tests erneut aus",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2898",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "- verifiziere, dass keine Security-, Queue-, Recovery- oder Lifecycle-Funktion durch das Redesign beschädigt wurde",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2900",
+      "section": "DESIGN: 36. FINALE VERIFIKATION",
+      "text": "Diese Design-Spezifikation ist ab jetzt Bestandteil des laufenden CodexPi-Goals und muss im finalen Requirement-Audit mit überprüft werden.",
       "status": "pending",
       "evidence": []
     }

@@ -20,5 +20,6 @@
   "18": "goal-hook.py",
   "19": "install-entrypoint.ps1",
   "20": "install-worker.ps1",
-  "21": "main.py"
+  "21": "main.py",
+  "22": "test-live-queue.py"
 }

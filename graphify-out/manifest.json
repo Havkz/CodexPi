@@ -1,7 +1,7 @@
 {
   "Setup/build_audit.py": {
-    "mtime": 1789838442.921012,
-    "ast_hash": "9d80e7f72c911a6982e76491a0f961b3",
+    "mtime": 1789899227.2221954,
+    "ast_hash": "3b958e794a798dd5136284f311530f01",
     "semantic_hash": ""
   },
   "Setup/configure-worker.py": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/native.py": {
-    "mtime": 1789859347.0574589,
-    "ast_hash": "46cbf4e66246fe92dd5abcb49356ddce",
+    "mtime": 1789899074.890977,
+    "ast_hash": "eb1c0cca0a622c6bc23fb4e9998aa3bd",
     "semantic_hash": ""
   },
   "app/web.py": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1789838444.4318752,
-    "ast_hash": "37ec24e9678ed2dd3271f10586f7857c",
+    "mtime": 1789899230.1458895,
+    "ast_hash": "42c379d2399721b6bdeec31b4e8b68d3",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1789859273.4390037,
-    "ast_hash": "8fae27396ce5972d831b7898c1246355",
+    "mtime": 1789899227.2231982,
+    "ast_hash": "7b300e355e3c4c9dd70623f3627f6173",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -182,6 +182,26 @@
   "tests/test_scheduler.py": {
     "mtime": 1789859393.4392538,
     "ast_hash": "45344a580bb43c503cdb8c6f82ed12a4",
+    "semantic_hash": ""
+  },
+  "Setup/test-live-queue.py": {
+    "mtime": 1789898989.1227763,
+    "ast_hash": "e29479df4851b441a33d795f48b1e01e",
+    "semantic_hash": ""
+  },
+  "Setup/verify-secrets.py": {
+    "mtime": 1789859775.601433,
+    "ast_hash": "5a89ffc9a60fc06ac704081b3ed85374",
+    "semantic_hash": ""
+  },
+  "tests/test_audit.py": {
+    "mtime": 1789899227.2231982,
+    "ast_hash": "ed7ad7a131d322e10275c5793f236f3f",
+    "semantic_hash": ""
+  },
+  "docs/windows-worker.md": {
+    "mtime": 1789859775.601433,
+    "ast_hash": "e5fe9b71fd0fdc352d65d69146ded7eb",
     "semantic_hash": ""
   }
 }

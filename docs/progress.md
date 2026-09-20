@@ -1,6 +1,7 @@
 # CodexPi installation progress
 
-The authoritative specification is C:\CODEXPI_GOAL.md (2032 lines).
+The authoritative specification is C:\CODEXPI_GOAL.md (2900 lines, fully reread
+on 2026-09-20 including the appended binding design specification).
 `requirement-audit.json` preserves every nonempty source line for individual
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
@@ -57,6 +58,14 @@ because a related file exists. The dashboard password is deliberately omitted.
   TUI restart and goal/queue acceptance are still being tested.
 
 ## Work still required
+
+The appended design sections 1–36 are mandatory acceptance criteria: unified
+dark design tokens, polished responsive login/dashboard/detail/infrastructure,
+semantic web status pills, accessible controls, and compact native Discord
+embeds with multiline vertical indentation and a random readable accent per
+message. Verify 1920x1080, 1440px and 375–430px widths, all embed types/buttons,
+and regression coverage for every security, queue, recovery and lifecycle path.
+No existing functional requirements are replaced by this addition.
 
 Full TUI/goal/queue verification, complete rename/delete/deployment lifecycle,
 crash/reboot/worker disconnect tests, final CI and source publication,
