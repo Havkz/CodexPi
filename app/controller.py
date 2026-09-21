@@ -486,7 +486,12 @@ class Controller:
             logging.getLogger('scheduler').info('Released detached inactive TUI for %s', project['slug'])
 
     async def selective_wake(self):
-        if time.monotonic() - self.last_unsnooze_poll < 10:
+        selected = self.db.setting('selected')
+        project = self.db.get(selected) if selected else None
+        # The upstream CLI takes ~2 CPU seconds on Pi; keep fast reset polling
+        # only while a selected goal can need a wake. Idle health stays timestamped.
+        interval = 10 if project and project['goal_status'] == 'usage limited' else 60
+        if time.monotonic() - self.last_unsnooze_poll < interval:
             return
         try:
             status = await command('unsnooze', 'status', '--json')
@@ -496,10 +501,8 @@ class Controller:
         self.health_errors.pop('unsnooze', None)
         self.unsnooze = json.loads(status['stdout'])
         self.last_unsnooze_poll = time.monotonic()
-        selected = self.db.setting('selected')
         if not selected or self.db.setting('pause_all', False):
             return
-        project = self.db.get(selected)
         if (project['lifecycle'] != 'ready' or project['operation'] or
                 project['goal_status'] != 'usage limited' or project['queue_position'] != 1):
             return

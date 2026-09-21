@@ -82,9 +82,9 @@ def validate_job(job):
         relative_path(artifact)
 
 
-async def execute(argv, cwd, timeout):
+async def execute(argv, cwd, timeout, *, env=None):
     kwargs = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {'start_new_session': True}
-    process = await asyncio.create_subprocess_exec(*argv, cwd=cwd, stdout=asyncio.subprocess.PIPE,
+    process = await asyncio.create_subprocess_exec(*argv, cwd=cwd, env=env, stdout=asyncio.subprocess.PIPE,
                                                   stderr=asyncio.subprocess.PIPE, **kwargs)
 
     async def capture(stream):
@@ -160,13 +160,17 @@ class Worker:
             expected = 'https://github.com/' + job['repo'] + '.git'
 
             async def checked(*args, cwd=path):
-                result = await execute(list(args), cwd, 180)
+                # Use the already authenticated user-owned gh keyring, not GCM's
+                # interactive credential storage. These overrides affect only this child.
+                args = [args[0], '-c', 'credential.helper=', '-c',
+                        'credential.helper=!gh auth git-credential', *args[1:]]
+                result = await execute(args, cwd, 180, env={**os.environ, 'GIT_TERMINAL_PROMPT': '0'})
                 if result['exit_code'] or result['timed_out']:
                     raise RuntimeError(Path(args[0]).name + ': ' + result['stderr'][-3000:])
                 return result['stdout'].strip()
 
             if not path.exists():
-                await checked('gh', 'repo', 'clone', job['repo'], str(path), '--', '--no-checkout', cwd=self.projects)
+                await checked('git', 'clone', '--no-checkout', expected, str(path), cwd=self.projects)
             if not (path / '.git').is_dir():
                 raise ValueError('Existing directory is not a managed repository checkout')
             origin = await checked('git', 'remote', 'get-url', 'origin')

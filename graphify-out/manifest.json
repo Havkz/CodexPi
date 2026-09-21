@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1789945174.988963,
-    "ast_hash": "843b33d450c915e3e5bb52cb4b659f17",
+    "mtime": 1789968153.5635185,
+    "ast_hash": "ced419375c396d1ca350169f594edac2",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
-    "mtime": 1789858500.0358138,
-    "ast_hash": "45d79f8038fe78c817eb31465e575646",
+    "mtime": 1789945545.8325334,
+    "ast_hash": "2e09afe62a4e170e9844c097ef8b721d",
     "semantic_hash": ""
   },
   "app/worker_server.py": {
@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "tests/test_worker.py": {
-    "mtime": 1789858632.0661464,
-    "ast_hash": "31977c12f3645fe2d16dcebc5d74a40e",
+    "mtime": 1789945545.8336048,
+    "ast_hash": "50b08138cf6904ef4e8484c385393eec",
     "semantic_hash": ""
   },
   "app/web_assets/index.html": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1789927403.4290829,
-    "ast_hash": "b5c1f5d41d6d9ca0c5fbcd90cbecf415",
+    "mtime": 1789968236.7075133,
+    "ast_hash": "ca36a4bc4cebff19feb5afe2bb4b7f48",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1789945118.7564163,
-    "ast_hash": "d6df0064bb2a11eeed7ff98f63db15f8",
+    "mtime": 1789968153.5645254,
+    "ast_hash": "66557262dbc371ed8e3f69c5c0020d58",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -200,8 +200,8 @@
     "semantic_hash": ""
   },
   "docs/windows-worker.md": {
-    "mtime": 1789859775.601433,
-    "ast_hash": "e5fe9b71fd0fdc352d65d69146ded7eb",
+    "mtime": 1789968236.7060072,
+    "ast_hash": "00e6b529eca4e2da187a7f2574cda58b",
     "semantic_hash": ""
   },
   "Setup/verify-design.py": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "docs/design-verification.md": {
-    "mtime": 1789927403.4290829,
-    "ast_hash": "7223871ab1a0eb2195cdabd8cc228bd9",
+    "mtime": 1789945403.1962864,
+    "ast_hash": "cd60853912089f65103830d909cfda4d",
     "semantic_hash": ""
   },
   "Setup/test-live-lifecycle.py": {
@@ -245,8 +245,13 @@
     "semantic_hash": ""
   },
   "docs/unsnooze.md": {
-    "mtime": 1789944929.044115,
-    "ast_hash": "9daae9a1e08fdc7278bcc3ec055c53a2",
+    "mtime": 1789968236.7070086,
+    "ast_hash": "88cbf74354240cf9a2d8aabe6d7db391",
+    "semantic_hash": ""
+  },
+  "Setup/measure-idle.py": {
+    "mtime": 1789968153.5645254,
+    "ast_hash": "8264fd0b666ff48a6237b222366cf8f7",
     "semantic_hash": ""
   }
 }

@@ -27,6 +27,11 @@ and Settings properties. Running is not sufficient proof of connectivity:
 also check the dashboard or the Pi's `codexpi-tool windows-status`.
 Only one worker process can hold `windows-worker/state/worker.lock`.
 
+For a controlled worker restart, first verify that no job is running, stop this
+task, wait until its state is `Ready` and its old worker process has exited, then
+start it. `IgnoreNew` can discard a start requested while termination is still
+in progress. Verify the signed connection/heartbeat afterward, not just task state.
+
 ## Protocol and jobs
 
 After the signed handshake the worker sends its durable job inventory, then
@@ -41,6 +46,16 @@ the synchronization source. The worker checks out under
 `C:\CodexPi\Projects\<slug>`, validates origin and SHA, and refuses to overwrite
 local changes or an unrelated existing checkout. Commands run without a shell
 wrapper and without visible console windows. Timeout kills the process tree.
+
+All checkout Git commands use a process-local empty `credential.helper` reset
+followed by `!gh auth git-credential`, and `GIT_TERMINAL_PROMPT=0`. This uses the
+already authenticated user's gh keyring and does not ask the background task to
+persist a new credential through Git Credential Manager. No token is copied into
+arguments, files, or job output. Global Git configuration and the actual test
+command's environment are not changed. The same path covers initial clone and
+subsequent exact-SHA fetches. See the official
+[Git helper reset semantics](https://git-scm.com/docs/gitcredentials) and
+[GitHub CLI credential-helper support](https://cli.github.com/manual/gh_auth_setup-git).
 Output is bounded to 2 MiB per stream and drained, with truncation indicated.
 Responses include stdout, stderr, exit code, timeout/truncation flags, exact
 commit, actual cwd, elevation flag and resolved existing artifact paths.
@@ -59,5 +74,18 @@ before returned output is persisted. Do not put credentials in command arguments
 
 See `progress.md` for the exact live job ID, SHA and observed elevated result.
 Unit tests cover native output/exit/timeout, path validation, DPAPI roundtrip
-and interrupted-ledger recovery. Login/reboot, prolonged disconnect and
-complete project lifecycle acceptance are still outstanding.
+and interrupted-ledger recovery, plus scoped authentication on both clone/fetch.
+
+On 2026-09-21, real task job `6f1c5f44-13a8-4df7-a74d-0102f700b4c2` fetched exact
+SHA `4138f9930e788ca181c308991c525343d4517a93` and passed all three native Windows
+unittests in `C:\CodexPi\Projects\codexpi-e2e-20260920`, with exit 0 and elevation
+true. The result was acknowledged (`delivered` in the worker ledger). The original
+Pi Codex session submitted this job after reconnect automatically lifted its
+recorded Windows-offline-only blocker; it then completed its original goal.
+The Windows working tree was checked clean. Before the fix, three recorded jobs
+failed before checkout with `wincredman` and missing `/dev/tty` errors. The user's
+global helper remains `manager`; only worker Git children use gh.
+
+This verifies real reconnect and exact-commit execution, not Windows reboot/login
+autostart, the precise 60-second heartbeat expiry, or every interrupted-job case.
+Those acceptance checks remain outstanding.

@@ -222,6 +222,23 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(any('resume-now' in args for args in calls))
         self.assertFalse(any(args[:2] == ('unsnooze', 'cancel') and args[-1] != 'first-stop' for args in calls))
 
+    async def test_unsnooze_idle_poll_avoids_restarting_node_every_ten_seconds(self):
+        controller = self.controller
+        controller.health_errors = {}
+        controller.last_unsnooze_poll = time.monotonic() - 11
+        controller.select('first')
+        status = AsyncMock(return_value={'stdout': '{"sessions":[]}'})
+        with patch('app.controller.command', status):
+            await controller.selective_wake()
+            status.assert_not_awaited()
+            controller.db.update('first', goal_status='usage limited')
+            await controller.selective_wake()
+            status.assert_awaited_once_with('unsnooze', 'status', '--json')
+            controller.db.update('first', goal_status='paused')
+            controller.last_unsnooze_poll = time.monotonic() - 61
+            await controller.selective_wake()
+            self.assertEqual(status.await_count, 2)
+
 
 if __name__ == '__main__':
     unittest.main()

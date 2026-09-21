@@ -9,6 +9,11 @@ structured session records; it does not implement a second banner parser.
 `autoResume=false` is configured persistently and enforced by environment in
 both systemd units (also inherited by their tmux/Unsnooze children). Codex's
 configured wake message is `/goal resume`; tmux is the configured multiplexer.
+The upstream CLI health/status command is polled every 60 seconds when idle,
+and every 10 seconds when a selected goal is usage limited. Its real Pi cost was
+measured at 1.54 wall seconds / 2.23 CPU seconds per call; this avoids continuous
+Node cold-start overhead without replacing Unsnooze's own detection logic.
+The dashboard shows the actual last-check timestamp.
 
 ## Why the manual CLI wake cannot be used safely here
 

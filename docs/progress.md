@@ -82,6 +82,22 @@ because a related file exists. The dashboard password is deliberately omitted.
   shared cleanup; stale complete-project blockers are also reconciled.
 - Ponytail review: reused the existing journal and TUI resume; no new runtime
   dependency or background process. No further safe simplification identified.
+- Subsequently repaired the Windows checkout authentication at the shared Git
+  child-process entry point, covering both clone and fetch. No global Git or
+  credential-store changes. Live acknowledged elevated job
+  `6f1c5f44-13a8-4df7-a74d-0102f700b4c2` passed all three tests at exact SHA
+  `4138f9930e788ca181c308991c525343d4517a93`. The original CLI E2E goal then
+  completed; both test goals are complete and retain their original session IDs.
+  Native Linux tests, clean Pi/Windows trees, remote main SHA and successful
+  GitHub Actions run `35543242446` were independently checked.
+- Seventeen Windows unit tests pass; sixteen Pi tests pass with one DPAPI skip.
+  Idle Unsnooze polling was reduced from ten to sixty seconds after measuring
+  approximately 2.23 CPU seconds per CLI invocation. Usage-limited selected
+  goals retain ten-second polling. No new service, parser or dependency added.
+- Warm 60.10-second idle measurement with both native goals complete and no
+  tmux panes: 364.76 MiB process PSS, 255.45 MiB cgroup MemoryCurrent, 5.45%
+  of one CPU core across all three Pi services. See `resources.md`; a final
+  post-implementation measurement remains explicitly pending in the audit.
 
 ## Work still required
 

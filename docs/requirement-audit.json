@@ -3675,8 +3675,8 @@
       "id": "L0794",
       "section": "16. WINDOWS WORKER JOBS",
       "text": "   * Worker holt exakten GitHub-Commit",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["docs/windows-worker.md: live acknowledged job 6f1c5f44-13a8-4df7-a74d-0102f700b4c2, exact SHA 4138f9930e788ca181c308991c525343d4517a93"]
     },
     {
       "id": "L0795",
@@ -3710,22 +3710,22 @@
       "id": "L0800",
       "section": "16. WINDOWS WORKER JOBS",
       "text": "     * stdout",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["tests/test_worker.py:test_native_execution_exit_output_timeout; docs/progress.md: live job 9a189ce0-4da5-4e30-bd0f-4ff82f28f25c returned distinct stdout/stderr"]
     },
     {
       "id": "L0801",
       "section": "16. WINDOWS WORKER JOBS",
       "text": "     * stderr",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["docs/windows-worker.md: live acknowledged Windows unittest result in stderr, job 6f1c5f44-13a8-4df7-a74d-0102f700b4c2"]
     },
     {
       "id": "L0802",
       "section": "16. WINDOWS WORKER JOBS",
       "text": "     * Exit-Code",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["tests/test_worker.py:test_native_execution_exit_output_timeout verifies exit 7; docs/windows-worker.md: real worker result exit 0 acknowledged after three passing tests"]
     },
     {
       "id": "L0803",
@@ -5902,7 +5902,7 @@
       "section": "27. RESSOURCENLIMITS",
       "text": "Am Ende realen RAM-Verbrauch der CodexPi-Infrastruktur **ohne aktiven Codex-Worker** messen und dokumentieren.",
       "status": "pending",
-      "evidence": []
+      "evidence": ["docs/resources.md and Setup/measure-idle.py: live 60.10-second idle sample, 364.76 MiB process PSS; final post-implementation sample still required"]
     },
     {
       "id": "L1286",
@@ -6811,15 +6811,15 @@
       "id": "L1477",
       "section": "33. COMPLETE-HANDLING",
       "text": "9. nächstes Queue-Projekt auswählen",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["docs/unsnooze.md: 2026-09-21 live queue E2E completion advanced original session 01a0bbea-00c6-7710-98f2-6b75a3099636 to position 1"]
     },
     {
       "id": "L1478",
       "section": "33. COMPLETE-HANDLING",
       "text": "10. dieses mit nativem `/goal resume`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["docs/unsnooze.md: actual mapped TUI slash resume automatically acknowledged active for original next session after queue E2E completion"]
     },
     {
       "id": "L1479",
