@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1790185697.1859121,
-    "ast_hash": "d8b7565dc5ed8546bf921d0ba2a5b027",
+    "mtime": 1790186625.4550335,
+    "ast_hash": "5e5d5efb5e21b71a0e3dec05c0ab6a4f",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1790185893.0184813,
-    "ast_hash": "10053a9c71935d615a4c3f709ed98f1a",
+    "mtime": 1790186848.0826292,
+    "ast_hash": "65e7cd7b2fa4c8bc238b9af860be73fb",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1790185796.5216844,
-    "ast_hash": "9d20e9747ed491b1e0b2db4ea7241e3c",
+    "mtime": 1790186832.3948524,
+    "ast_hash": "c7a1a882cfce418cb9774f7c694d23ee",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1790185602.5629861,
-    "ast_hash": "6f4b4128ccf1f7371d5171649a4b1c85",
+    "mtime": 1790186625.4550335,
+    "ast_hash": "20bc5fbd19c7b0118d20203b413f52b2",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -285,8 +285,8 @@
     "semantic_hash": ""
   },
   "docs/lifecycle-fixes-20260923.md": {
-    "mtime": 1790185923.2035384,
-    "ast_hash": "314c833530b85c3e3825357c8a745cab",
+    "mtime": 1790186832.394337,
+    "ast_hash": "bd63ad145a5e46258ed822c0c499fc3f",
     "semantic_hash": ""
   }
 }

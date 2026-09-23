@@ -414,7 +414,9 @@ class Controller:
         project = self.db.get(project['project_id'])
         if project['last_ci_status'] in ('failure', 'pending'):
             if project['last_ci_status'] == 'failure':
-                self.db.event(project['project_id'], 'critical', {'message': 'Final CI failed'})
+                await self.native.rpc('thread/goal/set', {'threadId': project['codex_session_id'], 'status': 'blocked'})
+                self.record_status(project, 'stalled', block_reason=json.dumps(
+                    {'reason': 'Completion verification failed', 'details': 'Final CI failed', 'requires_user': False}))
             return
         self.clear_block(project)
         with self.db.transaction():
@@ -435,17 +437,40 @@ class Controller:
         if project['lifecycle'] != 'ready':
             return
         commit = (await command('git', 'rev-parse', 'HEAD', cwd=project['project_path']))['stdout'].strip()
-        runs = await command('gh', 'run', 'list', '--repo', project['github_repo'], '--commit', commit,
-                             '--json', 'status,conclusion,url', '--limit', '50')
-        data = json.loads(runs['stdout'])
-        state = 'not configured' if not data else 'passed'
-        if any(r['status'] != 'completed' for r in data):
+        tree = await command('git', 'ls-tree', '-r', '--name-only', '-z', commit, '--', '.github/workflows',
+                             cwd=project['project_path'])
+        workflows = {p for p in tree['stdout'].split('\0')
+                     if p.count('/') == 2 and p.endswith(('.yml', '.yaml'))}
+        runs = await command('gh', 'api', '--paginate', '--slurp',
+                             f"repos/{project['github_repo']}/actions/runs?head_sha={commit}&per_page=100")
+        latest = {}
+        for page in json.loads(runs['stdout']):
+            for run in page['workflow_runs']:
+                if run['head_sha'] != commit:
+                    continue
+                key = (run['workflow_id'], run['event'])
+                previous = latest.get(key)
+                if previous is None or (run['id'], run['run_attempt']) > (previous['id'], previous['run_attempt']):
+                    latest[key] = run
+        data = list(latest.values())
+        observed = {r['path'].split('@', 1)[0] for r in data}
+        state = 'not configured' if not workflows and not data else 'passed'
+        # No run is not proof of success (including disabled/manual/path-filtered workflows).
+        if workflows - observed or any(r['status'] != 'completed' or not r['conclusion'] for r in data):
             state = 'pending'
-        if any(r['conclusion'] not in ('', None, 'success', 'skipped', 'neutral') for r in data):
+        if any(r['status'] == 'completed' and r['conclusion'] and
+               r['conclusion'] not in ('success', 'skipped', 'neutral') for r in data):
             state = 'failure'
-        self.db.update(project['project_id'], last_commit=commit, last_ci_status=state)
-        if state == 'failure' and project['last_ci_status'] != 'failure':
-            self.db.event(project['project_id'], 'critical', {'message': 'GitHub Actions failed', 'commit': commit})
+        with self.db.transaction():
+            try:
+                current = self.db.get(project['project_id'])
+            except KeyError:
+                return  # Deleted while GitHub was responding.
+            if current['lifecycle'] != 'ready':
+                return
+            self.db.update(project['project_id'], last_commit=commit, last_ci_status=state)
+            if state == 'failure' and (current['last_ci_status'] != 'failure' or current['last_commit'] != commit):
+                self.db.event(project['project_id'], 'critical', {'message': 'GitHub Actions failed', 'commit': commit})
 
     async def scheduler(self):
         while True:

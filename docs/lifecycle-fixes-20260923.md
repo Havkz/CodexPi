@@ -108,3 +108,37 @@ Migration of Windows session `01a072f0-df80-7152-aff3-a5e66960c071` has NOT star
 Its reusable migration mechanism and execution remain required, strictly after
 the other requirements are verified. The broader original goal and complete
 requirement-by-requirement final audit remain unfinished.
+
+## Completion gate follow-up
+
+The final requirement review reproduced six CI-gate failures before repair:
+missing runs with committed workflows were accepted as unconfigured, partial
+workflow coverage and wrong-commit results could pass, empty conclusions could
+pass, a failed old attempt masked its successful retry, and failed final CI
+left the project active while repeatedly emitting a critical event.
+
+The gate now enumerates workflow files from the exact Git commit and paginates
+GitHub's workflow-run API. Only matching SHA results count; the latest run and
+attempt per workflow/event supersede older results. A manual-dispatch success
+does not hide a push failure. Final failure blocks the native goal and records
+one stalled transition without advancing the queue. CI-state changes and their
+notification are committed together.
+
+Conservative boundary: a committed workflow with no run remains pending,
+including disabled, manual-only and path-filtered workflows. CodexPi does not
+infer that a missing check succeeded or provide a completion bypass. The project
+must arrange the relevant workflow execution or correct its CI configuration.
+
+Verification on 2026-09-23: 29 Windows tests passed; Pi Python 3.13 ran 29 tests,
+28 passed and the Windows-only DPAPI test skipped. API pagination, retry ordering,
+workflow/event separation and repeated stalled polling have regression coverage.
+On the Pi, the changed checker read real Git/GitHub data for all four mapped
+projects using a temporary database copy: the original CLI E2E project's exact
+commit passed CI; the other three commits actually contain no workflow. No live
+project was deliberately failed or re-executed for that check.
+
+After idle-state verification and controller restart, the live dashboard/TUI
+restoration test passed again with request
+`71fdb60e-caeb-4be7-936a-6cee05edba9d`. UserTestProject remained paused, its original
+session/cwd were confirmed, no goal was invented, and Infrastructure had no
+resume error. The separate delayed-ack/error browser fixtures also passed.

@@ -222,6 +222,60 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(json.loads(c.db.get('first')['resume_result'])['status'], 'complete')
         self.assertIsNone(c.db.setting('selected'))
 
+    async def test_ci_checks_exact_commit_all_workflows_and_latest_attempt(self):
+        c = self.controller
+        sha = 'a' * 40
+        c.db.update('first', github_repo='owner/first')
+        run = {'id': 10, 'run_attempt': 1, 'workflow_id': 1, 'event': 'push',
+               'head_sha': sha, 'path': '.github/workflows/tests.yml',
+               'status': 'completed', 'conclusion': 'success', 'html_url': 'https://example.invalid/run'}
+        cases = [([], [], 'not configured'),
+                 (['.github/workflows/tests.yml'], [], 'pending'),
+                 (['.github/workflows/tests.yml'], [run], 'passed'),
+                 (['.github/workflows/tests.yml', '.github/workflows/other.yml'], [run], 'pending'),
+                 (['.github/workflows/tests.yml'], [{**run, 'head_sha': 'b' * 40}], 'pending'),
+                 (['.github/workflows/tests.yml'], [{**run, 'conclusion': None}], 'pending'),
+                 (['.github/workflows/tests.yml'], [{**run, 'path': run['path'] + '@refs/heads/main'}], 'passed'),
+                 (['.github/workflows/tests.yml'], [{**run, 'conclusion': 'failure'},
+                    {**run, 'run_attempt': 2}], 'passed'),
+                 (['.github/workflows/tests.yml'], [run, {**run, 'id': 11, 'status': 'in_progress', 'conclusion': None}], 'pending'),
+                 (['.github/workflows/tests.yml'], [{**run, 'conclusion': 'failure'},
+                    {**run, 'event': 'workflow_dispatch', 'id': 12}], 'failure')]
+        for workflows, runs, expected in cases:
+            with self.subTest(expected=expected, runs=runs):
+                async def command(*args, **kwargs):
+                    if args[:2] == ('git', 'rev-parse'):
+                        output = sha
+                    elif args[:2] == ('git', 'ls-tree'):
+                        output = '\0'.join(workflows) + ('\0' if workflows else '')
+                    elif args[:2] == ('gh', 'api'):
+                        output = json.dumps([{'workflow_runs': runs[:1]}, {'workflow_runs': runs[1:]}])
+                    else:
+                        output = json.dumps([{'status': r['status'], 'conclusion': r['conclusion'], 'url': r['html_url']} for r in runs])
+                    return {'stdout': output, 'stderr': '', 'exit_code': 0}
+                with patch('app.controller.command', command):
+                    await c.refresh_git(c.db.get('first'))
+                self.assertEqual(c.db.get('first')['last_ci_status'], expected)
+
+    async def test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming(self):
+        c = self.controller
+        c.select('first')
+        c.db.update('first', goal_status='active', last_ci_status='failure')
+        c.refresh_git = AsyncMock()
+        with patch('app.controller.command', AsyncMock(return_value={'stdout': '', 'exit_code': 0})):
+            await c.complete(c.db.get('first'))
+            c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'stalled'}})
+            await c.poll_goals()
+            await c.poll_goals()
+        project = c.db.get('first')
+        self.assertEqual(project['goal_status'], 'stalled')
+        self.assertIn('CI', project['block_reason'])
+        self.assertEqual(project['completion_notified'], 0)
+        self.assertFalse(c.db.setting('advance_queue', False))
+        self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], 0)
+        self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='stalled'").fetchone()[0], 1)
+        c.native.rpc.assert_awaited_once_with('thread/goal/set', {'threadId': 'first', 'status': 'blocked'})
+
     async def test_pending_resume_keeps_selection_until_ack(self):
         controller = self.controller
         controller.select('first')

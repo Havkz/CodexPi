@@ -2,7 +2,6 @@
   "0": "common.py",
   "1": "Controller",
   "2": "windows_worker.py",
-  "3": "main.py",
   "4": "Native",
   "5": "Database",
   "6": "web.py",
@@ -10,7 +9,6 @@
   "8": "CodexPi installation progress",
   "9": "build_audit.py",
   "10": "connect-github.py",
-  "11": "discord-token.py",
   "12": "install-base.sh",
   "13": "verify-dashboard.py",
   "14": "__init__.py",
@@ -29,5 +27,6 @@
   "27": "Bot",
   "28": "GoalSource",
   "29": "Pi infrastructure resource measurements",
-  "30": "verify-sandbox.py"
+  "30": "verify-sandbox.py",
+  "32": "main"
 }

@@ -109,6 +109,13 @@ specification was preserved and extended to include all new requirements.
 Genuine provider-limit/reset end-to-end verification and the explicitly delayed
 Windows project migration remain pending; no synthetic limit is claimed live.
 
+Completion-gate follow-up: reproduced and repaired missing/partial/wrong-commit
+CI acceptance, stale failed-attempt handling and repeated final-failure events.
+29 Windows tests passed; 28 Pi tests passed with one Windows-only skip. Real
+GitHub checks for all four mapped projects and post-restart dashboard/TUI
+restoration passed. Details and conservative missing-workflow behavior are in
+`lifecycle-fixes-20260923.md`; this remains incremental, not final acceptance.
+
 The dark dashboard redesign is deployed and has incremental live desktop/mobile
 and synthetic interaction evidence in `docs/design-verification.md`. A genuine
 browser form-login Origin defect was found and repaired without weakening the

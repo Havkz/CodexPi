@@ -6783,8 +6783,10 @@
       "id": "L1471",
       "section": "33. COMPLETE-HANDLING",
       "text": "3. relevante CI-Ergebnisse prüfen",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/lifecycle-fixes-20260923.md: Completion gate follow-up; exact-SHA paginated GitHub results, complete workflow coverage, latest attempts and failure-to-stalled regressions; live Pi reads verified for four existing projects"
+      ]
     },
     {
       "id": "L1472",

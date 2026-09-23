@@ -10,8 +10,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "build_audit.py"
     },
     {
@@ -21,8 +21,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_build_audit_reconcile",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "reconcile()"
     },
     {
@@ -32,8 +32,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "setup_build_audit_main",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "main()"
     },
     {
@@ -43,8 +43,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit_rationale_1",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "create a lossless, line-addressed audit from the user's specification.  every no"
     },
     {
@@ -54,8 +54,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_worker",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 2,
+      "community_name": "windows_worker.py",
       "norm_label": "configure-worker.py"
     },
     {
@@ -65,8 +65,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_worker_rationale_1",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 2,
+      "community_name": "windows_worker.py",
       "norm_label": "provision a currentuser dpapi credential over the existing authenticated ssh lin"
     },
     {
@@ -76,8 +76,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "configure.py"
     },
     {
@@ -87,8 +87,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "setup_configure_preserve",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "preserve()"
     },
     {
@@ -98,8 +98,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_rationale_1",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "run on pi after copying reviewed sources; preserve and back up user config."
     },
     {
@@ -253,8 +253,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_measure_idle",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "measure-idle.py"
     },
     {
@@ -264,8 +264,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "setup_measure_idle_sample",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "sample()"
     },
     {
@@ -275,8 +275,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_measure_idle_rationale_1",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "read-only pi resource sample; refuse to label an active-goal run as idle."
     },
     {
@@ -286,8 +286,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native",
-      "community": 4,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe-native.py"
     },
     {
@@ -297,8 +297,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "setup_probe_native_rpc",
-      "community": 4,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "rpc()"
     },
     {
@@ -308,8 +308,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native_rationale_1",
-      "community": 4,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe the installed native protocol without requesting any model work."
     },
     {
@@ -319,8 +319,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "site-config.py"
     },
     {
@@ -330,8 +330,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config_rationale_1",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "generate only a password hash from the user-owned specification."
     },
     {
@@ -407,8 +407,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_queue",
-      "community": 4,
-      "community_name": "Native",
+      "community": 32,
+      "community_name": "main",
       "norm_label": "test-live-queue.py"
     },
     {
@@ -418,8 +418,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "setup_test_live_queue_state",
-      "community": 4,
-      "community_name": "Native",
+      "community": 32,
+      "community_name": "main",
       "norm_label": "state()"
     },
     {
@@ -429,8 +429,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_queue_rationale_1",
-      "community": 4,
-      "community_name": "Native",
+      "community": 32,
+      "community_name": "main",
       "norm_label": "exercise the two explicitly named e2e projects through the authenticated dashboa"
     },
     {
@@ -440,8 +440,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "trust-hooks.py"
     },
     {
@@ -451,8 +451,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "setup_trust_hooks_main",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "main()"
     },
     {
@@ -462,8 +462,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks_rationale_1",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "trust only the seven reviewed hook definitions, through codex's native api."
     },
     {
@@ -616,8 +616,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_live_resume",
-      "community": 4,
-      "community_name": "Native",
+      "community": 32,
+      "community_name": "main",
       "norm_label": "verify-live-resume.py"
     },
     {
@@ -627,8 +627,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "setup_verify_live_resume_main",
-      "community": 4,
-      "community_name": "Native",
+      "community": 32,
+      "community_name": "main",
       "norm_label": "main()"
     },
     {
@@ -638,8 +638,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_live_resume_rationale_1",
-      "community": 4,
-      "community_name": "Native",
+      "community": 32,
+      "community_name": "main",
       "norm_label": "resume only the existing queue e2e goal; never create or replace an objective."
     },
     {
@@ -759,8 +759,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_common",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "common.py"
     },
     {
@@ -770,8 +770,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_common_slugify",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "slugify()"
     },
     {
@@ -781,8 +781,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_common_atomic_write",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "atomic_write()"
     },
     {
@@ -803,8 +803,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "app_common_password_hash",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "password_hash()"
     },
     {
@@ -814,8 +814,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "app_common_password_valid",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "password_valid()"
     },
     {
@@ -825,8 +825,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "app_common_canonical",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "canonical()"
     },
     {
@@ -836,8 +836,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "app_common_signedchannel",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "signedchannel"
     },
     {
@@ -847,8 +847,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_common_signedchannel_init",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".__init__()"
     },
     {
@@ -858,8 +858,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "app_common_signedchannel_sign",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".sign()"
     },
     {
@@ -869,8 +869,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "app_common_signedchannel_verify",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".verify()"
     },
     {
@@ -880,8 +880,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "app_common_redactor",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "redactor"
     },
     {
@@ -891,8 +891,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "app_common_redactor_init",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".__init__()"
     },
     {
@@ -902,8 +902,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_common_redactor_clean",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".clean()"
     },
     {
@@ -913,8 +913,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "app_common_rationale_80",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "per-connection random challenge + directional mac + monotonic sequence."
     },
     {
@@ -924,8 +924,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_controller",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "controller.py"
     },
     {
@@ -957,8 +957,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "app_controller_controller_init",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".__init__()"
     },
     {
@@ -1185,7 +1185,7 @@
       "label": ".refresh_git()",
       "file_type": "code",
       "source_file": "app/controller.py",
-      "source_location": "L434",
+      "source_location": "L436",
       "_origin": "ast",
       "id": "app_controller_controller_refresh_git",
       "community": 1,
@@ -1196,7 +1196,7 @@
       "label": ".scheduler()",
       "file_type": "code",
       "source_file": "app/controller.py",
-      "source_location": "L450",
+      "source_location": "L475",
       "_origin": "ast",
       "id": "app_controller_controller_scheduler",
       "community": 1,
@@ -1207,7 +1207,7 @@
       "label": ".resume_ready()",
       "file_type": "code",
       "source_file": "app/controller.py",
-      "source_location": "L503",
+      "source_location": "L528",
       "_origin": "ast",
       "id": "app_controller_controller_resume_ready",
       "community": 1,
@@ -1218,7 +1218,7 @@
       "label": ".release_idle_tuis()",
       "file_type": "code",
       "source_file": "app/controller.py",
-      "source_location": "L557",
+      "source_location": "L582",
       "_origin": "ast",
       "id": "app_controller_controller_release_idle_tuis",
       "community": 1,
@@ -1229,7 +1229,7 @@
       "label": ".selective_wake()",
       "file_type": "code",
       "source_file": "app/controller.py",
-      "source_location": "L581",
+      "source_location": "L606",
       "_origin": "ast",
       "id": "app_controller_controller_selective_wake",
       "community": 1,
@@ -1240,7 +1240,7 @@
       "label": ".persist_usage_resets()",
       "file_type": "code",
       "source_file": "app/controller.py",
-      "source_location": "L625",
+      "source_location": "L650",
       "_origin": "ast",
       "id": "app_controller_controller_persist_usage_resets",
       "community": 1,
@@ -1251,7 +1251,7 @@
       "label": ".close()",
       "file_type": "code",
       "source_file": "app/controller.py",
-      "source_location": "L650",
+      "source_location": "L675",
       "_origin": "ast",
       "id": "app_controller_controller_close",
       "community": 1,
@@ -1265,8 +1265,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_db",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "db.py"
     },
     {
@@ -1408,8 +1408,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "app_db_database_backup",
-      "community": 4,
-      "community_name": "Native",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".backup()"
     },
     {
@@ -1419,8 +1419,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_discord_bot",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "discord_bot.py"
     },
     {
@@ -1430,8 +1430,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_discord_bot_status_embed",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "status_embed()"
     },
     {
@@ -1441,8 +1441,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_discord_bot_closeview",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "closeview"
     },
     {
@@ -1452,8 +1452,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "app_discord_bot_closeview_init",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".__init__()"
     },
     {
@@ -1485,8 +1485,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "app_discord_bot_bot",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "bot"
     },
     {
@@ -1496,8 +1496,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "app_discord_bot_bot_init",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".__init__()"
     },
     {
@@ -1507,8 +1507,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_discord_bot_bot_setup_hook",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".setup_hook()"
     },
     {
@@ -1518,8 +1518,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "app_discord_bot_bot_on_ready",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".on_ready()"
     },
     {
@@ -1529,8 +1529,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "app_discord_bot_bot_category",
-      "community": 4,
-      "community_name": "Native",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".category()"
     },
     {
@@ -1540,8 +1540,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_discord_bot_bot_ensure_channel",
-      "community": 4,
-      "community_name": "Native",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".ensure_channel()"
     },
     {
@@ -1551,8 +1551,8 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "app_discord_bot_bot_send_pending",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".send_pending()"
     },
     {
@@ -1562,8 +1562,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_discord_bot_rationale_14",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "one compact text hierarchy: vertical indentation, not a grid of fields."
     },
     {
@@ -1716,8 +1716,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "native.py"
     },
     {
@@ -1727,8 +1727,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_native_nativeerror",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "nativeerror"
     },
     {
@@ -1738,8 +1738,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 4,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "runtimeerror"
     },
     {
@@ -1760,8 +1760,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_native_validate_model_selection",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "validate_model_selection()"
     },
     {
@@ -1771,8 +1771,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "app_native_native",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "native"
     },
     {
@@ -1782,8 +1782,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "app_native_native_init",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".__init__()"
     },
     {
@@ -1793,8 +1793,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "app_native_native_connect",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".connect()"
     },
     {
@@ -1804,8 +1804,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "app_native_native_read",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".read()"
     },
     {
@@ -1815,8 +1815,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "app_native_native_rpc",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".rpc()"
     },
     {
@@ -1826,8 +1826,8 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "app_native_native_close",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".close()"
     },
     {
@@ -1837,8 +1837,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_native_goalsource",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "goalsource"
     },
     {
@@ -1848,8 +1848,8 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "app_native_goalsource_init",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".__init__()"
     },
     {
@@ -1859,8 +1859,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "app_native_goalsource_rows",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".rows()"
     },
     {
@@ -1870,8 +1870,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_native_tui_proxy",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "tui_proxy()"
     },
     {
@@ -1881,8 +1881,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native_rationale_1",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "native codex 0.155.1 rpc and the scheduler's local tui admission gate."
     },
     {
@@ -1892,8 +1892,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "app_native_rationale_120",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "reuse upstream parsing and event comparison; never retain objective text."
     },
     {
@@ -2497,8 +2497,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_audit",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "test_audit.py"
     },
     {
@@ -2508,8 +2508,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_audit_audittests",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "audittests"
     },
     {
@@ -2519,8 +2519,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_append_preserves_evidence_and_rejects_edits()"
     },
     {
@@ -2530,8 +2530,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_core",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "test_core.py"
     },
     {
@@ -2541,8 +2541,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_core_coretests",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "coretests"
     },
     {
@@ -2552,8 +2552,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_auth_and_replay",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".test_auth_and_replay()"
     },
     {
@@ -2563,8 +2563,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".test_db_constraints_rollback_and_backup()"
     },
     {
@@ -2574,8 +2574,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_project_names",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".test_project_names()"
     },
     {
@@ -2585,8 +2585,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_discord",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "test_discord.py"
     },
     {
@@ -2596,8 +2596,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "discordtests"
     },
     {
@@ -2607,8 +2607,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_embeds_and_crash_deduplication",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_embeds_and_crash_deduplication()"
     },
     {
@@ -2618,8 +2618,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_usage_notification_once_and_late_reset_edits_same_message",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_usage_notification_once_and_late_reset_edits_same_message()"
     },
     {
@@ -2629,8 +2629,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lifecycle",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "test_lifecycle.py"
     },
     {
@@ -2717,8 +2717,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_scheduler",
-      "community": 11,
-      "community_name": "discord-token.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": "test_scheduler.py"
     },
     {
@@ -2761,8 +2761,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_recovery_records_native_limit_once_and_clears_resume_intent",
-      "community": 4,
-      "community_name": "Native",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_recovery_records_native_limit_once_and_clears_resume_intent()"
     },
     {
@@ -2783,8 +2783,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_model_config_gate_accepts_only_native_selection_batch",
-      "community": 3,
-      "community_name": "main.py",
+      "community": 4,
+      "community_name": "Native",
       "norm_label": ".test_model_config_gate_accepts_only_native_selection_batch()"
     },
     {
@@ -2843,10 +2843,32 @@
       "norm_label": ".test_completion_compacts_queue_and_confirms_pending_resume()"
     },
     {
-      "label": ".test_pending_resume_keeps_selection_until_ack()",
+      "label": ".test_ci_checks_exact_commit_all_workflows_and_latest_attempt()",
       "file_type": "code",
       "source_file": "tests/test_scheduler.py",
       "source_location": "L225",
+      "_origin": "ast",
+      "id": "tests_test_scheduler_schedulertests_test_ci_checks_exact_commit_all_workflows_and_latest_attempt",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": ".test_ci_checks_exact_commit_all_workflows_and_latest_attempt()"
+    },
+    {
+      "label": ".test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming()",
+      "file_type": "code",
+      "source_file": "tests/test_scheduler.py",
+      "source_location": "L260",
+      "_origin": "ast",
+      "id": "tests_test_scheduler_schedulertests_test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": ".test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming()"
+    },
+    {
+      "label": ".test_pending_resume_keeps_selection_until_ack()",
+      "file_type": "code",
+      "source_file": "tests/test_scheduler.py",
+      "source_location": "L279",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_pending_resume_keeps_selection_until_ack",
       "community": 21,
@@ -2857,7 +2879,7 @@
       "label": ".test_gate_pauses_second_goal_before_native_execution()",
       "file_type": "code",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L250",
+      "source_location": "L304",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_gate_pauses_second_goal_before_native_execution",
       "community": 21,
@@ -2868,7 +2890,7 @@
       "label": ".test_release_only_detached_idle_persisted_goals()",
       "file_type": "code",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L306",
+      "source_location": "L360",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_release_only_detached_idle_persisted_goals",
       "community": 21,
@@ -2879,7 +2901,7 @@
       "label": ".test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt()",
       "file_type": "code",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L335",
+      "source_location": "L389",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt",
       "community": 21,
@@ -2890,7 +2912,7 @@
       "label": ".test_unsnooze_idle_poll_avoids_restarting_node_every_ten_seconds()",
       "file_type": "code",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L411",
+      "source_location": "L465",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_unsnooze_idle_poll_avoids_restarting_node_every_ten_seconds",
       "community": 21,
@@ -2915,8 +2937,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_web_webtests",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "webtests"
     },
     {
@@ -2926,8 +2948,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_web_webtests_test_auth_csrf_expiry_and_parallel_rate_limit",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_auth_csrf_expiry_and_parallel_rate_limit()"
     },
     {
@@ -3129,6 +3151,17 @@
       "norm_label": "verification boundaries and remaining work"
     },
     {
+      "label": "Completion gate follow-up",
+      "file_type": "document",
+      "source_file": "docs/lifecycle-fixes-20260923.md",
+      "source_location": "L112",
+      "_origin": "ast",
+      "id": "docs_lifecycle_fixes_20260923_completion_gate_follow_up",
+      "community": 0,
+      "community_name": "common.py",
+      "norm_label": "completion gate follow-up"
+    },
+    {
       "label": "lifecycle.md",
       "file_type": "document",
       "source_file": "docs/lifecycle.md",
@@ -3264,7 +3297,7 @@
       "label": "Source references",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L132",
+      "source_location": "L139",
       "_origin": "ast",
       "id": "docs_progress_source_references",
       "community": 8,
@@ -5621,7 +5654,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L437",
+      "source_location": "L439",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_refresh_git",
@@ -5633,7 +5666,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L568",
+      "source_location": "L593",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_release_idle_tuis",
@@ -5645,7 +5678,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L546",
+      "source_location": "L571",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
@@ -5657,7 +5690,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L598",
+      "source_location": "L623",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_selective_wake",
@@ -5778,7 +5811,19 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L316",
+      "source_location": "L256",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_scheduler_schedulertests_test_ci_checks_exact_commit_all_workflows_and_latest_attempt",
+      "target": "app_controller_command"
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/test_scheduler.py",
+      "source_location": "L370",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests_test_release_only_detached_idle_persisted_goals",
@@ -5790,7 +5835,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L358",
+      "source_location": "L412",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests_test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt",
@@ -5833,7 +5878,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L650",
+      "source_location": "L675",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller",
@@ -5921,7 +5966,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L625",
+      "source_location": "L650",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller",
@@ -5976,7 +6021,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L434",
+      "source_location": "L436",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller",
@@ -5987,7 +6032,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L557",
+      "source_location": "L582",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller",
@@ -6009,7 +6054,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L503",
+      "source_location": "L528",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller",
@@ -6031,7 +6076,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L450",
+      "source_location": "L475",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller",
@@ -6053,7 +6098,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L581",
+      "source_location": "L606",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller",
@@ -6295,7 +6340,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L470",
+      "source_location": "L495",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6331,11 +6376,23 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L532",
+      "source_location": "L557",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
       "target": "app_controller_controller_record_goal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/controller.py",
+      "source_location": "L418",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_controller_controller_complete",
+      "target": "app_controller_controller_record_status",
       "confidence_score": 1.0
     },
     {
@@ -6367,7 +6424,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L419",
+      "source_location": "L421",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_complete",
@@ -6451,7 +6508,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L523",
+      "source_location": "L548",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
@@ -6487,7 +6544,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L549",
+      "source_location": "L574",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
@@ -6499,7 +6556,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L471",
+      "source_location": "L496",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6511,7 +6568,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L547",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
@@ -6643,7 +6700,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L423",
+      "source_location": "L425",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_complete",
@@ -6655,7 +6712,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L518",
+      "source_location": "L543",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
@@ -6667,7 +6724,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L432",
+      "source_location": "L434",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_complete",
@@ -6679,7 +6736,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L576",
+      "source_location": "L601",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_release_idle_tuis",
@@ -6691,7 +6748,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L520",
+      "source_location": "L545",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
@@ -6715,7 +6772,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L457",
+      "source_location": "L482",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6739,7 +6796,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L460",
+      "source_location": "L485",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6763,7 +6820,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L481",
+      "source_location": "L506",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6775,7 +6832,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L455",
+      "source_location": "L480",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6787,7 +6844,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L477",
+      "source_location": "L502",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6799,7 +6856,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L475",
+      "source_location": "L500",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6811,7 +6868,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L476",
+      "source_location": "L501",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6824,7 +6881,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/controller.py",
-      "source_location": "L456",
+      "source_location": "L481",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_scheduler",
@@ -6836,7 +6893,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/controller.py",
-      "source_location": "L527",
+      "source_location": "L552",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_resume_ready",
@@ -6847,7 +6904,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/controller.py",
-      "source_location": "L605",
+      "source_location": "L630",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_controller_controller_selective_wake",
@@ -7262,7 +7319,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L382",
+      "source_location": "L436",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests_test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt",
@@ -8697,7 +8754,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L271",
+      "source_location": "L325",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests_test_gate_pauses_second_goal_before_native_execution",
@@ -10560,6 +10617,17 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
+      "source_location": "L225",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_scheduler_schedulertests",
+      "target": "tests_test_scheduler_schedulertests_test_ci_checks_exact_commit_all_workflows_and_latest_attempt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_scheduler.py",
       "source_location": "L213",
       "weight": 1.0,
       "_origin": "ast",
@@ -10582,7 +10650,18 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L250",
+      "source_location": "L260",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_scheduler_schedulertests",
+      "target": "tests_test_scheduler_schedulertests_test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_scheduler.py",
+      "source_location": "L304",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests",
@@ -10637,7 +10716,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L225",
+      "source_location": "L279",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests",
@@ -10659,7 +10738,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L306",
+      "source_location": "L360",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests",
@@ -10681,7 +10760,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L411",
+      "source_location": "L465",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests",
@@ -10692,7 +10771,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
-      "source_location": "L335",
+      "source_location": "L389",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_scheduler_schedulertests",
@@ -10858,6 +10937,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/lifecycle-fixes-20260923.md",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_lifecycle_fixes_20260923_lifecycle_repair_evidence_2026_09_23",
+      "target": "docs_lifecycle_fixes_20260923_completion_gate_follow_up",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lifecycle-fixes-20260923.md",
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
@@ -10957,7 +11047,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L132",
+      "source_location": "L139",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -11120,5 +11210,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4bad7066fd70fe34a172160caeb2a4d2341dc210"
+  "built_at_commit": "8aabd594fce335ad6c923873c80b0f25e7ceef2f"
 }
