@@ -92,8 +92,10 @@ parent tables, merge operations, and `config/value/write` remain denied.
 ## Verification boundaries and remaining work
 
 27 unit tests pass on Windows. The final Pi rerun passed 26 tests with one
-Windows-only DPAPI skip. This repository's new four-job GitHub Actions matrix
-must also pass before publication acceptance.
+Windows-only DPAPI skip. All four GitHub Actions jobs (Windows/Ubuntu,
+Python 3.11/3.13) passed for code commit
+`a524d293155cff2930f3fb1115afce9c029d3455`:
+https://github.com/Havkz/CodexPi/actions/runs/35898363930
 
 A current genuine mapped provider-limit -> reset -> Unsnooze -> native resume
 cycle has NOT yet been observed. Native limit states, outbox/crash handling,
