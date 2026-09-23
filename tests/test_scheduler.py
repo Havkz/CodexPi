@@ -27,7 +27,21 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         controller.redactor = Redactor(self.root)
         controller.tui_connections = {}
         controller.unsnooze = {}
+        controller.health_errors = {}
         controller.wait_idle = AsyncMock()
+        controller.pane_exists = AsyncMock(return_value=True)
+        self.native_status = 'paused'
+        self.thread_status = 'idle'
+        async def native_rpc(method, params, **kwargs):
+            if method == 'thread/goal/get':
+                return {'goal': {'status': self.native_status} if self.native_status else None}
+            if method == 'thread/read':
+                return {'thread': {'id': params['threadId'], 'cwd': str(self.root / params['threadId']),
+                                   'status': {'type': self.thread_status}}}
+            if method == 'account/rateLimits/read':
+                return {'ordinaryUsageAllowed': True, 'rateLimits': {}}
+            return {}
+        controller.native = SimpleNamespace(rpc=AsyncMock(side_effect=native_rpc))
         self.controller = controller
         for name in ('first', 'second'):
             path = self.root / name
@@ -42,6 +56,172 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.controller.db.conn.close()
         self.temp.cleanup()
 
+    async def test_recovery_records_native_limit_once_and_clears_resume_intent(self):
+        c = self.controller
+        c.select('first')
+        c.db.update('first', operation=json.dumps({'kind': 'resume', 'sent_at': time.time() - 60}))
+        c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'usage limited', 'updated_at_ms': 1800000000000}})
+        c.attach_ready = AsyncMock()
+        for _ in range(2):
+            await c.recover()
+            await c.poll_goals()
+        self.assertEqual(c.db.get('first')['goal_status'], 'usage limited')
+        self.assertIsNone(c.db.get('first')['operation'])
+        self.assertEqual(c.db.setting('selected'), 'first')
+        self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='usage limited'").fetchone()[0], 1)
+        # A failed durable outbox write must not swallow the transition on retry.
+        c.db.update('first', goal_status='active')
+        with patch.object(c.db, 'event', side_effect=RuntimeError('disk failure')):
+            with self.assertRaises(RuntimeError):
+                c.record_goal(c.db.get('first'), {'status': 'usageLimited'})
+        self.assertEqual(c.db.get('first')['goal_status'], 'active')
+
+    async def test_empty_goal_resume_restores_session_without_a_slash(self):
+        c = self.controller
+        self.native_status = None
+        c.attach_ready = AsyncMock()
+        c.slash = AsyncMock()
+        result = await c.resume('first')
+        self.assertIsNotNone(c.db.get('first')['operation'])
+        self.assertIsNone(c.db.get('first')['resume_result'])
+        await c.resume_ready()
+        c.attach_ready.assert_awaited_once()
+        self.assertEqual(await c.resume('first'), result)  # idempotent while pending
+        self.assertEqual(c.db.setting('selected'), 'first')
+        c.tui_connections['first'] = {1: time.monotonic() - 2}
+        await c.resume_ready()
+        c.slash.assert_not_awaited()
+        self.assertIsNone(c.db.get('first')['operation'])
+        self.assertEqual(json.loads(c.db.get('first')['resume_result'])['status'], 'restored')
+        self.assertEqual(c.db.get('first')['goal_status'], 'paused')
+
+    async def test_model_config_gate_accepts_only_native_selection_batch(self):
+        c = self.controller
+        upstream = SimpleNamespace(rpc=AsyncMock(return_value={}), close=AsyncMock())
+        app = web.Application()
+        app['controller'], app['sockets'] = c, set()
+        app.router.add_get('/', tui_proxy)
+        selection = {'edits': [
+            {'keyPath': 'model', 'value': 'gpt-test', 'mergeStrategy': 'replace'},
+            {'keyPath': 'model_reasoning_effort', 'value': 'medium', 'mergeStrategy': 'replace'}],
+            'filePath': None, 'expectedVersion': None, 'reloadUserConfig': True}
+        with patch('app.native.Native.connect', AsyncMock(return_value=upstream)):
+            async with TestClient(TestServer(app)) as client:
+                async with client.ws_connect('/') as socket:
+                    async def rpc(method, params):
+                        await socket.send_json({'id': 1, 'method': method, 'params': params})
+                        return await socket.receive_json()
+                    self.assertIn('error', await rpc('config/batchWrite', selection))
+                    self.assertIn('result', await rpc('thread/resume', {'threadId': 'first'}))
+                    self.assertIn('result', await rpc('config/batchWrite', selection))
+                    self.assertEqual(upstream.rpc.await_args.args, ('config/batchWrite', selection))
+                    cleared = json.loads(json.dumps(selection))
+                    cleared['edits'][1]['value'] = None
+                    self.assertIn('result', await rpc('config/batchWrite', cleared))
+                    invalid = [dict(selection, filePath='/tmp/config.toml'), dict(selection, unknown=True),
+                               dict(selection, edits=[]), dict(selection, edits=selection['edits'] * 2)]
+                    for key, value, strategy in [('features.multi_agent', True, 'replace'),
+                            ('sandbox_mode', 'danger-full-access', 'replace'), ('model', {}, 'replace'),
+                            ('model', '', 'replace'), ('model', 'gpt-test', 'upsert'),
+                            ('model_reasoning_effort', 'nonsense', 'replace'), ('profiles.x.model', 'gpt-test', 'replace')]:
+                        invalid.append(dict(selection, edits=[{'keyPath': key, 'value': value, 'mergeStrategy': strategy}]))
+                    before = upstream.rpc.await_count
+                    for params in invalid:
+                        self.assertIn('error', await rpc('config/batchWrite', params), params)
+                    self.assertIn('error', await rpc('config/value/write', selection['edits'][0]))
+                    c.db.update('first', lifecycle='deleting')
+                    self.assertIn('error', await rpc('config/batchWrite', selection))
+                    self.assertEqual(upstream.rpc.await_count, before)
+
+    async def test_resume_confirmation_timeout_crash_and_identity(self):
+        c = self.controller
+        c.select('first')
+        c.tui_connections['first'] = {1: time.monotonic() - 2}
+        c.slash = AsyncMock()
+        c.attach_ready = AsyncMock()
+        result = await c.resume('first')
+        with patch('app.controller.command', AsyncMock()):
+            await c.resume_ready()
+            c.slash.assert_awaited_once()
+            saved = json.loads(c.db.get('first')['operation'])
+            self.assertIn('sent_at', saved)
+            self.assertIsNone(c.db.get('first')['resume_result'])
+            # Reopened durable journal must not send the slash a second time.
+            c.db.conn.close()
+            c.db = Database(self.root / 'test.db')
+            await c.resume_ready()
+            c.slash.assert_awaited_once()
+            saved['sent_at'] = time.time() - 61
+            c.db.update('first', operation=json.dumps(saved))
+            await c.resume_ready()
+            failure = json.loads(c.db.get('first')['resume_result'])
+            self.assertEqual(failure['id'], result['operation_id'])
+            self.assertEqual(failure['status'], 'failed')
+            self.assertIn('timed out', failure['message'])
+            await c.resume_ready()
+            c.slash.assert_awaited_once()
+        # A successful thread/read for the wrong session is not acknowledgement.
+        await c.resume('first')
+        c.native.rpc = AsyncMock(side_effect=[{'goal': None}, {'thread': {'id': 'other', 'cwd': str(self.root / 'first')}}])
+        await c.resume_ready()
+        self.assertIn('identity', json.loads(c.db.get('first')['resume_result'])['message'])
+
+    async def test_normal_resume_does_not_preempt_but_run_now_promotes(self):
+        c = self.controller
+        c.select('first')
+        c.db.update('first', goal_status='active')
+        c.pause = AsyncMock(wraps=c.pause)
+        await c.resume('second')
+        self.assertEqual(c.db.setting('selected'), 'first')
+        self.assertEqual(c.db.get('second')['queue_position'], 2)
+        self.assertEqual(json.loads(c.db.get('second')['resume_result'])['status'], 'queued')
+        c.pause.assert_not_awaited()
+        await c.run_now('second')
+        self.assertEqual(c.db.setting('selected'), 'second')
+        self.assertEqual(c.db.get('second')['queue_position'], 1)
+        c.pause.assert_awaited_once()
+
+    async def test_limit_reset_persists_but_account_limit_does_not_invent_goal(self):
+        c = self.controller
+        c.db.set_setting('account_usage', {'ordinaryUsageAllowed': False, 'rateLimits': {
+            'primary': {'usedPercent': 100, 'resetsAt': 1800000000}}})
+        c.persist_usage_resets()
+        self.assertEqual(c.db.get('first')['goal_status'], 'paused')
+        self.assertIsNone(c.db.get('first')['usage_limit'])
+        c.record_goal(c.db.get('first'), {'status': 'usageLimited'})
+        c.persist_usage_resets()
+        self.assertEqual(json.loads(c.db.get('first')['usage_limit'])['resetAt'], 1800000000000)
+        payload = json.loads(c.db.conn.execute('SELECT payload FROM events').fetchone()[0])
+        self.assertEqual(payload['usage_limit']['resetSource'], 'native-account')
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        self.assertEqual(json.loads(c.db.get('first')['usage_limit'])['resetAt'], 1800000000000)
+        c.record_goal(c.db.get('first'), {'status': 'paused'})
+        self.assertIsNone(c.db.get('first')['usage_limit'])
+
+    async def test_managed_tui_launch_cannot_wait_in_update_prompt(self):
+        c = self.controller
+        c.pane_exists.return_value = False
+        command = AsyncMock(return_value={'stdout': '', 'stderr': '', 'exit_code': 1})
+        with patch('app.controller.command', command):
+            await c.attach_ready(c.db.get('first'))
+        launch = next(call.args[-1] for call in command.await_args_list if call.args[:2] == ('tmux', 'new-session'))
+        self.assertIn('check_for_update_on_startup=false', launch)
+        self.assertIn('UNSNOOZE_AUTO_RESUME=false', launch)
+        self.assertIn('resume first', launch)
+
+    async def test_completion_compacts_queue_and_confirms_pending_resume(self):
+        c = self.controller
+        c.select('first')
+        c.db.update('first', operation=json.dumps({'kind': 'resume', 'id': 'r1'}))
+        c.refresh_git = AsyncMock()
+        c.cancel_wakes = AsyncMock()
+        with patch('app.controller.command', AsyncMock(return_value={'stdout': '', 'stderr': '', 'exit_code': 0})):
+            await c.complete(c.db.get('first'))
+        self.assertEqual(c.db.get('second')['queue_position'], 1)
+        self.assertEqual(json.loads(c.db.get('first')['resume_result'])['status'], 'complete')
+        self.assertIsNone(c.db.setting('selected'))
+
     async def test_pending_resume_keeps_selection_until_ack(self):
         controller = self.controller
         controller.select('first')
@@ -54,6 +234,10 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         block.write_text('{"reason":"Old blocker"}')
         controller.db.update('first', block_reason=block.read_text(), windows_required=1)
         controller.record_goal(controller.db.get('first'), {'status': 'active'})
+        self.assertIsNotNone(controller.db.get('first')['operation'])
+        self.native_status, self.thread_status = 'active', 'active'
+        controller.tui_connections['first'] = {1: time.monotonic() - 2}
+        await controller.resume_ready()
         self.assertIsNone(controller.db.get('first')['operation'])
         self.assertIsNone(controller.db.get('first')['block_reason'])
         self.assertEqual(controller.db.get('first')['windows_required'], 0)
@@ -218,6 +402,8 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
             await controller.resume_ready()
             controller.slash.assert_awaited_once()
             controller.record_goal(controller.db.get('first'), {'status': 'active'})
+            self.native_status, self.thread_status = 'active', 'active'
+            await controller.resume_ready()
             self.assertIsNone(controller.db.get('first')['operation'])
         self.assertFalse(any('resume-now' in args for args in calls))
         self.assertFalse(any(args[:2] == ('unsnooze', 'cancel') and args[-1] != 'first-stop' for args in calls))

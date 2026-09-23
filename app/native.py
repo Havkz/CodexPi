@@ -21,6 +21,32 @@ def project_thread_config(path):
             'sandbox_workspace_write.writable_roots': [str(Path(path) / '.git')]}
 
 
+def validate_model_selection(params):
+    # Exact 0.155.1 build_model_selection_edits shape. Never allow a caller-selected
+    # file, parent table, profile, merge, or mixed batch to change security settings.
+    if (not isinstance(params, dict) or set(params) - {'edits', 'filePath', 'expectedVersion', 'reloadUserConfig'}
+            or params.get('filePath') is not None
+            or params.get('expectedVersion') is not None and not isinstance(params['expectedVersion'], str)
+            or type(params.get('reloadUserConfig', False)) is not bool):
+        raise ValueError('Only native model/reasoning selection config writes are allowed')
+    edits = params.get('edits')
+    if not isinstance(edits, list) or len(edits) != 2:
+        raise ValueError('Model selection requires exactly model and reasoning effort')
+    values = {}
+    for edit in edits:
+        if (not isinstance(edit, dict) or set(edit) != {'keyPath', 'value', 'mergeStrategy'}
+                or edit['mergeStrategy'] != 'replace' or not isinstance(edit['keyPath'], str)
+                or edit['keyPath'] not in ('model', 'model_reasoning_effort') or edit['keyPath'] in values):
+            raise ValueError('Invalid model selection edit')
+        values[edit['keyPath']] = edit['value']
+    model, effort = values['model'], values['model_reasoning_effort']
+    if (not isinstance(model, str) or not model.strip() or len(model) > 200
+            or any(ord(char) < 32 for char in model)
+            or effort is not None and (not isinstance(effort, str)
+                or effort not in ('none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'))):
+        raise ValueError('Invalid model or reasoning effort')
+
+
 class Native:
     def __init__(self, socket, event=None):
         self.socket = str(socket)
@@ -144,11 +170,17 @@ async def tui_proxy(request):
             if method in ('thread/start', 'thread/fork'):
                 raise ValueError('New projects must be created using codexpi and /rename')
             if (method in ('review/start', 'thread/realtime/start', 'thread/archive', 'thread/delete',
-                           'thread/unarchive', 'thread/rollback', 'config/value/write', 'config/batchWrite') or
+                           'thread/unarchive', 'thread/rollback', 'config/value/write') or
                     (method and method.startswith(('process/', 'command/exec', 'experimentalFeature/enablement/'))) or
                     (method and method.startswith('thread/queue/') and method != 'thread/queue/list')):
                 raise ValueError('This operation bypasses the CodexPi single-project queue')
-            if method == 'thread/name/set':
+            if method == 'config/batchWrite':
+                async with controller.lock:
+                    if not any(p['project_id'] in resumed and p['lifecycle'] == 'ready' for p in controller.db.all()):
+                        raise ValueError('Model selection requires a mapped ready TUI session')
+                    validate_model_selection(params)
+                    result = await upstream.rpc(method, params)
+            elif method == 'thread/name/set':
                 project = controller.db.by_session(params.get('threadId'))
                 if not project:
                     raise ValueError('Session is not managed by CodexPi')
@@ -206,7 +238,8 @@ async def tui_proxy(request):
                         controller.record_goal(project, result['goal'])
                     if method == 'thread/goal/clear':
                         await controller.wait_idle(project)
-                        controller.db.update(project['project_id'], goal_status='paused')
+                        controller.db.update(project['project_id'], goal_status='paused', operation=None, usage_limit=None)
+                        await controller.cancel_wakes(project)
                         if selected == project['project_id']:
                             controller.db.set_setting('selected', None)
             elif method is not None and request_id is not None:

@@ -1,5 +1,5 @@
 'use strict';
-let state, dragging, refreshing = false, busy = false, connected = false, detailId = null, lifecycleIntent;
+let state, dragging, refreshing = false, busy = false, connected = false, detailId = null, lifecycleIntent, pendingAction, submittingProject;
 const $ = id => document.getElementById(id);
 const node = (tag, text = '', cls = '') => {
   const el = document.createElement(tag); el.textContent = text; el.className = cls; return el;
@@ -35,34 +35,47 @@ function block(p) {
 }
 async function act(action, project_id, extra = {}) {
   if (busy || !connected) return;
-  busy = true; $('notice').textContent = 'Änderung wird ausgeführt …'; render();
+  busy = true; submittingProject = ['resume', 'run-now'].includes(action) ? project_id : null;
+  $('notice').textContent = 'Änderung wird ausgeführt …'; render();
   let success = false;
   try {
-    const res = await fetch('/api/action', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf}, body: JSON.stringify({action, project_id, ...extra})});
+    const res = await fetch('/api/action', {method: 'POST', signal: AbortSignal.timeout(45000), headers: {'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf}, body: JSON.stringify({action, project_id, ...extra})});
     if (!res.ok) { const text = await res.text(); let error; try { error = JSON.parse(text).error; } catch {} throw new Error(error || text.slice(0, 300)); }
     if (action === 'logout') { location.reload(); return; }
-    $('notice').textContent = '';
+    const response = await res.json();
+    if (response.operation_id) {
+      pendingAction = {project_id, id: response.operation_id, deadline: Date.now() + 90000};
+      $('notice').textContent = 'Native Session wird wiederhergestellt und bestätigt …';
+    } else $('notice').textContent = '';
     success = true;
   } catch (err) { $('notice').textContent = err.message; }
-  finally { busy = false; await refresh(); }
+  finally { submittingProject = null; busy = Boolean(pendingAction); await refresh(); }
   return success;
 }
-function actions(p, compact = false) {
+function actions(p, compact = false, inDetail = false) {
   const result = node('div', '', 'actions' + (compact ? ' queue-actions' : ''));
-  const list = compact ? [['Run now', 'run-now']] : [['Run now', 'run-now'], ['Pause', 'pause'], ['Resume', 'resume']];
+  let operation; try { operation = JSON.parse(p.operation || '{}'); } catch { operation = {}; }
+  const resuming = operation.kind === 'resume' && !operation.error && state.selected === p.project_id;
+  const list = [['Resume', 'resume'], ['Pause', 'pause']];
+  if (p.queue_position > 1 && state.selected !== p.project_id) list.unshift(['Run now', 'run-now']);
   for (const [label, action] of list) {
     const b = button(label, () => act(action, p.project_id), p.project_id + ':' + action, action === 'run-now' ? 'primary' : '');
-    b.disabled = busy || !connected || p.lifecycle !== 'ready' || p.goal_status === 'complete' || (action === 'pause' && p.goal_status === 'paused');
+    const loading = action === 'resume' && (resuming || pendingAction?.project_id === p.project_id || submittingProject === p.project_id);
+    if (loading) { b.textContent = 'Resume …'; b.classList.add('loading'); b.setAttribute('aria-busy', 'true'); }
+    b.disabled = busy || !connected || p.lifecycle !== 'ready' || p.goal_status === 'complete' ||
+      (action === 'resume' && (p.goal_status === 'active' || resuming)) ||
+      (action === 'pause' && p.goal_status === 'paused' && !operation.kind && state.selected !== p.project_id);
     result.append(b);
   }
-  result.append(button('Details', () => showDetail(p.project_id), p.project_id + ':details'));
+  if (!inDetail) result.append(button('Details', () => showDetail(p.project_id), p.project_id + ':details'));
   if (!compact) for (const action of ['rename', 'delete']) {
     const b = button(action === 'rename' ? 'Rename' : 'Delete', () => showLifecycle(p, action), p.project_id + ':' + action, action === 'delete' ? 'danger' : '');
-    b.disabled = busy || !connected || p.lifecycle !== 'ready' || Boolean(p.operation); result.append(b);
+    let pending; try { pending = JSON.parse(p.operation || '{}'); } catch { pending = {kind: 'unknown'}; }
+    b.disabled = busy || !connected || p.lifecycle !== 'ready' || Boolean(p.operation && !(action === 'delete' && pending.kind === 'resume')); result.append(b);
   }
   return result;
 }
-function projectOverview(p) {
+function projectOverview(p, inDetail = false) {
   const body = node('div'), header = node('div', '', 'project-header'), name = node('div', '', 'project-name');
   name.append(node('h3', p.display_name), badge(p.goal_status)); header.append(name);
   header.append(node('span', p.queue_position == null ? 'Nicht in Queue' : 'Priority ' + p.queue_position, 'counter')); body.append(header);
@@ -72,8 +85,9 @@ function projectOverview(p) {
     ['Windows Requirement', p.windows_required ? 'Required' : 'Nicht angefordert'], ['Discord Channel', p.discord_channel_id, true]
   ]));
   const blocker = block(p); if (blocker) body.append(blocker);
-  const controls = actions(p); controls.classList.add('active-actions'); body.append(controls);
-  if (p.lifecycle !== 'ready') {
+  const controls = actions(p, false, inDetail); controls.classList.add('active-actions'); body.append(controls);
+  if (p.resume_result) { const result = JSON.parse(p.resume_result); body.append(node('p', result.message, result.status === 'failed' ? 'error' : 'notice')); }
+  if (p.lifecycle !== 'ready' || p.operation) {
     let operation; try { operation = JSON.parse(p.operation || '{}'); } catch { operation = {}; }
     body.append(node('p', 'Lifecycle: ' + p.lifecycle + ' · ' + (operation.error || 'Wird ausgeführt. Bei Unterbrechung automatisch fortgesetzt.'), 'notice'));
   }
@@ -132,7 +146,7 @@ function render() {
     const item = node('span'), dot = node('i', '', 'dot ' + (online ? 'online' : 'offline')); dot.setAttribute('aria-hidden', 'true'); item.append(dot, document.createTextNode(name + ' ' + (online ? 'online' : 'offline'))); return item;
   }));
   $('work-state').textContent = state.pause_all ? 'Alle Arbeit pausiert' : 'Single-worker policy';
-  $('active').replaceChildren(active ? projectOverview(active) : node('p', state.pause_all ? 'Alle Arbeit pausiert. Mit „Run now“ ein Projekt freigeben.' : 'Kein Projekt ausgewählt. Die Queue wartet auf deine Freigabe.', 'empty'));
+  $('active').replaceChildren(active ? projectOverview(active) : node('p', state.pause_all ? 'Alle Arbeit pausiert. Mit Resume das erste Projekt fortsetzen.' : 'Kein Projekt ausgewählt. Die Queue wartet auf deine Freigabe.', 'empty'));
   renderQueue(queue);
   $('projects').replaceChildren(...state.projects.map(p => {
     const card = node('article', '', 'project-card'); card.append(badge(p.goal_status), node('h3', p.display_name));
@@ -149,15 +163,22 @@ function render() {
     if ('heartbeat_age' in item) card.append(node('p', item.heartbeat_age === null ? 'Heartbeat: noch nicht empfangen' : 'Heartbeat: vor ' + Math.floor(item.heartbeat_age) + ' s'));
     if (item.error) card.append(node('p', item.error, 'error')); return card;
   }));
-  const limits = (state.unsnooze.sessions || []).filter(s => s.status === 'stopped');
-  $('limits').replaceChildren(...limits.map(item => {
-    const row = node('div', '', 'limit-row'), p = state.projects.find(p => p.codex_session_id === item.sessionId);
-    row.append(badge('usage limited'), node('strong', p?.display_name || item.agent || 'Codex'), node('span', 'Reset: ' + (item.resetAt ? new Date(item.resetAt).toLocaleString('de-DE') : 'unbekannt'), 'muted')); return row;
+  const limits = state.projects.filter(p => p.goal_status === 'usage limited');
+  $('limits').replaceChildren(...limits.map(p => {
+    const row = node('div', '', 'limit-row'), item = JSON.parse(p.usage_limit || '{}');
+    row.append(badge('usage limited'), node('strong', p.display_name), node('span', 'Reset: ' + (item.resetAt ? new Date(item.resetAt).toLocaleString('de-DE') : 'unbekannt'), 'muted')); return row;
   }));
+  if (state.account_usage?.ordinaryUsageAllowed === false) $('limits').append(node('p', 'Konto: Nutzung derzeit nicht verfügbar. Eine wiederhergestellte Session ohne Goal bleibt ohne Goal.', 'notice'));
+  for (const [name, window] of Object.entries(state.account_usage?.rateLimits || {}).filter(([key, value]) => ['primary', 'secondary'].includes(key) && value)) {
+    $('limits').append(node('p', 'Konto · ' + name + ': ' + window.usedPercent + '% verwendet · Reset: ' + date(window.resetsAt), 'muted'));
+  }
   for (const p of state.projects.filter(p => p.goal_status === 'limited by budget')) {
     const row = node('div', '', 'limit-row'); row.append(badge(p.goal_status), node('strong', p.display_name), node('span', 'Manuelle Freigabe erforderlich.', 'muted')); $('limits').append(row);
   }
   if (!$('limits').children.length) $('limits').append(node('p', 'Kein Usage-Limit gemeldet. Verbrauchsprozentwerte sind derzeit nicht verfügbar.', 'muted'));
+  const detailOverview = $('detail-overview'), currentDetail = state.projects.find(p => p.project_id === detailId);
+  if (detailOverview && currentDetail) detailOverview.replaceChildren(node('h3', 'Overview'), projectOverview(currentDetail, true));
+  if (detailId && !currentDetail) $('project-dialog').close();
   if (focus && !focused.isConnected) document.querySelector('[data-key="' + CSS.escape(focus) + '"]')?.focus({preventScroll: true});
 }
 async function refresh() {
@@ -168,9 +189,20 @@ async function refresh() {
     if (response.status === 401) { location.reload(); return; }
     if (!response.ok) throw new Error('Dashboard nicht erreichbar');
     state = await response.json(); connected = true;
+    if (pendingAction) {
+      const project = state.projects.find(p => p.project_id === pendingAction.project_id);
+      const result = project?.resume_result ? JSON.parse(project.resume_result) : null;
+      if (result?.id === pendingAction.id) {
+        $('notice').textContent = result.message; pendingAction = null; busy = false;
+      } else if (!project || Date.now() > pendingAction.deadline) {
+        $('notice').textContent = !project ? 'Projekt wurde gelöscht.' : 'Keine Resume-Bestätigung innerhalb von 90 Sekunden. Projektzustand prüfen; kein automatischer erneuter Versuch.';
+        pendingAction = null; busy = false;
+      }
+    }
     $('freshness').textContent = 'Live · ' + new Date().toLocaleTimeString('de-DE'); render();
   } catch (err) {
     connected = false; $('freshness').textContent = 'Verbindung unterbrochen · Daten möglicherweise veraltet';
+    if (pendingAction && Date.now() > pendingAction.deadline) { pendingAction = null; busy = false; }
     $('notice').textContent = err.message; render();
   } finally { refreshing = false; }
 }
@@ -184,7 +216,7 @@ async function showDetail(id) {
     const detail = await response.json(); if (detailId !== id) return;
     const p = detail.project, grid = node('div', '', 'detail-grid');
     function panel(title, wide = false) { const card = node('section', '', 'panel' + (wide ? ' detail-wide' : '')); card.append(node('h3', title)); grid.append(card); return card; }
-    const overview = panel('Overview', true); overview.append(projectOverview(p));
+    const overview = panel('Overview', true); overview.id = 'detail-overview'; overview.append(projectOverview(p, true));
     panel('Session / tmux').append(metadata([['Session', p.codex_session_id, true], ['tmux', p.tmux_session_name, true], ['Project path', p.project_path, true], ['Lifecycle', p.lifecycle]]));
     panel('Integrations').append(metadata([['Repo', repo(p)], ['CI', p.last_ci_status || 'unknown'], ['Discord Channel', p.discord_channel_id, true], ['Windows Worker', state.windows_online ? 'online' : 'offline']]));
     const commits = panel('Commits', true);
@@ -236,4 +268,4 @@ $('lifecycle-form').onsubmit = async event => {
 $('pause-all').onclick = () => act('pause-all'); $('logout').onclick = () => act('logout');
 $('close-detail').onclick = () => $('project-dialog').close();
 $('project-dialog').addEventListener('close', () => { detailId = null; });
-refresh(); setInterval(() => { if (!dragging && !busy && !document.hidden) refresh(); }, 5000);
+refresh(); setInterval(() => { if (!dragging && (!busy || pendingAction) && (!document.hidden || pendingAction)) refresh(); }, 2000);

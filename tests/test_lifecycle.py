@@ -77,6 +77,8 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
 
         async def command(*args, **kwargs):
             state['calls'].append((args, kwargs))
+            if args[:2] == ('unsnooze', 'status'):
+                return {'stdout': '{"sessions":[]}', 'stderr': '', 'exit_code': 0}
             if args[:2] == ('gh', 'api'):
                 if '--method' in args:
                     state['repo'] = 'owner/' + args[-1].removeprefix('name=')
@@ -151,6 +153,24 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                     await lifecycle.begin(controller, 'project-1', 'delete', confirmation='First')
                 self.assertEqual(state['calls'], [])
             controller.db.conn.close()
+
+    async def test_delete_supersedes_resume_for_paused_and_limited_projects(self):
+        for status in ('paused', 'usage limited'):
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as temp:
+                c, state, command = self.make_controller(temp)
+                state['native_status'] = 'paused' if status == 'paused' else 'usageLimited'
+                c.db.update('project-1', goal_status=status,
+                            operation=json.dumps({'kind': 'resume', 'source': 'unsnooze', 'sent_at': 1}))
+                with patch('app.lifecycle.command', command), patch('app.controller.command', command):
+                    await lifecycle.begin(c, 'project-1', 'delete', confirmation='First')
+                    await lifecycle.recover(c)
+                    await c.resume_ready()
+                self.assertEqual(c.db.all(), [])
+                self.assertTrue(state['archived'])
+                self.assertTrue(state['deleted'])
+                self.assertEqual(state['repo'], 'owner/first')
+                self.assertIsNone(c.db.setting('selected'))
+                c.db.conn.close()
 
 
 if __name__ == '__main__':

@@ -86,6 +86,8 @@ def main():
         fixture['projects'][0]['display_name'] = '<img src=x onerror=alert(1)>'
         fixture['selected'] = 'fixture-0'
         fixture['pause_all'] = False
+        for project in fixture['projects']:
+            project.update(operation=None, resume_result=None)
         actions = []
         def fake_action(route):
             body = route.request.post_data_json
@@ -97,6 +99,10 @@ def main():
                 for index, project in enumerate(fixture['projects'], 1):
                     project['queue_position'] = index
             elif body['action'] in ('run-now', 'resume'):
+                if body['action'] == 'run-now':
+                    fixture['projects'].sort(key=lambda p: p['project_id'] != body['project_id'])
+                    for index, project in enumerate(fixture['projects'], 1):
+                        project['queue_position'] = index
                 fixture['selected'] = body['project_id']
                 for project in fixture['projects']:
                     if project['goal_status'] == 'active':
@@ -137,10 +143,11 @@ def main():
         page.locator('#active').get_by_role('button', name='Pause', exact=True).click()
         page.get_by_text('Kein Projekt ausgewählt.', exact=False).wait_for()
         page.locator('#queue tr[data-id="fixture-0"]').get_by_role('button', name='Run now').click()
-        page.locator('#active').get_by_role('button', name='Resume', exact=True).click()
+        page.locator('#active').get_by_role('button', name='Pause', exact=True).click()
+        page.locator('#queue tr[data-id="fixture-0"]').get_by_role('button', name='Resume', exact=True).click()
         page.get_by_role('button', name='Pause all', exact=True).click()
         page.get_by_text('Alle Arbeit pausiert. Mit', exact=False).wait_for()
-        assert actions == ['reorder', 'reorder', 'run-now', 'pause', 'run-now', 'resume', 'pause-all'], actions
+        assert actions == ['reorder', 'reorder', 'run-now', 'pause', 'run-now', 'pause', 'resume', 'pause-all'], actions
         report['synthetic_interactions'] = actions
         page.unroute('**/api/action')
         page.unroute('**/api/state')

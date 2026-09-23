@@ -69,6 +69,42 @@ class DiscordTests(unittest.IsolatedAsyncioTestCase):
             await bot.close()
             db.conn.close()
 
+    async def test_usage_notification_once_and_late_reset_edits_same_message(self):
+        with tempfile.TemporaryDirectory() as directory:
+            db = Database(Path(directory) / 'test.db')
+            self.addCleanup(db.conn.close)
+            db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,
+                tmux_session_name,codex_session_id,discord_channel_id,created_at,updated_at)
+                VALUES ('p','Test','test',?,'tmux','session','123',1,1)''', (directory,))
+            controller = SimpleNamespace(db=db, redactor=Redactor(directory), unsnooze={})
+            bot = Bot(controller)
+            bot._connection.user = SimpleNamespace(id=777)
+            history = []
+            async def messages(**kwargs):
+                self.assertIsNone(kwargs['limit'])
+                for old in history:
+                    yield old
+            async def send(**kwargs):
+                history.append(SimpleNamespace(author=SimpleNamespace(id=777), content='',
+                    embeds=[kwargs['embed']], edit=AsyncMock()))
+            channel = SimpleNamespace(send=AsyncMock(side_effect=send), history=messages)
+            bot.fetch_channel = AsyncMock(return_value=channel)
+            db.event('p', 'usage limited', {})
+            await bot.send_pending()
+            await bot.send_pending()
+            self.assertEqual(channel.send.await_count, 1)
+            self.assertIn('unknown', history[0].embeds[0].description)
+            event = db.conn.execute('SELECT payload FROM events').fetchone()
+            payload = json.loads(event[0]) | {'usage_limit': {'resetAt': 1800000000000}}
+            db.conn.execute('UPDATE events SET payload=?', (json.dumps(payload),))
+            await bot.send_pending()
+            await bot.send_pending()
+            self.assertEqual(channel.send.await_count, 1)
+            history[0].edit.assert_awaited_once()
+            self.assertIn('<t:1800000000:F>', history[0].edit.await_args.kwargs['embed'].description)
+            await bot.close()
+            db.conn.close()
+
 
 if __name__ == '__main__':
     unittest.main()

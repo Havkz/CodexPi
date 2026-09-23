@@ -1,11 +1,15 @@
 {
   "source": "C:\\CODEXPI_GOAL.md",
-  "source_sha256": "23cfddb164d6cb21ce9eb362bbcdbf2d979365c9013f0c1d153223a230e15335",
-  "source_lines": 2900,
+  "source_sha256": "ca83c822ac9526284a40134866e4479a0b92f663ba995dac9a41f89268ada3fa",
+  "source_lines": 2957,
   "source_revisions": [
     {
       "source_sha256": "16a54c0a093b2b6e0594cb26d599403fcd5452febec57a6cc6ec035c270c223c",
       "source_lines": 2032
+    },
+    {
+      "source_sha256": "23cfddb164d6cb21ce9eb362bbcdbf2d979365c9013f0c1d153223a230e15335",
+      "source_lines": 2900
     }
   ],
   "complete": false,
@@ -3676,7 +3680,9 @@
       "section": "16. WINDOWS WORKER JOBS",
       "text": "   * Worker holt exakten GitHub-Commit",
       "status": "tested",
-      "evidence": ["docs/windows-worker.md: live acknowledged job 6f1c5f44-13a8-4df7-a74d-0102f700b4c2, exact SHA 4138f9930e788ca181c308991c525343d4517a93"]
+      "evidence": [
+        "docs/windows-worker.md: live acknowledged job 6f1c5f44-13a8-4df7-a74d-0102f700b4c2, exact SHA 4138f9930e788ca181c308991c525343d4517a93"
+      ]
     },
     {
       "id": "L0795",
@@ -3711,21 +3717,27 @@
       "section": "16. WINDOWS WORKER JOBS",
       "text": "     * stdout",
       "status": "tested",
-      "evidence": ["tests/test_worker.py:test_native_execution_exit_output_timeout; docs/progress.md: live job 9a189ce0-4da5-4e30-bd0f-4ff82f28f25c returned distinct stdout/stderr"]
+      "evidence": [
+        "tests/test_worker.py:test_native_execution_exit_output_timeout; docs/progress.md: live job 9a189ce0-4da5-4e30-bd0f-4ff82f28f25c returned distinct stdout/stderr"
+      ]
     },
     {
       "id": "L0801",
       "section": "16. WINDOWS WORKER JOBS",
       "text": "     * stderr",
       "status": "tested",
-      "evidence": ["docs/windows-worker.md: live acknowledged Windows unittest result in stderr, job 6f1c5f44-13a8-4df7-a74d-0102f700b4c2"]
+      "evidence": [
+        "docs/windows-worker.md: live acknowledged Windows unittest result in stderr, job 6f1c5f44-13a8-4df7-a74d-0102f700b4c2"
+      ]
     },
     {
       "id": "L0802",
       "section": "16. WINDOWS WORKER JOBS",
       "text": "     * Exit-Code",
       "status": "tested",
-      "evidence": ["tests/test_worker.py:test_native_execution_exit_output_timeout verifies exit 7; docs/windows-worker.md: real worker result exit 0 acknowledged after three passing tests"]
+      "evidence": [
+        "tests/test_worker.py:test_native_execution_exit_output_timeout verifies exit 7; docs/windows-worker.md: real worker result exit 0 acknowledged after three passing tests"
+      ]
     },
     {
       "id": "L0803",
@@ -5902,7 +5914,9 @@
       "section": "27. RESSOURCENLIMITS",
       "text": "Am Ende realen RAM-Verbrauch der CodexPi-Infrastruktur **ohne aktiven Codex-Worker** messen und dokumentieren.",
       "status": "pending",
-      "evidence": ["docs/resources.md and Setup/measure-idle.py: live 60.10-second idle sample, 364.76 MiB process PSS; final post-implementation sample still required"]
+      "evidence": [
+        "docs/resources.md and Setup/measure-idle.py: live 60.10-second idle sample, 364.76 MiB process PSS; final post-implementation sample still required"
+      ]
     },
     {
       "id": "L1286",
@@ -6812,14 +6826,18 @@
       "section": "33. COMPLETE-HANDLING",
       "text": "9. nächstes Queue-Projekt auswählen",
       "status": "tested",
-      "evidence": ["docs/unsnooze.md: 2026-09-21 live queue E2E completion advanced original session 01a0bbea-00c6-7710-98f2-6b75a3099636 to position 1"]
+      "evidence": [
+        "docs/unsnooze.md: 2026-09-21 live queue E2E completion advanced original session 01a0bbea-00c6-7710-98f2-6b75a3099636 to position 1"
+      ]
     },
     {
       "id": "L1478",
       "section": "33. COMPLETE-HANDLING",
       "text": "10. dieses mit nativem `/goal resume`",
       "status": "tested",
-      "evidence": ["docs/unsnooze.md: actual mapped TUI slash resume automatically acknowledged active for original next session after queue E2E completion"]
+      "evidence": [
+        "docs/unsnooze.md: actual mapped TUI slash resume automatically acknowledged active for original next session after queue E2E completion"
+      ]
     },
     {
       "id": "L1479",
@@ -14238,6 +14256,267 @@
       "id": "L2900",
       "section": "DESIGN: 36. FINALE VERIFIKATION",
       "text": "Diese Design-Spezifikation ist ab jetzt Bestandteil des laufenden CodexPi-Goals und muss im finalen Requirement-Audit mit überprüft werden.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2902",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "# VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2904",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Alle bisherigen Anforderungen bleiben bestehen. Diese Ergänzungen gehören zum bestehenden Goal und zum vollständigen abschließenden Requirement-Audit. Kein neues Goal erstellen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2906",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 1. Dashboard-Navigation",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2908",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Den überflüssigen verschachtelten Details-Button im Project-Detail-Fenster entfernen. Details nur dort anbieten, wo tatsächlich die Detailansicht geöffnet wird. Die gesamte Dashboard-Navigation auf vergleichbare funktionslose oder doppelte Aktionen prüfen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2910",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 2. Run now, Resume und Pause",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2912",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Run now ausschließlich anbieten, wenn ein anderes Projekt vorgezogen wird und sich dadurch die Ausführungsreihenfolge der aktiven Queue tatsächlich ändert. Run now ist kein gewöhnlicher Start- oder Resume-Button.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2913",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Für normale Projektsteuerung Resume und Pause verwenden. Resume muss das pausierte Goal fortsetzen oder die richtige native Session wiederherstellen. Ein bereits laufendes anderes Projekt darf durch normales Resume nicht übergangen werden; niemals zwei Goals gleichzeitig ausführen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2915",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 3. Zuverlässiges Resume und Ladeanimation",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2917",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Den Fall reproduzieren, dass UserTestProject während eines bestehenden OpenAI-Usage-Limits erstellt wurde, noch kein natives /goal hatte und Resume sowie Run now scheinbar nicht reagierten. Dies getrennt von echten Usage-Limits laufender Goals untersuchen. Der Benutzer bestätigte: Das echte Limit war am 23.09.2026 in einer anderen bereits laufenden Codex-CLI-Session erreicht; für UserTestProject muss deshalb kein natives Limit-Ereignis existieren. Keinen fehlenden Goal- oder Limit-Status erfinden.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2918",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Native Session und Goal, Controller/Scheduler, Queue/Admission-Gates, persistierte DB, tmux/TUI, Unsnooze, Dashboard-API/Frontend, Fehlerbehandlung und Aktualisierung vollständig prüfen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2919",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Resume zeigt unmittelbar eine Ladeanimation bis zur bestätigten tatsächlichen Wirkung. HTTP-Erfolg allein ist keine Resume-Bestätigung. Der Controller bestätigt die richtige native Session auf dem Pi und den tatsächlich erreichten Zustand. Ohne Goal die Session korrekt wiederherstellen und die notwendige Eingabe eines ursprünglichen /goal klar anzeigen, keinen Goal-Prompt erfinden.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2920",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Bei echtem Limit den korrekten Limit-Status und verfügbare Reset-Informationen zeigen. Bei anderen Fehlern eine konkrete Fehlermeldung anzeigen. Geeignete Timeouts, keine endlose Ladeanimation, keine doppelten Requests bei wiederholtem Klicken. Angezeigte aktive Session und Projektstatus müssen dem Controller entsprechen; erfolgreich gestartetes/fortgesetztes Goal erscheint als laufendes Projekt. Regressionstests ergänzen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2922",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 4. Echte Usage-Limits, Discord und Unsnooze",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2924",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Den vollständigen nativen Goal-Status -> Controller -> Scheduler -> DB -> Dashboard -> Discord -> Unsnooze-Pfad untersuchen. Autoritatives usageLimited korrekt persistieren, niemals allein aus Inaktivität ableiten. Verfügbare Reset-Informationen speichern und anzeigen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2925",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Für dasselbe Limit-Ereignis genau eine Discord-Statusnachricht mit betroffenem Projekt, Status und bekanntem Reset senden; Crash-Recovery und doppelte Erkennung berücksichtigen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2926",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Nach tatsächlichem Reset darf die bestehende Unsnooze-Integration ausschließlich die weiterhin berechtigte richtige Session über natives /goal resume fortsetzen. Pausierte, gelöschte oder wegen erforderlicher Nutzerentscheidung blockierte Projekte niemals automatisch fortsetzen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2928",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 5. Sichere Löschung",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2930",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Paused- und usageLimited-Projekte müssen ohne verfügbare Codex-Nutzung über den vorhandenen sicheren Lifecycle löschbar sein. Delete darf nicht an einem ausstehenden Resume scheitern.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2931",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Ausstehende Resume-/Unsnooze-Aufträge abbrechen, Sessions quieszent machen und gegebenenfalls archivieren, Discord-Channel entsprechend bestehender Semantik entfernen, DB-/Session-Mappings und Queue bereinigen. Bestehende GitHub-Aufbewahrung, Backups und Recovery-Garantien erhalten. Gelöschte Projekte dürfen nach Crash, Reset, Unsnooze oder Scheduler-Lauf niemals wieder starten.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2933",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 6. Natives /model und Sandbox",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2935",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Den Fehler \"config/batchWrite failed: This operation bypasses the CodexPi single-project queue\" beheben. Nur für legitime Modell-/Reasoning-Auswahl notwendige Config-Schreibvorgänge zulassen, keine beliebigen Writes und keine Abschwächung von Queue, Sicherheits- oder Persistenzgarantien.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2936",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Regressionstests sowie echten Modellwechsel in einer tatsächlich verbundenen gemappten CodexPi-TUI ausführen. Bubblewrap-Warnung auf dem Pi untersuchen, Installation/PATH und tatsächliche vorgesehene Sandbox prüfen; keine pauschale Abschaltung von Sicherheitsmaßnahmen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2938",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 7. Vollständige Migration ausgewählter Windows-Projekte - erst ganz am Ende",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2940",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Einen wiederverwendbaren zuverlässigen Migrationsmechanismus bereitstellen. Erst nachdem alle übrigen Anforderungen implementiert und erfolgreich geprüft wurden, zunächst ausschließlich die ausdrücklich ausgewählte lokale Codex-Session 01a072f0-df80-7152-aff3-a5e66960c071 migrieren. Keine wahllose Übernahme anderer Projekte.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2941",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Tatsächlichen Windows-Projektordner und Entwicklungsstand anhand der nativen Session ermitteln. Originaldateien und bisherigen Windows-Stand weder löschen noch überschreiben.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2942",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Alle relevanten Dateien, vollständige Git-Historie/Commits, uncommittete Änderungen, vollständigen verfügbaren nativen Verlauf, bisherige Prompts/Entscheidungen/Anforderungen, relevante lokale Projektanweisungen, ursprünglichen Goal-Prompt und aktuellen Goal-Status sowie tatsächlich exportierbaren Arbeitskontext übernehmen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2943",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Keinen fehlenden Kontext erfinden. Vollständig migrierten Verlauf, rekonstruierten Kontext und technisch nicht übertragbare Informationen ausdrücklich unterscheiden und überprüfbar dokumentieren.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2944",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Wiederherstellung ursprünglicher Session-ID und vollständigen nativen Verlaufs bevorzugen und auf dem Pi tatsächlich prüfen. Nur falls plattformübergreifend technisch unmöglich: dokumentierter Fallback mit neuer nativer Session und möglichst vollständigem überprüfbarem Kontexttransfer.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2945",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Projekt in bestehende Pi-Struktur übernehmen, privates GitHub-Repository erstellen/verknüpfen und Discord-Projektchannel gemäß Architektur anlegen. Zentralen DB-Eintrag einschließlich Session-Mapping, Projektpfad, Goal-Status und Queue-Position vollständig registrieren.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2946",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Projekt muss im Dashboard erscheinen und regulär pausierbar, fortsetzbar und verwaltbar sein. Unabgeschlossenes ursprüngliches Goal muss mit bisherigem Kontext weiterentwickelbar sein. Keine zweite parallele AI-Session; bestehende Single-Project-Architektur respektieren.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2948",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 8. Abschließende Verifikation und Veröffentlichung",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2950",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Reale CodexPi-Projekte und tatsächliche native Sessions zusätzlich zu automatisierten Regressionstests verwenden. Resume mit verfügbarer Nutzung und bei echtem ausgeschöpftem Limit, Anzeige des laufenden Projekts, Queue-Wechsel via Run now, Delete bei paused/usageLimited, Discord, Unsnooze/Session-Wiederherstellung, native Modellwechsel sowie Vollständigkeit/Wiederherstellbarkeit der Migration prüfen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2951",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Migration erst nach erfolgreicher Prüfung aller übrigen Funktionen durchführen. Ergebnisse und verbleibende Einschränkungen dokumentieren. Vollständigen Requirement-Audit gegen ursprüngliche Spezifikation und alle Ergänzungen durchführen. Alle Änderungen committen/pushen und relevante GitHub-Actions-Ergebnisse prüfen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2952",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Goal erst als complete markieren, wenn alle technisch möglichen Anforderungen umgesetzt und verifiziert sind.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2954",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "## 9. Konkreter Infrastructure-Resume-Fehler",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2956",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Die rote Meldung unter Infrastructure -> Raspberry Pi \"TUI did not acknowledge /goal resume; manual inspection required\" bei gleichzeitig online angezeigtem Pi untersuchen und beheben. tmux-Session, nativen TUI-Zustand, Übermittlung von /goal resume, Codex-Bestätigung, Race Conditions und Timeouts prüfen.",
+      "status": "pending",
+      "evidence": [
+        "docs/lifecycle-fixes-20260923.md: empty-goal stale resume reproduced; update-prompt startup interruption reproduced; scoped fixes deployed; live mapped TUI restoration and actual native goal execution confirmed; genuine provider-limit/reset end-to-end remains pending"
+      ]
+    },
+    {
+      "id": "L2957",
+      "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
+      "text": "Richtige Session zuverlässig wiederherstellen und fortsetzen. Echte Usage-Limit-Verhinderung als usageLimited mit Reset-Warten statt generischem Infrastrukturfehler anzeigen. Unbegrenzte Resume-Versuche und doppelte /goal resume-Aufrufe verhindern. Regressionstests und möglichst echte TUI-Verifikation durchführen. Diese Anforderung dauerhaft in Goal-Datei und Requirement-Audit führen, kein neues Goal erstellen.",
       "status": "pending",
       "evidence": []
     }

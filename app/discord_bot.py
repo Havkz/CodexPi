@@ -49,7 +49,7 @@ def status_embed(controller, project, event, payload):
     elif kind == 'usage limited':
         tracked = next((s for s in controller.unsnooze.get('sessions', [])
                         if s.get('sessionId') == project['codex_session_id']), {})
-        reset = tracked.get('resetAt')
+        reset = (payload.get('usage_limit') or json.loads(project.get('usage_limit') or '{}')).get('resetAt') or tracked.get('resetAt')
         lines.append('│ Reset: ' + (f'<t:{int(reset / 1000)}:F>' if reset else '`unknown`'))
     if kind != 'complete':
         lines.append('│ Session: ' + code(project['codex_session_id']))
@@ -157,7 +157,10 @@ class Bot(discord.Client):
 
     async def send_pending(self):
         pending = self.controller.db.conn.execute(
-            'SELECT * FROM events WHERE sent_at IS NULL ORDER BY event_id LIMIT 10').fetchall()
+            """SELECT * FROM events WHERE sent_at IS NULL OR (kind='usage limited'
+               AND json_extract(payload,'$.usage_limit.resetAt') IS NOT NULL
+               AND json_extract(payload,'$.reset_notified') IS NULL)
+               ORDER BY event_id LIMIT 10""").fetchall()
         for event in pending:
             project = self.controller.db.get(event['project_id'])
             if not project['discord_channel_id']:
@@ -170,14 +173,20 @@ class Bot(discord.Client):
                                                (json.dumps(payload), event['event_id']))
             # Stable footer lets crash recovery recognize a message sent before its DB ACK.
             marker = f'CodexPi event {event["event_id"]}'
-            found = False
-            async for old in channel.history(limit=50):
+            found = None
+            async for old in channel.history(limit=None, after=datetime.fromtimestamp(event['created_at'] - 1, timezone.utc)):
                 if old.author.id == self.user.id and (old.content.endswith(marker) or any(
                         embed.footer.text == f'CodexPi • Event {event["event_id"]}' for embed in old.embeds)):
-                    found = True
+                    found = old
                     break
-            if not found:
+            if not found and event['sent_at'] is None:
                 await channel.send(embed=status_embed(self.controller, project, event, payload),
                                    view=CloseView(self) if event['kind'] == 'complete' else None)
+            elif found and payload.get('usage_limit') and not payload.get('reset_notified'):
+                await found.edit(embed=status_embed(self.controller, project, event, payload))
+            if payload.get('usage_limit'):
+                payload['reset_notified'] = True
             self.controller.db.conn.execute('UPDATE events SET sent_at=? WHERE event_id=?',
                                            (time.time(), event['event_id']))
+            self.controller.db.conn.execute('UPDATE events SET payload=? WHERE event_id=?',
+                                           (json.dumps(payload), event['event_id']))

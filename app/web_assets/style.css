@@ -172,3 +172,6 @@ input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var
   .detail-grid .metadata { grid-template-columns: 1fr; }
   .login-card { padding: 28px; }
 }
+.loading::before { content: ''; display: inline-block; width: .85em; height: .85em; margin-right: .5em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: resume-spin .8s linear infinite; }
+@keyframes resume-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .loading::before { animation: none; } }

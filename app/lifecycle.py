@@ -70,7 +70,8 @@ def save(controller, project, operation, phase):
 async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=False):
     async with controller.lock:
         project = controller.db.get(ident)
-        if project['lifecycle'] != 'ready' or project['operation']:
+        pending = json.loads(project['operation'] or '{}')
+        if project['lifecycle'] != 'ready' or (pending and not (kind == 'delete' and pending.get('kind') == 'resume')):
             raise ValueError('Project already has a pending operation; wait for recovery')
         path = owned_path(controller, project, project['project_path'])
         if not path.exists():
@@ -157,6 +158,9 @@ async def finish(controller, project):
             raise RuntimeError('Project tmux session did not stop')
         if session:
             await controller.native.rpc('thread/unsubscribe', {'threadId': session})
+            # The wrapper can register a final stop while its pane exits. Refresh
+            # after quiescing; never rely on the scheduler's older cached records.
+            await controller.cancel_wakes(project, refresh=True)
         save(controller, project, operation, 'quiesced')
     if kind == 'rename':
         new = operation['new']
@@ -230,8 +234,7 @@ async def finish(controller, project):
                     controller.db.set_setting('selected', None)
                 controller.db.set_setting('deleted/' + ident, {'backup': operation['backup'], 'repo': old['github_repo']})
                 controller.db.conn.execute('DELETE FROM projects WHERE project_id=?', (ident,))
-                for index, row in enumerate((p for p in controller.db.all() if p['queue_position'] is not None), 1):
-                    controller.db.update(row['project_id'], queue_position=index)
+                controller.db.compact_queue()
 
 
 async def recover(controller):

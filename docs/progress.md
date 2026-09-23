@@ -101,6 +101,14 @@ because a related file exists. The dashboard password is deliberately omitted.
 
 ## Work still required
 
+2026-09-23 lifecycle repair: see `lifecycle-fixes-20260923.md` for reproduced
+causes, deployed fixes, 27-test Windows/26-test Pi evidence, live empty-session
+restoration, real native goal execution/completion, live paused deletion with
+pending resume, native `/model`, and sandbox enforcement. The original
+specification was preserved and extended to include all new requirements.
+Genuine provider-limit/reset end-to-end verification and the explicitly delayed
+Windows project migration remain pending; no synthetic limit is claimed live.
+
 The dark dashboard redesign is deployed and has incremental live desktop/mobile
 and synthetic interaction evidence in `docs/design-verification.md`. A genuine
 browser form-login Origin defect was found and repaired without weakening the

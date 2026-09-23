@@ -145,12 +145,13 @@ async def state(request):
          'checked_at': now - (time.monotonic() - git_poll) if git_poll else None,
          'detail': controller.config['github_account'] + ' · private repositories', 'error': errors.get('github')},
         {'name': 'Discord', 'status': 'online' if controller.bot and controller.bot.is_ready() else 'offline',
-         'checked_at': now, 'detail': 'Project notifications'},
+         'checked_at': now, 'detail': 'Project notifications', 'error': errors.get('discord')},
         {'name': 'Unsnooze', 'status': 'online' if controller.unsnooze.get('daemonRunning') else 'offline',
          'checked_at': now - (time.monotonic() - unsnooze_poll) if unsnooze_poll else None,
          'detail': 'Selective wake · queue position 1', 'error': errors.get('unsnooze')},
     ]
     payload = {'projects': controller.db.all(), 'selected': controller.db.setting('selected'),
+        'account_usage': controller.db.setting('account_usage', {}),
         'pause_all': controller.db.setting('pause_all', False), 'windows_online': controller.windows_online,
         'discord_online': bool(controller.bot and controller.bot.is_ready()),
         'unsnooze': controller.unsnooze, 'github_account': controller.config['github_account'],
@@ -221,7 +222,7 @@ async def action(request):
             response.set_status(409)
             return response
     elif action_name in ('run-now', 'resume'):
-        await controller.run_now(ident)
+        return safe_json(controller, await controller.resume(ident, promote=action_name == 'run-now'))
     elif action_name == 'pause':
         async with controller.lock:
             project = controller.db.get(ident)

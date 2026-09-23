@@ -80,19 +80,32 @@ class Controller:
 
     def record_goal(self, project, goal):
         status = NATIVE_STATUS[goal['status']]
-        self.db.update(project['project_id'], goal_status=status, last_activity=time.time())
-        if status != project['goal_status'] and status in ('stalled', 'usage limited', 'limited by budget'):
-            self.db.event(project['project_id'], status, {'reason': project['block_reason']})
+        self.record_status(project, status, last_activity=time.time())
         if status == 'active':
-            self.db.update(project['project_id'], operation=None)
             if project['goal_status'] != 'active':
                 self.clear_block(project)
         if status == 'paused' and self.db.setting('selected') == project['project_id']:
             self.db.set_setting('selected', None)
 
+    def record_status(self, project, status, **fields):
+        # State and notification outbox must survive (or roll back) together,
+        # including changes first observed during restart recovery.
+        operation = json.loads(project['operation'] or '{}')
+        changed = status != project['goal_status']
+        if status != 'usage limited' or changed:
+            fields['usage_limit'] = None
+        if status in ('stalled', 'usage limited', 'limited by budget') and changed and operation.get('kind') == 'resume':
+            fields['operation'] = None
+            fields['resume_result'] = json.dumps({'id': operation.get('id'), 'status': status,
+                'message': 'Native goal reports ' + status})
+        with self.db.transaction():
+            self.db.update(project['project_id'], goal_status=status, **fields)
+            if changed and status in ('stalled', 'usage limited', 'limited by budget'):
+                self.db.event(project['project_id'], status, {'reason': fields.get('block_reason', project['block_reason'])})
+
     def clear_block(self, project):
         (Path(project['project_path']) / '.codexpi/block.json').unlink(missing_ok=True)
-        self.db.update(project['project_id'], block_reason=None, windows_required=0, operation=None)
+        self.db.update(project['project_id'], block_reason=None, windows_required=0)
 
     async def create(self, name):
         name = name.strip()
@@ -200,6 +213,7 @@ class Controller:
         if await self.pane_exists(project):
             return
         args = ['env', 'UNSNOOZE_AUTO_RESUME=false', '/home/raspberry/.local/bin/unsnooze', '_run', 'codex',
+                '-c', 'check_for_update_on_startup=false',
                 '--remote', 'unix://' + str(self.root / 'state/tui.sock'),
                 '--no-alt-screen', 'resume', project['codex_session_id']]
         dead = await command('tmux', 'has-session', '-t', '=' + project['tmux_session_name'], check=False)
@@ -229,7 +243,11 @@ class Controller:
         # Interrupt that turn and confirm native idleness before releasing the single-worker slot.
         await self.wait_idle(project)
         if not preserve_operation:
-            self.db.update(project['project_id'], operation=None)
+            operation = json.loads(project['operation'] or '{}')
+            if operation.get('kind') == 'resume':
+                self.finish_resume(project, operation, 'cancelled', 'Resume cancelled by pause')
+            else:
+                self.db.update(project['project_id'], operation=None)
         if release and self.db.setting('selected') == project['project_id']:
             self.db.set_setting('selected', None)
         await self.cancel_wakes(project)
@@ -253,29 +271,61 @@ class Controller:
             await asyncio.sleep(0.2)
 
     async def run_now(self, project_id):
+        return await self.resume(project_id, promote=True)
+
+    async def resume(self, project_id, *, promote=False):
         async with self.lock:
             project = self.db.get(project_id)
             if project['lifecycle'] != 'ready':
                 raise ValueError('Project lifecycle recovery must finish before resuming')
             if project['goal_status'] == 'complete':
                 raise ValueError('Completed goals are never automatically restarted')
+            operation = json.loads(project['operation'] or '{}')
+            if (operation.get('kind') == 'resume' and not operation.get('error')
+                    and (not promote or self.db.setting('selected') == project_id)):
+                return {'ok': True, 'operation_id': operation.get('id')}
+            if operation and operation.get('kind') != 'resume':
+                raise ValueError('Project has a pending lifecycle operation')
+            if promote and (project['queue_position'] in (None, 1) or self.db.setting('selected') == project_id):
+                raise ValueError('Run now is only available when promoting another queued project')
+            goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+            if goal and goal['status'] == 'complete':
+                raise ValueError('Completed goals are never automatically restarted')
             selected = self.db.setting('selected')
-            if selected and selected != project_id:
+            if promote and selected and selected != project_id:
                 await self.pause(self.db.get(selected))
+                selected = None
+            operation = {'kind': 'resume', 'id': str(uuid.uuid4()), 'requested_at': time.time()}
+            if not promote and ((selected and selected != project_id) or project['queue_position'] != 1):
+                self.db.update(project_id, operation=json.dumps(operation), resume_result=json.dumps({
+                    'id': operation['id'], 'status': 'queued', 'message': 'Queued; the current project keeps its execution slot'}))
+                return {'ok': True, 'operation_id': operation['id']}
             self.db.set_setting('pause_all', False)
-            self.select(project_id)
-            await self.attach_ready(project)
+            if promote:
+                self.select(project_id)
+            else:
+                self.db.set_setting('selected', project_id)
             # Readiness is supplied by the native TUI's successful resume RPC, not a screen guess.
-            self.db.update(project_id, operation=json.dumps({'kind': 'resume', 'requested_at': time.time()}))
+            self.db.update(project_id, operation=json.dumps(operation), resume_result=None)
+            return {'ok': True, 'operation_id': operation['id']}
 
-    async def cancel_wakes(self, project):
+    def finish_resume(self, project, operation, status, message):
+        self.db.update(project['project_id'], operation=None, resume_result=json.dumps({
+            'id': operation.get('id'), 'status': status, 'message': message}))
+
+    async def cancel_wakes(self, project, *, refresh=False):
+        if refresh:
+            self.unsnooze = json.loads((await command('unsnooze', 'status', '--json'))['stdout'])
         for item in self.unsnooze.get('sessions', []):
             if item.get('sessionId') == project['codex_session_id'] and item['status'] not in ('cancelled', 'resumed'):
-                await command('unsnooze', 'cancel', item['key'], check=False)
+                await command('unsnooze', 'cancel', item['key'])
+                item['status'] = 'cancelled'
 
     async def recover(self):
         from .lifecycle import recover
         await recover(self)
+        with self.db.transaction():
+            self.db.compact_queue()
         rows = self.source.rows()
         selected = self.db.setting('selected')
         if self.db.setting('pause_all', False):
@@ -293,7 +343,12 @@ class Controller:
                 continue
             row = rows.get(project['codex_session_id'])
             if row:
-                self.db.update(project['project_id'], goal_status=row['status'])
+                # Completion still passes the existing Git/CI verification gate.
+                if row['status'] == 'complete':
+                    if project['goal_status'] != 'complete' or not project['completion_notified']:
+                        await self.complete(project)
+                else:
+                    self.record_status(project, row['status'])
         selected = self.db.setting('selected')
         if selected and not self.db.setting('pause_all', False):
             project = self.db.get(selected)
@@ -301,7 +356,8 @@ class Controller:
                 logging.getLogger('recovery').warning('Lifecycle journal retains selected project until quiescent')
             elif project['goal_status'] == 'active':
                 await self.attach_ready(project)
-                self.db.update(selected, operation=json.dumps({'kind': 'resume', 'requested_at': time.time()}))
+                if not project['operation']:
+                    self.db.update(selected, operation=json.dumps({'kind': 'resume', 'id': str(uuid.uuid4()), 'requested_at': time.time()}))
             elif project['goal_status'] == 'usage limited':
                 await self.attach_ready(project)
         logging.getLogger('recovery').info('SQLite and native goals reconciled')
@@ -334,10 +390,8 @@ class Controller:
                 elif reason or block.exists() or project['windows_required']:
                     self.clear_block(project)
                 continue
-            self.db.update(project['project_id'], goal_status=status, block_reason=reason,
+            self.record_status(project, status, block_reason=reason,
                            last_activity=row.get('updated_at_ms', 0) / (1000 if row.get('updated_at_ms', 0) > 1e12 else 1))
-            if status != old and status in ('stalled', 'usage limited', 'limited by budget'):
-                self.db.event(project['project_id'], status, {'reason': reason})
             operation = json.loads(project['operation'] or '{}')
             if (status == 'paused' and self.db.setting('selected') == project['project_id']
                     and operation.get('kind') != 'resume'):
@@ -364,10 +418,14 @@ class Controller:
             return
         self.clear_block(project)
         with self.db.transaction():
+            operation = json.loads(project['operation'] or '{}')
+            if operation.get('kind') == 'resume':
+                self.finish_resume(project, operation, 'complete', 'Native goal completed and final checks passed')
             self.db.update(project['project_id'], goal_status='complete', queue_position=None,
                            completion_notified=1, operation=None)
             self.db.event(project['project_id'], 'complete', {'repo': project['github_repo'],
                           'commit': project['last_commit'], 'ci': project['last_ci_status']})
+            self.db.compact_queue()
             if self.db.setting('selected') == project['project_id']:
                 self.db.set_setting('selected', None)
                 self.db.set_setting('advance_queue', True)
@@ -411,7 +469,9 @@ class Controller:
                         if next_project:
                             self.select(next_project['project_id'])
                             await self.attach_ready(next_project)
-                            self.db.update(next_project['project_id'], operation=json.dumps({'kind': 'resume', 'requested_at': time.time()}))
+                            operation = json.loads(next_project['operation'] or '{}')
+                            self.db.update(next_project['project_id'], operation=json.dumps({**operation, 'kind': 'resume',
+                                'id': operation.get('id') or str(uuid.uuid4()), 'requested_at': time.time()}), resume_result=None)
                     await self.resume_ready()
                     await self.selective_wake()
                     await self.release_idle_tuis()
@@ -424,14 +484,20 @@ class Controller:
                         raise
                     self.health_errors.pop('github', None)
                     self.last_git_poll = time.monotonic()
-                if self.bot and self.bot.is_ready():
-                    await self.bot.send_pending()
                 self.health_errors.pop('scheduler', None)
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
                 self.health_errors['scheduler'] = self.redactor.clean(str(exc))
                 logging.getLogger('scheduler').error('%s', self.redactor.clean(str(exc)))
+            # Unrelated Git, TUI, or Unsnooze failures must not starve the outbox.
+            try:
+                if self.bot and self.bot.is_ready():
+                    async with self.lock:
+                        await self.bot.send_pending()
+                self.health_errors.pop('discord', None)
+            except Exception as exc:
+                self.health_errors['discord'] = self.redactor.clean(str(exc))
             await asyncio.sleep(2)
 
     async def resume_ready(self):
@@ -442,24 +508,51 @@ class Controller:
             if (project['lifecycle'] != 'ready' or operation.get('kind') != 'resume'
                     or self.db.setting('selected') != project['project_id']):
                 continue
-            if operation.get('source') == 'unsnooze':
-                if project['queue_position'] != 1:
-                    self.db.update(project['project_id'], operation=None)
-                    continue
-                # Consume the detector record only after journaling the wake. The normal
-                # mapped TUI path survives a missing pane/reboot without an argv prompt.
-                await self.cancel_wakes(project)
-            connections = self.tui_connections.get(project['project_id'], {})
-            if not connections or time.monotonic() - min(connections.values()) < 1:
-                await self.attach_ready(project)
+            if operation.get('error'):
                 continue
-            if operation.get('sent_at'):
-                if time.time() - operation['sent_at'] > 30:
-                    raise RuntimeError('TUI did not acknowledge /goal resume; manual inspection required')
-                continue
-            await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Escape')
-            await self.slash(project, '/goal resume')
-            self.db.update(project['project_id'], operation=json.dumps({**operation, 'sent_at': time.time()}))
+            try:
+                goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+                if operation.get('source') == 'unsnooze':
+                    reason = json.loads(project['block_reason'] or '{}')
+                    if project['queue_position'] != 1 or reason.get('requires_user'):
+                        self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
+                        continue
+                    await self.cancel_wakes(project)
+                connections = self.tui_connections.get(project['project_id'], {})
+                ready = connections and time.monotonic() - min(connections.values()) >= 1
+                if ready and await self.pane_exists(project):
+                    thread = (await self.native.rpc('thread/read', {
+                        'threadId': project['codex_session_id'], 'includeTurns': False}))['thread']
+                    if thread['id'] != project['codex_session_id'] or thread['cwd'] != project['project_path']:
+                        raise RuntimeError('Restored native session identity or workspace does not match the project')
+                    if not goal:
+                        self.finish_resume(project, operation, 'restored', 'Session restored. No native goal exists; enter /goal in this project TUI.')
+                        continue
+                    if goal['status'] == 'active' and thread['status']['type'] == 'active':
+                        self.record_goal(project, goal)
+                        self.finish_resume(project, operation, 'active', 'Native goal is running in the mapped session')
+                        continue
+                    if goal['status'] in ('usageLimited', 'blocked', 'budgetLimited') and operation.get('sent_at'):
+                        self.record_goal(project, goal)
+                        self.finish_resume(project, operation, NATIVE_STATUS[goal['status']], 'Native goal reports ' + NATIVE_STATUS[goal['status']])
+                        continue
+                    if goal['status'] == 'complete':
+                        self.finish_resume(project, operation, 'verifying', 'Native goal has completed; final Git/CI verification is handled separately')
+                        continue
+                    if not operation.get('sent_at'):
+                        # Journal before sending: a crash must not repeat a potentially delivered slash.
+                        operation['sent_at'] = time.time()
+                        self.db.update(project['project_id'], operation=json.dumps(operation))
+                        await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Escape')
+                        await self.slash(project, '/goal resume')
+                elif not operation.get('sent_at'):
+                    await self.attach_ready(project)
+                if time.time() - operation.get('sent_at', operation['requested_at']) > 60:
+                    raise RuntimeError('Resume timed out: mapped TUI did not confirm a running goal or restored session; inspect the project TUI before retrying')
+            except Exception as exc:
+                operation['error'] = self.redactor.clean(str(exc))
+                self.db.update(project['project_id'], operation=json.dumps(operation), resume_result=json.dumps({
+                    'id': operation.get('id'), 'status': 'failed', 'message': operation['error']}))
 
     async def release_idle_tuis(self):
         if time.monotonic() - self.last_idle_cleanup < 10:
@@ -493,6 +586,14 @@ class Controller:
         interval = 10 if project and project['goal_status'] == 'usage limited' else 60
         if time.monotonic() - self.last_unsnooze_poll < interval:
             return
+        # Account availability is metadata, never a substitute for native goal status.
+        try:
+            limits = await self.native.rpc('account/rateLimits/read', {}, timeout=15)
+            self.db.set_setting('account_usage', {key: limits.get(key) for key in
+                ('ordinaryUsageAllowed', 'rateLimits', 'rateLimitsByLimitId')} | {'checked_at': time.time()})
+            self.health_errors.pop('account_usage', None)
+        except Exception as exc:
+            self.health_errors['account_usage'] = self.redactor.clean(str(exc))
         try:
             status = await command('unsnooze', 'status', '--json')
         except Exception as exc:
@@ -501,10 +602,13 @@ class Controller:
         self.health_errors.pop('unsnooze', None)
         self.unsnooze = json.loads(status['stdout'])
         self.last_unsnooze_poll = time.monotonic()
+        self.persist_usage_resets()
         if not selected or self.db.setting('pause_all', False):
             return
         if (project['lifecycle'] != 'ready' or project['operation'] or
                 project['goal_status'] != 'usage limited' or project['queue_position'] != 1):
+            return
+        if json.loads(project['block_reason'] or '{}').get('requires_user'):
             return
         for item in self.unsnooze.get('sessions', []):
             if (item.get('sessionId') == project['codex_session_id'] and item['status'] == 'stopped'
@@ -514,9 +618,34 @@ class Controller:
                 # pane using `codex resume ID MESSAGE`, bypassing the slash command
                 # and our admission gate. Reuse our durable mapped-TUI resume instead.
                 self.db.update(selected, operation=json.dumps({'kind': 'resume',
-                    'source': 'unsnooze', 'requested_at': time.time(),
+                    'id': str(uuid.uuid4()), 'source': 'unsnooze', 'requested_at': time.time(),
                     'reset_at': item['resetAt'], 'unsnooze_key': item['key']}))
                 break
+
+    def persist_usage_resets(self):
+        account = self.db.setting('account_usage', {})
+        limits = account.get('rateLimits') or {}
+        resets = [w['resetsAt'] * 1000 for w in (limits.get('primary'), limits.get('secondary'))
+                  if w and w.get('usedPercent', 0) >= 100 and w.get('resetsAt')]
+        for project in self.db.all():
+            if project['lifecycle'] != 'ready' or project['goal_status'] != 'usage limited':
+                continue
+            tracked = next((s for s in self.unsnooze.get('sessions', []) if
+                s.get('sessionId') == project['codex_session_id'] and s.get('status') == 'stopped'
+                and s.get('resetSource') != 'fallback' and s.get('resetAt')), None)
+            metadata = ({'resetAt': tracked['resetAt'], 'resetSource': 'unsnooze'} if tracked else
+                        {'resetAt': max(resets), 'resetSource': 'native-account'} if resets else None)
+            if metadata:
+                with self.db.transaction():
+                    self.db.update(project['project_id'], usage_limit=json.dumps(metadata))
+                    event = self.db.conn.execute("SELECT event_id,payload FROM events WHERE project_id=? AND kind='usage limited' ORDER BY event_id DESC LIMIT 1",
+                        (project['project_id'],)).fetchone()
+                    if event:
+                        payload = json.loads(event['payload'])
+                        if payload.get('usage_limit') != metadata:
+                            payload.pop('reset_notified', None)
+                        payload['usage_limit'] = metadata
+                        self.db.conn.execute('UPDATE events SET payload=? WHERE event_id=?', (json.dumps(payload), event['event_id']))
 
     async def close(self):
         if self.task:

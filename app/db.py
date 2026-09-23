@@ -51,13 +51,18 @@ class Database:
         self.conn.execute('PRAGMA synchronous=FULL')
         self.conn.execute('PRAGMA foreign_keys=ON')
         version = self.conn.execute('PRAGMA user_version').fetchone()[0]
-        if version > 1:
+        if version > 2:
             raise RuntimeError('Database was created by a newer CodexPi version')
         if version == 0:
             with self.transaction():
                 for statement in SCHEMA:
                     self.conn.execute(statement)
                 self.conn.execute('PRAGMA user_version=1')
+        if version < 2:
+            with self.transaction():
+                self.conn.execute('ALTER TABLE projects ADD COLUMN usage_limit TEXT')
+                self.conn.execute('ALTER TABLE projects ADD COLUMN resume_result TEXT')
+                self.conn.execute('PRAGMA user_version=2')
 
     @contextlib.contextmanager
     def transaction(self):
@@ -111,6 +116,10 @@ class Database:
     def event(self, project_id, kind, payload):
         self.conn.execute('INSERT INTO events(project_id,kind,payload,created_at) VALUES (?,?,?,?)',
                           (project_id, kind, json.dumps(payload), time.time()))
+
+    def compact_queue(self):
+        for position, project in enumerate((p for p in self.all() if p['queue_position'] is not None), 1):
+            self.update(project['project_id'], queue_position=position)
 
     def backup(self, directory, keep=7):
         directory = Path(directory)
