@@ -174,7 +174,8 @@ class Bot(discord.Client):
             # Stable footer lets crash recovery recognize a message sent before its DB ACK.
             marker = f'CodexPi event {event["event_id"]}'
             found = None
-            async for old in channel.history(limit=None, after=datetime.fromtimestamp(event['created_at'] - 1, timezone.utc)):
+            # No local-time cutoff: Pi/Discord clock skew must not defeat crash deduplication.
+            async for old in channel.history(limit=None):
                 if old.author.id == self.user.id and (old.content.endswith(marker) or any(
                         embed.footer.text == f'CodexPi • Event {event["event_id"]}' for embed in old.embeds)):
                     found = old

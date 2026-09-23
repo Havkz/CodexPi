@@ -82,6 +82,7 @@ class DiscordTests(unittest.IsolatedAsyncioTestCase):
             history = []
             async def messages(**kwargs):
                 self.assertIsNone(kwargs['limit'])
+                self.assertNotIn('after', kwargs)
                 for old in history:
                     yield old
             async def send(**kwargs):

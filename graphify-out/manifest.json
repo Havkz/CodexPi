@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
-    "mtime": 1790168753.7821455,
-    "ast_hash": "f09d3b5bc3cb6f5f824c76f41bad63d6",
+    "mtime": 1790186007.3140528,
+    "ast_hash": "bd5f0a291e6d8c84f436d999dce5d11e",
     "semantic_hash": ""
   },
   "app/main.py": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1790168050.9194214,
-    "ast_hash": "3d179661b165e006d9b23c8e4395e668",
+    "mtime": 1790185893.0184813,
+    "ast_hash": "10053a9c71935d615a4c3f709ed98f1a",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1789968383.8515875,
-    "ast_hash": "2cf3c4bde01b55fae2f439969daea40d",
+    "mtime": 1790185796.5216844,
+    "ast_hash": "9d20e9747ed491b1e0b2db4ea7241e3c",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "tests/test_discord.py": {
-    "mtime": 1790168753.7833679,
-    "ast_hash": "99f2ede1c0d55c67ca928e2fc434a415",
+    "mtime": 1790186007.3140528,
+    "ast_hash": "194551b64e153397ba8c5d7cb7415d25",
     "semantic_hash": ""
   },
   "docs/design-verification.md": {
@@ -285,8 +285,8 @@
     "semantic_hash": ""
   },
   "docs/lifecycle-fixes-20260923.md": {
-    "mtime": 1790185697.1874273,
-    "ast_hash": "26c5d5a3dba79cc5b15a4b4d548c0d6d",
+    "mtime": 1790185923.2035384,
+    "ast_hash": "314c833530b85c3e3825357c8a745cab",
     "semantic_hash": ""
   }
 }
