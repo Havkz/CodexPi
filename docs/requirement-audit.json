@@ -4884,29 +4884,37 @@
       "id": "L1052",
       "section": "21. PROJEKTABSCHLUSS / DATEISYSTEM",
       "text": "* DB `project_path` aktualisieren",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/deployment.md: live native deployment preserved session identity and verified moved DB/native cwd; crash-boundary regression tests"
+      ]
     },
     {
       "id": "L1053",
       "section": "21. PROJEKTABSCHLUSS / DATEISYSTEM",
       "text": "* erforderlichen systemd Service einrichten",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/deployment.md: real user systemd service and HTTP health passed; controller restart preserved PID; deployed rename/delete passed"
+      ]
     },
     {
       "id": "L1054",
       "section": "21. PROJEKTABSCHLUSS / DATEISYSTEM",
       "text": "* nur EIN finaler produktiver Projektordner",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/deployment.md: owned same-filesystem move, live destination and old-directory absence checked; no second working copy"
+      ]
     },
     {
       "id": "L1055",
       "section": "21. PROJEKTABSCHLUSS / DATEISYSTEM",
       "text": "* kein unnötiges Duplikat unter `~/CodexPi/projects`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Setup/verify-deployment.py and docs/deployment.md: old projects/slug directory absent after genuine native completion/deployment"
+      ]
     },
     {
       "id": "L1057",

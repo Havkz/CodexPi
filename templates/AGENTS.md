@@ -42,6 +42,17 @@ test, commit, push, and verify relevant CI. A clean Git tree alone is insufficie
 Default: retain this working directory. If the goal explicitly requires a 24/7
 Pi service, use the CodexPi deployment operation to move the sole final working
 copy to /home/raspberry/<slug>, update the DB path and install/test its systemd unit.
+While this native goal is active, register the deployment with:
+`codexpi-tool deploy-pi --goal-requires-24x7 --reason "specific goal requirement" --health-command "python3 healthcheck.py" -- python3 service.py`
+Use project-relative file arguments and an idempotent, read-only health check
+that fails if the actual application is not ready. No shell is used. Keep secrets
+in .env, never argv. This schedules delivery; it does not claim a running service.
+Finish tests, commit, push and complete the native goal. The controller then checks
+Git/CI, quiesces the session, moves its directory, updates its native cwd and starts
+the user service. Complete is only published after the health check passes.
+On failure the goal is blocked with a concrete reason; resume to repair the same
+session in its new folder. Existing deployed services are stopped before rename
+or deletion, and their stable project-ID unit is retained across rename.
 If the goal explicitly requires Windows delivery, use a final worker checkout and
 build/install job under C:\CodexPi\Projects\<slug>. Keep GitHub as source of truth.
 

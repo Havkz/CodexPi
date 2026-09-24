@@ -101,6 +101,14 @@ because a related file exists. The dashboard password is deliberately omitted.
 
 ## Work still required
 
+2026-09-24: implemented the previously missing explicit Pi deployment operation
+using the existing lifecycle journal. See `deployment.md` for 37-test Windows/
+36-pass-one-skip Pi coverage, crash-boundary simulations and the real native
+goal -> commit/push -> sole-directory move -> systemd -> application health path.
+Controller restart preserved the app process; live dashboard rename/delete of
+that deployed fixture passed with private GitHub/recovery backup retained.
+No ordinary project was deployed or removed, and migration has not begun.
+
 2026-09-23 lifecycle repair: see `lifecycle-fixes-20260923.md` for reproduced
 causes, deployed fixes, 27-test Windows/26-test Pi evidence, live empty-session
 restoration, real native goal execution/completion, live paused deletion with

@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1790186625.4550335,
-    "ast_hash": "5e5d5efb5e21b71a0e3dec05c0ab6a4f",
+    "mtime": 1790257243.0398836,
+    "ast_hash": "28b6a19e208d970cb29b0d4b54fc53a7",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -90,8 +90,8 @@
     "semantic_hash": ""
   },
   "app/main.py": {
-    "mtime": 1789859212.2243364,
-    "ast_hash": "a66ce5f262e269d2361d3d8d6cc177ec",
+    "mtime": 1790256053.8245635,
+    "ast_hash": "0891f9235db0f451257aeb7f3f82c132",
     "semantic_hash": ""
   },
   "app/native.py": {
@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "bin/codexpi-tool": {
-    "mtime": 1789858570.1931462,
-    "ast_hash": "63fe202db38ff716894e412486791525",
+    "mtime": 1790256053.8245635,
+    "ast_hash": "e1d25aa0077f0b48575a4008fad75b61",
     "semantic_hash": ""
   },
   "config/goal-hooks.json": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1790186848.0826292,
-    "ast_hash": "65e7cd7b2fa4c8bc238b9af860be73fb",
+    "mtime": 1790256922.4629087,
+    "ast_hash": "cb017bac6a0887755542573ccce87b61",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1790186832.3948524,
-    "ast_hash": "c7a1a882cfce418cb9774f7c694d23ee",
+    "mtime": 1790257338.8436363,
+    "ast_hash": "f54288eb8b408e634eab73200dd63c0a",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -175,13 +175,13 @@
     "semantic_hash": ""
   },
   "templates/AGENTS.md": {
-    "mtime": 1789839658.2234313,
-    "ast_hash": "eb9950a7fc34af870daaa10414bec55c",
+    "mtime": 1790256053.8245635,
+    "ast_hash": "45e4efb403e5a82a6137a83eda192803",
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1790186625.4550335,
-    "ast_hash": "20bc5fbd19c7b0118d20203b413f52b2",
+    "mtime": 1790257215.0074005,
+    "ast_hash": "1a2f054e6c7b23da30159eb38021a713",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -225,8 +225,8 @@
     "semantic_hash": ""
   },
   "app/lifecycle.py": {
-    "mtime": 1790185697.1874273,
-    "ast_hash": "dc3d984b794bf35474d8b022a4bbacab",
+    "mtime": 1790256053.8220522,
+    "ast_hash": "3962554138f19c675df5bd4af6d599ac",
     "semantic_hash": ""
   },
   "tests/test_lifecycle.py": {
@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "docs/lifecycle.md": {
-    "mtime": 1789927403.4285614,
-    "ast_hash": "6b43a22ff6b78743d9033d049666dc7d",
+    "mtime": 1790256917.8137715,
+    "ast_hash": "e65ae23604e2729d4e7e2de053698380",
     "semantic_hash": ""
   },
   "Setup/verify-live-resume.py": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "Setup/verify-lifecycle-fixes.py": {
-    "mtime": 1790169253.0038424,
-    "ast_hash": "d1585c846c468144e6a2d82a256be9b6",
+    "mtime": 1790257038.7356021,
+    "ast_hash": "29fdaf2994b015035583d3dd5335edc4",
     "semantic_hash": ""
   },
   "Setup/verify-sandbox.py": {
@@ -287,6 +287,26 @@
   "docs/lifecycle-fixes-20260923.md": {
     "mtime": 1790186832.394337,
     "ast_hash": "bd63ad145a5e46258ed822c0c499fc3f",
+    "semantic_hash": ""
+  },
+  "app/deployment.py": {
+    "mtime": 1790256375.253176,
+    "ast_hash": "86bcd0c888b4689df1e7c54c447b97a3",
+    "semantic_hash": ""
+  },
+  "tests/test_deployment.py": {
+    "mtime": 1790256706.8037405,
+    "ast_hash": "fcf9aab9b778a878a11ef5963df4d739",
+    "semantic_hash": ""
+  },
+  "Setup/verify-deployment.py": {
+    "mtime": 1790256766.556825,
+    "ast_hash": "db5c03f41a3712affffaab18c73f626b",
+    "semantic_hash": ""
+  },
+  "docs/deployment.md": {
+    "mtime": 1790257338.8425915,
+    "ast_hash": "79d7245ff4847a7e9d83ab94e27de53e",
     "semantic_hash": ""
   }
 }

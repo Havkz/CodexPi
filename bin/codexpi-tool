@@ -3,6 +3,7 @@ import argparse
 import asyncio
 import json
 from pathlib import Path
+import shlex
 import sys
 
 from aiohttp import ClientSession, UnixConnector
@@ -20,6 +21,11 @@ async def main():
     job.add_argument('--timeout', type=int, default=900)
     job.add_argument('--artifact', action='append', default=[])
     job.add_argument('argv', nargs=argparse.REMAINDER)
+    deploy = sub.add_parser('deploy-pi', help='Schedule explicit 24/7 delivery at verified native completion')
+    deploy.add_argument('--goal-requires-24x7', action='store_true', required=True)
+    deploy.add_argument('--reason', required=True)
+    deploy.add_argument('--health-command', required=True, help='Read-only health check argv, parsed without a shell')
+    deploy.add_argument('argv', nargs=argparse.REMAINDER)
     args = parser.parse_args()
     async with ClientSession(connector=UnixConnector(path=str(ROOT / 'state/local.sock'))) as client:
         if args.command == 'windows-status':
@@ -32,6 +38,16 @@ async def main():
                 raise SystemExit('Run the tool from a managed CodexPi project')
             directory = directory.parent
         argv = args.argv[1:] if args.argv[:1] == ['--'] else args.argv
+        if args.command == 'deploy-pi':
+            body = {'project_id': (directory / '.codexpi/project-id').read_text(),
+                    'goal_requires_24x7': args.goal_requires_24x7, 'reason': args.reason,
+                    'check': shlex.split(args.health_command), 'argv': argv}
+            async with client.post('http://localhost/deployment/pi', json=body) as response:
+                result = await response.json()
+                if response.status != 200:
+                    raise SystemExit(result.get('error', 'Deployment request failed'))
+                print(json.dumps(result))
+                return
         body = {'project_id': (directory / '.codexpi/project-id').read_text(),
                 'commit': args.commit, 'reason': args.reason, 'timeout': args.timeout,
                 'artifacts': args.artifact, 'argv': argv}

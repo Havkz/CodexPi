@@ -234,9 +234,10 @@ class Controller:
         await asyncio.sleep(0.25)
         await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Enter')
 
-    async def pause(self, project, release=True, preserve_operation=False):
+    async def pause(self, project, release=True, preserve_operation=False, preserve_status=False):
         goal = await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})
-        if goal.get('goal') and goal['goal']['status'] != 'complete':
+        if (goal.get('goal') and goal['goal']['status'] != 'complete'
+                and (not preserve_status or goal['goal']['status'] == 'active')):
             await self.native.rpc('thread/goal/set', {'threadId': project['codex_session_id'], 'status': 'paused'})
             self.db.update(project['project_id'], goal_status='paused')
         # Pausing a native goal stops continuation, not its already-running turn.
@@ -293,7 +294,7 @@ class Controller:
                 raise ValueError('Completed goals are never automatically restarted')
             selected = self.db.setting('selected')
             if promote and selected and selected != project_id:
-                await self.pause(self.db.get(selected))
+                await self.pause(self.db.get(selected), preserve_status=True)
                 selected = None
             operation = {'kind': 'resume', 'id': str(uuid.uuid4()), 'requested_at': time.time()}
             if not promote and ((selected and selected != project_id) or project['queue_position'] != 1):
@@ -418,6 +419,10 @@ class Controller:
                 self.record_status(project, 'stalled', block_reason=json.dumps(
                     {'reason': 'Completion verification failed', 'details': 'Final CI failed', 'requires_user': False}))
             return
+        from .deployment import complete as deploy
+        if not await deploy(self, project):
+            return
+        project = self.db.get(project['project_id'])
         self.clear_block(project)
         with self.db.transaction():
             operation = json.loads(project['operation'] or '{}')
@@ -490,7 +495,8 @@ class Controller:
                     if not selected and self.db.setting('advance_queue', False) and not self.db.setting('pause_all', False):
                         self.db.set_setting('advance_queue', False)
                         next_project = next((p for p in self.db.all() if p['lifecycle'] == 'ready' and p['queue_position'] is not None and
-                                             p['goal_status'] == 'paused' and p['codex_session_id'] in self.source.rows()), None)
+                                             p['goal_status'] == 'paused' and p['codex_session_id'] in self.source.rows() and
+                                             not json.loads(p['block_reason'] or '{}').get('requires_user')), None)
                         if next_project:
                             self.select(next_project['project_id'])
                             await self.attach_ready(next_project)

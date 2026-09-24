@@ -276,6 +276,39 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='stalled'").fetchone()[0], 1)
         c.native.rpc.assert_awaited_once_with('thread/goal/set', {'threadId': 'first', 'status': 'blocked'})
 
+    async def test_promotion_preserves_inactive_limit_and_user_blockers(self):
+        c = self.controller
+        for native, stored in (('usageLimited', 'usage limited'), ('blocked', 'stalled')):
+            with self.subTest(native=native):
+                self.native_status = native
+                c.select('first')
+                c.db.update('first', goal_status=stored, block_reason=json.dumps({'requires_user': True}))
+                c.db.update('second', operation=None)
+                c.native.rpc.reset_mock()
+                await c.resume('second', promote=True)
+                self.assertEqual(c.db.get('first')['goal_status'], stored)
+                self.assertFalse(any(call.args[0] == 'thread/goal/set' for call in c.native.rpc.await_args_list))
+
+    async def test_auto_queue_does_not_resume_paused_user_decision(self):
+        c = self.controller
+        c.db.set_setting('advance_queue', True)
+        c.db.update('first', goal_status='paused', block_reason=json.dumps({'requires_user': True}))
+        c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'paused'}})
+        c.native.ws = SimpleNamespace(closed=False)
+        c.last_backup = c.last_git_poll = time.monotonic()
+        c.poll_goals = AsyncMock()
+        c.resume_ready = AsyncMock()
+        c.selective_wake = AsyncMock()
+        c.release_idle_tuis = AsyncMock()
+        c.attach_ready = AsyncMock()
+        c.bot = None
+        with patch('app.controller.asyncio.sleep', AsyncMock(side_effect=asyncio.CancelledError)):
+            with self.assertRaises(asyncio.CancelledError):
+                await c.scheduler()
+        self.assertIsNone(c.db.setting('selected'))
+        self.assertIsNone(c.db.get('first')['operation'])
+        c.attach_ready.assert_not_awaited()
+
     async def test_pending_resume_keeps_selection_until_ack(self):
         controller = self.controller
         controller.select('first')

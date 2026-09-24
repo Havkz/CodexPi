@@ -27,7 +27,11 @@ def main():
         page.get_by_role('button', name='Anmelden').click()
         page.locator('.infra-card').first.wait_for()
         initial = page.request.get(BASE + '/api/state').json()
-        project = next(p for p in initial['projects'] if p['project_id'] == IDENT)
+        project = next((p for p in initial['projects'] if p['project_id'] == IDENT), None)
+        if project is None:
+            print(json.dumps({'skipped': 'The original UserTestProject no longer exists; no project was created or changed'}))
+            browser.close()
+            return
         assert project['display_name'] == 'UserTestProject' and project['goal_status'] == 'paused'
         assert not any(p['goal_status'] == 'active' for p in initial['projects'])
         page.locator('#projects .project-card').filter(has=page.get_by_role('heading', name='UserTestProject', exact=True)).get_by_role('button', name='Details').click()

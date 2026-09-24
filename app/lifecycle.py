@@ -8,7 +8,6 @@ import discord
 
 from .common import atomic_write, slugify
 from .controller import command
-from .native import project_thread_config
 
 
 def owned_path(controller, project, path):
@@ -137,6 +136,7 @@ def record_error(controller, ident, exc):
 
 
 async def finish(controller, project):
+    from . import deployment
     operation = json.loads(project['operation'])
     if operation['kind'] == 'close-channel':
         item = await channel(controller, project)
@@ -147,8 +147,9 @@ async def finish(controller, project):
     kind, old = operation['kind'], operation['old']
     ident, session = project['project_id'], project['codex_session_id']
     if operation['phase'] == 'prepared':
+        await deployment.stop(controller, project)
         if session:
-            await controller.pause(project, preserve_operation=True)
+            await controller.pause(project, release=kind != 'deploy', preserve_operation=True)
             thread = (await controller.native.rpc('thread/read', {'threadId': session}))['thread']
             if thread['status']['type'] != 'notLoaded':
                 await controller.native.rpc('thread/backgroundTerminals/clean', {'threadId': session})
@@ -162,6 +163,9 @@ async def finish(controller, project):
             # after quiescing; never rely on the scheduler's older cached records.
             await controller.cancel_wakes(project, refresh=True)
         save(controller, project, operation, 'quiesced')
+    if kind == 'deploy':
+        await deployment.finish(controller, project, operation)
+        return
     if kind == 'rename':
         new = operation['new']
         if operation['phase'] == 'quiesced':
@@ -180,14 +184,8 @@ async def finish(controller, project):
             save(controller, project, operation, 'directory')
         if operation['phase'] == 'directory':
             if session:
-                await controller.native.rpc('thread/resume', {'threadId': session, 'cwd': new['project_path'],
-                    'runtimeWorkspaceRoots': [new['project_path']], 'excludeTurns': True,
-                    'config': project_thread_config(new['project_path'])})
-                await controller.native.rpc('thread/settings/update', {'threadId': session, 'cwd': new['project_path'],
-                    'sandboxPolicy': {'type': 'workspaceWrite', 'writableRoots': [str(Path(new['project_path']) / '.git')],
-                                      'networkAccess': True, 'excludeTmpdirEnvVar': False, 'excludeSlashTmp': False}})
+                await deployment.relocate_session(controller, {**project, **new})
                 await controller.native.rpc('thread/name/set', {'threadId': session, 'name': new['display_name']})
-                await controller.native.rpc('thread/unsubscribe', {'threadId': session})
             save(controller, project, operation, 'session')
         if operation['phase'] == 'session':
             item = await channel(controller, project)
@@ -195,6 +193,9 @@ async def finish(controller, project):
                 await item.edit(name=new['slug'], reason='CodexPi user-confirmed project rename')
             save(controller, project, operation, 'channel')
         if operation['phase'] == 'channel':
+            plan = controller.db.setting(deployment.key(project))
+            if plan and plan.get('status') == 'active':
+                await deployment.start(controller, {**project, **new}, plan)
             with controller.db.transaction():
                 controller.db.update(ident, **new, lifecycle='ready', operation=None)
                 controller.db.event(ident, 'renamed', {'from': old['display_name'], 'to': new['display_name']})
@@ -220,7 +221,7 @@ async def finish(controller, project):
                 raise ValueError('Unsafe recovery backup path')
             backup.mkdir(parents=True, exist_ok=True)
             atomic_write(backup / 'manifest.json', json.dumps({'project': old, 'deleted_at': time.time(),
-                          'github_preserved': True}, indent=2))
+                          'github_preserved': True, 'deployment': controller.db.setting(deployment.key(project))}, indent=2))
             move_owned(source, backup / 'project', ident)
             save(controller, project, operation, 'directory')
         if operation['phase'] == 'directory':
@@ -229,18 +230,23 @@ async def finish(controller, project):
                 await item.delete(reason='CodexPi user-confirmed project deletion')
             save(controller, project, operation, 'channel')
         if operation['phase'] == 'channel':
+            if controller.db.setting(deployment.key(project)):
+                unit = deployment.unit_path(controller, project)
+                unit.unlink(missing_ok=True)
+                await command('systemctl', '--user', 'daemon-reload')
             with controller.db.transaction():
                 if controller.db.setting('selected') == ident:
                     controller.db.set_setting('selected', None)
                 controller.db.set_setting('deleted/' + ident, {'backup': operation['backup'], 'repo': old['github_repo']})
                 controller.db.conn.execute('DELETE FROM projects WHERE project_id=?', (ident,))
+                controller.db.conn.execute('DELETE FROM settings WHERE key=?', (deployment.key(project),))
                 controller.db.compact_queue()
 
 
 async def recover(controller):
     for project in controller.db.all():
         operation = json.loads(project['operation'] or '{}')
-        if operation.get('kind') not in ('rename', 'delete', 'close-channel') or operation.get('retry_at', 0) > time.time():
+        if operation.get('kind') not in ('rename', 'delete', 'deploy', 'close-channel') or operation.get('retry_at', 0) > time.time():
             continue
         try:
             await finish(controller, project)

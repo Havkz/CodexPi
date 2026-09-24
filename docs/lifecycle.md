@@ -79,3 +79,8 @@ deployment lifecycle; direct TUI `/rename` integration; rename consistency for
 previously deployed services/Windows checkouts; full native-goal/queue regressions.
 The verified live lifecycle session was empty: stopping an actively generating
 model turn is covered by the shared pause implementation/tests, not by this live test.
+
+2026-09-24: the Pi deployment lifecycle and deployed-service Rename/Delete now
+have unit/crash-boundary and real native-session evidence in `deployment.md`.
+The live deployed fixture was complete before Rename/Delete; this does not
+retroactively claim an active-turn interruption or physical power-loss test.
