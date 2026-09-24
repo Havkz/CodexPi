@@ -215,10 +215,13 @@ async def tui_proxy(request):
                     selected = controller.db.setting('selected')
                     if method == 'thread/goal/set':
                         status = params.get('status')
+                        if status == 'paused':
+                            controller.db.set_setting('manual_pause/' + project['project_id'], True)
                         if status is None:
                             goal = (await upstream.rpc('thread/goal/get', {'threadId': params['threadId']})).get('goal')
                             status = goal['status'] if goal else 'active'
                         if status == 'active':
+                            controller.db.set_setting('manual_pause/' + project['project_id'], False)
                             if controller.db.setting('pause_all', False) or (selected and selected != project['project_id']):
                                 # Store the exact objective but never start a second model turn.
                                 params = {**params, 'status': 'paused'}
@@ -226,7 +229,8 @@ async def tui_proxy(request):
                                 controller.select(project['project_id'])
                     if method in ('turn/start', 'turn/steer', 'thread/compact/start',
                                   'thread/shellCommand', 'thread/inject_items') and (selected != project['project_id']
-                            or controller.db.setting('pause_all', False)):
+                            or controller.db.setting('pause_all', False)
+                            or controller.db.setting('manual_pause/' + project['project_id'], False)):
                         raise ValueError('Project is queued. Use Run now in the dashboard to work on it.')
                     result = await upstream.rpc(method, params)
                     if method == 'thread/resume':
@@ -235,9 +239,18 @@ async def tui_proxy(request):
                     if method == 'thread/goal/set':
                         if result['goal']['status'] == 'paused':
                             await controller.wait_idle(project)
+                            if controller.db.setting('manual_pause/' + project['project_id'], False):
+                                operation = json.loads(project['operation'] or '{}')
+                                if operation.get('kind') == 'resume':
+                                    controller.finish_resume(project, operation, 'cancelled', 'Resume cancelled by native pause')
+                                await controller.cancel_wakes(project)
                         controller.record_goal(project, result['goal'])
                     if method == 'thread/goal/clear':
+                        controller.db.set_setting('manual_pause/' + project['project_id'], True)
                         await controller.wait_idle(project)
+                        operation = json.loads(project['operation'] or '{}')
+                        if operation.get('kind') == 'resume':
+                            controller.finish_resume(project, operation, 'cancelled', 'Native goal was cleared')
                         controller.db.update(project['project_id'], goal_status='paused', operation=None, usage_limit=None)
                         await controller.cancel_wakes(project)
                         if selected == project['project_id']:

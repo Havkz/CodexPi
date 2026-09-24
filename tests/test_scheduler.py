@@ -309,6 +309,59 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(c.db.get('first')['operation'])
         c.attach_ready.assert_not_awaited()
 
+    async def test_manual_pause_survives_restart_and_cancels_stale_resume(self):
+        c = self.controller
+        c.select('first')
+        self.native_status = 'active'
+        c.db.update('first', goal_status='active')
+        await c.pause(c.db.get('first'), manual=True)
+        self.assertTrue(c.db.setting('manual_pause/first'))
+        db_path = c.db.path
+        c.db.conn.close()
+        c.db = Database(db_path)
+        c.select('first')
+        c.db.update('first', operation=json.dumps({'kind': 'resume', 'id': 'stale', 'source': 'recovery', 'requested_at': time.time()}))
+        c.attach_ready = AsyncMock()
+        c.slash = AsyncMock()
+        # Crash after persisting Pause but before the native status changed.
+        c.db.update('first', goal_status='active')
+        c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'active'}})
+        await c.recover()
+        await c.resume_ready()
+        self.assertEqual(json.loads(c.db.get('first')['resume_result'])['status'], 'cancelled')
+        c.attach_ready.assert_not_awaited()
+        c.slash.assert_not_awaited()
+        self.native_status = 'paused'
+        await c.resume('first')
+        self.assertFalse(c.db.setting('manual_pause/first'))
+
+    async def test_windows_reconnect_respects_manual_pause_and_journals_one_resume(self):
+        from app.worker_server import unblock_windows
+        c = self.controller
+        c.attach_ready = AsyncMock()
+        c.db.update('first', goal_status='stalled', windows_required=1,
+                    block_reason=json.dumps({'reason': 'Windows offline', 'requires_user': False}))
+        c.db.set_setting('manual_pause/first', True)
+        await unblock_windows(c)
+        c.attach_ready.assert_not_awaited()
+        c.db.set_setting('manual_pause/first', False)
+        await unblock_windows(c)
+        operation = json.loads(c.db.get('first')['operation'])
+        self.assertTrue(operation.get('id'))
+        self.assertEqual(operation.get('source'), 'windows')
+        await unblock_windows(c)
+        self.assertEqual(json.loads(c.db.get('first')['operation']), operation)
+        c.attach_ready.assert_not_awaited()  # The shared journal consumer owns TUI restoration.
+
+    async def test_legacy_paused_projects_need_explicit_intent_not_a_guess(self):
+        c = self.controller
+        c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'paused'}, 'second': {'status': 'paused'}})
+        c.db.update('second', operation=json.dumps({'kind': 'resume', 'id': 'explicit-pending', 'requested_at': time.time()}))
+        await c.recover()
+        self.assertTrue(c.db.setting('manual_pause/first'))
+        self.assertFalse(c.db.setting('manual_pause/second', False))
+        self.assertTrue(c.db.setting('manual_pause_policy_initialized'))
+
     async def test_pending_resume_keeps_selection_until_ack(self):
         controller = self.controller
         controller.select('first')
@@ -389,6 +442,19 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                             'threadId': 'first', 'name': 'New name'}})
                         self.assertIn('result', await socket.receive_json())
                         rename.assert_awaited_once_with(controller, 'first', 'rename', name='New name', defer=True)
+                    controller.db.update('first', operation=json.dumps({'kind': 'resume', 'id': 'cancel-me'}))
+                    await socket.send_json({'id': 13, 'method': 'thread/goal/set', 'params': {
+                        'threadId': 'first', 'status': 'paused'}})
+                    self.assertIn('result', await socket.receive_json())
+                    self.assertTrue(controller.db.setting('manual_pause/first'))
+                    self.assertEqual(json.loads(controller.db.get('first')['resume_result'])['status'], 'cancelled')
+                    controller.select('first')  # Even a stale selection must not bypass a manual pause.
+                    await socket.send_json({'id': 14, 'method': 'turn/start', 'params': {'threadId': 'first'}})
+                    self.assertIn('error', await socket.receive_json())
+                    await socket.send_json({'id': 15, 'method': 'thread/goal/set', 'params': {
+                        'threadId': 'first', 'status': 'active'}})
+                    self.assertIn('result', await socket.receive_json())
+                    self.assertFalse(controller.db.setting('manual_pause/first'))
 
     async def test_release_only_detached_idle_persisted_goals(self):
         controller = self.controller

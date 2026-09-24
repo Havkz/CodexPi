@@ -112,14 +112,15 @@ async def unblock_windows(controller):
         for project in controller.db.all():
             reason = json.loads(project['block_reason'] or '{}')
             if (project['goal_status'] != 'stalled' or reason.get('reason') != 'Windows offline'
-                    or reason.get('requires_user') is not False or not project['windows_required']):
+                    or reason.get('requires_user') is not False or not project['windows_required']
+                    or project['operation'] or project['queue_position'] != 1 or not controller.can_auto_resume(project)):
                 continue
             selected = controller.db.setting('selected')
             if selected and selected != project['project_id']:
                 continue
             controller.select(project['project_id'])
-            await controller.attach_ready(project)
-            controller.db.update(project['project_id'], operation=json.dumps({'kind': 'resume', 'requested_at': time.time()}))
+            controller.db.update(project['project_id'], operation=json.dumps({'kind': 'resume', 'source': 'windows',
+                'id': str(uuid.uuid4()), 'requested_at': time.time()}), resume_result=None)
             return
 
 

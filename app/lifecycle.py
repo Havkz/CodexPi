@@ -240,6 +240,7 @@ async def finish(controller, project):
                 controller.db.set_setting('deleted/' + ident, {'backup': operation['backup'], 'repo': old['github_repo']})
                 controller.db.conn.execute('DELETE FROM projects WHERE project_id=?', (ident,))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', (deployment.key(project),))
+                controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('manual_pause/' + ident,))
                 controller.db.compact_queue()
 
 

@@ -150,7 +150,9 @@ async def state(request):
          'checked_at': now - (time.monotonic() - unsnooze_poll) if unsnooze_poll else None,
          'detail': 'Selective wake · queue position 1', 'error': errors.get('unsnooze')},
     ]
-    payload = {'projects': controller.db.all(), 'selected': controller.db.setting('selected'),
+    projects = [{**p, 'manual_paused': bool(controller.db.setting('manual_pause/' + p['project_id'], False))}
+                for p in controller.db.all()]
+    payload = {'projects': projects, 'selected': controller.db.setting('selected'),
         'account_usage': controller.db.setting('account_usage', {}),
         'pause_all': controller.db.setting('pause_all', False), 'windows_online': controller.windows_online,
         'discord_online': bool(controller.bot and controller.bot.is_ready()),
@@ -228,13 +230,16 @@ async def action(request):
             project = controller.db.get(ident)
             if project['lifecycle'] != 'ready':
                 raise ValueError('Project lifecycle operation is in progress')
-            await controller.pause(project)
+            await controller.pause(project, manual=True)
     elif action_name == 'pause-all':
         async with controller.lock:
             controller.db.set_setting('pause_all', True)
             for project in controller.db.all():
-                if project['lifecycle'] == 'ready' and project['codex_session_id'] and project['goal_status'] in ('active', 'usage limited'):
-                    await controller.pause(project)
+                if project['lifecycle'] == 'ready' and project['goal_status'] != 'complete':
+                    controller.db.set_setting('manual_pause/' + project['project_id'], True)
+                if project['lifecycle'] == 'ready' and project['codex_session_id'] and project['goal_status'] != 'complete':
+                    await controller.pause(project, manual=True,
+                        preserve_status=project['goal_status'] not in ('active', 'usage limited'))
     elif action_name == 'reorder':
         async with controller.lock:
             controller.db.reorder(body['ids'])

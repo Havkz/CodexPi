@@ -64,7 +64,7 @@ function actions(p, compact = false, inDetail = false) {
     if (loading) { b.textContent = 'Resume …'; b.classList.add('loading'); b.setAttribute('aria-busy', 'true'); }
     b.disabled = busy || !connected || p.lifecycle !== 'ready' || p.goal_status === 'complete' ||
       (action === 'resume' && (p.goal_status === 'active' || resuming)) ||
-      (action === 'pause' && p.goal_status === 'paused' && !operation.kind && state.selected !== p.project_id);
+      (action === 'pause' && p.goal_status === 'paused' && p.manual_paused && !operation.kind);
     result.append(b);
   }
   if (!inDetail) result.append(button('Details', () => showDetail(p.project_id), p.project_id + ':details'));

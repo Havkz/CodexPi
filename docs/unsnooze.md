@@ -47,8 +47,12 @@ is surfaced as an error rather than triggering an uncontrolled retry loop.
 excluded goal states, pause-all, priority changes, durable reopen after simulated
 restart, exactly one slash submission, and no `resume-now`/argv wake. These are
 simulated scheduler decisions, not a manufactured provider usage limit.
-Real provider limit/reset acceptance remains outstanding; Codex limits are not
-modified to force the test. Ordinary real native resume is tested separately.
+Automatic provider-reset continuation acceptance remains outstanding; Codex
+limits are not modified to force the test. `manual-pause.md` and
+`Setup/verify-usage-history.py` now prove genuine provider-limit errors, persisted
+resets and exactly one Discord message per native attempt. Ordinary real native
+resume is tested separately. Manual holds and user-decision blockers also prevent
+automatic wake, including a stale already-journaled wake after restart.
 
 Live check on 2026-09-21: `Setup/verify-live-resume.py --resume` resumed the
 existing queue E2E native session `01a0bbef-d4d2-7a63-9ebb-40495fa41952` from

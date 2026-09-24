@@ -101,6 +101,13 @@ because a related file exists. The dashboard password is deliberately omitted.
 
 ## Work still required
 
+2026-09-24 follow-up: `manual-pause.md` records durable user-pause authority shared
+by queue/recovery/Unsnooze/Windows reconnect, 40-test coverage and a real zero-token
+native pause/restart/queued-resume/cancel/delete verification. Read-only native
+history plus actual Discord messages now prove two genuine provider-limit
+attempts were persisted/notified with their reset times. A fully automatic reset
+and Unsnooze continuation remains unverified; do not conflate these evidence scopes.
+
 2026-09-24: implemented the previously missing explicit Pi deployment operation
 using the existing lifecycle journal. See `deployment.md` for 37-test Windows/
 36-pass-one-skip Pi coverage, crash-boundary simulations and the real native

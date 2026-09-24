@@ -107,6 +107,11 @@ class Controller:
         (Path(project['project_path']) / '.codexpi/block.json').unlink(missing_ok=True)
         self.db.update(project['project_id'], block_reason=None, windows_required=0)
 
+    def can_auto_resume(self, project):
+        return (project['lifecycle'] == 'ready' and not self.db.setting('pause_all', False)
+                and not self.db.setting('manual_pause/' + project['project_id'], False)
+                and not json.loads(project['block_reason'] or '{}').get('requires_user'))
+
     async def create(self, name):
         name = name.strip()
         slug = slugify(name)
@@ -234,7 +239,10 @@ class Controller:
         await asyncio.sleep(0.25)
         await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Enter')
 
-    async def pause(self, project, release=True, preserve_operation=False, preserve_status=False):
+    async def pause(self, project, release=True, preserve_operation=False, preserve_status=False, manual=False):
+        if manual:
+            # Persist intent before the native RPC: a crash cannot turn Pause into Resume.
+            self.db.set_setting('manual_pause/' + project['project_id'], True)
         goal = await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})
         if (goal.get('goal') and goal['goal']['status'] != 'complete'
                 and (not preserve_status or goal['goal']['status'] == 'active')):
@@ -283,6 +291,7 @@ class Controller:
                 raise ValueError('Completed goals are never automatically restarted')
             operation = json.loads(project['operation'] or '{}')
             if (operation.get('kind') == 'resume' and not operation.get('error')
+                    and not self.db.setting('manual_pause/' + project_id, False)
                     and (not promote or self.db.setting('selected') == project_id)):
                 return {'ok': True, 'operation_id': operation.get('id')}
             if operation and operation.get('kind') != 'resume':
@@ -297,6 +306,7 @@ class Controller:
                 await self.pause(self.db.get(selected), preserve_status=True)
                 selected = None
             operation = {'kind': 'resume', 'id': str(uuid.uuid4()), 'requested_at': time.time()}
+            self.db.set_setting('manual_pause/' + project_id, False)
             if not promote and ((selected and selected != project_id) or project['queue_position'] != 1):
                 self.db.update(project_id, operation=json.dumps(operation), resume_result=json.dumps({
                     'id': operation['id'], 'status': 'queued', 'message': 'Queued; the current project keeps its execution slot'}))
@@ -328,6 +338,15 @@ class Controller:
         with self.db.transaction():
             self.db.compact_queue()
         rows = self.source.rows()
+        if not self.db.setting('manual_pause_policy_initialized', False):
+            # Legacy paused rows did not distinguish a user pause from queue
+            # suspension. Do not guess authority to restart those sessions.
+            with self.db.transaction():
+                for project in self.db.all():
+                    pending = json.loads(project['operation'] or '{}')
+                    if project['goal_status'] == 'paused' and not (pending.get('kind') == 'resume' and not pending.get('error')):
+                        self.db.set_setting('manual_pause/' + project['project_id'], True)
+                self.db.set_setting('manual_pause_policy_initialized', True)
         selected = self.db.setting('selected')
         if self.db.setting('pause_all', False):
             selected = None
@@ -336,6 +355,12 @@ class Controller:
             if project['lifecycle'] != 'ready':
                 continue
             row = rows.get(project['codex_session_id'])
+            if (row and row['status'] not in ('paused', 'complete')
+                    and self.db.setting('manual_pause/' + project['project_id'], False)):
+                await self.pause(project, manual=True)
+                row['status'] = 'paused'
+                if selected == project['project_id']:
+                    selected = None
             if row and row['status'] == 'active' and project['project_id'] != selected:
                 await self.pause(project, release=False)
                 row['status'] = 'paused'
@@ -356,9 +381,13 @@ class Controller:
             if project['lifecycle'] != 'ready':
                 logging.getLogger('recovery').warning('Lifecycle journal retains selected project until quiescent')
             elif project['goal_status'] == 'active':
+                if not self.can_auto_resume(project):
+                    await self.pause(project)
+                    return
                 await self.attach_ready(project)
                 if not project['operation']:
-                    self.db.update(selected, operation=json.dumps({'kind': 'resume', 'id': str(uuid.uuid4()), 'requested_at': time.time()}))
+                    self.db.update(selected, operation=json.dumps({'kind': 'resume', 'source': 'recovery',
+                        'id': str(uuid.uuid4()), 'requested_at': time.time()}))
             elif project['goal_status'] == 'usage limited':
                 await self.attach_ready(project)
         logging.getLogger('recovery').info('SQLite and native goals reconciled')
@@ -373,10 +402,13 @@ class Controller:
                 continue
             status = row['status']
             old = project['goal_status']
-            if status == 'active' and self.db.setting('selected') != project['project_id']:
+            if status == 'active' and (self.db.setting('selected') != project['project_id'] or
+                                       self.db.setting('manual_pause/' + project['project_id'], False)):
                 await self.pause(project, release=False)
                 self.db.event(project['project_id'], 'critical', {'message': 'Unselected native goal was paused'})
                 continue
+            if status == 'paused' and old != 'paused':
+                self.db.set_setting('manual_pause/' + project['project_id'], True)
             block = Path(project['project_path']) / '.codexpi/block.json'
             reason = project['block_reason']
             if block.exists():
@@ -496,12 +528,12 @@ class Controller:
                         self.db.set_setting('advance_queue', False)
                         next_project = next((p for p in self.db.all() if p['lifecycle'] == 'ready' and p['queue_position'] is not None and
                                              p['goal_status'] == 'paused' and p['codex_session_id'] in self.source.rows() and
-                                             not json.loads(p['block_reason'] or '{}').get('requires_user')), None)
+                                             self.can_auto_resume(p)), None)
                         if next_project:
                             self.select(next_project['project_id'])
                             await self.attach_ready(next_project)
                             operation = json.loads(next_project['operation'] or '{}')
-                            self.db.update(next_project['project_id'], operation=json.dumps({**operation, 'kind': 'resume',
+                            self.db.update(next_project['project_id'], operation=json.dumps({**operation, 'kind': 'resume', 'source': 'queue',
                                 'id': operation.get('id') or str(uuid.uuid4()), 'requested_at': time.time()}), resume_result=None)
                     await self.resume_ready()
                     await self.selective_wake()
@@ -540,6 +572,10 @@ class Controller:
                     or self.db.setting('selected') != project['project_id']):
                 continue
             if operation.get('error'):
+                continue
+            if (self.db.setting('manual_pause/' + project['project_id'], False) or
+                    operation.get('source') in ('unsnooze', 'queue', 'windows', 'recovery') and not self.can_auto_resume(project)):
+                self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
                 continue
             try:
                 goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
@@ -639,7 +675,7 @@ class Controller:
         if (project['lifecycle'] != 'ready' or project['operation'] or
                 project['goal_status'] != 'usage limited' or project['queue_position'] != 1):
             return
-        if json.loads(project['block_reason'] or '{}').get('requires_user'):
+        if not self.can_auto_resume(project):
             return
         for item in self.unsnooze.get('sessions', []):
             if (item.get('sessionId') == project['codex_session_id'] and item['status'] == 'stopped'
