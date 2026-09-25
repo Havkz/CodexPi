@@ -31,6 +31,9 @@ def main():
         page.on('console', lambda message: violations.append(message.text) if 'Content Security Policy' in message.text else None)
         if args.live:
             page.goto('http://192.168.2.105:8787/')
+            expect(page.locator('link[rel=icon]')).to_have_attribute('href', '/favicon.ico')
+            icon = page.request.get('http://192.168.2.105:8787/favicon.ico')
+            assert icon.status == 200 and icon.body() == (ASSETS / 'favicon.ico').read_bytes()
             password = Path('C:/CODEXPI_GOAL.md').read_text(encoding='cp1252').splitlines()[121].strip('`')
             page.locator('input[name=password]').fill(password)
             page.locator('button[type=submit]').click()
@@ -44,14 +47,24 @@ def main():
                 headers = {'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'"}
                 if path == '/api/usage':
                     request.fulfill(json=data, headers=headers)
+                elif path == '/favicon.ico':
+                    request.fulfill(body=(ASSETS / 'favicon.ico').read_bytes(), content_type='image/x-icon', headers=headers)
                 elif path == '/static/dashboard.js':
                     request.fulfill(body='refreshUsage();', content_type='text/javascript', headers=headers)
                 else:
                     file = ASSETS / ('index.html' if path == '/' else path.removeprefix('/static/'))
                     request.fulfill(path=str(file), headers=headers)
-            page.route('http://codexpi.test/**', route)
+            page.context.route('http://codexpi.test/**', route)
             page.goto('http://codexpi.test/')
         expect(page.locator('#usage-weekly')).to_have_attribute('aria-pressed', 'true')
+        expect(page.locator('link[rel=icon]')).to_have_attribute('href', '/favicon.ico')
+        if args.live:
+            # Chromium's special favicon fetch is not reliably intercepted by the fixture route.
+            # Decode the real HTTP resource; test_web separately checks every ICO/PNG frame.
+            assert page.evaluate('''async () => {
+                const image = new Image(); image.src = '/favicon.ico'; await image.decode();
+                return [16, 32, 48].includes(image.naturalWidth) && image.naturalWidth === image.naturalHeight;
+            }''')
         expect(page.locator('#usage-chart-title')).to_have_text('Weekly')
         for series in ('weekly', 'daily'):
             expected = str(data['windows'][series]['remaining'])
@@ -60,6 +73,8 @@ def main():
         expect(page.locator('#usage-daily')).to_have_attribute('aria-pressed', 'true')
         expect(page.locator('#usage-chart-title')).to_have_text('Daily / 5h')
         expect(page.locator('#usage-chart-value')).to_contain_text(str(data['windows']['daily']['remaining']))
+        if args.live:
+            page.locator('#usage-section').screenshot(path=str(ROOT / 'state/usage-live-daily.png'))
         if not args.live:
             assert page.locator('.usage-line').count() == 2  # No line across the missing interval.
             expect(page.locator('#usage-daily-reset')).to_contain_text('neue Bestätigung abwarten')
@@ -95,7 +110,7 @@ def main():
         assert not violations, violations
         browser.close()
     print(json.dumps({'live': args.live, 'desktop_and_mobile': True, 'weekly_default': True,
-        'separate_series': True, 'page_errors': errors, 'csp_violations': violations,
+        'separate_series': True, 'favicon_decoded_live': args.live, 'page_errors': errors, 'csp_violations': violations,
         'samples': {key: len(value) for key, value in data['history'].items()}}))
 
 

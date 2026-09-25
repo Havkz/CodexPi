@@ -651,7 +651,7 @@ class Controller:
         # The upstream CLI takes ~2 CPU seconds on Pi; keep fast reset polling
         # only while a selected goal can need a wake. Idle health stays timestamped.
         interval = 10 if project and project['goal_status'] == 'usage limited' else 60
-        if time.monotonic() - self.last_unsnooze_poll < interval:
+        if self.last_unsnooze_poll and time.monotonic() - self.last_unsnooze_poll < interval:
             return
         # Account availability is metadata, never a substitute for native goal status.
         try:

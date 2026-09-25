@@ -2,6 +2,7 @@ import asyncio
 import json
 from pathlib import Path
 import tempfile
+import struct
 from types import SimpleNamespace
 import unittest
 
@@ -30,6 +31,17 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(response.headers['Cache-Control'], 'no-store')
                 self.assertEqual((await client.get('/', headers={'Host': 'evil.example'})).status, 403)
                 response = await client.get('/')
+                self.assertIn('href="/favicon.ico"', await response.text())
+                icon = await client.get('/favicon.ico')
+                self.assertEqual(icon.status, 200)
+                ico = await icon.read()
+                self.assertEqual(struct.unpack('<HHH', ico[:6]), (0, 1, 3))
+                for index, size in enumerate((16, 32, 48)):
+                    width, height, _, _, planes, bits, length, offset = struct.unpack_from('<BBBBHHII', ico, 6 + index * 16)
+                    self.assertEqual((width, height, planes, bits), (size, size, 1, 32))
+                    self.assertEqual(ico[offset:offset+8], b'\x89PNG\r\n\x1a\n')
+                    self.assertEqual(struct.unpack('>II', ico[offset+16:offset+24]), (size, size))
+                    self.assertLessEqual(offset + length, len(ico))
                 self.assertEqual(response.headers['Referrer-Policy'], 'same-origin')
                 cookie = response.cookies['codexpi_login']
                 self.assertTrue(cookie['httponly'])

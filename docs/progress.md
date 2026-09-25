@@ -1,17 +1,22 @@
 # CodexPi installation progress
 
-The authoritative specification is C:\CODEXPI_GOAL.md (2975 lines, including
+The authoritative specification is C:\CODEXPI_GOAL.md (2979 lines, including
 the appended binding design, lifecycle, migration and usage-chart requirements).
 `requirement-audit.json` preserves every nonempty source line for individual
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
 
-## 2026-09-25 usage-history implementation (live deployment pending)
+## 2026-09-25 usage-history implementation and live verification
 
 `docs/usage-history.md` records the bounded persistent measurements, independent
-Daily/Weekly line-area charts and remaining-usage progress cards. Local automated
-and isolated responsive-browser checks passed; Pi installation and live history
-checks are pending because both SSH and dashboard TCP connections currently fail.
+Daily/Weekly line-area charts and remaining-usage progress cards. All 43 local
+tests and 43 Pi tests (one expected skip) passed. Live responsive-browser checks,
+real account samples and history persistence across controller restart passed
+after the user resolved the PC VPN LAN block. An initial Linux CI cold-boot
+polling defect was reproduced and fixed. A real 0% to 100% account refill was
+captured later that day, without resuming the user-decision-blocked project.
+The existing brand mark is also deployed as favicon.ico on login and dashboard;
+actual HTTP delivery and browser decoding passed. No reference image was copied.
 The earlier manual-pause correction is published as `877016b`; all four jobs in
 GitHub Actions run `36056051967` passed. No overall completion is claimed.
 

@@ -62,14 +62,49 @@ coarse remaining time. Cards, fonts, borders and spacing reuse dashboard tokens.
   reset waiting, gaps, animation/reduced motion, unknown/stale states, reload,
   1440px desktop and 390/320px mobile. No page errors or CSP violations.
   Screenshots in ignored `state/usage-fixture-*.png` were visually inspected.
-- **Pi installation and real-history/controller-restart verification pending.**
-  On September 25 SSH and dashboard TCP connections to 192.168.2.105 failed
-  before authentication. No deployment or Pi mutation occurred for this change.
-  `Setup/verify-usage-ui.py --live` is the ready read-only dashboard verifier.
-  A real captured refill remains unobserved; synthetic chart coverage is not
-  represented as live quota/reset evidence.
+- **Pi installation and real-history/controller-restart verification passed.**
+  A temporary Windows VPN LAN block was resolved by the user. Before deployment,
+  all native goals were confirmed inactive and SQLite v2 was backed up to
+  `backups/sqlite/codexpi-20260925-145048-1790340648086670670.db`; code backup is
+  `backups/code/before-usage-20260925-1451.tgz`. Only the idle controller restarted.
+  Schema v3 and actual account observations were confirmed: first sample at
+  `1790340698.5807304`, Daily/5h 18% and Weekly 25% remaining. A second restart
+  retained both exact rows; the next account poll was confirmed at
+  `1790340754.1151428`. Project IDs/statuses stayed unchanged, no native goal ran.
+  `Setup/verify-usage-ui.py --live` passed at 1440/390/320px with real data,
+  weekly default, independent series, no page errors or CSP violations.
+  Screenshots `state/usage-live-*.png` were visually inspected. The Pi suite ran
+  43 tests successfully (one expected Windows-only DPAPI skip).
+- A genuine Daily/5h refill was subsequently captured on September 25: the
+  observation at `1790357266.0241644` had 0% remaining and advertised reset
+  `1790357280`; the observation at `1790357328.8293986` had 100% remaining.
+  Later real observations showed consumption again (94% at `1790357836.9241934`).
+  Both endpoints remain in the reduced history and the actual Daily chart.
+  This proves account-history refill capture, **not** automatic Unsnooze goal
+  resume: the user's project stayed blocked awaiting their decision throughout.
+  At first installation the honest display was one observed point, not a
+  fabricated historical week.
 
-Before deploying, recheck no native goal is executing and back up SQLite v2.
-Deploy all updated Python and web assets together, then restart only the idle
-controller. Verify real samples, mapped native statuses, a second idle restart
-and retained observations, then run the live browser verifier and Pi tests.
+The first CI run `36136193345` exposed a cold-boot timing defect on Linux:
+`last_unsnooze_poll=0` was treated as a previous poll, so an uptime under 60
+seconds suppressed the initial account/Unsnooze read. The same failure was
+reproduced locally at a deterministic monotonic clock of five seconds. The
+shared polling condition now throttles only after a previous poll exists.
+The regression also proves a second immediate call is still throttled and
+provider failure retains history without changing goal state. Local and Pi
+43-test suites passed after the fix; the source CI rerun is recorded separately.
+
+For future deployments, recheck no native goal is executing, back up SQLite,
+deploy Python and web assets together, and restart only the idle controller.
+
+## Existing-logo favicon
+
+The September 25 favicon addition uses the existing `brand-mark` HTML/CSS,
+rendered by `Setup/build-favicon.py` at 16/32/48px and wrapped in a standard ICO
+container. The attached user example was not copied. No image or chart runtime
+dependency was added. Both login and dashboard reference `/favicon.ico`.
+`tests/test_web.py` validates unauthenticated LAN delivery and all embedded PNG
+sizes. Live Pi delivery returned HTTP 200 with `image/vnd.microsoft.icon`; an
+isolated browser decoded the actual resource successfully. `--live` verifies
+both pages and byte-for-byte equality with the deployed asset. The 48px generated
+preview was visually inspected and matches the existing dark C/chevron mark.

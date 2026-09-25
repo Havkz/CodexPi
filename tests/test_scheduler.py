@@ -205,12 +205,15 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         c.native.rpc = AsyncMock(return_value={'ordinaryUsageAllowed': False, 'rateLimits': {
             'primary': {'usedPercent': 100, 'windowDurationMins': 300, 'resetsAt': 1800000000},
             'secondary': {'usedPercent': 30, 'windowDurationMins': 10080}}})
-        with patch('app.controller.command', AsyncMock(return_value={'stdout': '{"sessions":[]}'})):
+        with patch('app.controller.command', AsyncMock(return_value={'stdout': '{"sessions":[]}'})), \
+                patch('app.controller.time.monotonic', return_value=5):
             await c.selective_wake()
             saved = c.db.usage_history(time.time())
             self.assertEqual(saved['daily'][0]['remaining'], 0)
             self.assertEqual(saved['weekly'][0]['remaining'], 70)
             c.native.rpc.assert_awaited_once_with('account/rateLimits/read', {}, timeout=15)
+            await c.selective_wake()
+            self.assertEqual(c.native.rpc.await_count, 1)  # Subsequent polling remains throttled.
             c.last_unsnooze_poll = 0
             c.native.rpc.side_effect = RuntimeError('provider temporarily unavailable')
             await c.selective_wake()

@@ -38,5 +38,6 @@
   "36": "usage.js",
   "37": "build_audit.py",
   "38": "main",
-  "39": "verify-usage-ui.py"
+  "39": "verify-usage-ui.py",
+  "40": "build-favicon.py"
 }

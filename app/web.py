@@ -85,6 +85,10 @@ async def index(request):
     return response
 
 
+async def favicon(request):
+    return web.FileResponse(request.app['controller'].root / 'app/web_assets/favicon.ico')
+
+
 async def login(request):
     # ponytail: one password verifier at a time; adequate for a single-user LAN UI.
     async with request.app['login_lock']:
@@ -269,7 +273,7 @@ def make_app(controller):
     app['controller'] = controller
     app['login_tokens'] = {}
     app['login_lock'] = asyncio.Lock()
-    app.add_routes([web.get('/', index), web.post('/login', login),
+    app.add_routes([web.get('/', index), web.get('/favicon.ico', favicon), web.post('/login', login),
                     web.get('/api/state', state), web.get('/api/usage', usage), web.post('/api/action', action),
                     web.get('/api/projects/{project_id}', project_detail)])
     app.router.add_static('/static/', controller.root / 'app/web_assets', show_index=False)
