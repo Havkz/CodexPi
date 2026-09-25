@@ -14566,14 +14566,18 @@
       "section": "VERBINDLICHE PRÄZISIERUNG VOM 24.09.2026: USAGE-/LIMITS-VISUALISIERUNG",
       "text": "Weekly bleibt Standard. Zwischen Weekly und Daily/5h umschalten; jede Ansicht zeigt ihren eigenen Verlauf. Kompaktes Zeitverlaufsdiagramm über die Breite der großen Card: X-Achse Zeit, Y-Achse verbleibende Usage von 0 bis 100 Prozent. 100 Prozent bedeutet vollständig verfügbar, 0 Prozent aufgebraucht.",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "docs/usage-history.md; Setup/verify-usage-ui.py: implemented and isolated desktop/mobile checks passed; Pi deployment and live verification pending"
+      ]
     },
     {
       "id": "L2966",
       "section": "VERBINDLICHE PRÄZISIERUNG VOM 24.09.2026: USAGE-/LIMITS-VISUALISIERUNG",
       "text": "Dünne, weiche Linie mit dezenter halbtransparenter Flächenfüllung darunter. Verbrauch als fallender Verlauf, tatsächlicher Reset/Refill als deutlicher Sprung nach oben. Neue Messwerte sollen weich animiert in den Verlauf übergehen. Keine großen Achsenbeschriftungen oder unnötigen Chart-Elemente; nur dezente Grid-/Zeitmarkierungen wie in einem modernen Monitoring-Diagramm.",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "docs/usage-history.md; Setup/verify-usage-ui.py: SVG line/area, actual-value-only geometry, animation and reduced motion verified in isolated Edge; actual Pi refill not yet observed"
+      ]
     },
     {
       "id": "L2968",
@@ -14587,7 +14591,9 @@
       "section": "VERBINDLICHE PRÄZISIERUNG VOM 24.09.2026: USAGE-/LIMITS-VISUALISIERUNG",
       "text": "Je eine Daily-/5h- und Weekly-Karte mit horizontalem Progress-/Usage-Balken von 0 bis 100 Prozent. Links der Limit-Name, rechts prominent die verbleibende Prozentzahl. Darunter ein breiter abgerundeter Balken: vollständig gefüllt bedeutet 100 Prozent verfügbar, leer bedeutet 0 Prozent verfügbar. Unter dem Balken dezent die verbleibende Zeit beziehungsweise den genauen Reset-Zeitpunkt anzeigen. Daily/5h und Weekly erhalten unterschiedliche Akzentfarben.",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "docs/usage-history.md; Setup/verify-usage-ui.py: 0/100 percent, reset text, cyan/purple cards verified at 1440/390/320px; live Pi verification pending"
+      ]
     },
     {
       "id": "L2972",
@@ -14601,14 +14607,18 @@
       "section": "VERBINDLICHE PRÄZISIERUNG VOM 24.09.2026: USAGE-/LIMITS-VISUALISIERUNG",
       "text": "Für das Verlaufsdiagramm ausschließlich echte historische Messwerte verwenden und leichtgewichtig persistieren, sodass sie Dashboard- und Controller-Neustarts überstehen. Keine erfundenen Zwischenwerte. Ältere Messpunkte sinnvoll begrenzen oder aggregieren; die History darf nicht unbegrenzt wachsen. Fehlende Messwerte nicht als verfügbare Nutzung oder beobachteten Reset ausgeben.",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "tests/test_usage.py, tests/test_scheduler.py: actual controller poll persistence, DB reopen/backup, bounded retention, true-observation reduction, gaps, no fabricated reset, no goal-state changes; real controller restart pending Pi access"
+      ]
     },
     {
       "id": "L2975",
       "section": "VERBINDLICHE PRÄZISIERUNG VOM 24.09.2026: USAGE-/LIMITS-VISUALISIERUNG",
       "text": "Farben, Typografie, Card-Design, Glow, Abstände und Animationen vollständig an das bestehende moderne CodexPi-Dashboard anpassen. Diese Präzisierung einschließlich Persistenz, Datenwahrheit, Umschaltung und Darstellung im finalen Requirement-Audit berücksichtigen und mit Regressionstests sowie tatsächlicher Dashboard-Verifikation prüfen.",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "docs/usage-history.md: existing design tokens reused, 43 local regression tests and isolated Edge UI checks passed; actual Pi dashboard verification pending network access"
+      ]
     }
   ]
 }

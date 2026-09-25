@@ -169,13 +169,10 @@ function render() {
     row.append(badge('usage limited'), node('strong', p.display_name), node('span', 'Reset: ' + (item.resetAt ? new Date(item.resetAt).toLocaleString('de-DE') : 'unbekannt'), 'muted')); return row;
   }));
   if (state.account_usage?.ordinaryUsageAllowed === false) $('limits').append(node('p', 'Konto: Nutzung derzeit nicht verfügbar. Eine wiederhergestellte Session ohne Goal bleibt ohne Goal.', 'notice'));
-  for (const [name, window] of Object.entries(state.account_usage?.rateLimits || {}).filter(([key, value]) => ['primary', 'secondary'].includes(key) && value)) {
-    $('limits').append(node('p', 'Konto · ' + name + ': ' + window.usedPercent + '% verwendet · Reset: ' + date(window.resetsAt), 'muted'));
-  }
   for (const p of state.projects.filter(p => p.goal_status === 'limited by budget')) {
     const row = node('div', '', 'limit-row'); row.append(badge(p.goal_status), node('strong', p.display_name), node('span', 'Manuelle Freigabe erforderlich.', 'muted')); $('limits').append(row);
   }
-  if (!$('limits').children.length) $('limits').append(node('p', 'Kein Usage-Limit gemeldet. Verbrauchsprozentwerte sind derzeit nicht verfügbar.', 'muted'));
+  if (!$('limits').children.length) $('limits').append(node('p', 'Kein projektbezogenes Usage- oder Budget-Limit gemeldet.', 'muted'));
   const detailOverview = $('detail-overview'), currentDetail = state.projects.find(p => p.project_id === detailId);
   if (detailOverview && currentDetail) detailOverview.replaceChildren(node('h3', 'Overview'), projectOverview(currentDetail, true));
   if (detailId && !currentDetail) $('project-dialog').close();
@@ -200,6 +197,7 @@ async function refresh() {
       }
     }
     $('freshness').textContent = 'Live · ' + new Date().toLocaleTimeString('de-DE'); render();
+    refreshUsage(state.account_usage?.checked_at);
   } catch (err) {
     connected = false; $('freshness').textContent = 'Verbindung unterbrochen · Daten möglicherweise veraltet';
     if (pendingAction && Date.now() > pendingAction.deadline) { pendingAction = null; busy = false; }

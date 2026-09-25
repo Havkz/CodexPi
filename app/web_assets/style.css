@@ -114,6 +114,34 @@ tbody tr:hover { background: var(--surface-raised); }
 .table-panel .empty { padding: 24px; }
 .limit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 12px 0; }
 .limit-row + .limit-row { border-top: 1px solid var(--border); }
+.usage-weekly { --usage-accent: var(--purple); }
+.usage-daily { --usage-accent: var(--cyan); }
+.usage-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.usage-switch { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); }
+.usage-switch button { border-color: transparent; background: transparent; color: var(--secondary); }
+.usage-switch button[aria-pressed="true"] { background: var(--surface-raised); color: var(--text); border-color: var(--border); }
+.usage-total { display: flex; align-items: baseline; gap: 12px; margin-top: 20px; }
+.usage-total strong { font-size: 36px; font-weight: 600; letter-spacing: -.04em; color: var(--usage-accent); font-variant-numeric: tabular-nums; }
+.usage-total span { font-size: 12px; }
+.usage-chart { height: 180px; margin-top: 12px; }
+.usage-chart svg { width: 100%; height: 100%; overflow: visible; }
+.usage-grid { stroke: var(--border); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.usage-grid-time { stroke-dasharray: 2 6; opacity: .55; }
+.usage-line { fill: none; stroke: var(--usage-accent); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.usage-area { fill: var(--usage-accent); opacity: .10; }
+.usage-point { fill: var(--usage-accent); }
+.usage-times { display: flex; justify-content: space-between; gap: 16px; font-size: 10px; }
+.usage-note { margin-top: 12px; font-size: 11px; overflow-wrap: anywhere; }
+.usage-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); margin-top: var(--gap); }
+.usage-cards h3 { font-size: 14px; }
+.usage-percent { font-size: 26px; font-weight: 600; letter-spacing: -.035em; font-variant-numeric: tabular-nums; color: var(--usage-accent); }
+.usage-cards progress { appearance: none; display: block; width: 100%; height: 12px; border: 0; border-radius: 8px; overflow: hidden; margin-top: 18px; background: var(--input); color: var(--usage-accent); accent-color: var(--usage-accent); }
+.usage-cards progress::-webkit-progress-bar { background: var(--input); border-radius: 8px; }
+.usage-cards progress::-webkit-progress-value { background: var(--usage-accent); border-radius: 8px; transition: width .45s ease-out; }
+.usage-cards progress::-moz-progress-bar { background: var(--usage-accent); border-radius: 8px; }
+.usage-events { margin-top: var(--gap); }
+@media (max-width: 520px) { .usage-cards { grid-template-columns: 1fr; } .usage-chart { height: 150px; } }
+@media (prefers-reduced-motion: reduce) { .usage-cards progress::-webkit-progress-value { transition: none; } }
 footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 48px; padding: 20px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 11px; }
 dialog { width: min(1080px, calc(100% - 40px)); max-height: calc(100dvh - 48px); padding: 28px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); }
 dialog::backdrop { background: rgb(0 0 0 / .72); }

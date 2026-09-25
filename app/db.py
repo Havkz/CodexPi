@@ -4,6 +4,8 @@ from pathlib import Path
 import sqlite3
 import time
 
+from .usage import number, windows
+
 
 SCHEMA = (
     '''CREATE TABLE projects (
@@ -51,7 +53,7 @@ class Database:
         self.conn.execute('PRAGMA synchronous=FULL')
         self.conn.execute('PRAGMA foreign_keys=ON')
         version = self.conn.execute('PRAGMA user_version').fetchone()[0]
-        if version > 2:
+        if version > 3:
             raise RuntimeError('Database was created by a newer CodexPi version')
         if version == 0:
             with self.transaction():
@@ -63,6 +65,14 @@ class Database:
                 self.conn.execute('ALTER TABLE projects ADD COLUMN usage_limit TEXT')
                 self.conn.execute('ALTER TABLE projects ADD COLUMN resume_result TEXT')
                 self.conn.execute('PRAGMA user_version=2')
+        if version < 3:
+            with self.transaction():
+                self.conn.execute('''CREATE TABLE usage_samples (
+                    series TEXT NOT NULL, observed_at REAL NOT NULL,
+                    remaining REAL NOT NULL CHECK(remaining BETWEEN 0 AND 100),
+                    duration INTEGER NOT NULL, reset_at REAL,
+                    PRIMARY KEY(series, observed_at)) WITHOUT ROWID''')
+                self.conn.execute('PRAGMA user_version=3')
 
     @contextlib.contextmanager
     def transaction(self):
@@ -112,6 +122,50 @@ class Database:
         with self.transaction():
             for position, project_id in enumerate(ids, 1):
                 self.update(project_id, queue_position=position)
+
+    def record_usage(self, account):
+        stamp = account.get('checked_at')
+        if not number(stamp) or stamp <= 0:
+            raise ValueError('Usage observation requires a finite timestamp')
+        with self.transaction():
+            self.set_setting('account_usage', account)
+            for series, window in windows(account).items():
+                previous = self.conn.execute('SELECT observed_at FROM usage_samples WHERE series=? '
+                    'ORDER BY observed_at DESC LIMIT 1', (series,)).fetchone()
+                # One real observation per minute, including while Unsnooze polls faster.
+                # Clock rollback never rewrites an existing observation.
+                if previous and stamp - previous[0] < 60:
+                    continue
+                self.conn.execute('INSERT INTO usage_samples VALUES (?,?,?,?,?)',
+                    (series, stamp, window['remaining'], window['duration'], window['reset_at']))
+            self.conn.execute('DELETE FROM usage_samples WHERE observed_at < ?', (stamp - 8 * 86400,))
+            for series in ('daily', 'weekly'):
+                self.conn.execute('DELETE FROM usage_samples WHERE series=? AND observed_at IN '
+                    '(SELECT observed_at FROM usage_samples WHERE series=? ORDER BY observed_at DESC LIMIT -1 OFFSET 12000)',
+                    (series, series))
+
+    def usage_history(self, now):
+        result = {}
+        for series, span, bucket_seconds in (('daily', 86400, 300), ('weekly', 7 * 86400, 3600)):
+            rows = [dict(row) for row in self.conn.execute(
+                'SELECT observed_at,remaining,duration,reset_at FROM usage_samples '
+                'WHERE series=? AND observed_at BETWEEN ? AND ? ORDER BY observed_at', (series, now - span, now))]
+            # Keep actual first/min/max/last observations, never averages/interpolated data.
+            # Split outages before reducing so the chart cannot bridge missing measurements.
+            groups, previous, segment = {}, None, 0
+            for row in rows:
+                if previous and (row['observed_at'] - previous['observed_at'] > 180 or row['duration'] != previous['duration']):
+                    segment += 1
+                row['segment'] = segment
+                groups.setdefault((segment, int(row['observed_at'] // bucket_seconds)), []).append(row)
+                previous = row
+            kept = {}
+            for group in groups.values():
+                for row in (group[0], min(group, key=lambda r: r['remaining']),
+                            max(group, key=lambda r: r['remaining']), group[-1]):
+                    kept[row['observed_at']] = row
+            result[series] = sorted(kept.values(), key=lambda r: r['observed_at'])
+        return result
 
     def event(self, project_id, kind, payload):
         self.conn.execute('INSERT INTO events(project_id,kind,payload,created_at) VALUES (?,?,?,?)',

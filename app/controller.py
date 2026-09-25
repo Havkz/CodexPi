@@ -656,7 +656,7 @@ class Controller:
         # Account availability is metadata, never a substitute for native goal status.
         try:
             limits = await self.native.rpc('account/rateLimits/read', {}, timeout=15)
-            self.db.set_setting('account_usage', {key: limits.get(key) for key in
+            self.db.record_usage({key: limits.get(key) for key in
                 ('ordinaryUsageAllowed', 'rateLimits', 'rateLimitsByLimitId')} | {'checked_at': time.time()})
             self.health_errors.pop('account_usage', None)
         except Exception as exc:

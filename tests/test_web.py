@@ -26,6 +26,7 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
             async with TestClient(TestServer(app), cookie_jar=CookieJar(unsafe=True)) as client:
                 response = await client.get('/api/state')
                 self.assertEqual(response.status, 401)
+                self.assertEqual((await client.get('/api/usage')).status, 401)
                 self.assertEqual(response.headers['Cache-Control'], 'no-store')
                 self.assertEqual((await client.get('/', headers={'Host': 'evil.example'})).status, 403)
                 response = await client.get('/')
@@ -44,6 +45,15 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 self.assertNotIn('password_hash', str(state))
                 self.assertEqual(len(state['infrastructure']), 6)
                 self.assertEqual(state['infrastructure'][3]['status'], 'unknown')
+                db.record_usage({'checked_at': __import__('time').time(), 'rateLimits': {
+                    'primary': {'usedPercent': 100, 'windowDurationMins': 300, 'resetsAt': 2000000000},
+                    'secondary': {'usedPercent': 20, 'windowDurationMins': 10080}}})
+                usage_response = await client.get('/api/usage')
+                self.assertEqual(usage_response.status, 200)
+                usage = await usage_response.json()
+                self.assertEqual(usage['windows']['daily']['remaining'], 0)
+                self.assertEqual(usage['history']['weekly'][0]['remaining'], 80)
+                self.assertEqual(usage_response.headers['Cache-Control'], 'no-store')
                 secret = 'test-quoted-"private-key'
                 (Path(temp) / '.env').write_text('TEST_SECRET=' + secret)
                 db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,

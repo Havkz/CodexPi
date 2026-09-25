@@ -199,6 +199,26 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         c.record_goal(c.db.get('first'), {'status': 'paused'})
         self.assertIsNone(c.db.get('first')['usage_limit'])
 
+    async def test_account_telemetry_persists_without_resuming_or_inventing_limit(self):
+        c = self.controller
+        c.last_unsnooze_poll = 0
+        c.native.rpc = AsyncMock(return_value={'ordinaryUsageAllowed': False, 'rateLimits': {
+            'primary': {'usedPercent': 100, 'windowDurationMins': 300, 'resetsAt': 1800000000},
+            'secondary': {'usedPercent': 30, 'windowDurationMins': 10080}}})
+        with patch('app.controller.command', AsyncMock(return_value={'stdout': '{"sessions":[]}'})):
+            await c.selective_wake()
+            saved = c.db.usage_history(time.time())
+            self.assertEqual(saved['daily'][0]['remaining'], 0)
+            self.assertEqual(saved['weekly'][0]['remaining'], 70)
+            c.native.rpc.assert_awaited_once_with('account/rateLimits/read', {}, timeout=15)
+            c.last_unsnooze_poll = 0
+            c.native.rpc.side_effect = RuntimeError('provider temporarily unavailable')
+            await c.selective_wake()
+        self.assertEqual(c.db.usage_history(time.time()), saved)
+        self.assertIn('account_usage', c.health_errors)
+        self.assertTrue(all(p['goal_status'] == 'paused' and not p['operation'] for p in c.db.all()))
+        self.assertEqual(c.db.conn.execute('SELECT count(*) FROM events').fetchone()[0], 0)
+
     async def test_managed_tui_launch_cannot_wait_in_update_prompt(self):
         c = self.controller
         c.pane_exists.return_value = False

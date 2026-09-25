@@ -9,6 +9,7 @@ import time
 from aiohttp import web
 
 from .common import password_valid
+from .usage import windows
 
 
 def session(request):
@@ -175,6 +176,15 @@ def safe_json(controller, value):
     return web.json_response(clean(value))
 
 
+async def usage(request):
+    controller = request.app['controller']
+    account = controller.db.setting('account_usage', {})
+    now = time.time()
+    return safe_json(controller, {'windows': windows(account), 'history': controller.db.usage_history(now),
+        'checked_at': account.get('checked_at'), 'server_time': now,
+        'error': getattr(controller, 'health_errors', {}).get('account_usage')})
+
+
 async def project_detail(request):
     from .controller import command
     controller = request.app['controller']
@@ -260,7 +270,7 @@ def make_app(controller):
     app['login_tokens'] = {}
     app['login_lock'] = asyncio.Lock()
     app.add_routes([web.get('/', index), web.post('/login', login),
-                    web.get('/api/state', state), web.post('/api/action', action),
+                    web.get('/api/state', state), web.get('/api/usage', usage), web.post('/api/action', action),
                     web.get('/api/projects/{project_id}', project_detail)])
     app.router.add_static('/static/', controller.root / 'app/web_assets', show_index=False)
     return app
