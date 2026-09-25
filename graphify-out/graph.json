@@ -43,8 +43,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "build_audit.py"
     },
     {
@@ -54,8 +54,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_build_audit_reconcile",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "reconcile()"
     },
     {
@@ -65,8 +65,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "setup_build_audit_main",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "main()"
     },
     {
@@ -76,8 +76,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit_rationale_1",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "create a lossless, line-addressed audit from the user's specification.  every no"
     },
     {
@@ -87,8 +87,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_worker",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 2,
+      "community_name": "windows_worker.py",
       "norm_label": "configure-worker.py"
     },
     {
@@ -98,8 +98,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_worker_rationale_1",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 2,
+      "community_name": "windows_worker.py",
       "norm_label": "provision a currentuser dpapi credential over the existing authenticated ssh lin"
     },
     {
@@ -109,8 +109,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "configure.py"
     },
     {
@@ -120,8 +120,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "setup_configure_preserve",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "preserve()"
     },
     {
@@ -131,8 +131,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_rationale_1",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "run on pi after copying reviewed sources; preserve and back up user config."
     },
     {
@@ -319,8 +319,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe-native.py"
     },
     {
@@ -330,8 +330,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "setup_probe_native_rpc",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "rpc()"
     },
     {
@@ -341,8 +341,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native_rationale_1",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe the installed native protocol without requesting any model work."
     },
     {
@@ -440,8 +440,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_queue",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 37,
+      "community_name": "build_audit.py",
       "norm_label": "test-live-queue.py"
     },
     {
@@ -451,8 +451,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "setup_test_live_queue_state",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 37,
+      "community_name": "build_audit.py",
       "norm_label": "state()"
     },
     {
@@ -462,8 +462,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_queue_rationale_1",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 37,
+      "community_name": "build_audit.py",
       "norm_label": "exercise the two explicitly named e2e projects through the authenticated dashboa"
     },
     {
@@ -498,6 +498,39 @@
       "community": 21,
       "community_name": "main.py",
       "norm_label": "trust only the seven reviewed hook definitions, through codex's native api."
+    },
+    {
+      "label": "verify-controller-recovery.py",
+      "file_type": "code",
+      "source_file": "Setup/verify-controller-recovery.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_controller_recovery",
+      "community": 37,
+      "community_name": "build_audit.py",
+      "norm_label": "verify-controller-recovery.py"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "Setup/verify-controller-recovery.py",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "setup_verify_controller_recovery_main",
+      "community": 37,
+      "community_name": "build_audit.py",
+      "norm_label": "main()"
+    },
+    {
+      "label": "Live idle-controller SIGKILL recovery; --crash is required to inject the fault.",
+      "file_type": "rationale",
+      "source_file": "Setup/verify-controller-recovery.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_controller_recovery_rationale_1",
+      "community": 37,
+      "community_name": "build_audit.py",
+      "norm_label": "live idle-controller sigkill recovery; --crash is required to inject the fault."
     },
     {
       "label": "verify-dashboard.py",
@@ -693,8 +726,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_live_resume",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 37,
+      "community_name": "build_audit.py",
       "norm_label": "verify-live-resume.py"
     },
     {
@@ -704,8 +737,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "setup_verify_live_resume_main",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 37,
+      "community_name": "build_audit.py",
       "norm_label": "main()"
     },
     {
@@ -715,8 +748,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_live_resume_rationale_1",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 37,
+      "community_name": "build_audit.py",
       "norm_label": "resume only the existing queue e2e goal; never create or replace an objective."
     },
     {
@@ -836,8 +869,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "verify-secrets.py"
     },
     {
@@ -847,8 +880,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets_rationale_1",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "fail closed if a tracked file contains a configured secret; never print its valu"
     },
     {
@@ -946,8 +979,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_common",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "common.py"
     },
     {
@@ -957,8 +990,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_common_slugify",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "slugify()"
     },
     {
@@ -968,8 +1001,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_common_atomic_write",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "atomic_write()"
     },
     {
@@ -1111,8 +1144,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_controller",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "controller.py"
     },
     {
@@ -1628,8 +1661,8 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "app_db_database_backup",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".backup()"
     },
     {
@@ -2090,8 +2123,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "native.py"
     },
     {
@@ -2112,8 +2145,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "runtimeerror"
     },
     {
@@ -2134,8 +2167,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_native_validate_model_selection",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "validate_model_selection()"
     },
     {
@@ -2255,8 +2288,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native_rationale_1",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "native codex 0.155.1 rpc and the scheduler's local tui admission gate."
     },
     {
@@ -2948,8 +2981,8 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "app_worker_server_unblock_windows",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "unblock_windows()"
     },
     {
@@ -3014,8 +3047,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_audit",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "test_audit.py"
     },
     {
@@ -3025,8 +3058,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_audit_audittests",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "audittests"
     },
     {
@@ -3036,8 +3069,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".test_append_preserves_evidence_and_rejects_edits()"
     },
     {
@@ -3102,8 +3135,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_deployment",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "test_deployment.py"
     },
     {
@@ -3245,7 +3278,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lifecycle",
-      "community": 11,
+      "community": 27,
       "community_name": "Bot",
       "norm_label": "test_lifecycle.py"
     },
@@ -3256,7 +3289,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_lifecycle_crash",
-      "community": 11,
+      "community": 27,
       "community_name": "Bot",
       "norm_label": "crash"
     },
@@ -3267,7 +3300,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseexception",
-      "community": 11,
+      "community": 27,
       "community_name": "Bot",
       "norm_label": "baseexception"
     },
@@ -3333,8 +3366,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_scheduler",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "test_scheduler.py"
     },
     {
@@ -3377,8 +3410,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_recovery_records_native_limit_once_and_clears_resume_intent",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_recovery_records_native_limit_once_and_clears_resume_intent()"
     },
     {
@@ -3443,8 +3476,8 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_account_telemetry_persists_without_resuming_or_inventing_limit",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_account_telemetry_persists_without_resuming_or_inventing_limit()"
     },
     {
@@ -3767,6 +3800,138 @@
       "norm_label": ".test_dpapi_current_user_roundtrip()"
     },
     {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme",
+      "community": 26,
+      "community_name": "Unsnooze integration",
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "CodexPi",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme_codexpi",
+      "community": 43,
+      "community_name": "CodexPi",
+      "norm_label": "codexpi"
+    },
+    {
+      "label": "Alltag",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "readme_alltag",
+      "community": 43,
+      "community_name": "CodexPi",
+      "norm_label": "alltag"
+    },
+    {
+      "label": "Installation und Betrieb",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "_origin": "ast",
+      "id": "readme_installation_und_betrieb",
+      "community": 43,
+      "community_name": "CodexPi",
+      "norm_label": "installation und betrieb"
+    },
+    {
+      "label": "Dokumentation",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "readme_dokumentation",
+      "community": 43,
+      "community_name": "CodexPi",
+      "norm_label": "dokumentation"
+    },
+    {
+      "label": "Entwicklung und Pr\u00fcfung",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L69",
+      "_origin": "ast",
+      "id": "readme_entwicklung_und_pr\u00fcfung",
+      "community": 43,
+      "community_name": "CodexPi",
+      "norm_label": "entwicklung und prufung"
+    },
+    {
+      "label": "architecture.md",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_architecture",
+      "community": 26,
+      "community_name": "Unsnooze integration",
+      "norm_label": "architecture.md"
+    },
+    {
+      "label": "Architecture and data ownership",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_architecture_architecture_and_data_ownership",
+      "community": 42,
+      "community_name": "Architecture and data ownership",
+      "norm_label": "architecture and data ownership"
+    },
+    {
+      "label": "Process and trust boundaries",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "docs_architecture_process_and_trust_boundaries",
+      "community": 42,
+      "community_name": "Architecture and data ownership",
+      "norm_label": "process and trust boundaries"
+    },
+    {
+      "label": "Modules and files",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "docs_architecture_modules_and_files",
+      "community": 42,
+      "community_name": "Architecture and data ownership",
+      "norm_label": "modules and files"
+    },
+    {
+      "label": "Source of truth",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L50",
+      "_origin": "ast",
+      "id": "docs_architecture_source_of_truth",
+      "community": 42,
+      "community_name": "Architecture and data ownership",
+      "norm_label": "source of truth"
+    },
+    {
+      "label": "Queue, acknowledgement and recovery",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L78",
+      "_origin": "ast",
+      "id": "docs_architecture_queue_acknowledgement_and_recovery",
+      "community": 42,
+      "community_name": "Architecture and data ownership",
+      "norm_label": "queue, acknowledgement and recovery"
+    },
+    {
       "label": "deployment.md",
       "file_type": "document",
       "source_file": "docs/deployment.md",
@@ -3861,8 +4026,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_lifecycle_fixes_20260923",
-      "community": 0,
-      "community_name": "common.py",
+      "community": 26,
+      "community_name": "Unsnooze integration",
       "norm_label": "lifecycle-fixes-20260923.md"
     },
     {
@@ -4048,8 +4213,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_progress",
-      "community": 8,
-      "community_name": "CodexPi installation progress",
+      "community": 26,
+      "community_name": "Unsnooze integration",
       "norm_label": "progress.md"
     },
     {
@@ -4075,10 +4240,21 @@
       "norm_label": "2026-09-25 usage-history implementation and live verification"
     },
     {
-      "label": "Verified 2026-09-19",
+      "label": "2026-09-25 controller-crash verification and runbooks",
       "file_type": "document",
       "source_file": "docs/progress.md",
       "source_location": "L23",
+      "_origin": "ast",
+      "id": "docs_progress_2026_09_25_controller_crash_verification_and_runbooks",
+      "community": 8,
+      "community_name": "CodexPi installation progress",
+      "norm_label": "2026-09-25 controller-crash verification and runbooks"
+    },
+    {
+      "label": "Verified 2026-09-19",
+      "file_type": "document",
+      "source_file": "docs/progress.md",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_19",
       "community": 8,
@@ -4089,7 +4265,7 @@
       "label": "Verified 2026-09-20 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L44",
+      "source_location": "L55",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_20_incremental_not_final_acceptance",
       "community": 8,
@@ -4100,7 +4276,7 @@
       "label": "Verified 2026-09-21 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L74",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_21_incremental_not_final_acceptance",
       "community": 8,
@@ -4111,7 +4287,7 @@
       "label": "Work still required",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L116",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "docs_progress_work_still_required",
       "community": 8,
@@ -4122,12 +4298,100 @@
       "label": "Source references",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L168",
+      "source_location": "L179",
       "_origin": "ast",
       "id": "docs_progress_source_references",
       "community": 8,
       "community_name": "CodexPi installation progress",
       "norm_label": "source references"
+    },
+    {
+      "label": "recovery.md",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_recovery",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "recovery.md"
+    },
+    {
+      "label": "Recovery and operator runbook",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_recovery_recovery_and_operator_runbook",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "recovery and operator runbook"
+    },
+    {
+      "label": "Normal process recovery",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "docs_recovery_normal_process_recovery",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "normal process recovery"
+    },
+    {
+      "label": "Safe diagnosis",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "docs_recovery_safe_diagnosis",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "safe diagnosis"
+    },
+    {
+      "label": "Backups",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "docs_recovery_backups",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "backups"
+    },
+    {
+      "label": "Restore procedure and stop conditions",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "docs_recovery_restore_procedure_and_stop_conditions",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "restore procedure and stop conditions"
+    },
+    {
+      "label": "Verification",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L121",
+      "_origin": "ast",
+      "id": "docs_recovery_verification",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "verification"
+    },
+    {
+      "label": "Live controller crash, 2026-09-25",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L141",
+      "_origin": "ast",
+      "id": "docs_recovery_live_controller_crash_2026_09_25",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "live controller crash, 2026-09-25"
     },
     {
       "label": "resources.md",
@@ -4966,6 +5230,18 @@
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
+      "source_file": "Setup/verify-controller-recovery.py",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_controller_recovery_main",
+      "target": "setup_test_live_queue_state"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "Setup/verify-live-resume.py",
       "source_location": "L25",
       "weight": 1.0,
@@ -5041,6 +5317,40 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_trust_hooks_main",
+      "target": "runtimeerror"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-controller-recovery.py",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_controller_recovery",
+      "target": "setup_verify_controller_recovery_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-controller-recovery.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_controller_recovery_rationale_1",
+      "target": "setup_verify_controller_recovery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Setup/verify-controller-recovery.py",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_controller_recovery_main",
       "target": "runtimeerror"
     },
     {
@@ -13620,6 +13930,248 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_architecture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_deployment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_lifecycle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_manual_pause",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_progress",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_recovery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_unsnooze",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_usage_history",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_windows_worker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_codexpi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_codexpi",
+      "target": "readme_alltag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_codexpi",
+      "target": "readme_dokumentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_codexpi",
+      "target": "readme_entwicklung_und_pr\u00fcfung",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_codexpi",
+      "target": "readme_installation_und_betrieb",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture",
+      "target": "docs_architecture_architecture_and_data_ownership",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture",
+      "target": "docs_lifecycle_fixes_20260923",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L103",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture",
+      "target": "docs_unsnooze",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L103",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture",
+      "target": "docs_windows_worker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture_architecture_and_data_ownership",
+      "target": "docs_architecture_modules_and_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture_architecture_and_data_ownership",
+      "target": "docs_architecture_process_and_trust_boundaries",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture_architecture_and_data_ownership",
+      "target": "docs_architecture_queue_acknowledgement_and_recovery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_architecture_architecture_and_data_ownership",
+      "target": "docs_architecture_source_of_truth",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/deployment.md",
@@ -13854,6 +14406,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_progress_codexpi_installation_progress",
+      "target": "docs_progress_2026_09_25_controller_crash_verification_and_runbooks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/progress.md",
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
@@ -13865,7 +14428,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L168",
+      "source_location": "L179",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -13876,7 +14439,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L23",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -13887,7 +14450,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L44",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -13898,7 +14461,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L74",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -13909,11 +14472,88 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L116",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
       "target": "docs_progress_work_still_required",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery",
+      "target": "docs_recovery_recovery_and_operator_runbook",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery_recovery_and_operator_runbook",
+      "target": "docs_recovery_backups",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery_recovery_and_operator_runbook",
+      "target": "docs_recovery_normal_process_recovery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L94",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery_recovery_and_operator_runbook",
+      "target": "docs_recovery_restore_procedure_and_stop_conditions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery_recovery_and_operator_runbook",
+      "target": "docs_recovery_safe_diagnosis",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery_recovery_and_operator_runbook",
+      "target": "docs_recovery_verification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery_verification",
+      "target": "docs_recovery_live_controller_crash_2026_09_25",
       "confidence_score": 1.0
     },
     {
@@ -14083,5 +14723,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a20ff604bcf9be1c374e0d6cb7f2cc248df248c9"
+  "built_at_commit": "227c3d53f84aaf7bc318ca7541d9128947adc340"
 }

@@ -20,6 +20,17 @@ actual HTTP delivery and browser decoding passed. No reference image was copied.
 The earlier manual-pause correction is published as `877016b`; all four jobs in
 GitHub Actions run `36056051967` passed. No overall completion is claimed.
 
+## 2026-09-25 controller-crash verification and runbooks
+
+The required root README and architecture/recovery runbooks were added on
+2026-09-25. `Setup/verify-controller-recovery.py --crash` passed an actual idle
+controller SIGKILL/systemd restart, preserving mappings/manual holds/history and
+the existing dashboard login, with Discord/Windows heartbeat reconnected. Native
+Codex and Unsnooze were not restarted. Details and remaining active-goal/reboot/
+disaster-restore boundaries are in `docs/recovery.md`. Source commit `227c3d5`
+also passed all four CI jobs in run `36168785943` (including both Linux jobs that
+previously exposed the cold-boot poll bug).
+
 ## Verified 2026-09-19
 
 - Windows 11 Home; Node 24.14.0, npm 11.14.1, Git 2.51.0, gh 2.88.1,

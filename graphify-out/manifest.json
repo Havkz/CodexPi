@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1790358096.211967,
-    "ast_hash": "bbf42a0355ab820d9b4b29055a88487d",
+    "mtime": 1790358778.1395385,
+    "ast_hash": "95b1b1bc0e024ef2d77f7221c5ca8a84",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1790358052.3467045,
-    "ast_hash": "b6d4b6cd0715e8ad365e26c9a3c9fe8a",
+    "mtime": 1790358775.2446837,
+    "ast_hash": "e4cee721cd51fba0d3787aaab77fd407",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -352,6 +352,26 @@
   "Setup/build-favicon.py": {
     "mtime": 1790341005.546446,
     "ast_hash": "26eb4016923fc01c952be247bc25d25d",
+    "semantic_hash": ""
+  },
+  "Setup/verify-controller-recovery.py": {
+    "mtime": 1790358417.926778,
+    "ast_hash": "6ed7e21139acbbb87b56266d806d1045",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1790358597.58429,
+    "ast_hash": "a7e4efef37d81ed42da87ec2168a824e",
+    "semantic_hash": ""
+  },
+  "docs/architecture.md": {
+    "mtime": 1790358597.58429,
+    "ast_hash": "5ec4293eaea558a07a29ec99553e76bf",
+    "semantic_hash": ""
+  },
+  "docs/recovery.md": {
+    "mtime": 1790358687.557008,
+    "ast_hash": "b3b307ce5f6136bb032eb9f57edb2bf3",
     "semantic_hash": ""
   }
 }

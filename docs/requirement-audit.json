@@ -6568,8 +6568,10 @@
       "id": "L1418",
       "section": "31. BOOT / RECOVERY END-TO-END-TEST",
       "text": "* Pi-seitigen Controller hart beenden und systemd recovery prüfen",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/recovery.md: Setup/verify-controller-recovery.py --crash passed real SIGKILL, systemd new PID/invocation and restart counter, preserved mappings/holds/history/login, Discord and worker reconnect on 2026-09-25; native bridge/Unsnooze unchanged; no active-goal/reboot claim"
+      ]
     },
     {
       "id": "L1419",
@@ -7281,29 +7283,37 @@
       "id": "L1581",
       "section": "37. DOKUMENTATION",
       "text": "`~/CodexPi/README.md`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "README.md written and installed on Pi; local/remote SHA256 matched 13f9ff8963ce544035373f857c1ea75dfdc0938a5bb7d89d06a43fd0e1c4112f on 2026-09-25"
+      ]
     },
     {
       "id": "L1583",
       "section": "37. DOKUMENTATION",
       "text": "`~/CodexPi/docs/architecture.md`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/architecture.md written against current modules/units/schema; installed on Pi with matching SHA256 67f24ea7ef7e93edb3eb7da4dce99b0304380895669ab258ff93de5a534210df"
+      ]
     },
     {
       "id": "L1585",
       "section": "37. DOKUMENTATION",
       "text": "`~/CodexPi/docs/recovery.md`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/recovery.md written and installed on Pi with matching SHA256 c1291323ba0533142ae1935c2110cc75dfebdb1d48a2c8ec860cb640c582412d; real SIGKILL evidence and untested restore/reboot boundaries explicit"
+      ]
     },
     {
       "id": "L1587",
       "section": "37. DOKUMENTATION",
       "text": "`~/CodexPi/docs/windows-worker.md`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/windows-worker.md inspected against worker_server.py and installed on Pi; SHA256 9d7bf423090da3f898cdfa60972faa6bbe57f0e3c89355faa429b0f56629f071 matched on 2026-09-25"
+      ]
     },
     {
       "id": "L1589",
@@ -7316,85 +7326,109 @@
       "id": "L1591",
       "section": "37. DOKUMENTATION",
       "text": "* Architektur",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/architecture.md: process/trust boundaries and source-of-truth ownership documented against current code"
+      ]
     },
     {
       "id": "L1592",
       "section": "37. DOKUMENTATION",
       "text": "* Dateien",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/architecture.md: module, runtime, configuration and secret-file map"
+      ]
     },
     {
       "id": "L1593",
       "section": "37. DOKUMENTATION",
       "text": "* systemd units",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "README.md and docs/architecture.md: exact three units, installed paths, restart/linger/PATH/working-directory behavior"
+      ]
     },
     {
       "id": "L1594",
       "section": "37. DOKUMENTATION",
       "text": "* Windows Scheduled Task/Service",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/windows-worker.md: task identity, executable, logon/hidden/highest/IgnoreNew settings and safe restart sequence"
+      ]
     },
     {
       "id": "L1595",
       "section": "37. DOKUMENTATION",
       "text": "* DB-Schema",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/architecture.md: schema v3 tables, mappings, one-active index, WAL/FULL/foreign-key/integrity guarantees"
+      ]
     },
     {
       "id": "L1596",
       "section": "37. DOKUMENTATION",
       "text": "* Recovery",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/recovery.md: startup reconciliation, manual holds, bounded session resume, lifecycle roll-forward and live-vs-untested boundaries"
+      ]
     },
     {
       "id": "L1597",
       "section": "37. DOKUMENTATION",
       "text": "* Queue",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "README.md, docs/architecture.md and docs/manual-pause.md: Resume/Pause/Run now, selection/admission and persisted hold semantics"
+      ]
     },
     {
       "id": "L1598",
       "section": "37. DOKUMENTATION",
       "text": "* Unsnooze-Integration",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/architecture.md and docs/unsnooze.md: upstream detector, autoResume=false, native slash-command authority and no argv-wake fallback"
+      ]
     },
     {
       "id": "L1599",
       "section": "37. DOKUMENTATION",
       "text": "* Worker-Protokoll",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/windows-worker.md: challenge/HMAC/sequence/timestamp handshake, inventory/alive, deduplicated durable jobs/results, reconnect and unknown outcomes"
+      ]
     },
     {
       "id": "L1600",
       "section": "37. DOKUMENTATION",
       "text": "* Dashboard",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "README.md and docs/architecture.md: LAN URL, authentication/security, actions, detail/history and confirmation behavior"
+      ]
     },
     {
       "id": "L1601",
       "section": "37. DOKUMENTATION",
       "text": "* Discord",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/architecture.md and docs/lifecycle.md: bot ownership, project channels, transactional outbox, reset edits and Close/Delete distinction"
+      ]
     },
     {
       "id": "L1602",
       "section": "37. DOKUMENTATION",
       "text": "* Backup/Restore",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/recovery.md: online SQLite backup, WAL pitfalls, complete snapshot inventory, offline restore reconciliation and deleted-project boundaries documented; this documents procedure, not a passed full disaster-restore drill"
+      ]
     },
     {
       "id": "L1604",
