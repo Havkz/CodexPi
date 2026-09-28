@@ -100,8 +100,7 @@ failed before checkout with `wincredman` and missing `/dev/tty` errors. The user
 global helper remains `manager`; only worker Git children use gh.
 
 This verifies real reconnect and exact-commit execution, not Windows reboot/login
-autostart, the precise 60-second heartbeat expiry, or every interrupted-job case.
-Those acceptance checks remain outstanding.
+autostart or every interrupted-job case. Those acceptance checks remain outstanding.
 
 On 2026-09-27 the missing controller admission/dispatch guards were reproduced
 with focused offline tests before the fix. The six worker-admission regression
@@ -115,3 +114,22 @@ with HTTP 400 and project/native/queue states, jobs and event counts stayed
 unchanged (`state/worker-admission-20260927-150150.json`). This does not claim a
 new positive live active-goal dispatch test; the prior 2026-09-21 result above
 predates this guard change.
+
+On 2026-09-28 `Setup/verify-controller-recovery.py --worker-restart` stopped and
+started only the existing idle Windows scheduled task, after both job ledgers and
+all native/project states passed the no-work preflight. The real dashboard API
+reported offline within 5.187 seconds and the signed connection returned within
+2.954 seconds; Pi service identities, native statuses, project mappings, selection
+and manual holds were unchanged. Evidence: `state/worker-recovery-20260928-211623.json`.
+This proves disconnect detection within the required roughly 60-second window,
+not expiry of a silently open socket. The latter deadline has a focused clock
+regression check. That check first reproduced a cold-boot false-online result:
+`worker_seen=0` was treated as a received heartbeat when uptime was below 60s.
+Online now also requires a nonzero signed-heartbeat timestamp. The single added
+check passed on Windows and Pi; controller source backup is
+`backups/code/controller-before-heartbeat-20260928.py` on the Pi.
+
+The scheduled task has an enabled user-logon trigger and was running at inspection,
+but TaskScheduler/Operational history was disabled. Its prior automatic logon
+execution therefore cannot be conclusively proven from those logs. No event-log,
+permission, security or user-session settings were changed for this inspection.

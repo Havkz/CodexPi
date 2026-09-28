@@ -3559,7 +3559,9 @@
       "section": "15. WINDOWS WORKER",
       "text": "* nach 60 Sekunden ohne gültigen Heartbeat:",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "tests/test_worker_server.py: focused cold-boot and exact 60-second timestamp regression passed Windows/Pi. Live worker disconnect observed within 5.187s; silently open connection expiry remains unverified. docs/windows-worker.md"
+      ]
     },
     {
       "id": "L0766",
@@ -3930,8 +3932,10 @@
       "id": "L0842",
       "section": "17. WINDOWS WORKER DARF ADMIN",
       "text": "* reconnectet automatisch zum Pi",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Setup/verify-controller-recovery.py --crash: actual controller SIGKILL followed by signed Windows reconnect, state/controller-recovery-20260925-194716.json. Existing scheduled worker restart additionally reconnected in 2.954s on 2026-09-28; docs/recovery.md and docs/windows-worker.md"
+      ]
     },
     {
       "id": "L0843",
@@ -6516,8 +6520,10 @@
       "id": "L1408",
       "section": "31. BOOT / RECOVERY END-TO-END-TEST",
       "text": "U. Windows offline wird innerhalb ca. 60 s erkannt",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Setup/verify-controller-recovery.py --worker-restart: real scheduled worker stopped, actual dashboard API reported offline within 5.187s, then signed reconnect with unchanged Pi/native/queue state; state/worker-recovery-20260928-211623.json; docs/windows-worker.md"
+      ]
     },
     {
       "id": "L1409",

@@ -1,6 +1,6 @@
-"""Live idle-controller SIGKILL recovery; --crash is required to inject the fault.
+"""Live idle recovery; explicit --crash or --worker-restart injects a fault.
 
-Never kills the native bridge, Unsnooze, Windows worker or unrelated Pi services.
+Never kills the native bridge, Unsnooze or unrelated services.
 Refuses active goals, pending lifecycle work and unfinished Windows jobs.
 """
 import argparse
@@ -8,6 +8,8 @@ import http.cookiejar
 import importlib.util
 import json
 from pathlib import Path
+import sqlite3
+import subprocess
 import time
 import urllib.error
 import urllib.parse
@@ -53,7 +55,9 @@ async def snapshot():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--crash', action='store_true')
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument('--crash', action='store_true')
+    action.add_argument('--worker-restart', action='store_true')
     args = parser.parse_args()
     client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
     client.open(BASE, timeout=10).close()
@@ -66,6 +70,47 @@ def main():
     before_web = state()
     assert before_web['windows_online'] and before_web['discord_online'], 'Need connected baseline to verify reconnect'
     before = helper.remote(SNAPSHOT + '\nprint(json.dumps(asyncio.run(snapshot())))\n')
+    if args.worker_restart:
+        # Reuse the same idle/native/queue preflight; never interrupt a Windows job.
+        ledger = sqlite3.connect((ROOT / 'windows-worker/state/jobs.db').as_uri() + '?mode=ro', uri=True)
+        try:
+            assert not ledger.execute("SELECT 1 FROM jobs WHERE status!='delivered'").fetchone(), 'Unacknowledged Windows job; abort'
+        finally:
+            ledger.close()
+        def task(command):
+            subprocess.run(['powershell', '-NoProfile', '-NonInteractive', '-Command',
+                "$ErrorActionPreference='Stop'; " + command], check=True, capture_output=True, text=True, timeout=25)
+        task("if ((Get-ScheduledTask -TaskName 'CodexPi Windows Worker').State -ne 'Running') { throw 'Worker not running' }")
+        started = time.monotonic()
+        try:
+            task("Stop-ScheduledTask -TaskName 'CodexPi Windows Worker'; "
+                 "$deadline=(Get-Date).AddSeconds(15); "
+                 "while ((Get-ScheduledTask -TaskName 'CodexPi Windows Worker').State -eq 'Running') { "
+                 "if ((Get-Date) -gt $deadline) { throw 'Worker did not stop' }; Start-Sleep -Milliseconds 250 }")
+            while state()['windows_online']:
+                if time.monotonic() - started > 55:
+                    raise RuntimeError('Worker disconnect not observed within deadline')
+                time.sleep(1)
+            offline_seconds = time.monotonic() - started
+            assert offline_seconds <= 60
+            print('Worker offline confirmed; restarting its existing scheduled task', flush=True)
+        finally:
+            task("Start-ScheduledTask -TaskName 'CodexPi Windows Worker'")
+        restarted = time.monotonic()
+        while not state()['windows_online']:
+            if time.monotonic() - restarted > 60:
+                raise RuntimeError('Worker signed heartbeat did not reconnect')
+            time.sleep(1)
+        after = helper.remote(SNAPSHOT + '\nprint(json.dumps(asyncio.run(snapshot())))\n')
+        for field in ('projects', 'selected', 'manual_holds', 'native_statuses', 'services'):
+            assert after[field] == before[field], field
+        result = {'passed': True, 'offline_seconds': offline_seconds,
+            'reconnect_seconds': time.monotonic() - restarted, 'pi_and_projects_unchanged': True,
+            'logon_autostart_tested': False, 'silent_open_socket_expiry_tested': False}
+        record = ROOT / 'state' / ('worker-recovery-' + time.strftime('%Y%m%d-%H%M%S') + '.json')
+        record.write_text(json.dumps(result, indent=2))
+        print(json.dumps({'record': str(record), **result}))
+        return
     if not args.crash:
         print(json.dumps({'preflight': 'passed', 'projects': len(before['projects']), 'crash_injected': False}))
         return

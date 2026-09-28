@@ -61,7 +61,7 @@ class Controller:
 
     @property
     def windows_online(self):
-        return bool(self.worker is not None and not self.worker.closed and
+        return bool(self.worker is not None and not self.worker.closed and self.worker_seen and
                     time.monotonic() - self.worker_seen < 60)
 
     async def start(self):

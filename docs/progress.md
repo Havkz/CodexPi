@@ -6,6 +6,20 @@ the appended binding design, lifecycle, migration and usage-chart requirements).
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
 
+## 2026-09-28 Windows heartbeat and worker recovery
+
+`4f6ea6a` passed all four GitHub Actions jobs in run `36470494717`; deployed
+worker/lifecycle/layout/audit files were hash-matched with local sources.
+The existing recovery verifier now supports `--worker-restart` without new
+infrastructure or a separate harness. A real idle Windows-worker stop/start
+confirmed offline in 5.187s, signed reconnect in 2.954s and unchanged native
+sessions, queue, manual holds and Pi services. `windows-worker.md` records the
+evidence and remaining logon-autostart/silent-socket verification limits.
+A one-line cold-boot heartbeat guard fixes a reproduced false-online result
+before the first signed heartbeat. Its focused regression passed on Windows/Pi.
+Before deployment, SQLite backup was
+`backups/sqlite/codexpi-20260928-211701-1790623021781967392.db`.
+
 ## 2026-09-27/28 worker admission and top-of-dashboard usage
 
 Windows-job submission and dispatch now share queue/manual-pause/native-goal

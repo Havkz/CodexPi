@@ -44,6 +44,16 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
         self.c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,created_at,updated_at) VALUES(?,?,?,?,?)',
                               (ident, project, json.dumps(self.body), 1, 1))
 
+    def test_signed_heartbeat_required_and_expires_at_sixty_seconds(self):
+        c = self.c
+        c.worker_seen = 0
+        with patch('app.controller.time.monotonic', return_value=5):
+            self.assertFalse(c.windows_online)  # Connected is not a signed alive.
+            c.worker_seen = 1
+            self.assertTrue(c.windows_online)
+        with patch('app.controller.time.monotonic', return_value=61):
+            self.assertFalse(c.windows_online)
+
     async def test_unselected_offline_request_cannot_overwrite_pause_or_user_block(self):
         c = self.c
         c.worker_seen = time.monotonic() - 61
