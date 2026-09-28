@@ -1,10 +1,32 @@
 # CodexPi installation progress
 
-The authoritative specification is C:\CODEXPI_GOAL.md (2979 lines, including
+The authoritative specification is C:\CODEXPI_GOAL.md (2985 lines, including
 the appended binding design, lifecycle, migration and usage-chart requirements).
 `requirement-audit.json` preserves every nonempty source line for individual
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
+
+## 2026-09-27/28 worker admission and top-of-dashboard usage
+
+Windows-job submission and dispatch now share queue/manual-pause/native-goal
+eligibility checks under the existing controller lock. Offline requests cannot
+overwrite an inactive project's pause or human blocker. Undelivered jobs can be
+cancelled during safe deletion; ambiguous sent/running jobs retain their recovery
+barrier. See `windows-worker.md` for reproduction, regression and live API
+evidence. Backup before deployment: `backups/code/before-worker-admission-20260927-150106.tgz`
+and `backups/sqlite/codexpi-20260927-150106-1790514066026811185.db` on the Pi.
+
+On 2026-09-28 the Usage / Limits section was moved to the first dashboard content
+section, above summary/projects/queue/infrastructure, preserving its design and
+data. Deployed on the Pi; the existing live Edge check passed desktop and mobile,
+Weekly default, Daily switching, favicon decoding and absence of JS/CSP errors.
+`state/usage-dashboard-top.png` was visually inspected. This simple layout change
+adds one order assertion to the existing check, not a separate test suite.
+The user's request for focused, non-granular testing is preserved in the goal.
+Final migration and the complete requirement audit remain outstanding.
+The required `graphify update .` was attempted but its installed uv Python launcher
+returned `Access is denied` on 2026-09-28. No permissions/security settings were
+changed; graph refresh remains unverified for this change package.
 
 ## 2026-09-25 usage-history implementation and live verification
 

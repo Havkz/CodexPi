@@ -57,6 +57,8 @@ def main():
             page.context.route('http://codexpi.test/**', route)
             page.goto('http://codexpi.test/')
         expect(page.locator('#usage-weekly')).to_have_attribute('aria-pressed', 'true')
+        assert page.locator('main > section').first.get_attribute('id') == 'usage-section'
+        page.screenshot(path=str(ROOT / 'state/usage-dashboard-top.png'))
         expect(page.locator('link[rel=icon]')).to_have_attribute('href', '/favicon.ico')
         if args.live:
             # Chromium's special favicon fetch is not reliably intercepted by the fixture route.

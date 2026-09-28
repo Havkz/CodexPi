@@ -146,6 +146,11 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                                            ('pending', 'project-1', '{}', 1, 1))
                 with self.assertRaisesRegex(ValueError, 'Windows jobs'):
                     await lifecycle.begin(controller, 'project-1', 'rename', name='Renamed')
+                for status in ('sent', 'running'):
+                    controller.db.conn.execute('UPDATE jobs SET status=?', (status,))
+                    with self.assertRaisesRegex(ValueError, 'Windows jobs'):
+                        await lifecycle.begin(controller, 'project-1', 'delete', confirmation='First')
+                    self.assertEqual(controller.db.get('project-1')['lifecycle'], 'ready')
                 controller.db.conn.execute('DELETE FROM jobs')
                 path = Path(controller.db.get('project-1')['project_path'])
                 (path / '.codexpi/project-id').write_text('someone-else')
@@ -161,8 +166,13 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                 state['native_status'] = 'paused' if status == 'paused' else 'usageLimited'
                 c.db.update('project-1', goal_status=status,
                             operation=json.dumps({'kind': 'resume', 'source': 'unsnooze', 'sent_at': 1}))
+                c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,created_at,updated_at) VALUES(?,?,?,?,?)',
+                                  ('undelivered', 'project-1', '{}', 1, 1))
                 with patch('app.lifecycle.command', command), patch('app.controller.command', command):
-                    await lifecycle.begin(c, 'project-1', 'delete', confirmation='First')
+                    await lifecycle.begin(c, 'project-1', 'delete', confirmation='First', defer=True)
+                    job = c.db.conn.execute('SELECT * FROM jobs').fetchone()
+                    self.assertEqual(job['status'], 'finished')
+                    self.assertTrue(json.loads(job['result'])['cancelled'])
                     await lifecycle.recover(c)
                     await c.resume_ready()
                 self.assertEqual(c.db.all(), [])

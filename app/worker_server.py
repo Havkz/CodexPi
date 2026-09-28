@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import re
 import secrets
 import time
@@ -98,11 +99,46 @@ async def worker_socket(request):
 
 
 async def dispatch_pending(controller):
-    job = controller.db.conn.execute('SELECT * FROM jobs WHERE status=? ORDER BY created_at LIMIT 1', ('pending',)).fetchone()
-    if job is None or controller.db.conn.execute('SELECT 1 FROM jobs WHERE status IN (?,?)', ('sent', 'running')).fetchone():
-        return
-    controller.db.conn.execute('UPDATE jobs SET status=?,updated_at=? WHERE job_id=?', ('sent', time.time(), job['job_id']))
-    await send(controller, {'type': 'job', 'job_id': job['job_id'], **json.loads(job['payload'])})
+    async with controller.lock:
+        if controller.db.conn.execute('SELECT 1 FROM jobs WHERE status IN (?,?)', ('sent', 'running')).fetchone():
+            return
+        while True:
+            job = controller.db.conn.execute('SELECT * FROM jobs WHERE status=? ORDER BY created_at LIMIT 1', ('pending',)).fetchone()
+            if job is None:
+                return
+            project = controller.db.get(job['project_id'])
+            reason = await job_denial(controller, project)
+            if reason:
+                cancel_pending(controller, project['project_id'], reason)
+                continue
+            if not controller.windows_online:
+                return
+            # Persist intent first. A disconnect during send has an unknown outcome;
+            # only the authenticated worker inventory may authorize same-ID redelivery.
+            controller.db.conn.execute('UPDATE jobs SET status=?,updated_at=? WHERE job_id=?', ('sent', time.time(), job['job_id']))
+            try:
+                await send(controller, {'type': 'job', 'job_id': job['job_id'], **json.loads(job['payload'])})
+            except (ConnectionError, ValueError):
+                pass
+            return
+
+
+async def job_denial(controller, project):
+    if (controller.db.setting('selected') != project['project_id'] or project['queue_position'] != 1
+            or project['goal_status'] != 'active' or project['operation'] or not controller.can_auto_resume(project)):
+        return 'Only the selected, executing project may request Windows jobs'
+    goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+    if not goal or goal['status'] != 'active':
+        return 'An active native goal is required for Windows jobs'
+    return None
+
+
+def cancel_pending(controller, project_id, reason):
+    # Pending means never delivered (or absence confirmed by worker inventory).
+    # Never apply this to sent/running jobs, which may already have side effects.
+    result = {'stdout': '', 'stderr': reason, 'exit_code': -1, 'artifacts': [], 'cancelled': True}
+    controller.db.conn.execute("UPDATE jobs SET status='finished',result=?,updated_at=? WHERE project_id=? AND status='pending'",
+                              (json.dumps(result), time.time(), project_id))
 
 
 async def unblock_windows(controller):
@@ -126,23 +162,21 @@ async def unblock_windows(controller):
 
 async def submit_job(controller, body):
     async with controller.lock:
-        return await _submit_job(controller, body)
+        result = await _submit_job(controller, body)
+    try:
+        await dispatch_pending(controller)
+    except Exception as exc:
+        # Acceptance is already durable. Return its ID so the caller can follow
+        # the existing job; the next signed heartbeat retries dispatch safely.
+        logging.getLogger('worker').warning('Job accepted; dispatch deferred: %s', controller.redactor.clean(str(exc)))
+    return result
 
 
 async def _submit_job(controller, body):
     project = controller.db.get(body['project_id'])
-    if project['lifecycle'] != 'ready':
-        raise ValueError('Project lifecycle operation is in progress')
-    if not controller.windows_online:
-        reason = {'reason': 'Windows offline', 'details': str(body.get('reason', 'Native Windows test required')),
-                  'requires_user': False}
-        clean = controller.redactor.clean(json.dumps(reason))
-        atomic_write(__import__('pathlib').Path(project['project_path']) / '.codexpi/block.json', clean)
-        await controller.native.rpc('thread/goal/set', {'threadId': project['codex_session_id'], 'status': 'blocked'})
-        with controller.db.transaction():
-            controller.db.update(project['project_id'], goal_status='stalled', windows_required=1, block_reason=clean)
-            controller.db.event(project['project_id'], 'stalled', {'reason': clean})
-        raise ValueError('Windows offline')
+    denial = await job_denial(controller, project)
+    if denial:
+        raise ValueError(denial)
     argv, commit = body.get('argv'), body.get('commit')
     if (not isinstance(argv, list) or not argv or len(argv) > 128 or
             any(not isinstance(a, str) or '\x00' in a or len(a) > 65536 for a in argv)):
@@ -158,11 +192,20 @@ async def _submit_job(controller, body):
             PureWindowsPath(p).drive or PureWindowsPath(p).root or '..' in PureWindowsPath(p).parts
             for p in artifacts)):
         raise ValueError('Artifact paths must be relative to the project checkout')
+    if not controller.windows_online:
+        reason = {'reason': 'Windows offline', 'details': str(body.get('reason', 'Native Windows test required')),
+                  'requires_user': False}
+        clean = controller.redactor.clean(json.dumps(reason))
+        atomic_write(__import__('pathlib').Path(project['project_path']) / '.codexpi/block.json', clean)
+        await controller.native.rpc('thread/goal/set', {'threadId': project['codex_session_id'], 'status': 'blocked'})
+        with controller.db.transaction():
+            controller.db.update(project['project_id'], goal_status='stalled', windows_required=1, block_reason=clean)
+            controller.db.event(project['project_id'], 'stalled', {'reason': clean})
+        raise ValueError('Windows offline')
     await command('gh', 'api', 'repos/' + project['github_repo'] + '/commits/' + commit, '--jq', '.sha')
     payload = {'repo': project['github_repo'], 'slug': project['slug'], 'commit': commit,
                'argv': argv, 'timeout': timeout, 'artifacts': artifacts}
     ident = str(uuid.uuid4())
     controller.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,created_at,updated_at) VALUES (?,?,?,?,?)',
                               (ident, project['project_id'], json.dumps(payload), time.time(), time.time()))
-    await dispatch_pending(controller)
     return {'job_id': ident}

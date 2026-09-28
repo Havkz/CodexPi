@@ -66,6 +66,19 @@ reconnect until acknowledged. A process restart during execution produces an
 explicit unknown-outcome result; it does not blindly repeat side effects.
 The controller reconciles unacknowledged delivery against the worker inventory.
 
+Job admission and dispatch both hold the controller's existing queue lock and
+check selection, queue position 1, lifecycle, pending operations, manual/global
+pause, human-required blockers and the actual native active goal. Offline-worker
+blocking happens only after admission and request validation; an inactive
+project's pause or human blocker cannot be overwritten by a Windows request.
+Undelivered jobs that lose eligibility finish with an explicit cancelled result,
+so they do not block another project's queue. Delete may cancel these pending
+jobs atomically with its lifecycle journal, without consuming Codex usage.
+Already sent/running jobs are never declared cancelled or repeated on assumption:
+their durable result/inventory reconciliation must finish before deletion.
+If the native probe becomes unavailable after acceptance, the caller retains the
+durable job ID and the next signed heartbeat retries dispatch.
+
 Logs rotate at 2 MiB with five backups under `windows-worker/logs`. The shared
 secret, project `.env` values, and common GitHub/API token formats are redacted
 before returned output is persisted. Do not put credentials in command arguments.
@@ -89,3 +102,16 @@ global helper remains `manager`; only worker Git children use gh.
 This verifies real reconnect and exact-commit execution, not Windows reboot/login
 autostart, the precise 60-second heartbeat expiry, or every interrupted-job case.
 Those acceptance checks remain outstanding.
+
+On 2026-09-27 the missing controller admission/dispatch guards were reproduced
+with focused offline tests before the fix. The six worker-admission regression
+cases cover rejection, offline side effects, stale/native transitions, queue
+serialization and ambiguous delivery; existing lifecycle tests cover deletion of
+pending jobs while retaining the sent/running barrier. All 49 Windows tests
+passed; the nine affected worker-server/lifecycle tests also passed on the Pi.
+`Setup/verify-worker-admission.py` then exercised the real local API for the
+blocked user project and three completed projects: every request was rejected
+with HTTP 400 and project/native/queue states, jobs and event counts stayed
+unchanged (`state/worker-admission-20260927-150150.json`). This does not claim a
+new positive live active-goal dispatch test; the prior 2026-09-21 result above
+predates this guard change.

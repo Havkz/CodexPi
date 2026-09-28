@@ -75,7 +75,8 @@ async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=
         path = owned_path(controller, project, project['project_path'])
         if not path.exists():
             raise ValueError('Project directory is missing')
-        if controller.db.conn.execute("SELECT 1 FROM jobs WHERE project_id=? AND status!='finished'", (ident,)).fetchone():
+        if controller.db.conn.execute("SELECT 1 FROM jobs WHERE project_id=? AND status!='finished' AND (?!='delete' OR status!='pending')",
+                                      (ident, kind)).fetchone():
             raise ValueError('Wait for pending Windows jobs before changing project lifecycle')
         operation = {'kind': kind, 'phase': 'prepared', 'old': project, 'requested_at': time.time()}
         if kind == 'rename':
@@ -117,7 +118,11 @@ async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=
             raise ValueError('Unsupported lifecycle action')
         await channel(controller, project)  # permission/ownership preflight before any mutation
         controller.db.backup(controller.root / 'backups/sqlite')
-        controller.db.update(ident, lifecycle='renaming' if kind == 'rename' else 'deleting', operation=json.dumps(operation))
+        with controller.db.transaction():
+            if kind == 'delete':
+                from .worker_server import cancel_pending
+                cancel_pending(controller, ident, 'Project deletion cancelled the undelivered Windows job')
+            controller.db.update(ident, lifecycle='renaming' if kind == 'rename' else 'deleting', operation=json.dumps(operation))
         if defer:
             return {'ok': True}  # TUI receives its acknowledgement before recovery stops its pane.
         try:
