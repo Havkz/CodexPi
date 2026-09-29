@@ -6,6 +6,24 @@ the appended binding design, lifecycle, migration and usage-chart requirements).
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
 
+## 2026-09-29 active-goal recovery evidence closure
+
+The real 2026-09-28 controller SIGKILL now has active native-goal continuation
+evidence, not only idle process recovery. The original session/goal survived,
+resumed and completed its file/commit/push task. A read-only 2026-09-29 recheck
+confirmed native/DB completion, clean tree, matching remote commit, private repo
+and exactly one real Discord completion message with a Close button. See
+`recovery.md` for identities, records and the explicit remaining limits.
+No new fault or model request was needed for this evidence closure; existing
+verifiers were extended, with no new runtime dependencies or test framework.
+`1258632` passed all four GitHub Actions jobs in run `36471441990`.
+Native-bridge/full-Pi restart, actual Close interaction, genuine automatic
+quota-reset continuation, final audit and the delayed migration remain open.
+Both read-only live rechecks passed with five mapped projects and no injected
+fault. Audit reconciliation preserved the unchanged specification hash.
+Graphify query/update were retried on 2026-09-29; the existing uv launcher still
+fails with `Access is denied`, so graph refresh is not claimed.
+
 ## 2026-09-28 Windows heartbeat and worker recovery
 
 `4f6ea6a` passed all four GitHub Actions jobs in run `36470494717`; deployed

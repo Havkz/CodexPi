@@ -53,7 +53,8 @@ systemctl --user is-active codexpi codexpi-native codexpi-unsnooze
 
 Restarting only the controller is different from rebooting the Pi or restarting
 the native bridge. It still disconnects dashboard/TUI gate/worker connections
-temporarily. Never use a restart as proof that native goal continuation works.
+temporarily. A service restart alone is not proof of native goal continuation;
+verify the original goal identity, controller acknowledgement and subsequent work.
 
 ## Backups
 
@@ -129,11 +130,15 @@ and backup; real Pi controller restarts retained exact samples too.
 `Setup/verify-controller-recovery.py` performs a read-only preflight by default.
 `--crash` deliberately sends SIGKILL to **only the systemd controller main PID**,
 after rejecting active native turns, goals, operations and unfinished Windows
-jobs. It requires a connected Discord/worker baseline, then checks a new PID and
+jobs. The explicit `--active-project ID` exception permits only that selected,
+actually executing mapped goal; unrelated active goals and all unfinished jobs
+remain forbidden. It requires a connected Discord/worker baseline, then checks a new PID and
 invocation, increased systemd restart count, unchanged native/Unsnooze processes,
 same dashboard authentication, project mappings/queue/manual holds/native states
-and retained real usage observations. It does not test active-model continuation,
-native-process crash, reboot, kernel panic or physical power loss.
+and retained real usage observations. Active-project mode additionally requires
+an acknowledged active resume and verifies the same native ID, objective hash,
+creation time and nondecreasing token count. It does not test native-process
+crash, reboot, kernel panic or physical power loss.
 
 The Windows reboot/logon, full Pi reboot, active native crash recovery and
 coordinated disaster-restore drills remain separate final audit requirements.
@@ -153,3 +158,35 @@ The local ignored evidence record is
 `state/controller-recovery-20260925-194716.json`; it records completed=true and
 explicitly automatic_active_goal_resume_tested=false. This is a real SIGKILL
 process-recovery test, not a simulated status change or a whole-device reboot.
+
+### Live active-goal controller crash, 2026-09-28
+
+The existing native-resume verifier's `--recovery-fixture` option created one
+dedicated project and submitted its real goal through the mapped TUI. Dashboard
+Run now promoted it from queue position 2 to 1. The goal waited 45 seconds for
+fault injection, then wrote and verified `RECOVERY_TEST.txt`, committed/pushed
+and completed. It did not install dependencies or launch other agents.
+
+`Setup/verify-controller-recovery.py --crash --active-project
+2b63f666-dc35-4b68-bbb9-38fc4d1fad59` passed. Controller PID `677659` became
+`680856`, with a new systemd invocation and restart count 1. Native bridge PID
+`1158` and Unsnooze PID `1159` and their invocations were unchanged. The original
+native session `01a0e97b-6396-7b23-98b8-83c864c0d81a`, goal objective hash and
+creation time survived; its token count advanced from 7710 to 10078. Queue,
+project mappings, manual holds, dashboard authentication and real usage samples
+were preserved. Discord and the signed Windows heartbeat reconnected.
+The user's unrelated `usertestproject3` remained user-decision-blocked.
+
+Ignored local evidence: `state/controller-recovery-20260928-212639.json` records
+`completed=true` and `automatic_active_goal_resume_tested=true`.
+The same goal subsequently completed at commit
+`63c967bd01506ed1ff8e026fbc0753a98afc7062` in the private repository
+`Havkz/codexpi-active-recovery-e2e-20260928`.
+On 2026-09-29 the verifier's completed-project path rechecked the native goal,
+database completion, exact file content, clean tree, local/DB/remote commit and
+private visibility without starting a goal. Its outbox contains one sent
+completion event, matching exactly one actual Discord message
+`1554213028038451292`, including that commit and the Close button.
+`state/active-recovery-e2e-20260928.json` stores this completion evidence.
+The Close button was not clicked; its interaction and native-bridge/full-Pi
+restart recovery remain separate, unproven checks. The fixture is retained.

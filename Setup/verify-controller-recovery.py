@@ -1,7 +1,8 @@
-"""Live idle recovery; explicit --crash or --worker-restart injects a fault.
+"""Live recovery; explicit --crash or --worker-restart injects a fault.
 
 Never kills the native bridge, Unsnooze or unrelated services.
-Refuses active goals, pending lifecycle work and unfinished Windows jobs.
+Refuses active goals except an explicit --active-project for controller recovery.
+Always refuses pending lifecycle work and unfinished Windows jobs.
 """
 import argparse
 import http.cookiejar
@@ -20,29 +21,40 @@ spec = importlib.util.spec_from_file_location('lifecycle_e2e', ROOT / 'Setup/tes
 helper = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helper)
 BASE = 'http://192.168.2.105:8787'
-SNAPSHOT = '''import asyncio,json,subprocess
+SNAPSHOT = '''import asyncio,hashlib,json,subprocess
 from pathlib import Path
 from app.db import Database
 from app.native import GoalSource,Native
 def service(name):
  text=subprocess.check_output(['systemctl','--user','show',name,'--property=MainPID,NRestarts,ActiveState,InvocationID'],text=True)
  return dict(line.split('=',1) for line in text.splitlines())
-async def snapshot():
+async def snapshot(executing=None):
  db=Database('state/codexpi.db')
  assert db.conn.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
  projects=db.all()
- assert not any(p['operation'] or p['goal_status']=='active' for p in projects), 'Project operation or active goal; abort'
+ assert not any(p['operation'] or p['goal_status']=='active' and p['project_id']!=executing for p in projects), 'Project operation or unrelated active goal; abort'
  assert not db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('pending','sent','running')").fetchone(), 'Unfinished Windows job; abort'
  native_rows=GoalSource(Path.cwd()).rows()
- assert not any(r['status']=='active' for r in native_rows.values()), 'Native active goal; abort'
+ active_project=next((p for p in projects if p['project_id']==executing),None)
+ assert not executing or active_project, 'Unknown active project; abort'
+ allowed_session=active_project['codex_session_id'] if active_project else None
+ assert not any(r['status']=='active' and ident!=allowed_session for ident,r in native_rows.items()), 'Unrelated native active goal; abort'
+ active_goal=None
  native=await Native('state/native.sock').connect()
  try:
   for p in projects:
    thread=(await native.rpc('thread/read',{'threadId':p['codex_session_id']}))['thread']
-   assert thread['status']['type'] in ('idle','notLoaded'), 'Native turn is executing; abort'
+   if p['project_id']==executing:
+    assert db.setting('selected')==executing and p['goal_status']=='active' and thread['status']['type']=='active', 'Target is not executing; abort'
+    goal=(await native.rpc('thread/goal/get',{'threadId':p['codex_session_id']}))['goal']
+    assert goal['status']=='active' and thread['id']==p['codex_session_id'] and thread['cwd']==p['project_path']
+    active_goal={'session':thread['id'],'objective_sha256':hashlib.sha256(goal['objective'].encode()).hexdigest(),
+      'created_at':goal.get('createdAt'),'tokens_used':goal['tokensUsed']}
+   else:
+    assert thread['status']['type'] in ('idle','notLoaded'), 'Native turn is executing; abort'
  finally: await native.close()
  fields=('project_id','display_name','project_path','codex_session_id','tmux_session_name','github_repo','discord_channel_id','queue_position','goal_status','block_reason','lifecycle')
- result={'projects':[{k:p[k] for k in fields} for p in projects], 'selected':db.setting('selected'),
+ result={'projects':[{k:p[k] for k in fields} for p in projects], 'selected':db.setting('selected'), 'active_goal':active_goal,
    'manual_holds':{p['project_id']:db.setting('manual_pause/'+p['project_id'],False) for p in projects},
    'native_statuses':{k:r['status'] for k,r in native_rows.items()},
    'usage_samples':[list(r) for r in db.conn.execute('SELECT * FROM usage_samples ORDER BY observed_at DESC LIMIT 4')],
@@ -58,7 +70,10 @@ def main():
     action = parser.add_mutually_exclusive_group()
     action.add_argument('--crash', action='store_true')
     action.add_argument('--worker-restart', action='store_true')
+    parser.add_argument('--active-project', help='Allow only this executing project for --crash')
     args = parser.parse_args()
+    if args.active_project and not args.crash:
+        parser.error('--active-project requires --crash')
     client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
     client.open(BASE, timeout=10).close()
     password = Path('C:/CODEXPI_GOAL.md').read_text(encoding='cp1252').splitlines()[121].strip('`')
@@ -69,7 +84,8 @@ def main():
             return json.load(response)
     before_web = state()
     assert before_web['windows_online'] and before_web['discord_online'], 'Need connected baseline to verify reconnect'
-    before = helper.remote(SNAPSHOT + '\nprint(json.dumps(asyncio.run(snapshot())))\n')
+    snapshot_call = 'snapshot(' + repr(args.active_project) + ')'
+    before = helper.remote(SNAPSHOT + '\nprint(json.dumps(asyncio.run(' + snapshot_call + ')))\n')
     if args.worker_restart:
         # Reuse the same idle/native/queue preflight; never interrupt a Windows job.
         ledger = sqlite3.connect((ROOT / 'windows-worker/state/jobs.db').as_uri() + '?mode=ro', uri=True)
@@ -117,25 +133,31 @@ def main():
     record = ROOT / 'state' / ('controller-recovery-' + time.strftime('%Y%m%d-%H%M%S') + '.json')
     record.write_text(json.dumps({'before': before, 'completed': False}, indent=2))
     # Recheck immediately on the Pi before targeting the exact systemd main process.
-    killed = helper.remote(SNAPSHOT + '''
-before=asyncio.run(snapshot())
+    killed = helper.remote(SNAPSHOT + '\nbefore=asyncio.run(' + snapshot_call + ')\n' + '''
 subprocess.run(['systemctl','--user','kill','--kill-whom=main','--signal=SIGKILL','codexpi.service'],check=True)
 print(json.dumps(before['services']['codexpi']))
 ''')
     assert killed['MainPID'] == before['services']['codexpi']['MainPID'], 'Controller changed before injection; inspect record'
-    print('Injected SIGKILL into idle controller; waiting for systemd and signed worker reconnect', flush=True)
+    print('Injected controller SIGKILL; waiting for systemd and signed worker reconnect', flush=True)
     deadline = time.monotonic() + 90
     while time.monotonic() < deadline:
         try:
             web = state()
-            if web['windows_online'] and web['discord_online'] and web['unsnooze'].get('daemonRunning'):
+            target = next((p for p in web['projects'] if p['project_id']==args.active_project), None)
+            acknowledged = not args.active_project or (target and not target['operation'] and
+                json.loads(target['resume_result'] or '{}').get('status')=='active')
+            if acknowledged and web['windows_online'] and web['discord_online'] and web['unsnooze'].get('daemonRunning'):
                 break
         except (OSError, urllib.error.URLError):
             pass
         time.sleep(2)
     else:
         raise RuntimeError('Controller/integrations not confirmed within 90s; no repeated crash')
-    after = helper.remote(SNAPSHOT + '\nprint(json.dumps(asyncio.run(snapshot())))\n')
+    after = helper.remote(SNAPSHOT + '\nprint(json.dumps(asyncio.run(' + snapshot_call + ')))\n')
+    if args.active_project:
+        for key in ('session', 'objective_sha256', 'created_at'):
+            assert before['active_goal'][key] == after['active_goal'][key], key
+        assert after['active_goal']['tokens_used'] >= before['active_goal']['tokens_used']
     for field in ('projects', 'selected', 'manual_holds', 'native_statuses'):
         assert after[field] == before[field], field
     old, new = before['services']['codexpi'], after['services']['codexpi']
@@ -148,7 +170,7 @@ print(json.dumps(before['services']['codexpi']))
     assert web['csrf'] == before_web['csrf'], 'Existing authenticated dashboard session was not preserved'
     result = {'before': before, 'after': after, 'completed': True, 'crash_injected': True,
         'windows_reconnected': True, 'discord_reconnected': True, 'dashboard_session_preserved': True,
-        'usage_history_preserved': True, 'automatic_active_goal_resume_tested': False}
+        'usage_history_preserved': True, 'automatic_active_goal_resume_tested': bool(args.active_project)}
     record.write_text(json.dumps(result, indent=2))
     print(json.dumps({'record': str(record), 'passed': True, 'old_pid': old['MainPID'], 'new_pid': new['MainPID']}))
 

@@ -6543,8 +6543,10 @@
       "id": "L1411",
       "section": "31. BOOT / RECOVERY END-TO-END-TEST",
       "text": "X. User-required `stalled` resumed NICHT automatisch",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/recovery.md: live idle and active controller SIGKILL recovery and signed worker reconnect preserved usertestproject3's native stalled state and requires_user Test scope missing blocker; state/controller-recovery-20260928-212639.json records unchanged state before/after, while only the selected fixture resumed"
+      ]
     },
     {
       "id": "L1412",
@@ -6558,7 +6560,9 @@
       "section": "31. BOOT / RECOVERY END-TO-END-TEST",
       "text": "Z. Complete-Nachricht + Close-Button funktioniert",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "Partial only: real completion message 1554213028038451292 includes verified final commit and Close button; Setup/verify-native-resume.py --recovery-fixture rechecked native/DB/Git/Discord on 2026-09-29. Actual Close click not performed, so requirement remains pending; docs/recovery.md"
+      ]
     },
     {
       "id": "L1415",
@@ -6580,7 +6584,7 @@
       "text": "* Pi-seitigen Controller hart beenden und systemd recovery prüfen",
       "status": "tested",
       "evidence": [
-        "docs/recovery.md: Setup/verify-controller-recovery.py --crash passed real SIGKILL, systemd new PID/invocation and restart counter, preserved mappings/holds/history/login, Discord and worker reconnect on 2026-09-25; native bridge/Unsnooze unchanged; no active-goal/reboot claim"
+        "docs/recovery.md: Setup/verify-controller-recovery.py --crash passed real idle SIGKILL on 2026-09-25; --crash --active-project 2b63f666-dc35-4b68-bbb9-38fc4d1fad59 passed active-goal SIGKILL on 2026-09-28. New controller PID/invocation/restart count, same native goal ID/objective/creation time, continued token use and subsequent completion at 63c967bd01506ed1ff8e026fbc0753a98afc7062; mappings/holds/history/login and Discord/worker reconnect verified. Native bridge/Unsnooze unchanged; no native-process-crash or reboot claim"
       ]
     },
     {
