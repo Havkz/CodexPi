@@ -37,4 +37,18 @@ samples are not a controlled whole-system benchmark.
 
 Repeat this measurement after all remaining implementation, reboot/recovery and
 design work before recording the final required resource result. Separate
-Ponytail hook latency/startup overhead measurements are still outstanding.
+Ponytail measurements are updated below; full startup overhead remains outstanding.
+
+## Incremental 2026-09-29 sample
+
+The same read-only 60.10-second check passed with five mapped projects, no active
+native goal, no tmux pane and unchanged main PIDs. Process PSS totaled 370.11 MiB;
+cgroup memory totaled 425.71 MiB. CPU was 10.28% of one core: controller 10.04%,
+native bridge 0.22%, Unsnooze 0.02%. Four long-lived processes were observed;
+no separate Ponytail process remained. This is not an A/B Ponytail measurement.
+
+`optimization.md` records measured Ponytail hook latency and its scope. Total TUI
+startup overhead is still pending. The controller CPU increase from the earlier
+5.42% sample must be profiled before final resource acceptance; no causal
+attribution is made from these differently timed samples. The Token Optimizer
+integration is not yet installed, so this is not its final performance baseline.

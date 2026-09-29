@@ -1,7 +1,7 @@
 {
   "source": "C:\\CODEXPI_GOAL.md",
-  "source_sha256": "bfd0f03912530b23322329f52f8d601b6c57728cc4fbb806e2494c02b4326de7",
-  "source_lines": 2985,
+  "source_sha256": "8bc6e96d677f44bb1c1dd517d41acaae69041340626d7ebc2e51811db33a4083",
+  "source_lines": 2989,
   "source_revisions": [
     {
       "source_sha256": "16a54c0a093b2b6e0594cb26d599403fcd5452febec57a6cc6ec035c270c223c",
@@ -22,6 +22,10 @@
     {
       "source_sha256": "149de932e8afab35d1ac6979504af2813fcc00b2163dd4a8ca3bcb44f98ad13c",
       "source_lines": 2979
+    },
+    {
+      "source_sha256": "bfd0f03912530b23322329f52f8d601b6c57728cc4fbb806e2494c02b4326de7",
+      "source_lines": 2985
     }
   ],
   "complete": false,
@@ -9149,15 +9153,19 @@
       "id": "L1951",
       "section": "42.8 RESSOURCENMESSUNG",
       "text": "* Hook-Latenz",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/optimization.md: installed ARM64 Ponytail SessionStart and UserPromptSubmit hooks measured in isolated plugin data, three samples each; medians 94.55/94.84 ms; state/optimization-20260929-212155.json. No total TUI-startup claim"
+      ]
     },
     {
       "id": "L1952",
       "section": "42.8 RESSOURCENMESSUNG",
       "text": "* Einfluss auf Codex-Startzeit",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "Partial: SessionStart hook latency including Node startup is measured; total native TUI startup impact is not yet measured. docs/optimization.md"
+      ]
     },
     {
       "id": "L1954",
@@ -9212,8 +9220,10 @@
       "id": "L1967",
       "section": "42.9 PONYTAIL-DOKUMENTATION",
       "text": "`~/CodexPi/docs/optimization.md`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "docs/optimization.md created with inspected versions/configuration/hooks, measured latency/resources, disable procedure and explicit Token Optimizer installer defects; deployed and hash-checked on Pi on 2026-09-29"
+      ]
     },
     {
       "id": "L1969",
@@ -9310,15 +9320,19 @@
       "id": "L1987",
       "section": "42.10 PONYTAIL-ABSCHLUSSTEST",
       "text": "* Ponytail ist in Codex verfügbar",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "2026-09-29 native hooks/list: three enabled/trusted ponytail@ponytail hooks; installed version 4.10.0. Actual completed recovery session rollout contains full-mode developer context. docs/optimization.md"
+      ]
     },
     {
       "id": "L1988",
       "section": "42.10 PONYTAIL-ABSCHLUSSTEST",
       "text": "* Modus entspricht `full` bzw. aktuellem Äquivalent",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Setup/verify-optimization.py: JSON defaultMode and actual running native process PONYTAIL_DEFAULT_MODE both full, isolated SessionStart emits PONYTAIL:FULL; real recovery rollout includes level: full. state/optimization-20260929-212155.json"
+      ]
     },
     {
       "id": "L1989",
@@ -9353,7 +9367,9 @@
       "section": "42.10 PONYTAIL-ABSCHLUSSTEST",
       "text": "* Token Optimizer funktioniert weiterhin",
       "status": "pending",
-      "evidence": []
+      "evidence": [
+        "Not achieved: exact user-selected alexgreensh/token-optimizer v5.13.27 not activated. Setup/verify-optimization.py --token-preflight reproduces duplicate POSIX hooks on reinstall, failed removal and compact prompt not at TOML root on actual Pi configuration, without live config writes. docs/optimization.md"
+      ]
     },
     {
       "id": "L1994",
@@ -14710,6 +14726,22 @@
       "text": "Tests auf relevante Fehlerfälle und Sicherheitsgrenzen beschränken; nicht für jede Kleinigkeit oder jedes Implementierungsdetail neue Tests anlegen. Bestehende geeignete Prüfungen wiederverwenden. Während der Umsetzung gezielt betroffene Tests ausführen, die vollständige Suite erst zum Abschluss eines Änderungspakets. Die geforderten Regressionstests und realen Verifikationen bleiben bestehen.",
       "status": "pending",
       "evidence": []
+    },
+    {
+      "id": "L2987",
+      "section": "VERBINDLICHE PRÄZISIERUNG VOM 29.09.2026: TOKEN OPTIMIZER",
+      "text": "# VERBINDLICHE PRÄZISIERUNG VOM 29.09.2026: TOKEN OPTIMIZER",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2989",
+      "section": "VERBINDLICHE PRÄZISIERUNG VOM 29.09.2026: TOKEN OPTIMIZER",
+      "text": "Mit Token Optimizer ist ausschließlich https://github.com/alexgreensh/token-optimizer gemeint. Dieses Tool verwenden, sofern es mit der aktuellen Codex-/CodexPi-Version kompatibel ist. Keinen anderen Ersatz wegen eines uneindeutigen Namens installieren. Falls das Repository nicht mehr verfügbar oder inkompatibel ist, dies dokumentieren und vor der Installation eines alternativen Tools den Benutzer fragen.",
+      "status": "pending",
+      "evidence": [
+        "Exact repository confirmed by user on 2026-09-29; v5.13.27 commit 9ea1977acab5ab57421068064fc3bf2f0d4b2fdf staged for source review. No substitute or global installation. Installer defects reproduced; safe integration and compatibility acceptance remain pending. docs/optimization.md"
+      ]
     }
   ]
 }

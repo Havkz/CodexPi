@@ -1,10 +1,26 @@
 # CodexPi installation progress
 
-The authoritative specification is C:\CODEXPI_GOAL.md (2985 lines, including
+The authoritative specification is C:\CODEXPI_GOAL.md (2989 lines, including
 the appended binding design, lifecycle, migration and usage-chart requirements).
 `requirement-audit.json` preserves every nonempty source line for individual
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
+
+## 2026-09-29 optimization inventory and installer defects
+
+Added the required `optimization.md`, grounded in native hooks/list, actual
+service environment, installed source, a real goal's full-mode context and
+isolated ARM64 hook measurements. Existing idle measurement was reused; no new
+model turn, service restart or live mode change was needed. Total infrastructure
+PSS was 370.11 MiB and CPU 10.28% of one core; final profiling remains open.
+
+The user clarified Token Optimizer as `alexgreensh/token-optimizer` only; this
+was appended to the binding goal and audit without changing prior requirements.
+Release v5.13.27 was cloned for review, not globally installed. A single combined
+in-memory preflight reproduces duplicate hooks on reinstall, ineffective removal
+of those hooks and an incorrectly scoped appended TOML compact-prompt setting.
+The real seven trusted goal/Ponytail hooks remain unchanged. Safe integration
+of that exact tool is still pending; no substitute was installed.
 
 ## 2026-09-29 active-goal recovery evidence closure
 
