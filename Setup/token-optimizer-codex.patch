@@ -1,0 +1,39 @@
+diff --git a/skills/token-optimizer/scripts/codex_compact_prompt.py b/skills/token-optimizer/scripts/codex_compact_prompt.py
+--- a/skills/token-optimizer/scripts/codex_compact_prompt.py
++++ b/skills/token-optimizer/scripts/codex_compact_prompt.py
+@@ -99,7 +99,7 @@
+         rf"(?ms)^{re.escape(MANAGED_BEGIN)}.*?^{re.escape(MANAGED_END)}\n?"
+     )
+     if managed_re.search(config_text):
+-        return managed_re.sub(block, config_text), "updated"
++        return block + managed_re.sub("", config_text), "updated"
+ 
+     if COMPACT_FILE_RE.search(config_text) and not force:
+         raise ValueError("config.toml already has experimental_compact_prompt_file; rerun with --force to replace")
+@@ -110,8 +110,8 @@
+     if INLINE_COMPACT_RE.search(config_text):
+         config_text = _comment_out_setting(INLINE_COMPACT_LINE_RE, config_text)
+ 
+-    suffix = "" if not config_text or config_text.endswith("\n") else "\n"
+-    return config_text + suffix + "\n" + block, "installed"
++    # A root key must precede TOML tables; appending inherits the last table.
++    return block + config_text, "installed"
+ 
+ 
+ def plan_install(force: bool = False) -> dict[str, str | bool]:
+diff --git a/skills/token-optimizer/scripts/codex_install.py b/skills/token-optimizer/scripts/codex_install.py
+--- a/skills/token-optimizer/scripts/codex_install.py
++++ b/skills/token-optimizer/scripts/codex_install.py
+@@ -442,6 +442,12 @@
+ 
+ 
+ def _is_token_optimizer_group(group: Any) -> bool:
++    # Recognize current consolidated runners exactly, including POSIX commands.
++    # Do not take ownership of a foreign/mixed group merely naming our runtime.
++    current = _managed_hooks(enable_bash_compression=True, enable_hot_path_hooks=True,
++                             enable_prompt_hooks=True, enable_subagent_hooks=True)
++    if any(group == owned for groups in current.values() for owned in groups):
++        return True
+     # The path marker misses generated Windows commands: on versioned
+     # marketplace installs the baked paths use backslashes
+     # (...\token-optimizer\X.Y.Z\hooks\run.py) and consolidated-runner args

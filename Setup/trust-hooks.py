@@ -1,4 +1,4 @@
-"""Trust only the seven reviewed hook definitions, through Codex's native API."""
+"""Trust only the reviewed goal/Ponytail and optional Token Optimizer definitions."""
 import asyncio
 import json
 from pathlib import Path
@@ -18,6 +18,11 @@ REVIEWED = {
     'sha256:6a6f42bc3b58d6262db38bfd74d7f340fcca2b09cdb134aad365063f0bfefca4',
     'sha256:1423b56c1322f96c8f74c51c1e7ae9a047b904c1fa43ee9165d462fd7a6e70ef',
 }
+TOKEN_OPTIMIZER_REVIEWED = {
+    'sha256:0a1302b63344411fc1f5bc1be3e62d8abe1c832194b8434856adaf9cb9fdcb91',
+    'sha256:311c9ebcbaad6d473663fd84631d0983dd9a9b28895dfefde4c3321cf03414e3',
+    'sha256:82023c13698028cdaca771b0e03521185c6db18608bfc58c7a77ca7c9495783c',
+}
 
 
 async def main():
@@ -28,7 +33,8 @@ async def main():
         hooks = [h for group in result['data'] for h in group['hooks']]
         if any(group['errors'] or group['warnings'] for group in result['data']):
             raise RuntimeError('Resolve hook loading errors before granting trust')
-        if len(hooks) != 7 or {h['currentHash'] for h in hooks} != REVIEWED:
+        hashes = {h['currentHash'] for h in hooks}
+        if len(hooks) != len(hashes) or hashes not in (REVIEWED, REVIEWED | TOKEN_OPTIMIZER_REVIEWED):
             raise RuntimeError('Hook definitions changed; review them before updating this allowlist')
         config = Path.home() / '.codex/config.toml'
         backup = root / 'backups' / ('hook-trust-' + str(time.time_ns()) + '.toml')
@@ -39,7 +45,8 @@ async def main():
             'mergeStrategy': 'upsert'}], 'reloadUserConfig': True})
         result = await native.rpc('hooks/list', {'cwds': [str(root)]})
         hooks = [h for group in result['data'] for h in group['hooks']]
-        assert len(hooks) == 7 and all(h['trustStatus'] == 'trusted' for h in hooks), result
+        assert {h['currentHash'] for h in hooks} == hashes and len(hooks) == len(hashes), result
+        assert all(h['trustStatus'] == 'trusted' for h in hooks), result
         print(json.dumps({'trusted_hooks': len(hooks), 'backup': str(backup)}))
     finally:
         await native.close()

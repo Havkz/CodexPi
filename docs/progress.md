@@ -6,6 +6,20 @@ the appended binding design, lifecycle, migration and usage-chart requirements).
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
 
+## 2026-09-30 Token Optimizer compatibility patch and installation
+
+Installed the exact selected `alexgreensh/token-optimizer` v5.13.28 from pinned
+commit 0b4f87e411096b4e322bd242d22fc136feac508c with a two-function installer
+patch. The existing combined check now verifies real install/reinstall/uninstall
+on config copies plus three sandboxed hook events; it preserves foreign hooks
+and fixes root TOML placement. No replacement tool or command rewriting enabled.
+Native inventory confirms ten trusted hooks, including the original seven
+unchanged goal/Ponytail hashes. No model turn or service restart was performed.
+The normal mapped completed TUI still opens without changing its goal/tokens;
+that did not fire a fresh SessionStart and is not native hook-execution proof.
+See `optimization.md` for backup paths, reproducible installation, measurements
+and the remaining native-turn/compaction/Unsnooze/resource acceptance.
+
 ## 2026-09-29 optimization inventory and installer defects
 
 Added the required `optimization.md`, grounded in native hooks/list, actual

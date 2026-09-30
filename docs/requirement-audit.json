@@ -9368,7 +9368,7 @@
       "text": "* Token Optimizer funktioniert weiterhin",
       "status": "pending",
       "evidence": [
-        "Not achieved: exact user-selected alexgreensh/token-optimizer v5.13.27 not activated. Setup/verify-optimization.py --token-preflight reproduces duplicate POSIX hooks on reinstall, failed removal and compact prompt not at TOML root on actual Pi configuration, without live config writes. docs/optimization.md"
+        "Partial 2026-09-30: exact alexgreensh/token-optimizer v5.13.28 installed with two-function installer compatibility patch; copied install/reinstall/uninstall and sandboxed event checks pass. Native inventory has ten trusted hooks with prior seven unchanged, root compact prompt valid. Real native turn/compaction, Unsnooze coexistence and final resource acceptance remain pending; merely reopening a completed TUI did not fire fresh SessionStart. docs/optimization.md"
       ]
     },
     {
@@ -14740,7 +14740,7 @@
       "text": "Mit Token Optimizer ist ausschließlich https://github.com/alexgreensh/token-optimizer gemeint. Dieses Tool verwenden, sofern es mit der aktuellen Codex-/CodexPi-Version kompatibel ist. Keinen anderen Ersatz wegen eines uneindeutigen Namens installieren. Falls das Repository nicht mehr verfügbar oder inkompatibel ist, dies dokumentieren und vor der Installation eines alternativen Tools den Benutzer fragen.",
       "status": "pending",
       "evidence": [
-        "Exact repository confirmed by user on 2026-09-29; v5.13.27 commit 9ea1977acab5ab57421068064fc3bf2f0d4b2fdf staged for source review. No substitute or global installation. Installer defects reproduced; safe integration and compatibility acceptance remain pending. docs/optimization.md"
+        "Exact selected repository only: pinned v5.13.28 commit 0b4f87e411096b4e322bd242d22fc136feac508c installed on Pi from reviewed local marketplace with tracked compatibility patch, config backups and exact three new hook trust hashes. No alternative installed. Isolated compatibility checks pass; final native execution/coexistence acceptance remains pending. docs/optimization.md"
       ]
     }
   ]

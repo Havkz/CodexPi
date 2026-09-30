@@ -8,7 +8,9 @@ import argparse
 import json
 import os
 from pathlib import Path
+import runpy
 import statistics
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -23,19 +25,23 @@ from app.native import Native
 
 async def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--token-preflight', action='store_true', help='Check staged upstream installer in memory only')
+    parser.add_argument('--token-preflight', action='store_true', help='Check staged installer in memory and disposable configuration copies')
+    parser.add_argument('--token-baseline', type=Path, default=Path.home() / '.codex',
+                        help='Directory with original hooks.json/config.toml; use the pre-install backup after activation')
     args = parser.parse_args()
+    upstream = ROOT / 'Setup/upstream/token-optimizer'
+    sys.path.insert(0, str(upstream / 'skills/token-optimizer/scripts'))
+    import codex_install
+    import codex_compact_prompt
     if args.token_preflight:
-        upstream = ROOT / 'Setup/upstream/token-optimizer'
-        sys.path.insert(0, str(upstream / 'skills/token-optimizer/scripts'))
-        import codex_install
-        import codex_compact_prompt
         hooks_path = Path.home() / '.codex/hooks.json'
-        existing = json.loads(hooks_path.read_text())
+        baseline_hooks = args.token_baseline / 'hooks.json'
+        baseline_config = args.token_baseline / 'config.toml'
+        existing = json.loads(baseline_hooks.read_text())
         first = codex_install._merge_hooks(existing, enable_prompt_hooks=True)
         second = codex_install._merge_hooks(first, enable_prompt_hooks=True)
         removed = codex_install._remove_hooks(first)
-        config = (Path.home() / '.codex/config.toml').read_text()
+        config = baseline_config.read_text()
         proposed, _ = codex_compact_prompt._replace_or_append_config(
             config, Path.home() / '.codex/token-optimizer/codex-compact-prompt.md', force=False)
         count = lambda value: sum(len(g.get('hooks', [])) for groups in value['hooks'].values() for g in groups)
@@ -45,10 +51,93 @@ async def main():
             'idempotent': first == second, 'uninstall_preserves_original': removed == existing,
             'compact_setting_at_root': 'experimental_compact_prompt_file' in tomllib.loads(proposed),
             'live_files_changed': False}
+        checks = ('idempotent', 'uninstall_preserves_original', 'compact_setting_at_root')
+        if all(result[k] for k in checks):
+            # The real Codex home is never reassigned. Only the three install
+            # modules' path resolvers target these disposable copies.
+            original_hooks = hooks_path.read_bytes()
+            config_path = Path.home() / '.codex/config.toml'
+            original_config = config_path.read_bytes()
+            with tempfile.TemporaryDirectory(prefix='.codexpi-token-check-', dir=Path.home()) as scratch:
+                sandbox = Path(scratch)
+                shutil.copy2(baseline_hooks, sandbox / 'hooks.json')
+                shutil.copy2(baseline_config, sandbox / 'config.toml')
+                codex_install.codex_home = lambda: sandbox
+                codex_compact_prompt.codex_home = lambda: sandbox
+                codex_install.codex_statusline.codex_home = lambda: sandbox
+                codex_install.install(sandbox, is_global=True, enable_prompt_hooks=True)
+                installed_hooks = (sandbox / 'hooks.json').read_bytes()
+                installed_config = (sandbox / 'config.toml').read_bytes()
+                parsed = tomllib.loads(installed_config.decode())
+                prompt = Path(parsed.pop('experimental_compact_prompt_file'))
+                assert prompt == sandbox / 'token-optimizer/codex-compact-prompt.md'
+                assert prompt.read_text() == codex_compact_prompt.COMPACT_PROMPT
+                assert parsed == tomllib.loads(config)
+                codex_install.install(sandbox, is_global=True, enable_prompt_hooks=True)
+                assert (sandbox / 'hooks.json').read_bytes() == installed_hooks
+                assert (sandbox / 'config.toml').read_bytes() == installed_config
+                codex_install.uninstall(sandbox, is_global=True)
+                assert json.loads((sandbox / 'hooks.json').read_text()) == existing
+                assert (sandbox / 'config.toml').read_bytes() == baseline_config.read_bytes()
+                assert not prompt.exists()
+            assert hooks_path.read_bytes() == original_hooks
+            assert config_path.read_bytes() == original_config
+            foreign = {'hooks': [{'type': 'command', 'command': 'TOKEN_OPTIMIZER_RUNTIME=codex python3 user-hook.py'}]}
+            mixed = json.loads(json.dumps(codex_install._managed_hooks()['Stop'][0]))
+            mixed['hooks'].extend(foreign['hooks'])
+            for group in (foreign, mixed):
+                candidate = {'hooks': {'Stop': [group]}}
+                merged = codex_install._merge_hooks(candidate, enable_prompt_hooks=True)
+                assert codex_install._remove_hooks(merged) == candidate
+            result['copied_config_install_reinstall_uninstall_passed'] = True
+            result['foreign_and_mixed_groups_preserved'] = True
+            # Use the installed sandbox prerequisite: no network, private PID
+            # namespace, read-only host and a disposable home at its real path.
+            # HOME/CODEX_HOME and the production session databases stay untouched.
+            with tempfile.TemporaryDirectory(prefix='codexpi-token-hooks-') as scratch:
+                sandbox = Path(scratch)
+                (sandbox / '.codex').mkdir()
+                (sandbox / 'workspace').mkdir()
+                plugin_copy = sandbox / 'plugin-copy'
+                shutil.copytree(upstream / 'plugins/token-optimizer', plugin_copy,
+                                ignore=shutil.ignore_patterns('__pycache__'))
+                measurements = {}
+                managed = codex_install._managed_hooks(enable_prompt_hooks=True)
+                for event in ('SessionStart', 'UserPromptSubmit', 'Stop'):
+                    handler = managed[event][0]['hooks'][0]
+                    payload = {'hook_event_name': event, 'source': 'startup',
+                        'session_id': 'codexpi-isolated-token-check',
+                        'cwd': str(Path.home() / 'workspace'), 'prompt': 'ordinary project request'}
+                    started = time.perf_counter()
+                    output = subprocess.run(['bwrap', '--unshare-all', '--die-with-parent', '--new-session',
+                        '--ro-bind', '/', '/', '--bind', scratch, str(Path.home()),
+                        '--bind', str(plugin_copy), str(upstream), '--proc', '/proc', '--dev', '/dev',
+                        '--tmpfs', '/tmp', '--chdir', str(Path.home() / 'workspace'),
+                        '--setenv', 'TOKEN_OPTIMIZER_SNAPSHOT_DIR', str(Path.home() / 'snapshots'),
+                        '/bin/sh', '-c', handler['command']], input=json.dumps(payload),
+                        text=True, capture_output=True, check=True, timeout=handler['timeout'])
+                    measurements[event] = round((time.perf_counter() - started) * 1000, 2)
+                    assert not output.stderr, output.stderr
+                    if output.stdout.strip():
+                        envelope = json.loads(output.stdout)
+                        assert isinstance(envelope, dict)
+                        specific = envelope.get('hookSpecificOutput', {})
+                        assert specific.get('hookEventName', event) == event
+                for log in sandbox.rglob('*diagnostics.log'):
+                    content = log.read_text()
+                    assert 'Traceback' not in content and 'failed, continuing' not in content, content
+                generated = sorted(str(p.relative_to(sandbox)) for p in sandbox.rglob('*')
+                                   if p.is_file() and not p.is_relative_to(plugin_copy))
+                assert generated, 'Hooks exited without any execution evidence'
+                result['sandboxed_generated_files'] = generated
+                result['sandboxed_hook_ms'] = measurements
+                result['sandboxed_hooks_passed'] = True
+            assert hooks_path.read_bytes() == original_hooks
+            assert config_path.read_bytes() == original_config
         record = ROOT / 'state/token-optimizer-preflight.json'
         atomic_write(record, json.dumps(result, indent=2) + '\n')
         print(json.dumps({'record': str(record), **result}, indent=2))
-        if not all(result[k] for k in ('idempotent', 'uninstall_preserves_original', 'compact_setting_at_root')):
+        if not all(result[k] for k in checks):
             raise SystemExit(1)
         return
     native = await Native(ROOT / 'state/native.sock').connect()
@@ -58,8 +147,17 @@ async def main():
         await native.close()
     assert not any(g['errors'] or g['warnings'] for g in listing['data']), 'Hook loading problem'
     hooks = [h for g in listing['data'] for h in g['hooks']]
-    assert len(hooks) == 7 and all(h['enabled'] and h['trustStatus'] == 'trusted' for h in hooks)
+    reviewed = runpy.run_path(str(ROOT / 'Setup/trust-hooks.py'))
+    expected = reviewed['REVIEWED'] | reviewed['TOKEN_OPTIMIZER_REVIEWED']
+    assert len(hooks) == len(expected) and {h['currentHash'] for h in hooks} == expected
+    assert all(h['enabled'] and h['trustStatus'] == 'trusted' for h in hooks)
     assert len({h['key'] for h in hooks}) == len(hooks), 'Duplicate hook definition'
+    installed_hooks = json.loads((Path.home() / '.codex/hooks.json').read_text())
+    assert codex_install._merge_hooks(installed_hooks, enable_prompt_hooks=True) == installed_hooks
+    native_config = tomllib.loads((Path.home() / '.codex/config.toml').read_text())
+    compact_prompt = Path(native_config['experimental_compact_prompt_file'])
+    assert compact_prompt == Path.home() / '.codex/token-optimizer/codex-compact-prompt.md'
+    assert compact_prompt.read_text() == codex_compact_prompt.COMPACT_PROMPT
     ponytail = [h for h in hooks if h['pluginId'] == 'ponytail@ponytail']
     assert {h['eventName'] for h in ponytail} == {'sessionStart', 'userPromptSubmit', 'subagentStart'}
     plugin = Path(ponytail[0]['sourcePath']).parent.parent
@@ -108,6 +206,7 @@ async def main():
         'isolated_activation_prompt_off_passed': True, 'measurements': measurements,
         'median_ms': {k: round(statistics.median(v), 2) for k, v in measurements.items()},
         'native_model_turn_started': False, 'full_tui_startup_measured': False,
+        'optimizer_live_merge_idempotent': True, 'optimizer_root_compact_prompt_valid': True,
         'token_optimizer_hook_found': any('token' in h['command'].lower() and 'optim' in h['command'].lower() for h in hooks)}
     record = ROOT / 'state' / ('optimization-' + time.strftime('%Y%m%d-%H%M%S') + '.json')
     atomic_write(record, json.dumps(result, indent=2) + '\n')
