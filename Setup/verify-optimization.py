@@ -148,8 +148,10 @@ async def main():
     assert not any(g['errors'] or g['warnings'] for g in listing['data']), 'Hook loading problem'
     hooks = [h for g in listing['data'] for h in g['hooks']]
     reviewed = runpy.run_path(str(ROOT / 'Setup/trust-hooks.py'))
-    expected = reviewed['REVIEWED'] | reviewed['TOKEN_OPTIMIZER_REVIEWED']
-    assert len(hooks) == len(expected) and {h['currentHash'] for h in hooks} == expected
+    hashes = {h['currentHash'] for h in hooks}
+    assert len(hooks) == len(hashes) == 10 and hashes in (
+        reviewed['REVIEWED'] | reviewed['TOKEN_OPTIMIZER_REVIEWED'],
+        reviewed['REVIEWED_4_12'] | reviewed['TOKEN_OPTIMIZER_REVIEWED'])
     assert all(h['enabled'] and h['trustStatus'] == 'trusted' for h in hooks)
     assert len({h['key'] for h in hooks}) == len(hooks), 'Duplicate hook definition'
     installed_hooks = json.loads((Path.home() / '.codex/hooks.json').read_text())
@@ -187,8 +189,8 @@ async def main():
 
         for _ in range(3):
             result, elapsed = invoke('ponytail-activate.js', 'SessionStart')
-            assert result['systemMessage'] == 'PONYTAIL:FULL'
             context = result['hookSpecificOutput']['additionalContext']
+            assert 'PONYTAIL MODE ACTIVE' in context and 'level: full' in context
             assert 'YAGNI' in context and 'full' in context and 'security' in context.lower()
             assert (Path(scratch) / '.ponytail-active').read_text() == 'full'
             measurements.setdefault('session_start_ms', []).append(round(elapsed, 2))
@@ -196,7 +198,7 @@ async def main():
             assert not result, 'Ordinary prompt should not inject duplicate rules'
             measurements.setdefault('ordinary_prompt_ms', []).append(round(elapsed, 2))
         result, _ = invoke('ponytail-mode-tracker.js', 'UserPromptSubmit', '/ponytail off')
-        assert result['systemMessage'] == 'PONYTAIL:OFF'
+        assert 'PONYTAIL MODE OFF' in result['hookSpecificOutput']['additionalContext']
         assert not (Path(scratch) / '.ponytail-active').exists()
 
     result = {'observed_at': time.time(), 'version': manifest['version'], 'plugin_root': str(plugin),

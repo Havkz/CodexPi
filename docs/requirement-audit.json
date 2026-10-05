@@ -45,6 +45,14 @@
     }
   ],
   "complete": false,
+  "latest_verification": {
+    "date": "2026-10-05",
+    "migration": "docs/migration.md: all 664 original non-Git members, Git fsck/exact dirty state, 56 turns/2762 items, original rollout prefix, same-ID attached TUI and dashboard verified. Explicit Leave paused selected; original goal prompt/counters retained. Startup-dialog test mistake and real provider rejection documented, not hidden.",
+    "cleanup_L3001_L3005": "docs/progress.md; Pi state/test-cleanup-20261005.json: all ten selected lifecycles have verified backups, archived native sessions and absent Discord channels. Only Donut remains in DB/category. Ten GitHub repos pending explicit delete_repo credential scope; not complete.",
+    "manual_tests_L2997": "User-owned usage-reset and full-Pi-reboot acceptance results still missing; neither claimed passed.",
+    "targeted_regressions": "tests/test_web.py reproduces CSRF redaction collision; tests/test_scheduler.py verifies native terminal systemError before slot release. Live hook checks support reviewed Ponytail 4.12.0 without trust-all; docs/optimization.md.",
+    "overall": "Full requirement-by-requirement audit remains incomplete. Evidence here does not promote unrelated pending lines."
+  },
   "requirements": [
     {
       "id": "L0001",

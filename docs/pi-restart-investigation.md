@@ -2,7 +2,8 @@
 
 The user confirmed they did not initiate the observed restarts. Codex restarted
 only the `codexpi` user service while deploying the importer, never the Pi.
-Migration repair and external deletion are held pending stability assessment.
+The user subsequently identified a power outage. Hardware questioning is closed;
+resume migration repair without changing the pre-existing watchdogs/services.
 
 ## Observed, not inferred
 
@@ -19,6 +20,11 @@ Migration repair and external deletion are held pending stability assessment.
   length. Their original private archive was verified intact on the Pi and is
   also retained on Windows. A repair attempt was interrupted by another reboot;
   do not claim repair complete.
+- Subsequent read-only verification at 1,239 seconds uptime confirms the server
+  JAR and `004-Cancel order.pcapng` are now byte-for-byte correct. The decoded
+  capture `005-Decoded-test.pcapng` and reference client JAR still fail their
+  original hashes. Two incomplete copies are retained in
+  `.codexpi/migration/interrupted-copy-1791211484375233734/`.
 - At approximately 4–6 minutes uptime: CPU 46–47 C, available RAM 2,716 MiB of
   3,780 MiB, no swap, memory PSI averages zero. CodexPi/native/Unsnooze memory
   peaks in this boot were about 150/284/159 MB. These current measurements do
@@ -60,14 +66,28 @@ No changes were made to this pre-existing service.
 
 ## Conclusion and safe next evidence
 
-An abrupt/unclean system reset is confirmed; exact trigger remains unproven.
+An abrupt/unclean system reset is confirmed. The user subsequently reported a
+power outage; treat that as the reported cause, not as a watchdog diagnosis.
 Potential paths include power interruption, storage/kernel stall followed by
 watchdog reset, and the existing forced Internet-watchdog reboot. Do not select
-one merely because it fits the symptom. Ask about PSU/cable/peripherals, preserve
-the Windows archive, and collect boot-ID/voltage/memory/I/O telemetry without
-stress writes. Any changes to the existing global watchdog/network service need
+one merely because it fits the symptom. Preserve the Windows archive. No further
+PSU/cable/peripheral information is needed after the user's clarification.
+Any changes to the existing global watchdog/network service need
 explicit direction. Passwordless sudo is unavailable; no password was requested
 in chat and no privileged configuration was changed.
+
+The user reports no attached USB devices, USB-C power from the main wall outlet,
+and initially no general power outage, then clarified that it was a power outage.
+The earlier diagnostic observations above are retained as evidence, not a
+competing root-cause claim.
+
+At more than three hours uptime in the same boot, both remaining references were
+repaired from the intact archive: decoded capture 241,587,888 bytes and client
+JAR 31,152,600 bytes, with exact original SHA-256 hashes. The full non-Git member
+verification subsequently passed. A syntax-damaged `app/migration.py` was also
+replaced with the verified local version; its old bytes remain in the private
+`backups/migrations/migration.py.corrupt-20261005` backup. No original Windows
+file was modified.
 
 ## Separate reproducible CodexPi write-load defect
 
@@ -80,8 +100,9 @@ now produces zero row changes and preserves timestamps. FULL synchronous WAL,
 real state transitions and transactional notification outbox remain intact.
 Four focused checks passed, including rollback/backup, actual native limit
 transition/deduplication, Discord late-reset editing and migration recovery.
-This patch is not a demonstrated crash fix and has not yet been deployed to the
-Pi while the hardware investigation is open.
+This patch is not a demonstrated crash fix. It was deployed after the user's
+power-outage clarification, together with the targeted CSRF/terminal-turn fixes;
+only the CodexPi controller user service was restarted, not the Pi/native bridge.
 
 Relevant primary documentation:
 [Pi power/low-voltage behavior](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html),

@@ -268,10 +268,16 @@ class Controller:
                 'threadId': project['codex_session_id'], 'includeTurns': False}))['thread']
             if thread['status']['type'] in ('idle', 'notLoaded'):
                 return
-            if thread['status']['type'] != 'active':
+            if thread['status']['type'] not in ('active', 'systemError'):
                 raise RuntimeError('Cannot confirm native worker idleness')
             turns = await self.native.rpc('thread/turns/list', {
                 'threadId': project['codex_session_id'], 'limit': 1, 'sortDirection': 'desc'})
+            if thread['status']['type'] == 'systemError':
+                # Provider failures can leave a terminal turn in systemError.
+                # Require native terminal evidence, never infer idle from an error.
+                if turns['data'] and all(t['status'] in ('completed', 'failed', 'interrupted') for t in turns['data']):
+                    return
+                raise RuntimeError('Cannot confirm native worker idleness')
             for turn in turns['data']:
                 if turn['status'] == 'inProgress':
                     await self.native.rpc('turn/interrupt', {'threadId': project['codex_session_id'], 'turnId': turn['id']})

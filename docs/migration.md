@@ -73,19 +73,43 @@ the original objective, paused state, and all other original goal-row fields.
 The original rollout is an identical prefix of the live rollout; migration adds
 context without replacing history. Controller state reached ready/paused.
 
-However, the final independent file audit found four damaged/incomplete copies:
+The first independent file audit found four damaged/incomplete copies:
 the private server JAR, two PCAP references and the client JAR. The original
 archive remains intact. The Pi restarted during import and again during the
-attempted repair (not initiated by Codex). Repair completion is **unproven**.
+attempted repair (not initiated by Codex; the user subsequently reported a power
+outage). All four copies are now repaired and the full 664 non-Git member hashes
+pass. `git fsck --full`, original HEAD and the exact four modified/one untracked
+source status pass. All 56 original turns and 2,762 item rows match; only the
+live projection cursor changes as Codex appends new records.
 The importer now fsyncs extracted files/directories and rechecks every non-Git
 file before releasing the lifecycle. Damaged copies are retained separately
 when repaired; originals on Windows are untouched.
 
-Do not call this migration fully verified yet. Finish all-file checksum repair,
-open the real mapped TUI, verify its paused goal/session identity and dashboard
-mapping, and record Discord ownership. No trading/model turn was started.
+The actual attached TUI `/status` now proves the original session ID and Linux
+project cwd. Native state is idle, goal paused, tokens 6,031,136 unchanged.
+Dashboard independently reports the same mapping and durable manual pause with
+no selected project or infrastructure error. Private GitHub repository ID
+1358495158 and Discord category/topic ownership were independently checked.
+Private evidence: `state/migration-integrity-20261005.json`,
+`state/migration-tui-passive-20261005.json` and
+`state/migration-tui-verified-20261005.json` on the Pi.
+
+TUI acceptance exposed two prompts: updated Ponytail hooks required exact hash
+review; then Codex's paused-goal startup dialog defaults to **Resume goal**.
+An early `/status` test submitted Enter before dismissing that dialog and
+unintentionally authorized one native resume. The provider rejected it with a
+real usage limit; no tool work or increase in goal tokens was observed. The goal was
+immediately paused. Passive opening proves it does not resume by itself; the
+successful check explicitly selected **Leave paused** before `/status`.
+Never send blind slash-command Enter keystrokes into an uninspected startup menu.
+
+The failed provider turn left `systemError`; the controller now accepts this
+as quiescent only after its native latest turn is confirmed terminal. Unknown
+or executing states still retain the queue slot. Remaining final acceptance
+includes the user's reset/reboot checks and complete requirement audit.
 
 The single combined regression check in `tests/test_migration.py` covers export
 fidelity, unsafe/corrupt archives, target collisions, native-row preservation,
 the two-column compatibility case, manual hold and idempotent recovery after a
-Discord interruption. It does not replace the outstanding real TUI/file checks.
+Discord interruption. The live evidence above separately verifies actual files,
+history, TUI, dashboard and ownership; it does not claim unavailable usage reset.

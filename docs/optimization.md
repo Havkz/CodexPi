@@ -31,6 +31,18 @@ Ponytail remains a ruleset and short-lived Node hooks, not another AI worker.
 
 ## Hook coexistence and trust
 
+2026-10-05 follow-up: the Pi cache now contains Ponytail 4.12.0, confirming that
+the old marketplace ref did not pin future updates. Its three changed Node
+launchers caused a native trust dialog. After reviewing all three entrypoints
+and their runtime/config/instruction helpers, `trust-hooks.py` accepts the
+complete 4.12.0 hash set as well as the previously reviewed complete set.
+Mixed/unknown sets still fail closed. Native inventory verifies all ten hooks
+trusted after the scoped update; no Trust-all UI action was used.
+The existing isolated activation/ordinary-prompt/off check was updated for
+4.12.0's documented removal of warning-like `systemMessage`; it verifies the
+actual mode context instead. Pi check passed with ten trusted hooks and no
+model turn: `state/optimization-20261005-233753.json`.
+
 The native `hooks/list` response now reports ten enabled, trusted definitions,
 with no errors or warnings and no duplicate keys:
 

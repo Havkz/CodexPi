@@ -56,6 +56,32 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.controller.db.conn.close()
         self.temp.cleanup()
 
+    async def test_pause_releases_system_error_only_after_native_terminal_turn(self):
+        c = self.controller
+        del c.wait_idle  # Exercise the real shared queue/lifecycle idleness check.
+        c.select('first')
+        turn_status = 'failed'
+
+        async def rpc(method, params):
+            if method.startswith('thread/goal/'):
+                return {'goal': {'status': 'paused'}}
+            if method == 'thread/read':
+                return {'thread': {'status': {'type': 'systemError'}}}
+            if method == 'thread/turns/list':
+                return {'data': [{'id': 'limited-turn', 'status': turn_status}] if turn_status else []}
+            self.fail(method)
+
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        await c.pause(c.db.get('first'), manual=True)
+        self.assertIsNone(c.db.setting('selected'))
+        self.assertTrue(c.db.setting('manual_pause/first'))
+        # Error alone, an unknown state, or an executing turn is not idle proof.
+        for turn_status in (None, 'unknown', 'inProgress'):
+            c.select('first')
+            with self.assertRaisesRegex(RuntimeError, 'idleness'):
+                await c.pause(c.db.get('first'), manual=True)
+            self.assertEqual(c.db.setting('selected'), 'first')
+
     async def test_recovery_records_native_limit_once_and_clears_resume_intent(self):
         c = self.controller
         c.select('first')

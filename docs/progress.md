@@ -8,25 +8,37 @@ because a related file exists. The dashboard password is deliberately omitted.
 
 ## 2026-10-05 migration and final cleanup
 
-The user confirmed the Pi restarts were unexpected, not their reboot test.
-Read-only diagnosis confirms unclean shutdown/storage consequences but no
-definitive trigger. Existing global 30-second hardware and forced Internet
-watchdogs, a separate self-bot restart storm, and the older SD card require
-attention; none is yet proven causal. No global services were changed. See
-`pi-restart-investigation.md`. Large writes/deletions are currently held.
+The user subsequently identified a power outage. Read-only diagnostics and
+repaired interrupted copies are recorded in `pi-restart-investigation.md`.
+No global watchdog or unrelated service was changed. Migration work resumed.
 
 The selected Donut session has a checked private full archive on both hosts and
 is registered on the Pi using its original native session ID. Original goal
-fields and the full rollout prefix were verified. Final file verification found
-four damaged/incomplete copies across Pi restarts; repair and live TUI acceptance
-are not yet proven. See `migration.md` for evidence, exact scope and limitations.
+fields and full rollout prefix were verified. All 664 non-Git member hashes,
+Git fsck/dirty-state fidelity and 56 turns/2,762 original indexed items now pass.
+An actually attached TUI and dashboard verify the original ID and paused state.
+See `migration.md` for the startup-dialog test mistake, real provider limit,
+targeted pause repair, evidence and remaining limitations.
 
 The user owns the real usage-reset and full Pi-reboot acceptance tests; do not
 claim either passed without their result. They also explicitly authorized
 deleting all Codex-created test channels/repositories once no longer needed,
 and subsequently included `usertestproject3`. Keep only the migrated Donut
 project. Quiesce/archive through lifecycle deletion before external repository
-deletion; preserve recovery data and evidence. Cleanup is not yet performed.
+deletion; preserve recovery data and evidence. All ten selected test lifecycles
+are now independently verified deleted/archived, with Git-valid recovery
+backups and absent Discord channels. Only Donut remains in both DB and Discord
+category. The ten repositories remain pending: the Pi token received HTTP 403,
+and Windows CLI lacks `delete_repo`. User was asked to authorize that scope;
+no credentials or permissions were changed automatically.
+
+The intermittent CSRF failure in CI was reproduced by a valid URL-safe session
+token matching the provider-secret regex. Only the authenticated CSRF field
+bypasses content redaction now; project/log secrets remain redacted. One existing
+web test covers the collision and closes SQLite even on assertion failure.
+One targeted scheduler regression covers terminal native `systemError` after a
+provider failure, retaining the slot for unknown or in-progress turns. Both
+fixes and unchanged-value DB write suppression are deployed on the Pi.
 
 ## 2026-10-01 native Optimizer execution and migration priority
 

@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-05)
 
 ## Corpus Check
-- 80 files · ~91,550 words
+- 80 files · ~92,435 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 491 nodes · 1027 edges · 47 communities (35 shown, 12 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 90 edges (avg confidence: 0.66)
+- 492 nodes · 1029 edges · 47 communities (34 shown, 13 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 91 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b301e0ca`
+- Built from commit: `bdfe7ce0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -62,7 +62,7 @@
 1. `Database` - 51 edges
 2. `Controller` - 48 edges
 3. `command()` - 32 edges
-4. `SchedulerTests` - 27 edges
+4. `SchedulerTests` - 28 edges
 5. `atomic_write()` - 25 edges
 6. `Redactor` - 25 edges
 7. `finish()` - 19 edges
@@ -75,17 +75,17 @@
   Setup/discord-token.py → app/lifecycle.py
 - `main()` --indirect_call--> `action()`  [INFERRED]
   Setup/verify-lifecycle-fixes.py → app/web.py
-- `Crash` --uses--> `Redactor`  [INFERRED]
-  tests/test_lifecycle.py → app/common.py
-- `LifecycleTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_lifecycle.py → app/common.py
-- `SchedulerTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_scheduler.py → app/common.py
+- `WorkerAdmissionTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_worker_server.py → app/common.py
+- `Crash` --uses--> `Controller`  [INFERRED]
+  tests/test_lifecycle.py → app/controller.py
+- `LifecycleTests` --uses--> `Controller`  [INFERRED]
+  tests/test_lifecycle.py → app/controller.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (47 total, 12 thin omitted)
+## Communities (47 total, 13 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.33
@@ -100,8 +100,8 @@ Cohesion: 0.19
 Nodes (11): execute(), main(), protect_secret(), Outbound-only native Windows executor. This process never starts an AI agent., Windows DPAPI CurrentUser; no machine-wide or plaintext key file., relative_path(), validate_job(), Worker (+3 more)
 
 ### Community 3 - "deployment.py"
-Cohesion: 0.16
-Nodes (27): complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session(), render() (+19 more)
+Cohesion: 0.11
+Nodes (32): complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session(), render() (+24 more)
 
 ### Community 4 - "Native"
 Cohesion: 0.22
@@ -112,8 +112,8 @@ Cohesion: 0.33
 Nodes (5): Delete, Interrupted operation recovery, Project lifecycle, Rename, Verified on 2026-09-20
 
 ### Community 6 - "web.py"
-Cohesion: 0.15
-Nodes (20): action(), authorize(), favicon(), index(), login(), make_app(), project_detail(), safe_json() (+12 more)
+Cohesion: 0.10
+Nodes (24): number(), Read-only account telemetry; never decides whether a goal may execute., windows(), action(), authorize(), favicon(), index(), login() (+16 more)
 
 ### Community 7 - "dashboard.js"
 Cohesion: 0.42
@@ -128,12 +128,12 @@ Cohesion: 0.40
 Nodes (4): Installation and autostart, Protocol and jobs, Verification status, Windows worker
 
 ### Community 11 - "Bot"
-Cohesion: 0.10
-Nodes (16): read_env(), Redactor, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed(), main(), cancel_pending() (+8 more)
+Cohesion: 0.16
+Nodes (7): Native, NativeError, tui_proxy(), main(), Trust only the reviewed goal/Ponytail and optional Token Optimizer definitions., main(), Pi hook inventory and isolated Ponytail checks; no model turn or live config wri
 
 ### Community 21 - "main.py"
-Cohesion: 0.06
-Nodes (13): GoalSource, Native, NativeError, Native Codex 0.155.1 RPC and the scheduler's local TUI admission gate., Reuse upstream parsing and event comparison; never retain objective text., tui_proxy(), Read-only Pi resource sample; refuse to label an active-goal run as idle., sample() (+5 more)
+Cohesion: 0.05
+Nodes (13): Redactor, Database, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed(), unblock_windows(), BaseException (+5 more)
 
 ### Community 23 - "verify-design.py"
 Cohesion: 0.67
@@ -146,10 +146,6 @@ Nodes (4): Design verification — 2026-09-20, Implemented and deployed to the P
 ### Community 26 - "Unsnooze integration"
 Cohesion: 0.33
 Nodes (3): Unsnooze integration, Verification boundaries, Why the manual CLI wake cannot be used safely here
-
-### Community 27 - "Bot"
-Cohesion: 0.09
-Nodes (10): Database, number(), Read-only account telemetry; never decides whether a goal may execute., windows(), BaseException, DeploymentTests, Crash, LifecycleTests (+2 more)
 
 ### Community 29 - "Pi infrastructure resource measurements"
 Cohesion: 0.33
@@ -180,8 +176,8 @@ Cohesion: 0.22
 Nodes (6): Exercise the two explicitly named E2E projects through the authenticated dashboa, state(), main(), Live recovery; explicit --crash or --worker-restart injects a fault.  Never kill, main(), Resume only the existing queue E2E goal; never create or replace an objective.
 
 ### Community 38 - "main"
-Cohesion: 0.15
-Nodes (10): canonical(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., SignedChannel, slugify(), Run on Pi after copying reviewed sources; preserve and back up user config., Generate only a password hash from the user-owned specification. (+2 more)
+Cohesion: 0.09
+Nodes (19): canonical(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., read_env(), SignedChannel, slugify(), main() (+11 more)
 
 ### Community 41 - "Recovery and operator runbook"
 Cohesion: 0.22
@@ -210,16 +206,16 @@ Nodes (5): main(), open_project(), Create, rename and delete ONLY a dedicated li
 ## Knowledge Gaps
 - **73 isolated node(s):** `install-base.sh script`, `PATH`, `Alltag`, `Installation und Betrieb`, `Dokumentation` (+68 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `Bot` to `Controller`, `migration.py`, `deployment.py`, `main`, `web.py`, `Bot`, `main.py`?**
-  _High betweenness centrality (0.081) - this node is a cross-community bridge._
-- **Why does `Controller` connect `Controller` to `migration.py`, `deployment.py`, `Bot`, `main.py`, `Bot`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
-- **Why does `command()` connect `Controller` to `migration.py`, `deployment.py`, `web.py`, `Bot`, `main.py`, `Bot`?**
+- **Why does `Database` connect `main.py` to `Controller`, `migration.py`, `deployment.py`, `web.py`, `main`, `Bot`, `Bot`?**
+  _High betweenness centrality (0.082) - this node is a cross-community bridge._
+- **Why does `Controller` connect `Controller` to `migration.py`, `deployment.py`, `main`, `Bot`, `main.py`?**
+  _High betweenness centrality (0.064) - this node is a cross-community bridge._
+- **Why does `command()` connect `Controller` to `migration.py`, `deployment.py`, `main`, `web.py`, `main.py`, `Bot`?**
   _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Are the 11 inferred relationships involving `Database` (e.g. with `Controller` and `CoreTests`) actually correct?**
   _`Database` has 11 INFERRED edges - model-reasoned connections that need verification._

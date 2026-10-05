@@ -162,12 +162,11 @@ async def state(request):
         'pause_all': controller.db.setting('pause_all', False), 'windows_online': controller.windows_online,
         'discord_online': bool(controller.bot and controller.bot.is_ready()),
         'unsnooze': controller.unsnooze, 'github_account': controller.config['github_account'],
-        'infrastructure': infrastructure, 'server_time': now,
-        'csrf': session(request)['csrf']}
-    return safe_json(controller, payload)
+        'infrastructure': infrastructure, 'server_time': now}
+    return safe_json(controller, payload, csrf=session(request)['csrf'])
 
 
-def safe_json(controller, value):
+def safe_json(controller, value, *, csrf=None):
     # Redact before JSON escaping, including quoted/newline-containing secrets.
     def clean(item):
         if isinstance(item, str):
@@ -177,7 +176,12 @@ def safe_json(controller, value):
         if isinstance(item, list):
             return [clean(val) for val in item]
         return item
-    return web.json_response(clean(value))
+    payload = clean(value)
+    if csrf is not None:
+        # Only the authenticated session's own token bypasses content redaction.
+        # Random URL-safe tokens can coincidentally match provider-key patterns.
+        payload['csrf'] = csrf
+    return web.json_response(payload)
 
 
 async def usage(request):

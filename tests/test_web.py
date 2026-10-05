@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import closing
 import json
 from pathlib import Path
 import tempfile
@@ -17,8 +18,7 @@ from unittest.mock import AsyncMock, patch
 
 class WebTests(unittest.IsolatedAsyncioTestCase):
     async def test_auth_csrf_expiry_and_parallel_rate_limit(self):
-        with tempfile.TemporaryDirectory() as temp:
-            db = Database(Path(temp) / 'web.db')
+        with tempfile.TemporaryDirectory() as temp, closing((db := Database(Path(temp) / 'web.db')).conn):
             root = Path(__file__).resolve().parents[1]
             controller = SimpleNamespace(root=root, db=db, redactor=Redactor(temp),
                 config={'lan_subnet': '192.168.2.0/24', 'password_hash': password_hash('test-pass'),
@@ -53,7 +53,11 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                     headers={'Origin': str(client.make_url('/')).rstrip('/')})
                 self.assertEqual(response.status, 303)
                 self.assertTrue(response.cookies['codexpi']['httponly'])
+                # A valid random URL-safe CSRF token can resemble a provider key.
+                csrf = 'sk-' + 'a' * 40
+                db.conn.execute('UPDATE sessions SET csrf=?', (csrf,))
                 state = await (await client.get('/api/state')).json()
+                self.assertEqual(state['csrf'], csrf)
                 self.assertNotIn('password_hash', str(state))
                 self.assertEqual(len(state['infrastructure']), 6)
                 self.assertEqual(state['infrastructure'][3]['status'], 'unknown')
@@ -107,7 +111,6 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(codes.count(401), 5)
                 self.assertEqual(codes.count(429), 7)
                 self.assertEqual(db.conn.execute('SELECT failures FROM login_attempts').fetchone()[0], 5)
-            db.conn.close()
 
 
 if __name__ == '__main__':
