@@ -52,3 +52,18 @@ startup overhead is still pending. The controller CPU increase from the earlier
 5.42% sample must be profiled before final resource acceptance; no causal
 attribution is made from these differently timed samples. The Token Optimizer
 integration is not yet installed, so this is not its final performance baseline.
+
+## Incremental 2026-10-01 post-Optimizer sample
+
+After the real Optimizer E2E goal completed, the existing 60.10-second idle check
+measured 411.15 MiB process PSS, 512.06 MiB cgroup memory, and 5.90% of one CPU core.
+Controller: 79,292 KiB PSS / 5.68%; native bridge plus Code Mode: 243,636 KiB /
+0.20%; Unsnooze: 98,094 KiB / 0.02%. No active goal or tmux pane remained.
+Main PIDs were still 680856/1158/1159; no process with a Token Optimizer command
+line remained in the separate subsequent process inventory.
+
+The six-project, post-model-run sample is not a controlled plugin A/B comparison.
+It does not establish that the PSS increase from September 29 was caused by the
+optimizer. CPU is back near the earlier baseline without a controller change;
+the earlier 10.28% sample is not proof of a permanent CPU regression. Final
+repeatable overhead/resource acceptance remains open.

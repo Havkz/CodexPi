@@ -71,10 +71,17 @@ async def main():
         except Exception as exc:
             return web.json_response({'error': redactor.clean(str(exc))}, status=400)
 
+    async def local_import(request):
+        from .migration import request as migrate
+        try:
+            return web.json_response(await migrate(controller, await request.json()))
+        except Exception as exc:
+            return web.json_response({'error': redactor.clean(str(exc))}, status=400)
+
     local = web.Application(client_max_size=128 * 1024)
     local.add_routes([web.post('/projects/open', local_open), web.get('/windows-status', local_status),
                       web.post('/jobs', local_job), web.get('/jobs/{job_id}', job_status),
-                      web.post('/deployment/pi', local_deploy)])
+                      web.post('/deployment/pi', local_deploy), web.post('/projects/import', local_import)])
     gate = web.Application()
     gate['controller'] = controller
     gate['sockets'] = set()

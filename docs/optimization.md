@@ -103,7 +103,7 @@ override the current environment setting. Do not disable all Codex hooks:
 goal persistence/notifier hooks must remain enabled. Restore both defaults to
 `full` to return to the specified configuration. No live opt-out was performed.
 
-## Token Optimizer: installed; final native execution acceptance pending
+## Token Optimizer: installed; native execution verified
 
 The user identified only
 [`alexgreensh/token-optimizer`](https://github.com/alexgreensh/token-optimizer).
@@ -215,10 +215,42 @@ fixture `01a0e97b-6396-7b23-98b8-83c864c0d81a` through the normal mapped TUI too
 were unchanged. No fresh SessionStart side effects were observed, so this
 **does not prove optimizer execution in a native turn**.
 
-Remaining acceptance: a real native turn/compaction with the installed hooks,
-goal persistence and Unsnooze coexistence afterward, measured production startup
-and idle overhead, and any claimed token savings. Do not infer these from a
-successful installer or from the isolated hooks. The broader goal stays active.
+### Native execution on 2026-10-01
+
+One dedicated goal, `CodexPi Optimizer E2E 20261001`, completed through the mapped
+TUI while the dashboard showed it active. Project
+`a1dad3ab-3da1-4cbf-af1c-c1bcec41efef`, native session
+`01a0f898-30f0-7fc3-af48-778168e8cf2a`, used 11,596 native goal tokens / 44 seconds.
+It created and checked `OPTIMIZER_TEST.txt`, committed/pushed
+`164f05ae16a3164fe8b65266420e12423a2d2fbd` to private
+`Havkz/codexpi-optimizer-e2e-20261001`, and reached native/DB completion with a
+clean tree. Discord message `1555276346349846539` is the sole completion message.
+Its Close button exists but has not been clicked.
+
+The real session produced Optimizer health/restore markers and a Stop checkpoint
+containing the exact objective and the correct final file/commit summary. Its
+native rollout contains one Ponytail-full rules injection. Goal hooks recorded
+active -> complete with objective previews still redacted. The original user
+project remained user-blocked; no unrelated goal was resumed. No Optimizer
+process survived at the subsequent idle process check; all three existing units
+were active with their original main PIDs.
+
+Reproduce the read-only completion check with
+`py -3.11 Setup/verify-native-resume.py --optimizer-fixture`; its existing record
+`state/optimizer-e2e-20261001.json` prevents another project/goal submission.
+The verifier now uses Resume rather than the superseded Run now start control.
+
+Important measurement limit: the checkpoint's cached quality report showed zero
+tool calls while the native rollout contained five custom-tool calls. That cache
+was generated before the work finished. Upstream `codex_session.py` does recognize
+custom-tool records; a missing parser feature has **not** been established.
+Fresh versus cached analytics, including nested Code Mode details, require further
+inspection before using the score as evidence. No measured token savings claim.
+
+Remaining acceptance: native compaction, genuine quota-reset/Unsnooze coexistence,
+controlled startup/idle overhead and any claimed token savings. Normal native goal
+execution and checkpoint capture are now proven, not those broader cases. The
+overall goal stays active.
 
 Focused Windows checks passed for the native model-selection gate, blocking a
 second executing goal, and lossless audit reconciliation (three existing tests).

@@ -1,4 +1,4 @@
-"""One real, small native E2E goal via the mapped TUI and dashboard Run now.
+"""One real, small native E2E goal via the mapped TUI and dashboard Resume.
 
 Never overwrites a goal, never fabricates usageLimited, never resumes unrelated
 goals. Re-runs observe the original recorded project instead of creating more.
@@ -23,14 +23,24 @@ OBJECTIVE = 'Create RESUME_TEST.txt containing native-resume-20260923. Verify it
 def main():
     global RECORD, NAME, OBJECTIVE
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--recovery-fixture', action='store_true')
+    fixture = parser.add_mutually_exclusive_group()
+    fixture.add_argument('--recovery-fixture', action='store_true')
+    fixture.add_argument('--optimizer-fixture', action='store_true')
     args = parser.parse_args()
+    artifact, marker = 'RECOVERY_TEST.txt', 'native-recovery-20260928'
     if args.recovery_fixture:
         RECORD = ROOT / 'state/active-recovery-e2e-20260928.json'
         NAME = 'CodexPi Active Recovery E2E 20260928'
         OBJECTIVE = ('First run python3 -c "import time; time.sleep(45)" once, for a controller-recovery test. '
             'Then create RECOVERY_TEST.txt containing native-recovery-20260928, verify, commit and push, and complete. '
             'Only this test project; no agents or installs.')
+    if args.optimizer_fixture:
+        RECORD = ROOT / 'state/optimizer-e2e-20261001.json'
+        NAME = 'CodexPi Optimizer E2E 20261001'
+        artifact, marker = 'OPTIMIZER_TEST.txt', 'optimizer-native-20261001'
+        OBJECTIVE = ('Create OPTIMIZER_TEST.txt containing optimizer-native-20261001. '
+            'Verify its content, commit and push, then mark the goal complete. '
+            'Work only in this dedicated E2E project; do not spawn agents or install anything.')
     if RECORD.exists():
         project = json.loads(RECORD.read_text())
     else:
@@ -48,7 +58,7 @@ async def main():
 asyncio.run(main())
 ''')
     if native['goal_status'] == 'complete':
-        if args.recovery_fixture:
+        if args.recovery_fixture or args.optimizer_fixture:
             result = helper.remote('''import asyncio,json,subprocess
 from pathlib import Path
 from aiohttp import ClientSession
@@ -59,7 +69,7 @@ async def verify():
  p=d.get(''' + repr(project['project_id']) + ''')
  assert p['goal_status']=='complete' and p['completion_notified'] and not p['operation']
  path=Path(p['project_path'])
- assert (path/'RECOVERY_TEST.txt').read_text().strip()=='native-recovery-20260928'
+ assert (path/''' + repr(artifact) + ''').read_text().strip()==''' + repr(marker) + '''
  def git(*args):return subprocess.check_output(['git',*args],cwd=path,text=True).strip()
  assert not git('status','--porcelain')
  assert git('rev-parse','HEAD')==p['last_commit']==git('ls-remote','origin','refs/heads/main').split()[0]
@@ -78,9 +88,33 @@ async def verify():
  message=matched[0]
  assert p['last_commit'] in json.dumps(message['embeds'])
  assert any(b.get('custom_id')=='codexpi:close' and b.get('label')=='Close' for row in message['components'] for b in row['components'])
- print(json.dumps({'complete':True,'commit':p['last_commit'],'private_repo':p['github_repo'],
+ evidence={'complete':True,'commit':p['last_commit'],'private_repo':p['github_repo'],
    'discord_message_id':message['id'],'complete_messages':len(matched),'close_button_present':True,
-   'close_button_clicked':False,'clean_tree_and_file_verified':True}))
+   'close_button_clicked':False,'clean_tree_and_file_verified':True}
+ if ''' + repr(args.optimizer_fixture) + ''':
+  sid=p['codex_session_id']
+  optimizer=Path.home()/'.codex/token-optimizer'
+  checkpoints=sorted((optimizer/'checkpoints').glob(sid+'*-stop.json'))
+  assert checkpoints, 'No native Stop checkpoint'
+  checkpoint=json.loads(checkpoints[-1].read_text())
+  assert checkpoint['session_id']==sid and checkpoint['trigger']=='stop'
+  assert ''' + repr(OBJECTIVE) + ''' in checkpoint['active_task']
+  assert ''' + repr(marker) + ''' in checkpoint['continuation']
+  assert p['last_commit'][:7] in checkpoint['continuation']
+  assert (optimizer/('once-ensure-health-'+sid+'.json')).is_file()
+  assert (optimizer/('once-compact-restore-new-session-'+sid+'.json')).is_file()
+  rollouts=list((Path.home()/'.codex/sessions').rglob('*'+sid+'.jsonl'))
+  assert len(rollouts)==1
+  records=rollouts[0].read_text().splitlines()
+  assert sum('PONYTAIL MODE ACTIVE' in line and 'level: full' in line for line in records)==1
+  events=[json.loads(line) for line in Path('state/goal-hooks/events.jsonl').read_text().splitlines() if sid in line]
+  assert {'active','complete'} <= {event['new_status'] for event in events}
+  assert all(not event.get('objective_preview') for event in events)
+  evidence['optimizer']={'session':sid,'checkpoint':str(checkpoints[-1]),
+   'objective_and_continuation_preserved':True,'ponytail_full_records':1,
+   'goal_hook_transitions':['active','complete'],'goal_hook_previews_redacted':True,
+   'native_compaction_tested':False,'token_savings_measured':False}
+ print(json.dumps(evidence))
  d.conn.close()
 asyncio.run(verify())
 ''')
@@ -122,13 +156,17 @@ print(json.dumps({'goal_submitted_through_tui':True}))
         if current['goal_status'] == 'paused' and not current['operation']:
             assert not any(p['goal_status'] == 'active' for p in state['projects'])
             card = page.locator('#projects .project-card').filter(has=page.get_by_role('heading', name=NAME, exact=True))
-            card.get_by_role('button', name='Run now', exact=True).click()
+            card.get_by_role('button', name='Resume', exact=True).click()
         deadline = time.monotonic() + 85
         while time.monotonic() < deadline:
             state = page.request.get(helper.BASE + '/api/state').json()
             assert sum(p['goal_status'] == 'active' for p in state['projects']) <= 1
             current = next(p for p in state['projects'] if p['project_id'] == project['project_id'])
             result = json.loads(current['resume_result'] or '{}')
+            # A new /goal can start directly in the mapped TUI without a Resume
+            # operation. Do not wait forever for a journal entry that should not exist.
+            if not result and current['goal_status'] in ('active', 'complete', 'usage limited'):
+                result = {'status': current['goal_status'], 'source': 'native goal status'}
             if result.get('status') in ('active', 'complete', 'usage limited', 'failed', 'verifying'):
                 break
             time.sleep(1)

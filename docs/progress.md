@@ -1,10 +1,51 @@
 # CodexPi installation progress
 
-The authoritative specification is C:\CODEXPI_GOAL.md (2989 lines, including
+The authoritative specification is C:\CODEXPI_GOAL.md (see the audit's exact line count, including
 the appended binding design, lifecycle, migration and usage-chart requirements).
 `requirement-audit.json` preserves every nonempty source line for individual
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
+
+## 2026-10-05 migration and final cleanup
+
+The user confirmed the Pi restarts were unexpected, not their reboot test.
+Read-only diagnosis confirms unclean shutdown/storage consequences but no
+definitive trigger. Existing global 30-second hardware and forced Internet
+watchdogs, a separate self-bot restart storm, and the older SD card require
+attention; none is yet proven causal. No global services were changed. See
+`pi-restart-investigation.md`. Large writes/deletions are currently held.
+
+The selected Donut session has a checked private full archive on both hosts and
+is registered on the Pi using its original native session ID. Original goal
+fields and the full rollout prefix were verified. Final file verification found
+four damaged/incomplete copies across Pi restarts; repair and live TUI acceptance
+are not yet proven. See `migration.md` for evidence, exact scope and limitations.
+
+The user owns the real usage-reset and full Pi-reboot acceptance tests; do not
+claim either passed without their result. They also explicitly authorized
+deleting all Codex-created test channels/repositories once no longer needed,
+and subsequently included `usertestproject3`. Keep only the migrated Donut
+project. Quiesce/archive through lifecycle deletion before external repository
+deletion; preserve recovery data and evidence. Cleanup is not yet performed.
+
+## 2026-10-01 native Optimizer execution and migration priority
+
+The installed Optimizer now has one genuine completed native goal as evidence:
+correct file/commit/private push, exactly one Discord completion, real checkpoint
+with objective and continuation, unchanged Ponytail-full injection and redacted
+goal-hook transitions. The existing verifier was extended, not a new test suite.
+See `optimization.md` and `resources.md` for identities, scope and measured idle
+usage. Cached quality metrics are not claimed as live tool counts or savings.
+Commit e873640 passed all four GitHub Actions jobs in run 36748225324.
+
+The user has now explicitly requested moving the Windows session migration ahead
+of the remaining final tests. The selected native rollout was found; its initial
+cwd is the user home, but repeated tool workdirs identify
+`C:\Users\User\CascadeProjects\donut-order-trader` as the actual project.
+Do not copy the whole home directory. Five uncommitted/untracked project files
+must survive; existing origin is Havkz/donut-order-trader. At that checkpoint
+migration was not yet performed; see the newer entry above. The original Windows project/session must remain intact, with no
+parallel Pi goal started. Remaining tests and the full audit are still required.
 
 ## 2026-09-30 Token Optimizer compatibility patch and installation
 

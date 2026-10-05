@@ -90,8 +90,8 @@
     "semantic_hash": ""
   },
   "app/main.py": {
-    "mtime": 1790256053.8245635,
-    "ast_hash": "0891f9235db0f451257aeb7f3f82c132",
+    "mtime": 1791129453.2234182,
+    "ast_hash": "08bc88b8955438519511d06f917fa8cb",
     "semantic_hash": ""
   },
   "app/native.py": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1790787348.4488766,
-    "ast_hash": "46e9b5bb61713e487b15f148526d352c",
+    "mtime": 1791211794.7475708,
+    "ast_hash": "8b16c5671c1b789eb04e612d8b916a9a",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1790787348.4458137,
-    "ast_hash": "6b839e3c5acea115da8b8d7c74abf322",
+    "mtime": 1791211755.5330124,
+    "ast_hash": "377fe821671cddcf580a66843178cf3a",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -225,8 +225,8 @@
     "semantic_hash": ""
   },
   "app/lifecycle.py": {
-    "mtime": 1790359442.60703,
-    "ast_hash": "d51869bea517820d9a34482546373b78",
+    "mtime": 1791129453.2249234,
+    "ast_hash": "bf6ca137b9290d200d3a5b35f026e695",
     "semantic_hash": ""
   },
   "tests/test_lifecycle.py": {
@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "docs/resources.md": {
-    "mtime": 1790710146.5297227,
-    "ast_hash": "ffd41f2a128bf81900246842dd0146cd",
+    "mtime": 1791128250.6489978,
+    "ast_hash": "864d64ae4779a4906067d435680bbbce",
     "semantic_hash": ""
   },
   "Setup/verify-delete-resume.py": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "Setup/verify-native-resume.py": {
-    "mtime": 1790708814.771175,
-    "ast_hash": "7c35eaf64938845857306d0b79370437",
+    "mtime": 1790877373.9314046,
+    "ast_hash": "af371ec365b319d59e80261d345506ee",
     "semantic_hash": ""
   },
   ".github/workflows/tests.yml": {
@@ -390,8 +390,28 @@
     "semantic_hash": ""
   },
   "docs/optimization.md": {
-    "mtime": 1790787348.4443076,
-    "ast_hash": "3e8ea8ced927c9ba281344956230262a",
+    "mtime": 1791128250.647984,
+    "ast_hash": "34c35890d30671449e0a37e327b265ac",
+    "semantic_hash": ""
+  },
+  "Setup/export-migration.py": {
+    "mtime": 1791129522.7238233,
+    "ast_hash": "a72a98480883a62983e467568bbf97f8",
+    "semantic_hash": ""
+  },
+  "app/migration.py": {
+    "mtime": 1791211418.7789888,
+    "ast_hash": "bb7f44bb674e46ae4e23c4c433f3aa59",
+    "semantic_hash": ""
+  },
+  "tests/test_migration.py": {
+    "mtime": 1791211292.8096874,
+    "ast_hash": "aec8213e191ec75c1183b40fd7e2f3d4",
+    "semantic_hash": ""
+  },
+  "docs/migration.md": {
+    "mtime": 1791211755.5330124,
+    "ast_hash": "a42b2bd2ba8e4acfa39a8325d54b6d1e",
     "semantic_hash": ""
   }
 }

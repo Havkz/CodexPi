@@ -202,6 +202,105 @@
       "norm_label": "one masked local dialog; transmit the token only over authenticated ssh stdin."
     },
     {
+      "label": "export-migration.py",
+      "file_type": "code",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_export_migration",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "export-migration.py"
+    },
+    {
+      "label": "git()",
+      "file_type": "code",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "setup_export_migration_git",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "git()"
+    },
+    {
+      "label": "regular()",
+      "file_type": "code",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "setup_export_migration_regular",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "regular()"
+    },
+    {
+      "label": "digest()",
+      "file_type": "code",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "setup_export_migration_digest",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "digest()"
+    },
+    {
+      "label": "native_state()",
+      "file_type": "code",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "setup_export_migration_native_state",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "native_state()"
+    },
+    {
+      "label": "export()",
+      "file_type": "code",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "setup_export_migration_export",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "export()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L199",
+      "_origin": "ast",
+      "id": "setup_export_migration_main",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "main()"
+    },
+    {
+      "label": "Export one explicitly selected Windows project/session without changing it.  The",
+      "file_type": "rationale",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_export_migration_rationale_1",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "export one explicitly selected windows project/session without changing it.  the"
+    },
+    {
+      "label": "Keep only this thread's indexed history/metadata, never another thread.",
+      "file_type": "rationale",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "setup_export_migration_rationale_47",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "keep only this thread's indexed history/metadata, never another thread."
+    },
+    {
       "label": "goal-hook.py",
       "file_type": "code",
       "source_file": "Setup/goal-hook.py",
@@ -319,8 +418,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe-native.py"
     },
     {
@@ -330,8 +429,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "setup_probe_native_rpc",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "rpc()"
     },
     {
@@ -341,8 +440,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native_rationale_1",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "probe the installed native protocol without requesting any model work."
     },
     {
@@ -374,8 +473,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_lifecycle",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 46,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "test-live-lifecycle.py"
     },
     {
@@ -385,8 +484,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "setup_test_live_lifecycle_remote",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 46,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "remote()"
     },
     {
@@ -396,8 +495,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "setup_test_live_lifecycle_open_project",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 46,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "open_project()"
     },
     {
@@ -407,8 +506,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "setup_test_live_lifecycle_main",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 46,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "main()"
     },
     {
@@ -418,8 +517,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "setup_test_live_lifecycle_verify_deleted",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 46,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "verify_deleted()"
     },
     {
@@ -429,8 +528,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_lifecycle_rationale_1",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 46,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "create, rename and delete only a dedicated lifecycle e2e project via real ui.  p"
     },
     {
@@ -775,7 +874,7 @@
       "norm_label": "main()"
     },
     {
-      "label": "One real, small native E2E goal via the mapped TUI and dashboard Run now.  Never",
+      "label": "One real, small native E2E goal via the mapped TUI and dashboard Resume.  Never",
       "file_type": "rationale",
       "source_file": "Setup/verify-native-resume.py",
       "source_location": "L1",
@@ -783,7 +882,7 @@
       "id": "setup_verify_native_resume_rationale_1",
       "community": 28,
       "community_name": "GoalSource",
-      "norm_label": "one real, small native e2e goal via the mapped tui and dashboard run now.  never"
+      "norm_label": "one real, small native e2e goal via the mapped tui and dashboard resume.  never"
     },
     {
       "label": "verify-optimization.py",
@@ -1166,7 +1265,7 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "app_common_redactor",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": "redactor"
     },
@@ -1177,7 +1276,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "app_common_redactor_init",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": ".__init__()"
     },
@@ -1188,7 +1287,7 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_common_redactor_clean",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": ".clean()"
     },
@@ -1562,8 +1661,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_db",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "db.py"
     },
     {
@@ -1617,8 +1716,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "app_db_database_get",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".get()"
     },
     {
@@ -1661,8 +1760,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "app_db_database_set_setting",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".set_setting()"
     },
     {
@@ -1683,8 +1782,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "app_db_database_record_usage",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".record_usage()"
     },
     {
@@ -1705,8 +1804,8 @@
       "source_location": "L170",
       "_origin": "ast",
       "id": "app_db_database_event",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".event()"
     },
     {
@@ -1727,8 +1826,8 @@
       "source_location": "L178",
       "_origin": "ast",
       "id": "app_db_database_backup",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".backup()"
     },
     {
@@ -1892,8 +1991,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_discord_bot",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "discord_bot.py"
     },
     {
@@ -1914,8 +2013,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_discord_bot_closeview",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "closeview"
     },
     {
@@ -1925,8 +2024,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "app_discord_bot_closeview_init",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".__init__()"
     },
     {
@@ -1969,8 +2068,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "app_discord_bot_bot_init",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".__init__()"
     },
     {
@@ -1980,8 +2079,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_discord_bot_bot_setup_hook",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".setup_hook()"
     },
     {
@@ -2002,8 +2101,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "app_discord_bot_bot_category",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".category()"
     },
     {
@@ -2013,8 +2112,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_discord_bot_bot_ensure_channel",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".ensure_channel()"
     },
     {
@@ -2183,6 +2282,116 @@
       "norm_label": "main()"
     },
     {
+      "label": "migration.py",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "app_migration",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "migration.py"
+    },
+    {
+      "label": "digest()",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "app_migration_digest",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "digest()"
+    },
+    {
+      "label": "inspect_archive()",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "app_migration_inspect_archive",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "inspect_archive()"
+    },
+    {
+      "label": "extract_project()",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "app_migration_extract_project",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "extract_project()"
+    },
+    {
+      "label": "verify_project_files()",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L100",
+      "_origin": "ast",
+      "id": "app_migration_verify_project_files",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "verify_project_files()"
+    },
+    {
+      "label": "restore_native()",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L110",
+      "_origin": "ast",
+      "id": "app_migration_restore_native",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "restore_native()"
+    },
+    {
+      "label": "request()",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L173",
+      "_origin": "ast",
+      "id": "app_migration_request",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "request()"
+    },
+    {
+      "label": "finish()",
+      "file_type": "code",
+      "source_file": "app/migration.py",
+      "source_location": "L228",
+      "_origin": "ast",
+      "id": "app_migration_finish",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "finish()"
+    },
+    {
+      "label": "Explicit, journaled import of one private Windows project/native session.  No mo",
+      "file_type": "rationale",
+      "source_file": "app/migration.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "app_migration_rationale_1",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "explicit, journaled import of one private windows project/native session.  no mo"
+    },
+    {
+      "label": "Insert only absent selected-thread rows. Never replace a live DB/file.",
+      "file_type": "rationale",
+      "source_file": "app/migration.py",
+      "source_location": "L111",
+      "_origin": "ast",
+      "id": "app_migration_rationale_111",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "insert only absent selected-thread rows. never replace a live db/file."
+    },
+    {
       "label": "native.py",
       "file_type": "code",
       "source_file": "app/native.py",
@@ -2211,8 +2420,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "runtimeerror"
     },
     {
@@ -2376,8 +2585,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_usage",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "usage.py"
     },
     {
@@ -2387,8 +2596,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "app_usage_number",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "number()"
     },
     {
@@ -2398,8 +2607,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "app_usage_windows",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "windows()"
     },
     {
@@ -2409,8 +2618,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_usage_rationale_1",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "read-only account telemetry; never decides whether a goal may execute."
     },
     {
@@ -3058,8 +3267,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "app_worker_server_cancel_pending",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "cancel_pending()"
     },
     {
@@ -3069,7 +3278,7 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "app_worker_server_unblock_windows",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": "unblock_windows()"
     },
@@ -3212,8 +3421,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_project_names",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".test_project_names()"
     },
     {
@@ -3234,8 +3443,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": "deploymenttests"
     },
     {
@@ -3245,8 +3454,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_fixture",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": ".fixture()"
     },
     {
@@ -3256,8 +3465,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_request_admission_and_ownership",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_request_admission_and_ownership()"
     },
     {
@@ -3267,8 +3476,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_completion_moves_once_renames_and_deletes_owned_service",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_completion_moves_once_renames_and_deletes_owned_service()"
     },
     {
@@ -3278,8 +3487,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_deployment_recovers_after_each_effect_without_parallel_goal",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_deployment_recovers_after_each_effect_without_parallel_goal()"
     },
     {
@@ -3289,8 +3498,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_failed_health_keeps_repairable_session_and_never_completes",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_failed_health_keeps_repairable_session_and_never_completes()"
     },
     {
@@ -3300,8 +3509,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_pending_ci_does_not_move_or_start_service",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_pending_ci_does_not_move_or_start_service()"
     },
     {
@@ -3311,8 +3520,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_unit_arguments_are_not_shell_or_systemd_expansions",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 44,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_unit_arguments_are_not_shell_or_systemd_expansions()"
     },
     {
@@ -3448,14 +3657,47 @@
       "norm_label": ".test_delete_supersedes_resume_for_paused_and_limited_projects()"
     },
     {
+      "label": "test_migration.py",
+      "file_type": "code",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_migration",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "test_migration.py"
+    },
+    {
+      "label": "MigrationTests",
+      "file_type": "code",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "tests_test_migration_migrationtests",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "migrationtests"
+    },
+    {
+      "label": ".test_private_export_preserves_dirty_git_session_and_goal()",
+      "file_type": "code",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": ".test_private_export_preserves_dirty_git_session_and_goal()"
+    },
+    {
       "label": "test_scheduler.py",
       "file_type": "code",
       "source_file": "tests/test_scheduler.py",
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_scheduler",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "test_scheduler.py"
     },
     {
@@ -3498,8 +3740,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_recovery_records_native_limit_once_and_clears_resume_intent",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_recovery_records_native_limit_once_and_clears_resume_intent()"
     },
     {
@@ -3564,8 +3806,8 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_account_telemetry_persists_without_resuming_or_inventing_limit",
-      "community": 37,
-      "community_name": "build_audit.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_account_telemetry_persists_without_resuming_or_inventing_limit()"
     },
     {
@@ -3685,8 +3927,8 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_gate_pauses_second_goal_before_native_execution",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_gate_pauses_second_goal_before_native_execution()"
     },
     {
@@ -3729,8 +3971,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_usage",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "test_usage.py"
     },
     {
@@ -3740,8 +3982,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "tests_test_usage_account",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "account()"
     },
     {
@@ -3751,8 +3993,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_usage_usagetests",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "usagetests"
     },
     {
@@ -3762,8 +4004,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_usage_usagetests_test_windows_are_remaining_not_used_and_unknown_never_means_full",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_windows_are_remaining_not_used_and_unknown_never_means_full()"
     },
     {
@@ -3773,8 +4015,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tests_test_usage_usagetests_test_migration_sampling_restart_backup_retention_and_truthful_reduction",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_migration_sampling_restart_backup_retention_and_truthful_reduction()"
     },
     {
@@ -3784,7 +4026,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_web",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": "test_web.py"
     },
@@ -3795,7 +4037,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_web_webtests",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": "webtests"
     },
@@ -3806,7 +4048,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_web_webtests_test_auth_csrf_expiry_and_parallel_rate_limit",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": ".test_auth_csrf_expiry_and_parallel_rate_limit()"
     },
@@ -4015,8 +4257,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "readme",
-      "community": 26,
-      "community_name": "Unsnooze integration",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "readme.md"
     },
     {
@@ -4147,8 +4389,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_deployment",
-      "community": 26,
-      "community_name": "Unsnooze integration",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "deployment.md"
     },
     {
@@ -4158,8 +4400,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_deployment_explicit_pi_deployment",
-      "community": 26,
-      "community_name": "Unsnooze integration",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "explicit pi deployment"
     },
     {
@@ -4169,8 +4411,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "docs_deployment_evidence_2026_09_24",
-      "community": 26,
-      "community_name": "Unsnooze integration",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "evidence, 2026-09-24"
     },
     {
@@ -4416,6 +4658,72 @@
       "norm_label": "real usage-limit history"
     },
     {
+      "label": "migration.md",
+      "file_type": "document",
+      "source_file": "docs/migration.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_migration",
+      "community": 45,
+      "community_name": "Selected Windows session migration",
+      "norm_label": "migration.md"
+    },
+    {
+      "label": "Selected Windows session migration",
+      "file_type": "document",
+      "source_file": "docs/migration.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_migration_selected_windows_session_migration",
+      "community": 45,
+      "community_name": "Selected Windows session migration",
+      "norm_label": "selected windows session migration"
+    },
+    {
+      "label": "Scope and source",
+      "file_type": "document",
+      "source_file": "docs/migration.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "docs_migration_scope_and_source",
+      "community": 45,
+      "community_name": "Selected Windows session migration",
+      "norm_label": "scope and source"
+    },
+    {
+      "label": "Reusable mechanism",
+      "file_type": "document",
+      "source_file": "docs/migration.md",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "docs_migration_reusable_mechanism",
+      "community": 45,
+      "community_name": "Selected Windows session migration",
+      "norm_label": "reusable mechanism"
+    },
+    {
+      "label": "Fidelity and compatibility",
+      "file_type": "document",
+      "source_file": "docs/migration.md",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "docs_migration_fidelity_and_compatibility",
+      "community": 45,
+      "community_name": "Selected Windows session migration",
+      "norm_label": "fidelity and compatibility"
+    },
+    {
+      "label": "Current evidence and unfinished verification",
+      "file_type": "document",
+      "source_file": "docs/migration.md",
+      "source_location": "L67",
+      "_origin": "ast",
+      "id": "docs_migration_current_evidence_and_unfinished_verification",
+      "community": 45,
+      "community_name": "Selected Windows session migration",
+      "norm_label": "current evidence and unfinished verification"
+    },
+    {
       "label": "optimization.md",
       "file_type": "document",
       "source_file": "docs/optimization.md",
@@ -4482,26 +4790,37 @@
       "norm_label": "disabling ponytail when explicitly requested"
     },
     {
-      "label": "Token Optimizer: installed; final native execution acceptance pending",
+      "label": "Token Optimizer: installed; native execution verified",
       "file_type": "document",
       "source_file": "docs/optimization.md",
       "source_location": "L106",
       "_origin": "ast",
-      "id": "docs_optimization_token_optimizer_installed_final_native_execution_acceptance_pending",
+      "id": "docs_optimization_token_optimizer_installed_native_execution_verified",
       "community": 4,
       "community_name": "Native",
-      "norm_label": "token optimizer: installed; final native execution acceptance pending"
+      "norm_label": "token optimizer: installed; native execution verified"
     },
     {
       "label": "Pinned installation and recovery",
       "file_type": "document",
       "source_file": "docs/optimization.md",
-      "source_location": "L151",
+      "source_location": "L153",
       "_origin": "ast",
       "id": "docs_optimization_pinned_installation_and_recovery",
       "community": 4,
       "community_name": "Native",
       "norm_label": "pinned installation and recovery"
+    },
+    {
+      "label": "Native execution on 2026-10-01",
+      "file_type": "document",
+      "source_file": "docs/optimization.md",
+      "source_location": "L218",
+      "_origin": "ast",
+      "id": "docs_optimization_native_execution_on_2026_10_01",
+      "community": 4,
+      "community_name": "Native",
+      "norm_label": "native execution on 2026-10-01"
     },
     {
       "label": "progress.md",
@@ -4510,8 +4829,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_progress",
-      "community": 26,
-      "community_name": "Unsnooze integration",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "progress.md"
     },
     {
@@ -4526,10 +4845,32 @@
       "norm_label": "codexpi installation progress"
     },
     {
-      "label": "2026-09-30 Token Optimizer compatibility patch and installation",
+      "label": "2026-10-05 migration and final cleanup",
       "file_type": "document",
       "source_file": "docs/progress.md",
       "source_location": "L9",
+      "_origin": "ast",
+      "id": "docs_progress_2026_10_05_migration_and_final_cleanup",
+      "community": 8,
+      "community_name": "CodexPi installation progress",
+      "norm_label": "2026-10-05 migration and final cleanup"
+    },
+    {
+      "label": "2026-10-01 native Optimizer execution and migration priority",
+      "file_type": "document",
+      "source_file": "docs/progress.md",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "docs_progress_2026_10_01_native_optimizer_execution_and_migration_priority",
+      "community": 8,
+      "community_name": "CodexPi installation progress",
+      "norm_label": "2026-10-01 native optimizer execution and migration priority"
+    },
+    {
+      "label": "2026-09-30 Token Optimizer compatibility patch and installation",
+      "file_type": "document",
+      "source_file": "docs/progress.md",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "docs_progress_2026_09_30_token_optimizer_compatibility_patch_and_installation",
       "community": 8,
@@ -4540,7 +4881,7 @@
       "label": "2026-09-29 optimization inventory and installer defects",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L23",
+      "source_location": "L57",
       "_origin": "ast",
       "id": "docs_progress_2026_09_29_optimization_inventory_and_installer_defects",
       "community": 8,
@@ -4551,7 +4892,7 @@
       "label": "2026-09-29 active-goal recovery evidence closure",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L39",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "docs_progress_2026_09_29_active_goal_recovery_evidence_closure",
       "community": 8,
@@ -4562,7 +4903,7 @@
       "label": "2026-09-28 Windows heartbeat and worker recovery",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L57",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "docs_progress_2026_09_28_windows_heartbeat_and_worker_recovery",
       "community": 8,
@@ -4573,7 +4914,7 @@
       "label": "2026-09-27/28 worker admission and top-of-dashboard usage",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L71",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "docs_progress_2026_09_27_28_worker_admission_and_top_of_dashboard_usage",
       "community": 8,
@@ -4584,7 +4925,7 @@
       "label": "2026-09-25 usage-history implementation and live verification",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L93",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "docs_progress_2026_09_25_usage_history_implementation_and_live_verification",
       "community": 8,
@@ -4595,7 +4936,7 @@
       "label": "2026-09-25 controller-crash verification and runbooks",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L107",
+      "source_location": "L141",
       "_origin": "ast",
       "id": "docs_progress_2026_09_25_controller_crash_verification_and_runbooks",
       "community": 8,
@@ -4606,7 +4947,7 @@
       "label": "Verified 2026-09-19",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L118",
+      "source_location": "L152",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_19",
       "community": 8,
@@ -4617,7 +4958,7 @@
       "label": "Verified 2026-09-20 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L139",
+      "source_location": "L173",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_20_incremental_not_final_acceptance",
       "community": 8,
@@ -4628,7 +4969,7 @@
       "label": "Verified 2026-09-21 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L169",
+      "source_location": "L203",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_21_incremental_not_final_acceptance",
       "community": 8,
@@ -4639,7 +4980,7 @@
       "label": "Work still required",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L211",
+      "source_location": "L245",
       "_origin": "ast",
       "id": "docs_progress_work_still_required",
       "community": 8,
@@ -4650,7 +4991,7 @@
       "label": "Source references",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L263",
+      "source_location": "L297",
       "_origin": "ast",
       "id": "docs_progress_source_references",
       "community": 8,
@@ -4799,6 +5140,17 @@
       "community": 29,
       "community_name": "Pi infrastructure resource measurements",
       "norm_label": "incremental 2026-09-29 sample"
+    },
+    {
+      "label": "Incremental 2026-10-01 post-Optimizer sample",
+      "file_type": "document",
+      "source_file": "docs/resources.md",
+      "source_location": "L56",
+      "_origin": "ast",
+      "id": "docs_resources_incremental_2026_10_01_post_optimizer_sample",
+      "community": 29,
+      "community_name": "Pi infrastructure resource measurements",
+      "norm_label": "incremental 2026-10-01 post-optimizer sample"
     },
     {
       "label": "unsnooze.md",
@@ -5300,6 +5652,178 @@
       "_origin": "ast",
       "source": "setup_discord_token_main",
       "target": "app_lifecycle_save"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration",
+      "target": "setup_export_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration",
+      "target": "setup_export_migration_export",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration",
+      "target": "setup_export_migration_git",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L199",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration",
+      "target": "setup_export_migration_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration",
+      "target": "setup_export_migration_native_state",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration",
+      "target": "setup_export_migration_regular",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration_rationale_1",
+      "target": "setup_export_migration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration_export",
+      "target": "setup_export_migration_git",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/test_migration.py",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "target": "setup_export_migration_git"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration_export",
+      "target": "setup_export_migration_regular",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L153",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration_export",
+      "target": "setup_export_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L98",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration_export",
+      "target": "setup_export_migration_native_state",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration_rationale_47",
+      "target": "setup_export_migration_native_state",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/export-migration.py",
+      "source_location": "L207",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_export_migration_main",
+      "target": "setup_export_migration_export",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/test_migration.py",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "target": "setup_export_migration_export"
     },
     {
       "relation": "defines",
@@ -6376,6 +6900,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_common",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "app/native.py",
       "source_location": "L11",
       "weight": 1.0,
@@ -6544,6 +7080,30 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_common_slugify",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L199",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_request",
+      "target": "app_common_slugify",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "tests/test_core.py",
       "source_location": "L10",
       "weight": 1.0,
@@ -6633,6 +7193,54 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_lifecycle_finish",
+      "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L80",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_extract_project",
+      "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L248",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L169",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_restore_native",
       "target": "app_common_atomic_write",
       "confidence_score": 1.0
     },
@@ -7511,6 +8119,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "app/worker_server.py",
       "source_location": "L13",
       "weight": 1.0,
@@ -7528,6 +8148,18 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_lifecycle",
+      "target": "app_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
       "target": "app_controller",
       "confidence_score": 1.0
     },
@@ -7775,6 +8407,42 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_controller_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L240",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_controller_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L207",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_request",
+      "target": "app_controller_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "app/web.py",
       "source_location": "L193",
       "weight": 1.0,
@@ -7842,6 +8510,18 @@
       "_origin": "ast",
       "source": "tests_test_lifecycle_lifecycletests_make_controller",
       "target": "app_controller_command"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_controller_command",
+      "confidence_score": 1.0
     },
     {
       "relation": "indirect_call",
@@ -8300,6 +8980,29 @@
       "_origin": "ast",
       "source": "tests_test_lifecycle_lifecycletests_make_controller",
       "target": "app_controller_controller"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_controller_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L18",
+      "weight": 0.8,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests",
+      "target": "app_controller_controller",
+      "confidence_score": 0.5
     },
     {
       "relation": "imports",
@@ -9166,6 +9869,18 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_db",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
       "source_location": "L15",
       "weight": 1.0,
@@ -9538,6 +10253,29 @@
       "_origin": "ast",
       "source": "tests_test_lifecycle_lifecycletests_test_rename_and_delete_recover_after_every_effect",
       "target": "app_db_database"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_db_database",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L19",
+      "weight": 0.8,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests",
+      "target": "app_db_database",
+      "confidence_score": 0.5
     },
     {
       "relation": "imports",
@@ -11018,6 +11756,18 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/lifecycle.py",
+      "source_location": "L259",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_lifecycle",
+      "target": "app_migration_finish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/lifecycle.py",
       "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
@@ -11156,6 +11906,30 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L229",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_lifecycle_save",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L264",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_lifecycle_save",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "indirect_call",
       "context": "argument",
       "confidence": "INFERRED",
@@ -11268,7 +12042,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/lifecycle.py",
-      "source_location": "L260",
+      "source_location": "L264",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_lifecycle_recover",
@@ -11292,11 +12066,23 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/lifecycle.py",
-      "source_location": "L258",
+      "source_location": "L262",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_lifecycle_recover",
       "target": "app_lifecycle_finish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/lifecycle.py",
+      "source_location": "L260",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_lifecycle_recover",
+      "target": "app_migration_finish",
       "confidence_score": 1.0
     },
     {
@@ -11308,6 +12094,18 @@
       "_origin": "ast",
       "source": "app_main",
       "target": "app_main_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/main.py",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_main",
+      "target": "app_migration_request",
       "confidence_score": 1.0
     },
     {
@@ -11395,12 +12193,24 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/main.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_main_main",
+      "target": "app_migration_request",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "indirect_call",
       "context": "argument",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/main.py",
-      "source_location": "L85",
+      "source_location": "L92",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_main_main",
@@ -11411,7 +12221,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/main.py",
-      "source_location": "L86",
+      "source_location": "L93",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_main_main",
@@ -11436,11 +12246,374 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/main.py",
-      "source_location": "L87",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_main_main",
       "target": "app_worker_server_worker_socket"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_migration_extract_project",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L228",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_migration_finish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_migration_inspect_archive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L173",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_migration_request",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_migration_restore_native",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_migration_verify_project_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_native",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration",
+      "target": "app_native_project_thread_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_rationale_1",
+      "target": "app_migration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "submodule_import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_migration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_extract_project",
+      "target": "app_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_inspect_archive",
+      "target": "app_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_restore_native",
+      "target": "app_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_verify_project_files",
+      "target": "app_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_migration_digest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_migration.py",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "target": "app_migration_digest"
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "app/migration.py",
+      "source_location": "L233",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_migration_inspect_archive",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "app/migration.py",
+      "source_location": "L179",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_request",
+      "target": "app_migration_inspect_archive",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_migration_inspect_archive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_migration.py",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "target": "app_migration_inspect_archive"
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "app/migration.py",
+      "source_location": "L236",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_migration_extract_project",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_migration_extract_project",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_migration.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "target": "app_migration_extract_project"
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "app/migration.py",
+      "source_location": "L239",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_migration_verify_project_files",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "app/migration.py",
+      "source_location": "L266",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_migration_restore_native",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_rationale_111",
+      "target": "app_migration_restore_native",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "app_migration_restore_native",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_migration.py",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "target": "app_migration_restore_native"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L188",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_request",
+      "target": "app_migration_finish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/migration.py",
+      "source_location": "L275",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_migration_finish",
+      "target": "app_native_project_thread_config",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14356,6 +15529,28 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration",
+      "target": "tests_test_migration_migrationtests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_migration.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_migration_migrationtests",
+      "target": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "tests/test_scheduler.py",
       "source_location": "L19",
       "weight": 1.0,
@@ -15373,6 +16568,61 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "docs/migration.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_migration",
+      "target": "docs_migration_selected_windows_session_migration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/migration.md",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_migration_selected_windows_session_migration",
+      "target": "docs_migration_current_evidence_and_unfinished_verification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/migration.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_migration_selected_windows_session_migration",
+      "target": "docs_migration_fidelity_and_compatibility",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/migration.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_migration_selected_windows_session_migration",
+      "target": "docs_migration_reusable_mechanism",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/migration.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_migration_selected_windows_session_migration",
+      "target": "docs_migration_scope_and_source",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "docs/optimization.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -15433,17 +16683,28 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_optimization_optimization_installed_state_and_acceptance_limits",
-      "target": "docs_optimization_token_optimizer_installed_final_native_execution_acceptance_pending",
+      "target": "docs_optimization_token_optimizer_installed_native_execution_verified",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/optimization.md",
-      "source_location": "L151",
+      "source_location": "L218",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_optimization_token_optimizer_installed_final_native_execution_acceptance_pending",
+      "source": "docs_optimization_token_optimizer_installed_native_execution_verified",
+      "target": "docs_optimization_native_execution_on_2026_10_01",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/optimization.md",
+      "source_location": "L153",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_optimization_token_optimizer_installed_native_execution_verified",
       "target": "docs_optimization_pinned_installation_and_recovery",
       "confidence_score": 1.0
     },
@@ -15462,7 +16723,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L107",
+      "source_location": "L141",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15473,7 +16734,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L93",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15484,7 +16745,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L71",
+      "source_location": "L105",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15495,7 +16756,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L57",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15506,7 +16767,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L39",
+      "source_location": "L73",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15517,7 +16778,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L23",
+      "source_location": "L57",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15528,7 +16789,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L9",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15539,7 +16800,29 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L263",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_progress_codexpi_installation_progress",
+      "target": "docs_progress_2026_10_01_native_optimizer_execution_and_migration_priority",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/progress.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_progress_codexpi_installation_progress",
+      "target": "docs_progress_2026_10_05_migration_and_final_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/progress.md",
+      "source_location": "L297",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15550,7 +16833,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L118",
+      "source_location": "L152",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15561,7 +16844,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L139",
+      "source_location": "L173",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15572,7 +16855,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L169",
+      "source_location": "L203",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15583,7 +16866,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L211",
+      "source_location": "L245",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -15698,6 +16981,17 @@
       "_origin": "ast",
       "source": "docs_resources_pi_infrastructure_resource_measurements",
       "target": "docs_resources_incremental_2026_09_29_sample",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/resources.md",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_resources_pi_infrastructure_resource_measurements",
+      "target": "docs_resources_incremental_2026_10_01_post_optimizer_sample",
       "confidence_score": 1.0
     },
     {
@@ -15856,5 +17150,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b144cade064adcd9a196471911d165310d371331"
+  "built_at_commit": "e8736407320cf89d0a376cd84a032198542a41fc"
 }

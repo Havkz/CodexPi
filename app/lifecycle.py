@@ -252,9 +252,13 @@ async def finish(controller, project):
 async def recover(controller):
     for project in controller.db.all():
         operation = json.loads(project['operation'] or '{}')
-        if operation.get('kind') not in ('rename', 'delete', 'deploy', 'close-channel') or operation.get('retry_at', 0) > time.time():
+        if operation.get('kind') not in ('rename', 'delete', 'deploy', 'close-channel', 'import') or operation.get('retry_at', 0) > time.time():
             continue
         try:
-            await finish(controller, project)
+            if operation['kind'] == 'import':
+                from .migration import finish as finish_import
+                await finish_import(controller, project)
+            else:
+                await finish(controller, project)
         except Exception as exc:
             record_error(controller, project['project_id'], exc)

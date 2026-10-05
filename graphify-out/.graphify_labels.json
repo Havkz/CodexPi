@@ -33,6 +33,7 @@
   "31": "Durable manual pause and real quota evidence, 2026-09-24",
   "32": "main",
   "33": "verify-deployment.py",
+  "34": "migration.py",
   "35": "Bot",
   "36": "usage.js",
   "37": "build_audit.py",
@@ -41,5 +42,8 @@
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
   "42": "Architecture and data ownership",
-  "43": "CodexPi"
+  "43": "CodexPi",
+  "44": "DeploymentTests",
+  "45": "Selected Windows session migration",
+  "46": "test-live-lifecycle.py"
 }

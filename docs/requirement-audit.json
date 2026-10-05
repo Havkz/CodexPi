@@ -1,7 +1,7 @@
 {
   "source": "C:\\CODEXPI_GOAL.md",
-  "source_sha256": "8bc6e96d677f44bb1c1dd517d41acaae69041340626d7ebc2e51811db33a4083",
-  "source_lines": 2989,
+  "source_sha256": "318da3a280a00aabd80ded7f148b58e100291ce1f15f34ef3e2f5fa602f58735",
+  "source_lines": 3005,
   "source_revisions": [
     {
       "source_sha256": "16a54c0a093b2b6e0594cb26d599403fcd5452febec57a6cc6ec035c270c223c",
@@ -26,6 +26,22 @@
     {
       "source_sha256": "bfd0f03912530b23322329f52f8d601b6c57728cc4fbb806e2494c02b4326de7",
       "source_lines": 2985
+    },
+    {
+      "source_sha256": "8bc6e96d677f44bb1c1dd517d41acaae69041340626d7ebc2e51811db33a4083",
+      "source_lines": 2989
+    },
+    {
+      "source_sha256": "2ea80b990cad021c070a3f63edcb679b136fc3e341ede6d6947fc170c5142b8a",
+      "source_lines": 2993
+    },
+    {
+      "source_sha256": "249d695e6816102263c8276a48ee0f0155e7af1e97b6dc74a25d649899b60cd0",
+      "source_lines": 2997
+    },
+    {
+      "source_sha256": "b4790f7208a3c0a58912fa90cb360256d9a0851328b97dd863d823476ddfd2ac",
+      "source_lines": 3001
     }
   ],
   "complete": false,
@@ -9368,7 +9384,7 @@
       "text": "* Token Optimizer funktioniert weiterhin",
       "status": "pending",
       "evidence": [
-        "Partial 2026-09-30: exact alexgreensh/token-optimizer v5.13.28 installed with two-function installer compatibility patch; copied install/reinstall/uninstall and sandboxed event checks pass. Native inventory has ten trusted hooks with prior seven unchanged, root compact prompt valid. Real native turn/compaction, Unsnooze coexistence and final resource acceptance remain pending; merely reopening a completed TUI did not fire fresh SessionStart. docs/optimization.md"
+        "Partial 2026-10-01: exact selected Optimizer v5.13.28 plus scoped installer patch completed one real mapped native goal, with correct checkpoint objective/continuation, Ponytail-full injection, redacted goal-hook transitions, private Git push and one Discord completion. Reproducible existing --optimizer-fixture verifier. Native compaction, automatic quota-reset/Unsnooze and final overhead acceptance remain open; cached quality metrics are not proof of savings. docs/optimization.md"
       ]
     },
     {
@@ -14740,8 +14756,64 @@
       "text": "Mit Token Optimizer ist ausschließlich https://github.com/alexgreensh/token-optimizer gemeint. Dieses Tool verwenden, sofern es mit der aktuellen Codex-/CodexPi-Version kompatibel ist. Keinen anderen Ersatz wegen eines uneindeutigen Namens installieren. Falls das Repository nicht mehr verfügbar oder inkompatibel ist, dies dokumentieren und vor der Installation eines alternativen Tools den Benutzer fragen.",
       "status": "pending",
       "evidence": [
-        "Exact selected repository only: pinned v5.13.28 commit 0b4f87e411096b4e322bd242d22fc136feac508c installed on Pi from reviewed local marketplace with tracked compatibility patch, config backups and exact three new hook trust hashes. No alternative installed. Isolated compatibility checks pass; final native execution/coexistence acceptance remains pending. docs/optimization.md"
+        "Exact selected repository only: pinned v5.13.28 commit 0b4f87e411096b4e322bd242d22fc136feac508c installed with tracked compatibility patch, backups and three exact new hook trust hashes. No alternative installed. Isolated compatibility checks and one real native goal/checkpoint/Discord completion passed; remaining compaction, analytics and reset coexistence checks are explicit. docs/optimization.md"
       ]
+    },
+    {
+      "id": "L2991",
+      "section": "VERBINDLICHE PRIORITÄTSÄNDERUNG: WINDOWS-MIGRATION VORZIEHEN",
+      "text": "# VERBINDLICHE PRIORITÄTSÄNDERUNG: WINDOWS-MIGRATION VORZIEHEN",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2993",
+      "section": "VERBINDLICHE PRIORITÄTSÄNDERUNG: WINDOWS-MIGRATION VORZIEHEN",
+      "text": "Auf ausdrücklichen Nutzerwunsch die Migration der Session 01a072f0-df80-7152-aff3-a5e66960c071 vor die noch offenen abschließenden Tests ziehen. Dies ersetzt ausschließlich die frühere Vorgabe, die Migration erst nach erfolgreicher Prüfung aller übrigen Funktionen durchzuführen. Alle Anforderungen an vollständigen, überprüfbaren Kontext-/Datei-/Git-Transfer, den Erhalt der Windows-Originale, sichere Session-Zuordnung und die Single-Project-Queue bleiben bestehen. Die verbleibenden Tests und der vollständige Requirement-Audit sind weiterhin vor dem Abschluss des gesamten Goals erforderlich. Keine automatische parallele Ausführung des migrierten Goals starten.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2995",
+      "section": "VERBINDLICHE TEST-ZUSTÄNDIGKEIT VOM 04.10.2026",
+      "text": "# VERBINDLICHE TEST-ZUSTÄNDIGKEIT VOM 04.10.2026",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2997",
+      "section": "VERBINDLICHE TEST-ZUSTÄNDIGKEIT VOM 04.10.2026",
+      "text": "Der Nutzer übernimmt den echten Usage-Reset-Test und den vollständigen Raspberry-Pi-Reboot-Test selbst. Codex soll die übrigen relevanten Tests gezielt abschließen und die Session vollständig übertragen. Diese beiden nutzerseitigen Tests nicht eigenständig auslösen und nicht ohne Ergebnis als bestanden markieren; ihre ausstehenden beziehungsweise gemeldeten Ergebnisse im Requirement-Audit dokumentieren. Unnötige Wiederholungen und Tests für jede kleine Implementierungsänderung vermeiden.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L2999",
+      "section": "VERBINDLICHE BEREINIGUNG DER TESTPROJEKTE VOM 04.10.2026",
+      "text": "# VERBINDLICHE BEREINIGUNG DER TESTPROJEKTE VOM 04.10.2026",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L3001",
+      "section": "VERBINDLICHE BEREINIGUNG DER TESTPROJEKTE VOM 04.10.2026",
+      "text": "Die von Codex ausschließlich für seine Tests angelegten Discord-Channels und GitHub-Repositories löschen, sobald sie nicht mehr benötigt werden beziehungsweise die Tests abgeschlossen sind. Zuerst die zugehörigen Testprojekte über den sicheren CodexPi-Lifecycle bereinigen, einschließlich Sessions, Queue und ausstehender Resume-/Unsnooze-Aufträge. Vor externen Löschungen die konkreten Projekt-, Channel- und Repository-Identitäten prüfen und notwendige Testergebnisse beziehungsweise Recovery-Daten sichern. Diese ausdrückliche Ausnahme von der Repository-Aufbewahrung gilt ausschließlich für diese Codex-Testfixtures; bestehende Nutzerprojekte und das migrierte donut-order-trader nicht löschen.",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L3003",
+      "section": "ERWEITERTE LÖSCHFREIGABE VOM 05.10.2026",
+      "text": "# ERWEITERTE LÖSCHFREIGABE VOM 05.10.2026",
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "L3005",
+      "section": "ERWEITERTE LÖSCHFREIGABE VOM 05.10.2026",
+      "text": "Der Nutzer hat zusätzlich die Löschung von usertestproject3 ausdrücklich freigegeben. Dieses Projekt ebenfalls über den sicheren Lifecycle bereinigen und den zugehörigen Discord-Channel sowie das eindeutig zugeordnete Test-Repository entfernen. Diese Freigabe ersetzt die bisherige Ausnahme für usertestproject3. Am Ende soll ausschließlich das migrierte Donut-Projekt verbleiben; dessen tatsächlicher bestehender Repository-Name ist donut-order-trader. Die Formulierung donut-order-tracker ist keine Anweisung, das Repository eigenständig umzubenennen.",
+      "status": "pending",
+      "evidence": []
     }
   ]
 }
