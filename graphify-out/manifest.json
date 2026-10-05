@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "app/db.py": {
-    "mtime": 1790282367.537297,
-    "ast_hash": "f6937d30355ac4458ba63631283fa7ed",
+    "mtime": 1791212585.2846413,
+    "ast_hash": "d7360aff328d1998b136fd20473893c0",
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
@@ -140,8 +140,8 @@
     "semantic_hash": ""
   },
   "tests/test_core.py": {
-    "mtime": 1789839033.122684,
-    "ast_hash": "267f606fa6731e6ed6005d0147c2ddcf",
+    "mtime": 1791212585.2881618,
+    "ast_hash": "98cf0ed07dc3be52da83b16357366120",
     "semantic_hash": ""
   },
   "tests/test_web.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1791211755.5330124,
-    "ast_hash": "377fe821671cddcf580a66843178cf3a",
+    "mtime": 1791212133.717704,
+    "ast_hash": "54fc27e8d39c430b4b757b525fe1ad79",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "docs/resources.md": {
-    "mtime": 1791128250.6489978,
-    "ast_hash": "864d64ae4779a4906067d435680bbbce",
+    "mtime": 1791212662.4685664,
+    "ast_hash": "5c32df9ad3cf6b88ed922ccf0103134f",
     "semantic_hash": ""
   },
   "Setup/verify-delete-resume.py": {
@@ -412,6 +412,11 @@
   "docs/migration.md": {
     "mtime": 1791211755.5330124,
     "ast_hash": "a42b2bd2ba8e4acfa39a8325d54b6d1e",
+    "semantic_hash": ""
+  },
+  "docs/pi-restart-investigation.md": {
+    "mtime": 1791212662.4674752,
+    "ast_hash": "db9d250b4c89a25c19a5520cee14f270",
     "semantic_hash": ""
   }
 }

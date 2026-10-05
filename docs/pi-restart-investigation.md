@@ -29,6 +29,13 @@ Migration repair and external deletion are held pending stability assessment.
 - Root is ext4 on the 16 GB `SS16G` SD card; reported manufacture date 06/2016,
   about 4.1 GB free after the interrupted repair. Card age is a risk indicator,
   not proof of failure. No destructive storage benchmark or mounted fsck run.
+- Passive follow-up observed the controller waiting in `jbd2_log_wait_commit`,
+  alongside the filesystem journal thread in D state. The controller subsequently
+  returned to `ep_poll`; this sample did not establish a 30-second stall.
+  Host I/O pressure was elevated (some avg10 up to 25.96%, full up to 15.83%),
+  while memory pressure remained zero. Other headless-browser processes were
+  active. This supports storage contention, not a proven defective SD card or
+  a proven watchdog reset.
 - Hardware watchdog is active with a 30-second timeout, configured by existing
   `/etc/systemd/system.conf.d/99-watchdog.conf`. `bootstatus=0` does not establish
   the reset cause: the BCM2835 driver does not advertise reset-cause reporting.
@@ -61,6 +68,20 @@ the Windows archive, and collect boot-ID/voltage/memory/I/O telemetry without
 stress writes. Any changes to the existing global watchdog/network service need
 explicit direction. Passwordless sudo is unavailable; no password was requested
 in chat and no privileged configuration was changed.
+
+## Separate reproducible CodexPi write-load defect
+
+Locally, three identical native-goal polls over two paused projects caused six
+row updates and changed `updated_at` despite unchanged native observations.
+`Database.update` now conditionally writes only changed field values, comparing
+inside SQLite (including NULLs and case-sensitive display-name changes).
+Identical setting upserts are also suppressed. Repeating the same reproduction
+now produces zero row changes and preserves timestamps. FULL synchronous WAL,
+real state transitions and transactional notification outbox remain intact.
+Four focused checks passed, including rollback/backup, actual native limit
+transition/deduplication, Discord late-reset editing and migration recovery.
+This patch is not a demonstrated crash fix and has not yet been deployed to the
+Pi while the hardware investigation is open.
 
 Relevant primary documentation:
 [Pi power/low-voltage behavior](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html),

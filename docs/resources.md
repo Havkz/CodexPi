@@ -67,3 +67,13 @@ It does not establish that the PSS increase from September 29 was caused by the
 optimizer. CPU is back near the earlier baseline without a controller change;
 the earlier 10.28% sample is not proof of a permanent CPU regression. Final
 repeatable overhead/resource acceptance remains open.
+# 2026-10-05 redundant idle writes (local reproduction)
+
+Three unchanged goal polls across two paused projects previously wrote six rows
+and changed project timestamps. The shared SQLite update/upsert now suppresses
+identical values: the same reproduction writes zero rows and keeps timestamps.
+No sampling interval, queue policy, notification transaction or FULL durability
+setting was relaxed. Four focused persistence/lifecycle checks passed.
+Pi deployment and an actual I/O before/after measurement remain pending while
+unexpected system restarts are investigated; do not claim a measured Pi saving
+or that this resolves the reboot cause. See `pi-restart-investigation.md`.

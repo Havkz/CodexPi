@@ -102,16 +102,22 @@ class Database:
         columns = {row[1] for row in self.conn.execute('PRAGMA table_info(projects)')}
         if not fields or not set(fields) <= columns - {'project_id', 'created_at'}:
             raise ValueError('Invalid project update')
+        # Repeated native observations are not changes. Compare in SQLite so a
+        # stale caller cannot skip a real transition; retain FULL durability.
+        compared = {key: value for key, value in fields.items() if key != 'updated_at'}
+        changed = ' OR '.join(f'{key} COLLATE BINARY IS NOT ?' for key in compared) or '1'
         fields['updated_at'] = time.time()
         sql = ','.join(f'{key}=?' for key in fields)
-        self.conn.execute(f'UPDATE projects SET {sql} WHERE project_id=?', (*fields.values(), project_id))
+        self.conn.execute(f'UPDATE projects SET {sql} WHERE project_id=? AND ({changed})',
+                          (*fields.values(), project_id, *compared.values()))
 
     def setting(self, key, default=None):
         row = self.conn.execute('SELECT value FROM settings WHERE key=?', (key,)).fetchone()
         return json.loads(row[0]) if row else default
 
     def set_setting(self, key, value):
-        self.conn.execute('INSERT INTO settings VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',
+        self.conn.execute('INSERT INTO settings VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value '
+                          'WHERE settings.value IS NOT excluded.value',
                           (key, json.dumps(value)))
 
     def reorder(self, ids):

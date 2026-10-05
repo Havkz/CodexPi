@@ -43,8 +43,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit",
-      "community": 38,
-      "community_name": "main",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "build_audit.py"
     },
     {
@@ -54,8 +54,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_build_audit_reconcile",
-      "community": 38,
-      "community_name": "main",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "reconcile()"
     },
     {
@@ -65,8 +65,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "setup_build_audit_main",
-      "community": 38,
-      "community_name": "main",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "main()"
     },
     {
@@ -76,8 +76,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit_rationale_1",
-      "community": 38,
-      "community_name": "main",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "create a lossless, line-addressed audit from the user's specification.  every no"
     },
     {
@@ -109,8 +109,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "configure.py"
     },
     {
@@ -120,8 +120,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "setup_configure_preserve",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "preserve()"
     },
     {
@@ -131,8 +131,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_rationale_1",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "run on pi after copying reviewed sources; preserve and back up user config."
     },
     {
@@ -451,8 +451,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "site-config.py"
     },
     {
@@ -462,8 +462,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config_rationale_1",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "generate only a password hash from the user-owned specification."
     },
     {
@@ -1001,8 +1001,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "verify-secrets.py"
     },
     {
@@ -1012,8 +1012,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets_rationale_1",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "fail closed if a tracked file contains a configured secret; never print its valu"
     },
     {
@@ -1144,8 +1144,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_common",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "common.py"
     },
     {
@@ -1155,8 +1155,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_common_slugify",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "slugify()"
     },
     {
@@ -1166,8 +1166,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_common_atomic_write",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "atomic_write()"
     },
     {
@@ -1188,8 +1188,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "app_common_password_hash",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "password_hash()"
     },
     {
@@ -1199,8 +1199,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "app_common_password_valid",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "password_valid()"
     },
     {
@@ -1210,8 +1210,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "app_common_canonical",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "canonical()"
     },
     {
@@ -1221,8 +1221,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "app_common_signedchannel",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "signedchannel"
     },
     {
@@ -1232,8 +1232,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_common_signedchannel_init",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".__init__()"
     },
     {
@@ -1243,8 +1243,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "app_common_signedchannel_sign",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".sign()"
     },
     {
@@ -1254,8 +1254,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "app_common_signedchannel_verify",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".verify()"
     },
     {
@@ -1298,8 +1298,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "app_common_rationale_80",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "per-connection random challenge + directional mac + monotonic sequence."
     },
     {
@@ -1746,7 +1746,7 @@
       "label": ".setting()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L109",
+      "source_location": "L114",
       "_origin": "ast",
       "id": "app_db_database_setting",
       "community": 27,
@@ -1757,7 +1757,7 @@
       "label": ".set_setting()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L113",
+      "source_location": "L118",
       "_origin": "ast",
       "id": "app_db_database_set_setting",
       "community": 27,
@@ -1768,7 +1768,7 @@
       "label": ".reorder()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L117",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "app_db_database_reorder",
       "community": 27,
@@ -1779,7 +1779,7 @@
       "label": ".record_usage()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L126",
+      "source_location": "L132",
       "_origin": "ast",
       "id": "app_db_database_record_usage",
       "community": 27,
@@ -1790,7 +1790,7 @@
       "label": ".usage_history()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L147",
+      "source_location": "L153",
       "_origin": "ast",
       "id": "app_db_database_usage_history",
       "community": 27,
@@ -1801,18 +1801,18 @@
       "label": ".event()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L170",
+      "source_location": "L176",
       "_origin": "ast",
       "id": "app_db_database_event",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".event()"
     },
     {
       "label": ".compact_queue()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L174",
+      "source_location": "L180",
       "_origin": "ast",
       "id": "app_db_database_compact_queue",
       "community": 27,
@@ -1823,11 +1823,11 @@
       "label": ".backup()",
       "file_type": "code",
       "source_file": "app/db.py",
-      "source_location": "L178",
+      "source_location": "L184",
       "_origin": "ast",
       "id": "app_db_database_backup",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".backup()"
     },
     {
@@ -1991,8 +1991,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_discord_bot",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": "discord_bot.py"
     },
     {
@@ -2013,8 +2013,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_discord_bot_closeview",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": "closeview"
     },
     {
@@ -2024,8 +2024,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "app_discord_bot_closeview_init",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".__init__()"
     },
     {
@@ -2068,8 +2068,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "app_discord_bot_bot_init",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".__init__()"
     },
     {
@@ -2079,8 +2079,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_discord_bot_bot_setup_hook",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".setup_hook()"
     },
     {
@@ -2101,8 +2101,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "app_discord_bot_bot_category",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".category()"
     },
     {
@@ -2112,8 +2112,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_discord_bot_bot_ensure_channel",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".ensure_channel()"
     },
     {
@@ -3267,8 +3267,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "app_worker_server_cancel_pending",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": "cancel_pending()"
     },
     {
@@ -3344,8 +3344,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_audit",
-      "community": 38,
-      "community_name": "main",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "test_audit.py"
     },
     {
@@ -3355,8 +3355,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_audit_audittests",
-      "community": 38,
-      "community_name": "main",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "audittests"
     },
     {
@@ -3366,8 +3366,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
-      "community": 38,
-      "community_name": "main",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_append_preserves_evidence_and_rejects_edits()"
     },
     {
@@ -3377,8 +3377,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_core",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "test_core.py"
     },
     {
@@ -3388,8 +3388,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_core_coretests",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "coretests"
     },
     {
@@ -3399,8 +3399,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_auth_and_replay",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".test_auth_and_replay()"
     },
     {
@@ -3410,19 +3410,19 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".test_db_constraints_rollback_and_backup()"
     },
     {
       "label": ".test_project_names()",
       "file_type": "code",
       "source_file": "tests/test_core.py",
-      "source_location": "L69",
+      "source_location": "L81",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_project_names",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".test_project_names()"
     },
     {
@@ -3443,8 +3443,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": "deploymenttests"
     },
     {
@@ -3454,8 +3454,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_fixture",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".fixture()"
     },
     {
@@ -3465,8 +3465,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_request_admission_and_ownership",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_request_admission_and_ownership()"
     },
     {
@@ -3476,8 +3476,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_completion_moves_once_renames_and_deletes_owned_service",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_completion_moves_once_renames_and_deletes_owned_service()"
     },
     {
@@ -3487,8 +3487,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_deployment_recovers_after_each_effect_without_parallel_goal",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_deployment_recovers_after_each_effect_without_parallel_goal()"
     },
     {
@@ -3498,8 +3498,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_failed_health_keeps_repairable_session_and_never_completes",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_failed_health_keeps_repairable_session_and_never_completes()"
     },
     {
@@ -3509,8 +3509,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_pending_ci_does_not_move_or_start_service",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_pending_ci_does_not_move_or_start_service()"
     },
     {
@@ -3520,8 +3520,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_unit_arguments_are_not_shell_or_systemd_expansions",
-      "community": 44,
-      "community_name": "DeploymentTests",
+      "community": 27,
+      "community_name": "Bot",
       "norm_label": ".test_unit_arguments_are_not_shell_or_systemd_expansions()"
     },
     {
@@ -3707,8 +3707,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "schedulertests"
     },
     {
@@ -3718,7 +3718,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_setup",
-      "community": 27,
+      "community": 11,
       "community_name": "Bot",
       "norm_label": ".setup()"
     },
@@ -3729,8 +3729,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_teardown",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".teardown()"
     },
     {
@@ -3740,8 +3740,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_recovery_records_native_limit_once_and_clears_resume_intent",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_recovery_records_native_limit_once_and_clears_resume_intent()"
     },
     {
@@ -3751,8 +3751,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_empty_goal_resume_restores_session_without_a_slash",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_empty_goal_resume_restores_session_without_a_slash()"
     },
     {
@@ -3773,8 +3773,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_resume_confirmation_timeout_crash_and_identity",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_resume_confirmation_timeout_crash_and_identity()"
     },
     {
@@ -3784,8 +3784,8 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_normal_resume_does_not_preempt_but_run_now_promotes",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_normal_resume_does_not_preempt_but_run_now_promotes()"
     },
     {
@@ -3795,8 +3795,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_limit_reset_persists_but_account_limit_does_not_invent_goal",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_limit_reset_persists_but_account_limit_does_not_invent_goal()"
     },
     {
@@ -3806,8 +3806,8 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_account_telemetry_persists_without_resuming_or_inventing_limit",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_account_telemetry_persists_without_resuming_or_inventing_limit()"
     },
     {
@@ -3817,8 +3817,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_managed_tui_launch_cannot_wait_in_update_prompt",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_managed_tui_launch_cannot_wait_in_update_prompt()"
     },
     {
@@ -3828,8 +3828,8 @@
       "source_location": "L236",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_completion_compacts_queue_and_confirms_pending_resume",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_completion_compacts_queue_and_confirms_pending_resume()"
     },
     {
@@ -3839,8 +3839,8 @@
       "source_location": "L248",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_ci_checks_exact_commit_all_workflows_and_latest_attempt",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_ci_checks_exact_commit_all_workflows_and_latest_attempt()"
     },
     {
@@ -3850,8 +3850,8 @@
       "source_location": "L283",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming()"
     },
     {
@@ -3861,8 +3861,8 @@
       "source_location": "L302",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_promotion_preserves_inactive_limit_and_user_blockers",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_promotion_preserves_inactive_limit_and_user_blockers()"
     },
     {
@@ -3872,8 +3872,8 @@
       "source_location": "L315",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_auto_queue_does_not_resume_paused_user_decision",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_auto_queue_does_not_resume_paused_user_decision()"
     },
     {
@@ -3883,8 +3883,8 @@
       "source_location": "L335",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_manual_pause_survives_restart_and_cancels_stale_resume",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_manual_pause_survives_restart_and_cancels_stale_resume()"
     },
     {
@@ -3894,8 +3894,8 @@
       "source_location": "L361",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_windows_reconnect_respects_manual_pause_and_journals_one_resume",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_windows_reconnect_respects_manual_pause_and_journals_one_resume()"
     },
     {
@@ -3905,8 +3905,8 @@
       "source_location": "L379",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_legacy_paused_projects_need_explicit_intent_not_a_guess",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_legacy_paused_projects_need_explicit_intent_not_a_guess()"
     },
     {
@@ -3916,8 +3916,8 @@
       "source_location": "L388",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_pending_resume_keeps_selection_until_ack",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_pending_resume_keeps_selection_until_ack()"
     },
     {
@@ -3927,8 +3927,8 @@
       "source_location": "L413",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_gate_pauses_second_goal_before_native_execution",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_gate_pauses_second_goal_before_native_execution()"
     },
     {
@@ -3938,8 +3938,8 @@
       "source_location": "L482",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_release_only_detached_idle_persisted_goals",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_release_only_detached_idle_persisted_goals()"
     },
     {
@@ -3949,8 +3949,8 @@
       "source_location": "L511",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt()"
     },
     {
@@ -3960,8 +3960,8 @@
       "source_location": "L587",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_unsnooze_idle_poll_avoids_restarting_node_every_ten_seconds",
-      "community": 27,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_unsnooze_idle_poll_avoids_restarting_node_every_ten_seconds()"
     },
     {
@@ -4026,8 +4026,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_web",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "test_web.py"
     },
     {
@@ -4037,8 +4037,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_web_webtests",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "webtests"
     },
     {
@@ -4048,8 +4048,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_web_webtests_test_auth_csrf_expiry_and_parallel_rate_limit",
-      "community": 11,
-      "community_name": "Bot",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".test_auth_csrf_expiry_and_parallel_rate_limit()"
     },
     {
@@ -4823,6 +4823,72 @@
       "norm_label": "native execution on 2026-10-01"
     },
     {
+      "label": "pi-restart-investigation.md",
+      "file_type": "document",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_pi_restart_investigation",
+      "community": 44,
+      "community_name": "DeploymentTests",
+      "norm_label": "pi-restart-investigation.md"
+    },
+    {
+      "label": "Unexpected Pi restarts \u2014 2026-10-05",
+      "file_type": "document",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_pi_restart_investigation_unexpected_pi_restarts_2026_10_05",
+      "community": 44,
+      "community_name": "DeploymentTests",
+      "norm_label": "unexpected pi restarts \u2014 2026-10-05"
+    },
+    {
+      "label": "Observed, not inferred",
+      "file_type": "document",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "docs_pi_restart_investigation_observed_not_inferred",
+      "community": 44,
+      "community_name": "DeploymentTests",
+      "norm_label": "observed, not inferred"
+    },
+    {
+      "label": "Existing non-CodexPi services",
+      "file_type": "document",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "docs_pi_restart_investigation_existing_non_codexpi_services",
+      "community": 44,
+      "community_name": "DeploymentTests",
+      "norm_label": "existing non-codexpi services"
+    },
+    {
+      "label": "Conclusion and safe next evidence",
+      "file_type": "document",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L61",
+      "_origin": "ast",
+      "id": "docs_pi_restart_investigation_conclusion_and_safe_next_evidence",
+      "community": 44,
+      "community_name": "DeploymentTests",
+      "norm_label": "conclusion and safe next evidence"
+    },
+    {
+      "label": "Separate reproducible CodexPi write-load defect",
+      "file_type": "document",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L72",
+      "_origin": "ast",
+      "id": "docs_pi_restart_investigation_separate_reproducible_codexpi_write_load_defect",
+      "community": 44,
+      "community_name": "DeploymentTests",
+      "norm_label": "separate reproducible codexpi write-load defect"
+    },
+    {
       "label": "progress.md",
       "file_type": "document",
       "source_file": "docs/progress.md",
@@ -4859,7 +4925,7 @@
       "label": "2026-10-01 native Optimizer execution and migration priority",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L24",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "docs_progress_2026_10_01_native_optimizer_execution_and_migration_priority",
       "community": 8,
@@ -4870,7 +4936,7 @@
       "label": "2026-09-30 Token Optimizer compatibility patch and installation",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L43",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "docs_progress_2026_09_30_token_optimizer_compatibility_patch_and_installation",
       "community": 8,
@@ -4881,7 +4947,7 @@
       "label": "2026-09-29 optimization inventory and installer defects",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L57",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "docs_progress_2026_09_29_optimization_inventory_and_installer_defects",
       "community": 8,
@@ -4892,7 +4958,7 @@
       "label": "2026-09-29 active-goal recovery evidence closure",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L73",
+      "source_location": "L80",
       "_origin": "ast",
       "id": "docs_progress_2026_09_29_active_goal_recovery_evidence_closure",
       "community": 8,
@@ -4903,7 +4969,7 @@
       "label": "2026-09-28 Windows heartbeat and worker recovery",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L91",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "docs_progress_2026_09_28_windows_heartbeat_and_worker_recovery",
       "community": 8,
@@ -4914,7 +4980,7 @@
       "label": "2026-09-27/28 worker admission and top-of-dashboard usage",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L105",
+      "source_location": "L112",
       "_origin": "ast",
       "id": "docs_progress_2026_09_27_28_worker_admission_and_top_of_dashboard_usage",
       "community": 8,
@@ -4925,7 +4991,7 @@
       "label": "2026-09-25 usage-history implementation and live verification",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L127",
+      "source_location": "L134",
       "_origin": "ast",
       "id": "docs_progress_2026_09_25_usage_history_implementation_and_live_verification",
       "community": 8,
@@ -4936,7 +5002,7 @@
       "label": "2026-09-25 controller-crash verification and runbooks",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L141",
+      "source_location": "L148",
       "_origin": "ast",
       "id": "docs_progress_2026_09_25_controller_crash_verification_and_runbooks",
       "community": 8,
@@ -4947,7 +5013,7 @@
       "label": "Verified 2026-09-19",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L152",
+      "source_location": "L159",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_19",
       "community": 8,
@@ -4958,7 +5024,7 @@
       "label": "Verified 2026-09-20 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L173",
+      "source_location": "L180",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_20_incremental_not_final_acceptance",
       "community": 8,
@@ -4969,7 +5035,7 @@
       "label": "Verified 2026-09-21 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L203",
+      "source_location": "L210",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_21_incremental_not_final_acceptance",
       "community": 8,
@@ -4980,7 +5046,7 @@
       "label": "Work still required",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L245",
+      "source_location": "L252",
       "_origin": "ast",
       "id": "docs_progress_work_still_required",
       "community": 8,
@@ -4991,7 +5057,7 @@
       "label": "Source references",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L297",
+      "source_location": "L304",
       "_origin": "ast",
       "id": "docs_progress_source_references",
       "community": 8,
@@ -5151,6 +5217,17 @@
       "community": 29,
       "community_name": "Pi infrastructure resource measurements",
       "norm_label": "incremental 2026-10-01 post-optimizer sample"
+    },
+    {
+      "label": "2026-10-05 redundant idle writes (local reproduction)",
+      "file_type": "document",
+      "source_file": "docs/resources.md",
+      "source_location": "L70",
+      "_origin": "ast",
+      "id": "docs_resources_2026_10_05_redundant_idle_writes_local_reproduction",
+      "community": 29,
+      "community_name": "Pi infrastructure resource measurements",
+      "norm_label": "2026-10-05 redundant idle writes (local reproduction)"
     },
     {
       "label": "unsnooze.md",
@@ -7118,7 +7195,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_core.py",
-      "source_location": "L70",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_core_coretests_test_project_names",
@@ -7310,7 +7387,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_core.py",
-      "source_location": "L63",
+      "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
@@ -9940,7 +10017,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L178",
+      "source_location": "L184",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -9962,7 +10039,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L174",
+      "source_location": "L180",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -9973,7 +10050,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L170",
+      "source_location": "L176",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -10006,7 +10083,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L126",
+      "source_location": "L132",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -10017,7 +10094,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L117",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -10028,7 +10105,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L113",
+      "source_location": "L118",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -10039,7 +10116,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L109",
+      "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -10072,7 +10149,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L147",
+      "source_location": "L153",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database",
@@ -10494,7 +10571,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L130",
+      "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_record_usage",
@@ -10506,7 +10583,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L122",
+      "source_location": "L128",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_reorder",
@@ -10518,7 +10595,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L127",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_record_usage",
@@ -10530,7 +10607,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L176",
+      "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_compact_queue",
@@ -10542,7 +10619,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L124",
+      "source_location": "L130",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_reorder",
@@ -10566,7 +10643,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/db.py",
-      "source_location": "L131",
+      "source_location": "L137",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_record_usage",
@@ -10579,7 +10656,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/db.py",
-      "source_location": "L128",
+      "source_location": "L134",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_record_usage",
@@ -10591,7 +10668,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/db.py",
-      "source_location": "L132",
+      "source_location": "L138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_record_usage",
@@ -10615,7 +10692,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/db.py",
-      "source_location": "L187",
+      "source_location": "L193",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_db_database_backup",
@@ -12793,7 +12870,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/test_core.py",
-      "source_location": "L54",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
@@ -15225,7 +15302,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_core.py",
-      "source_location": "L69",
+      "source_location": "L81",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_core_coretests",
@@ -16711,6 +16788,61 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_pi_restart_investigation",
+      "target": "docs_pi_restart_investigation_unexpected_pi_restarts_2026_10_05",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_pi_restart_investigation_unexpected_pi_restarts_2026_10_05",
+      "target": "docs_pi_restart_investigation_conclusion_and_safe_next_evidence",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_pi_restart_investigation_unexpected_pi_restarts_2026_10_05",
+      "target": "docs_pi_restart_investigation_existing_non_codexpi_services",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_pi_restart_investigation_unexpected_pi_restarts_2026_10_05",
+      "target": "docs_pi_restart_investigation_observed_not_inferred",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-restart-investigation.md",
+      "source_location": "L72",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_pi_restart_investigation_unexpected_pi_restarts_2026_10_05",
+      "target": "docs_pi_restart_investigation_separate_reproducible_codexpi_write_load_defect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -16723,7 +16855,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L141",
+      "source_location": "L148",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16734,7 +16866,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L127",
+      "source_location": "L134",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16745,7 +16877,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L105",
+      "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16756,7 +16888,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L91",
+      "source_location": "L98",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16767,7 +16899,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L73",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16778,7 +16910,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L57",
+      "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16789,7 +16921,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L43",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16800,7 +16932,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L24",
+      "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16822,7 +16954,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L297",
+      "source_location": "L304",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16833,7 +16965,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L152",
+      "source_location": "L159",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16844,7 +16976,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L173",
+      "source_location": "L180",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16855,7 +16987,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L203",
+      "source_location": "L210",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16866,7 +16998,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L245",
+      "source_location": "L252",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -16959,6 +17091,17 @@
       "_origin": "ast",
       "source": "docs_recovery_verification",
       "target": "docs_recovery_live_controller_crash_2026_09_25",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/resources.md",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_resources",
+      "target": "docs_resources_2026_10_05_redundant_idle_writes_local_reproduction",
       "confidence_score": 1.0
     },
     {
@@ -17150,5 +17293,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "e8736407320cf89d0a376cd84a032198542a41fc"
+  "built_at_commit": "b301e0ca5484e6ec0c4c028e1ca50a8b32f6b3e6"
 }

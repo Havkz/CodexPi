@@ -42,6 +42,18 @@ class CoreTests(unittest.TestCase):
                   (str(index), str(index), str(index), f'/projects/{index}', str(index), index,
                    time.time(), time.time()))
             db.update('1', goal_status='active')
+            db.set_setting('selected', '1')
+            stamp, changes = db.get('1')['updated_at'], db.conn.total_changes
+            db.update('1', goal_status='active', block_reason=None)
+            db.set_setting('selected', '1')
+            self.assertEqual(db.conn.total_changes, changes)
+            self.assertEqual(db.get('1')['updated_at'], stamp)
+            self.assertEqual(db.conn.execute('PRAGMA synchronous').fetchone()[0], 2)
+            db.update('1', display_name='First')
+            db.update('1', display_name='FIRST', block_reason='changed')
+            self.assertEqual(db.get('1')['display_name'], 'FIRST')
+            db.update('1', display_name='1', block_reason=None)
+            self.assertIsNone(db.get('1')['block_reason'])
             with self.assertRaises(sqlite3.IntegrityError):
                 db.update('2', goal_status='active')
             with self.assertRaises(ValueError):
