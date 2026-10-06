@@ -63,7 +63,9 @@ def status_embed(controller, project, event, payload):
     elif payload.get('message'):
         sections.append('**Details**\n│ ' + plain(payload['message'], 650))
     if kind == 'usage limited':
-        sections.append('**Resume**\n- Scheduler-controlled\n│ Policy: `Unsnooze`\n│ Queue position: ' +
+        prompt_limit = controller.db.setting('prompt_limit/' + project['project_id'])
+        policy = 'New prompt required after reset; failed prompt is not replayed' if prompt_limit else 'Unsnooze'
+        sections.append('**Resume**\n- Scheduler-controlled\n│ Policy: ' + code(policy) + '\n│ Queue position: ' +
                         code(project['queue_position']))
     if kind in ('active', 'complete'):
         waiting = [p for p in controller.db.all() if p['project_id'] != project['project_id']

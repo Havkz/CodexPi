@@ -4,7 +4,7 @@ import time
 import uuid
 
 from .common import NATIVE_STATUS
-from .native import project_thread_config, turn_params
+from .native import idle_thread, project_thread_config, turn_params
 
 
 def key(project):
@@ -79,7 +79,8 @@ async def dispatch(controller, project, native, *, allow_limited=False):
         item.update(phase='active', result=result, turn_id=result['turn']['id'])
         with controller.db.transaction():
             controller.db.set_setting('prompt_active/' + project['project_id'], item)
-            controller.db.update(project['project_id'], goal_status='active', last_activity=time.time())
+            controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_limit/' + project['project_id'],))
+            controller.db.update(project['project_id'], goal_status='active', usage_limit=None, last_activity=time.time())
         return result
     except Exception as exc:
         item['error'] = controller.redactor.clean(str(exc))
@@ -91,6 +92,33 @@ async def dispatch(controller, project, native, *, allow_limited=False):
 async def reconcile(controller, project):
     item = active(controller, project)
     if not item:
+        limit = controller.db.setting('prompt_limit/' + project['project_id'])
+        if not limit:
+            return False
+        goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+        # A genuine failed user turn does not change an inactive native goal.
+        # Keep its evidence until an explicit goal change or a confirmed reset.
+        if ((goal['status'] if goal else None) != limit.get('goal_status')
+                or (goal.get('updatedAt') if goal else None) != limit.get('goal_updated_at')):
+            controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_limit/' + project['project_id'],))
+            return False
+        metadata = json.loads(project['usage_limit'] or '{}')
+        account = controller.db.setting('account_usage', {})
+        reset = metadata.get('resetAt')
+        if (not reset or reset > time.time() * 1000 or account.get('checked_at', 0) * 1000 <= reset
+                or account.get('ordinaryUsageAllowed') is not True
+                or not await idle_thread(controller.native, project['codex_session_id'])
+                or controller.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone()):
+            return True
+        # Do not replay a failed prompt: it may already have performed actions.
+        # Nor does a quota reset authorize resuming a previously paused goal.
+        with controller.db.transaction():
+            controller.record_status(project, NATIVE_STATUS[goal['status']] if goal else limit['previous_status'])
+            controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_limit/' + project['project_id'],))
+            if goal and goal['status'] == 'paused' and not controller.db.setting(key(project), []) and not project['operation']:
+                controller.db.set_setting('manual_pause/' + project['project_id'], True)
+            if controller.db.setting('selected') == project['project_id'] and not project['operation']:
+                controller.db.set_setting('selected', None)
         return False
     turns = (await controller.native.rpc('thread/turns/list', {'threadId': project['codex_session_id'],
                         'limit': 100, 'sortDirection': 'desc'}))['data']
@@ -107,23 +135,33 @@ async def reconcile(controller, project):
     goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
     status = NATIVE_STATUS[goal['status']] if goal else item['previous_status']
     error = turn.get('error') or {}
-    if error.get('codexErrorInfo') == 'usageLimitExceeded':
+    limited = error.get('codexErrorInfo') == 'usageLimitExceeded'
+    if limited:
         status = 'usage limited'  # Genuine native turn error, not account availability/inactivity.
-    controller.record_status(controller.db.get(project['project_id']), status)
+    limit = None
+    if limited and (not goal or goal['status'] != 'usageLimited'):
+        limit = {
+                'turn_id': turn['id'], 'goal_status': goal['status'] if goal else None,
+                'goal_updated_at': goal.get('updatedAt') if goal else None,
+                'previous_status': item['previous_status'] if item['previous_status'] not in ('active', 'usage limited') else 'paused'}
+    controller.record_status(controller.db.get(project['project_id']), status, prompt_limit=limit)
     with controller.db.transaction():
         receipts = controller.db.setting('prompt_receipts/' + project['project_id'], [])
         controller.db.set_setting('prompt_receipts/' + project['project_id'],
                                   (receipts + [{'id': item['id'], 'result': item.get('result')}])[-100:])
         controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_active/' + project['project_id'],))
+        if status == 'paused' and goal and not controller.db.setting(key(project), []) and not project['operation']:
+            controller.db.set_setting('manual_pause/' + project['project_id'], True)
         if status not in ('active', 'usage limited') and controller.db.setting('selected') == project['project_id']:
             controller.db.set_setting('selected', None)
     controller.health_errors.pop('prompt', None)
-    return status == 'usage limited' and not goal
+    return limited
 
 
 def cancel_active(controller, project):
     """Only after the shared wait_idle proof. Never automatically replay an uncertain send."""
     item = active(controller, project)
+    controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_limit/' + project['project_id'],))
     if item:
         with controller.db.transaction():
             receipts = controller.db.setting('prompt_receipts/' + project['project_id'], [])

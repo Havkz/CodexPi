@@ -224,6 +224,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                 c.db.set_setting('usage_wake/project-1', {'reset_at': 1})
                 c.db.set_setting('prompts/project-1', [{'id': 'queued-user-prompt'}])
                 c.db.set_setting('prompt_active/project-1', {'id': 'old-turn'})
+                c.db.set_setting('prompt_limit/project-1', {'turn_id': 'old-turn'})
                 c.db.update('project-1', goal_status=status,
                             operation=json.dumps({'kind': 'resume', 'source': 'unsnooze', 'sent_at': 1}))
                 c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,created_at,updated_at) VALUES(?,?,?,?,?)',
@@ -239,6 +240,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                 self.assertIsNone(c.db.setting('usage_wake/project-1'))
                 self.assertIsNone(c.db.setting('prompts/project-1'))
                 self.assertIsNone(c.db.setting('prompt_active/project-1'))
+                self.assertIsNone(c.db.setting('prompt_limit/project-1'))
                 self.assertTrue(state['archived'])
                 self.assertTrue(state['deleted'])
                 self.assertEqual(state['repo'], 'owner/first')

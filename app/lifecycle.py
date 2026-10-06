@@ -303,8 +303,9 @@ async def finish(controller, project):
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', (deployment.key(project),))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('manual_pause/' + ident,))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('usage_wake/' + ident,))
-                controller.db.conn.execute('DELETE FROM settings WHERE key IN (?,?,?)',
-                                          ('prompts/' + ident, 'prompt_active/' + ident, 'prompt_receipts/' + ident))
+                controller.db.conn.execute('DELETE FROM settings WHERE key IN (?,?,?,?)',
+                                          ('prompts/' + ident, 'prompt_active/' + ident, 'prompt_receipts/' + ident,
+                                           'prompt_limit/' + ident))
                 controller.db.compact_queue()
 
 

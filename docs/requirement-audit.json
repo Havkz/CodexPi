@@ -14493,9 +14493,9 @@
       "id": "L2924",
       "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
       "text": "Den vollständigen nativen Goal-Status -> Controller -> Scheduler -> DB -> Dashboard -> Discord -> Unsnooze-Pfad untersuchen. Autoritatives usageLimited korrekt persistieren, niemals allein aus Inaktivität ableiten. Verfügbare Reset-Informationen speichern und anzeigen.",
-      "status": "pending",
+      "status": "tested",
       "evidence": [
-        "docs/manual-pause.md and Setup/verify-usage-history.py: two real native provider-limit attempts mapped to persisted reset/outbox records and actual Discord messages; automatic reset continuation remains unverified"
+        "app/controller.py record_status/persist_usage_resets/selective_wake; app/prompts.py reconcile. Actual native Donut and Sybu goals report usageLimited, persisted project/reset match, sent Discord outbox and dashboard verified. Original native ordinary failed turn also verified with no goal, durable across controller restart. No limit inferred from inactivity/account telemetry. state/unsnooze-queue-live-20261006.json and state/prompt-quota-live-20261006.json; affected Windows/Pi regression suites pass."
       ]
     },
     {
@@ -14511,9 +14511,9 @@
       "id": "L2926",
       "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
       "text": "Nach tatsächlichem Reset darf die bestehende Unsnooze-Integration ausschließlich die weiterhin berechtigte richtige Session über natives /goal resume fortsetzen. Pausierte, gelöschte oder wegen erforderlicher Nutzerentscheidung blockierte Projekte niemals automatisch fortsetzen.",
-      "status": "pending",
+      "status": "tested",
       "evidence": [
-        "docs/manual-pause.md: persisted manual holds, shared automatic-resume guards, stale-wake cancellation, Windows reconnect journal, real native paused/restart/queued-resume/cancel/delete verification; complete genuine reset-to-Unsnooze cycle remains pending"
+        "state/unsnooze-queue-live-20261006.json: actual elapsed provider reset automatically resumed original Donut SID/cwd through journaled mapped /goal resume; goal and native thread active confirmed. tests.test_scheduler covers queue reorder, absent/stale selection, once-per-reset delivery, manual pause, required user input, Windows jobs and stale wake guards; tests.test_lifecycle covers deleted waiters. Ordinary failed prompts/previously paused goals are not replayed or resumed after reset; combined regression verifies persistence and atomic rollback."
       ]
     },
     {
@@ -14527,15 +14527,19 @@
       "id": "L2930",
       "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
       "text": "Paused- und usageLimited-Projekte müssen ohne verfügbare Codex-Nutzung über den vorhandenen sicheren Lifecycle löschbar sein. Delete darf nicht an einem ausstehenden Resume scheitern.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Existing real paused/queued-resume fixture deletion in Setup/verify-delete-resume.py; actual no-goal usage-limited fixture deleted through dashboard on 2026-10-06 while ordinaryUsageAllowed=false. tests.test_lifecycle.test_delete_supersedes_resume_for_paused_and_limited_projects covers both native statuses and pending Unsnooze/resume. state/prompt-quota-live-20261006.json."
+      ]
     },
     {
       "id": "L2931",
       "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
       "text": "Ausstehende Resume-/Unsnooze-Aufträge abbrechen, Sessions quieszent machen und gegebenenfalls archivieren, Discord-Channel entsprechend bestehender Semantik entfernen, DB-/Session-Mappings und Queue bereinigen. Bestehende GitHub-Aufbewahrung, Backups und Recovery-Garantien erhalten. Gelöschte Projekte dürfen nach Crash, Reset, Unsnooze oder Scheduler-Lauf niemals wieder starten.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/lifecycle.py journal-before-quiescence and transactional mapping cleanup inspected; tests.test_lifecycle covers interruption/recovery after every effect and paused/native-limited pending resumes/jobs/markers. Actual dashboard deletion during exhausted quota independently confirmed archived native session, Discord 404, GitHub immutable ID 404 only after explicit opt-in, absent DB/tmux/execution markers and retained recovery manifest/deletion tombstone. Earlier default deletion preserved private repository, per state/pause-policy-e2e-20260924.json; later explicit cleanup permission respected."
+      ]
     },
     {
       "id": "L2933",
@@ -14653,17 +14657,19 @@
       "id": "L2956",
       "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
       "text": "Die rote Meldung unter Infrastructure -> Raspberry Pi \"TUI did not acknowledge /goal resume; manual inspection required\" bei gleichzeitig online angezeigtem Pi untersuchen und beheben. tmux-Session, nativen TUI-Zustand, Übermittlung von /goal resume, Codex-Bestätigung, Race Conditions und Timeouts prüfen.",
-      "status": "pending",
+      "status": "tested",
       "evidence": [
-        "docs/lifecycle-fixes-20260923.md: empty-goal stale resume reproduced; update-prompt startup interruption reproduced; scoped fixes deployed; live mapped TUI restoration and actual native goal execution confirmed; genuine provider-limit/reset end-to-end remains pending"
+        "Original missing-goal/update-dialog causes and real mapped restoration retained in docs/lifecycle-fixes-20260923.md. Current connected TUI and normal dashboard Resume verified on 0.160.1, same Sybu native SID became active then genuine usageLimited without generic infrastructure error. Additional real queued-resume timeout root cause fixed: restoration started_at excludes prior queue waiting. Existing combined timeout/crash/identity test covers hour-old queue, delayed connection, actual delivery timeout and no repeated slash. state/prompt-quota-live-20261006.json."
       ]
     },
     {
       "id": "L2957",
       "section": "VERBINDLICHE ERGÄNZUNGEN VOM 23.09.2026: LIFECYCLE, RESUME UND MIGRATION",
       "text": "Richtige Session zuverlässig wiederherstellen und fortsetzen. Echte Usage-Limit-Verhinderung als usageLimited mit Reset-Warten statt generischem Infrastrukturfehler anzeigen. Unbegrenzte Resume-Versuche und doppelte /goal resume-Aufrufe verhindern. Regressionstests und möglichst echte TUI-Verifikation durchführen. Diese Anforderung dauerhaft in Goal-Datei und Requirement-Audit führen, kein neues Goal erstellen.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Normal dashboard Sybu resume 599d6ce5-46ca-4aee-a886-319697c2c55e confirmed native active state; subsequent real turn 01a112b0-13e4-73b3-9338-72f4ded61889 failed usageLimitExceeded, native goal usageLimited and DB/reset/Discord agree. Original Donut genuine reset-to-resume confirmed separately. Journal-before-slash, once-per-reset marker, bounded selected restoration timeout and no blind retry verified by affected regression suite; requirement remains in existing goal/audit, no new goal."
+      ]
     },
     {
       "id": "L2959",
@@ -14871,9 +14877,9 @@
       "id": "L3009",
       "section": "VERBINDLICHE ERGÄNZUNG VOM 06.10.2026: UNSNOOZE UND AUTO CONTINUE",
       "text": "Das ausgebliebene automatische Resume von donut-order-trader nach dem nächtlichen 5h-Reset untersuchen und beheben. Insbesondere den Start eines Projekts während eines bereits ausgeschöpften Limits prüfen. Echte native Usage-Limits und verfügbare Reset-Informationen müssen auch ohne erkannten Unsnooze-Transcript-Eintrag zuverlässig zum vorgesehenen abgesicherten Resume der richtigen Session führen. Keine Nutzungslimits aus Inaktivität ableiten, keine künstlichen Limits erzeugen, keine unbegrenzten oder doppelten Resume-Versuche. Manuelle Pausen, Nutzerentscheidungen, Löschung und Single-Project-Admission weiterhin respektieren.",
-      "status": "pending",
+      "status": "tested",
       "evidence": [
-        "Root cause reproduced from original transcript and hourly DB snapshots; docs/unsnooze.md. Native-account fallback and once-per-reset mapped slash regression pass on both hosts, fix deployed. Next genuine provider-reset acknowledgement still unverified."
+        "Original transcript/hourly DB root cause identified; native-account fallback and once-per-reset mapped slash inspected and regression-covered. Actual elapsed provider reset resumed original Donut SID/cwd without requiring an Unsnooze transcript entry, persisted automatic operation and native goal/thread active confirmed. Later distinct native limit persisted/notified. state/unsnooze-queue-live-20261006.json; new empty session ordinary real quota failure separately verified in state/prompt-quota-live-20261006.json. No fake limits/refills."
       ]
     },
     {
@@ -14916,7 +14922,7 @@
       "text": "Den Windows- und Pi-Einstieg um codexpi --all ergänzen. Das tatsächliche native codex resume --all-Menü vom Pi öffnen, bestehende verwaltete Projekte/Sessions und ihren echten Verlauf anzeigen sowie normale Prompts und neue beziehungsweise geänderte Goals ermöglichen. Reines Öffnen und Lesen startet keine Ausführung. Wenn ein anderes Projekt arbeitet, neue Prompts dauerhaft einreihen; das laufende Projekt arbeitet weiter. Erst der Controller darf die gespeicherten Prompts im einzigen freigegebenen Ausführungsslot senden. Keine zweite parallele AI-Session, keine Umgehung der Queue-/Sicherheitsregeln; Pausen, Löschung und Wiederherstellung berücksichtigen. Regressionstests und echte TUI-Verifikation durchführen.",
       "status": "pending",
       "evidence": [
-        "bin/codexpi and bin/codexpi.cmd --all; actual native picker on 0.155.1 and 0.160.1. Cross-project verification prompt persisted exactly once without preempting current project. Existing combined scheduler regression covers durable prompt queue, restart, slot and sandbox. Ordinary-prompt quota lifecycle acceptance remains pending; native UI renders explicit queued failed-start receipt."
+        "bin/codexpi and bin/codexpi.cmd --all; actual native picker on 0.155.1 and 0.160.1. Cross-project verification prompt persisted exactly once without preempting current project. Existing combined scheduler regression covers durable prompt queue, restart, slot and sandbox. Connected mapped TUI ordinary prompt produced genuine usageLimitExceeded with no native goal; persisted usage limited/reset survives actual controller restart, dashboard verified, exactly one Discord event/message. Fixture/channel/repo removed through opt-in lifecycle, native archived and execution markers absent. state/prompt-quota-live-20261006.json. Post-reset ordinary prompt completion remains unverified live; reset/no-replay/manual-hold/atomic rollback are covered by one combined regression. Native UI renders explicit queued failed-start receipt."
       ]
     },
     {

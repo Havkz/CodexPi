@@ -95,6 +95,8 @@ class DiscordTests(unittest.IsolatedAsyncioTestCase):
             await bot.send_pending()
             self.assertEqual(channel.send.await_count, 1)
             self.assertIn('unknown', history[0].embeds[0].description)
+            self.assertIn('Unsnooze', history[0].embeds[0].description)
+            db.set_setting('prompt_limit/p', {'turn_id': 'failed-user-turn'})
             event = db.conn.execute('SELECT payload FROM events').fetchone()
             payload = json.loads(event[0]) | {'usage_limit': {'resetAt': 1800000000000}}
             db.conn.execute('UPDATE events SET payload=?', (json.dumps(payload),))
@@ -103,6 +105,7 @@ class DiscordTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(channel.send.await_count, 1)
             history[0].edit.assert_awaited_once()
             self.assertIn('<t:1800000000:F>', history[0].edit.await_args.kwargs['embed'].description)
+            self.assertIn('failed prompt is not replayed', history[0].edit.await_args.kwargs['embed'].description)
             await bot.close()
             db.conn.close()
 

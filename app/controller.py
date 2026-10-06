@@ -88,7 +88,7 @@ class Controller:
         if status == 'paused' and self.db.setting('selected') == project['project_id']:
             self.db.set_setting('selected', None)
 
-    def record_status(self, project, status, **fields):
+    def record_status(self, project, status, *, prompt_limit=None, **fields):
         # State and notification outbox must survive (or roll back) together,
         # including changes first observed during restart recovery.
         operation = json.loads(project['operation'] or '{}')
@@ -99,8 +99,10 @@ class Controller:
             fields['operation'] = None
             fields['resume_result'] = json.dumps({'id': operation.get('id'), 'status': status,
                 'message': 'Native goal reports ' + status})
-        with self.db.transaction():
+        with contextlib.nullcontext() if self.db.conn.in_transaction else self.db.transaction():
             self.db.update(project['project_id'], goal_status=status, **fields)
+            if prompt_limit is not None:
+                self.db.set_setting('prompt_limit/' + project['project_id'], prompt_limit)
             if changed and status in ('stalled', 'usage limited', 'limited by budget'):
                 self.db.event(project['project_id'], status, {'reason': fields.get('block_reason', project['block_reason'])})
 
@@ -269,9 +271,9 @@ class Controller:
         # Interrupt that turn and confirm native idleness before releasing the single-worker slot.
         await self.wait_idle(project)
         from .prompts import active, cancel_active
-        if active(self, project):
-            cancel_active(self, project)
-            self.db.update(project['project_id'], goal_status='paused')
+        if active(self, project) or self.db.setting('prompt_limit/' + project['project_id']):
+            self.db.update(project['project_id'], goal_status='paused', usage_limit=None)
+        cancel_active(self, project)
         if not preserve_operation:
             operation = json.loads(project['operation'] or '{}')
             if operation.get('kind') == 'resume':
@@ -389,6 +391,8 @@ class Controller:
                 else:
                     await self.pause(project, release=False, manual=True)
                 continue
+            if self.db.setting('prompt_limit/' + project['project_id']) and await reconcile(self, project):
+                continue
             row = rows.get(project['codex_session_id'])
             if (row and row['status'] not in ('paused', 'complete')
                     and self.db.setting('manual_pause/' + project['project_id'], False)):
@@ -402,7 +406,7 @@ class Controller:
         for project in self.db.all():
             if project['lifecycle'] != 'ready':
                 continue
-            if active(self, project):
+            if await reconcile(self, project):
                 continue
             row = rows.get(project['codex_session_id'])
             if row:
@@ -437,6 +441,7 @@ class Controller:
             from .prompts import reconcile
             if await reconcile(self, project):
                 continue
+            project = self.db.get(project['project_id'])
             row = rows.get(project['codex_session_id'])
             if not row:
                 continue
@@ -663,6 +668,10 @@ class Controller:
                 self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
                 continue
             try:
+                if not operation.get('started_at'):
+                    # Queue waiting is unbounded; only the selected restoration attempt times out.
+                    operation['started_at'] = time.time()
+                    self.db.update(project['project_id'], operation=json.dumps(operation))
                 goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
                 if operation.get('source') == 'unsnooze':
                     reason = json.loads(project['block_reason'] or '{}')
@@ -711,7 +720,7 @@ class Controller:
                         await self.slash(project, '/goal resume')
                 elif not operation.get('sent_at'):
                     await self.attach_ready(project)
-                if time.time() - operation.get('sent_at', operation['requested_at']) > 60:
+                if time.time() - operation.get('sent_at', operation['started_at']) > 60:
                     raise RuntimeError('Resume timed out: mapped TUI did not confirm a running goal or restored session; inspect the project TUI before retrying')
             except Exception as exc:
                 operation['error'] = self.redactor.clean(str(exc))

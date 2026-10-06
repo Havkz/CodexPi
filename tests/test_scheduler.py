@@ -112,6 +112,76 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(c.db.setting('selected'))
 
 
+    async def test_prompt_usage_error_survives_goal_poll_restart_and_reset_without_replay(self):
+        c = self.controller
+        sid = 'first'
+        native_goal = {'status': 'paused', 'updatedAt': 10}
+        turn_error = 'usageLimitExceeded'
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/goal/get':
+                return {'goal': native_goal}
+            if method == 'thread/turns/list':
+                return {'data': [{'id': 'quota-turn', 'status': 'failed',
+                                  'error': {'codexErrorInfo': turn_error}}]}
+            if method == 'thread/read':
+                return {'thread': {'status': {'type': self.thread_status}}}
+            self.fail('Unexpected native mutation: ' + method)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        c.source = SimpleNamespace(rows=lambda: {sid: {'status': 'paused', 'updated_at_ms': 10000}} if native_goal else {})
+        c.attach_ready = AsyncMock()
+        for native_goal in ({'status': 'paused', 'updatedAt': 10}, None):
+            c.select(sid)
+            c.db.set_setting('manual_pause/' + sid, False)
+            c.db.update(sid, goal_status='active')
+            c.db.set_setting('prompt_active/' + sid, {'id': 'prompt', 'turn_id': 'quota-turn',
+                'previous_status': 'paused', 'result': {'turn': {'id': 'quota-turn'}}})
+            await c.poll_goals()
+            self.assertEqual(c.db.get(sid)['goal_status'], 'usage limited')
+            c.db.conn.close()
+            c.db = Database(self.root / 'test.db')
+            await c.recover()
+            await c.poll_goals()
+            self.assertEqual(c.db.get(sid)['goal_status'], 'usage limited')
+            self.assertFalse(c.db.setting('manual_pause/' + sid, False))
+            # Only an actual post-reset account observation can clear this turn
+            # error; never resend a partially executed prompt or resume its goal.
+            reset = time.time() - 60
+            c.db.update(sid, usage_limit=json.dumps({'resetAt': reset * 1000, 'resetSource': 'native-account'}))
+            c.db.set_setting('account_usage', {'checked_at': reset - 1, 'ordinaryUsageAllowed': True})
+            await c.poll_goals()
+            self.assertEqual(c.db.get(sid)['goal_status'], 'usage limited')
+            c.db.set_setting('account_usage', {'checked_at': time.time(), 'ordinaryUsageAllowed': True})
+            self.thread_status = 'active'
+            await c.poll_goals()
+            self.assertEqual(c.db.get(sid)['goal_status'], 'usage limited')
+            self.thread_status = 'idle'
+            record_status = c.record_status
+            def interrupted_reset(*args, **kwargs):
+                record_status(*args, **kwargs)
+                raise RuntimeError('interrupted reset transaction')
+            with patch.object(c, 'record_status', side_effect=interrupted_reset):
+                with self.assertRaisesRegex(RuntimeError, 'interrupted reset'):
+                    await c.poll_goals()
+            self.assertEqual(c.db.get(sid)['goal_status'], 'usage limited')
+            self.assertIsNotNone(c.db.setting('prompt_limit/' + sid))
+            await c.poll_goals()
+            self.assertEqual(c.db.get(sid)['goal_status'], 'paused')
+            self.assertIsNone(c.db.setting('selected'))
+            self.assertIsNone(c.db.setting('prompt_limit/' + sid))
+            self.assertIsNone(c.db.get(sid)['usage_limit'])
+        self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='usage limited'").fetchone()[0], 2)
+        turn_error = 'responseStreamDisconnected'
+        c.db.set_setting('prompt_active/' + sid, {'id': 'not-quota', 'turn_id': 'quota-turn', 'previous_status': 'paused'})
+        await c.poll_goals()
+        self.assertEqual(c.db.get(sid)['goal_status'], 'paused')
+        self.assertIsNone(c.db.setting('prompt_limit/' + sid))
+        # Pause also cancels a terminal quota hold without needing a native goal.
+        c.db.update(sid, goal_status='usage limited')
+        c.db.set_setting('prompt_limit/' + sid, {'turn_id': 'quota-turn'})
+        await c.pause(c.db.get(sid), manual=True)
+        self.assertEqual(c.db.get(sid)['goal_status'], 'paused')
+        self.assertIsNone(c.db.setting('prompt_limit/' + sid))
+
     async def test_cli_update_defers_for_users_execution_and_unknown_native_state(self):
         from app.maintenance import daily_update, idle
         c = self.controller
@@ -257,7 +327,15 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         c.slash = AsyncMock()
         c.attach_ready = AsyncMock()
         result = await c.resume('first')
+        operation = json.loads(c.db.get('first')['operation'])
+        operation['requested_at'] = time.time() - 3600
+        c.db.update('first', operation=json.dumps(operation))
         with patch('app.controller.command', AsyncMock()):
+            connections = c.tui_connections.pop('first')
+            await c.resume_ready()
+            self.assertNotIn('error', json.loads(c.db.get('first')['operation']))
+            c.slash.assert_not_awaited()
+            c.tui_connections['first'] = connections
             await c.resume_ready()
             c.slash.assert_awaited_once()
             saved = json.loads(c.db.get('first')['operation'])
@@ -680,7 +758,9 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
             await controller.resume_ready()
             controller.attach_ready.assert_awaited_once()
             controller.slash.assert_not_awaited()
-            self.assertEqual(controller.db.get('first')['operation'], operation)
+            restored = json.loads(controller.db.get('first')['operation'])
+            self.assertGreater(restored.pop('started_at'), 0)
+            self.assertEqual(restored, json.loads(operation))
             controller.tui_connections['first'] = {1: time.monotonic() - 2}
             controller.db.set_setting('pause_all', True)
             await controller.resume_ready()

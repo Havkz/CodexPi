@@ -317,6 +317,8 @@ async def tui_proxy(request):
                     if method == 'thread/goal/clear':
                         controller.db.set_setting('manual_pause/' + project['project_id'], True)
                         await controller.wait_idle(project)
+                        from .prompts import cancel_active
+                        cancel_active(controller, project)
                         operation = json.loads(project['operation'] or '{}')
                         if operation.get('kind') == 'resume':
                             controller.finish_resume(project, operation, 'cancelled', 'Native goal was cleared')
