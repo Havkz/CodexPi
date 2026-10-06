@@ -12,7 +12,7 @@ import uuid
 
 from .common import NATIVE_STATUS, Redactor, atomic_write, slugify
 from .db import Database
-from .native import GoalSource, Native, project_thread_config
+from .native import GoalSource, Native, idle_thread, project_thread_config
 
 
 async def command(*args, cwd=None, timeout=90, check=True):
@@ -58,6 +58,7 @@ class Controller:
         self.health_errors = {}
         self.tui_connections = {}
         self.task = None
+        self.maintenance = False
 
     @property
     def windows_online(self):
@@ -113,6 +114,8 @@ class Controller:
                 and not json.loads(project['block_reason'] or '{}').get('requires_user'))
 
     async def create(self, name):
+        if getattr(self, 'maintenance', False):
+            raise ValueError('Codex CLI update is in progress; reopen after maintenance completes')
         name = name.strip()
         slug = slugify(name)
         async with self.lock:
@@ -215,12 +218,26 @@ class Controller:
     async def attach_ready(self, project):
         if project['lifecycle'] != 'ready':
             raise ValueError('Project lifecycle recovery must finish before attaching')
+        await self.open_tui(project, [project['codex_session_id']])
+
+    async def browse(self):
+        if getattr(self, 'maintenance', False):
+            raise ValueError('Codex CLI update is in progress; reopen after maintenance completes')
+        async with self.lock:
+            # A fresh view opens the native picker every time; never overwrite a
+            # previous browser TUI's draft or inject /resume into its composer.
+            project = {'tmux_session_name': 'codexpi-browser-' + uuid.uuid4().hex[:12], 'project_path': str(self.root)}
+            await self.open_tui(project, ['--all', '--include-non-interactive'])
+            return {'tmux_session_name': project['tmux_session_name']}
+
+    async def open_tui(self, project, resume_args):
+        self.db.set_setting('last_tui_activity', time.time())
         if await self.pane_exists(project):
             return
         args = ['env', 'UNSNOOZE_AUTO_RESUME=false', '/home/raspberry/.local/bin/unsnooze', '_run', 'codex',
                 '-c', 'check_for_update_on_startup=false',
                 '--remote', 'unix://' + str(self.root / 'state/tui.sock'),
-                '--no-alt-screen', 'resume', project['codex_session_id']]
+                '--no-alt-screen', 'resume', *resume_args]
         dead = await command('tmux', 'has-session', '-t', '=' + project['tmux_session_name'], check=False)
         if dead['exit_code'] == 0:
             await command('tmux', 'respawn-pane', '-t', project['tmux_session_name'] + ':0.0',
@@ -251,6 +268,10 @@ class Controller:
         # Pausing a native goal stops continuation, not its already-running turn.
         # Interrupt that turn and confirm native idleness before releasing the single-worker slot.
         await self.wait_idle(project)
+        from .prompts import active, cancel_active
+        if active(self, project):
+            cancel_active(self, project)
+            self.db.update(project['project_id'], goal_status='paused')
         if not preserve_operation:
             operation = json.loads(project['operation'] or '{}')
             if operation.get('kind') == 'resume':
@@ -360,6 +381,14 @@ class Controller:
         for project in self.db.all():
             if project['lifecycle'] != 'ready':
                 continue
+            from .prompts import active, reconcile
+            if active(self, project):
+                if not selected or selected == project['project_id']:
+                    self.select(project['project_id'])
+                    await reconcile(self, project)
+                else:
+                    await self.pause(project, release=False, manual=True)
+                continue
             row = rows.get(project['codex_session_id'])
             if (row and row['status'] not in ('paused', 'complete')
                     and self.db.setting('manual_pause/' + project['project_id'], False)):
@@ -372,6 +401,8 @@ class Controller:
                 row['status'] = 'paused'
         for project in self.db.all():
             if project['lifecycle'] != 'ready':
+                continue
+            if active(self, project):
                 continue
             row = rows.get(project['codex_session_id'])
             if row:
@@ -386,7 +417,7 @@ class Controller:
             project = self.db.get(selected)
             if project['lifecycle'] != 'ready':
                 logging.getLogger('recovery').warning('Lifecycle journal retains selected project until quiescent')
-            elif project['goal_status'] == 'active':
+            elif project['goal_status'] == 'active' and not active(self, project):
                 if not self.can_auto_resume(project):
                     await self.pause(project)
                     return
@@ -402,6 +433,9 @@ class Controller:
         rows = self.source.rows()
         for project in self.db.all():
             if project['lifecycle'] != 'ready':
+                continue
+            from .prompts import reconcile
+            if await reconcile(self, project):
                 continue
             row = rows.get(project['codex_session_id'])
             if not row:
@@ -533,6 +567,8 @@ class Controller:
                     await self.resume_ready()
                     await self.selective_wake()
                     await self.release_idle_tuis()
+                    from .maintenance import daily_update
+                    await daily_update(self)
                 if time.monotonic() - self.last_git_poll > 120:
                     try:
                         for project in self.db.all():
@@ -579,6 +615,20 @@ class Controller:
                 self.db.set_setting('selected', None)
                 self.db.set_setting('advance_queue', 'blocked')
         advance = self.db.setting('advance_queue', False)
+        from .prompts import dispatch, key
+        # Explicitly queued prompts/resumes need no auto-continue opt-in. A selected
+        # active/limited/blocked project still retains its slot above.
+        for candidate in self.db.all():
+            if (candidate['queue_position'] is None or candidate['lifecycle'] != 'ready'
+                    or self.db.setting('manual_pause/' + candidate['project_id'], False)):
+                continue
+            operation = json.loads(candidate['operation'] or '{}')
+            if operation.get('kind') == 'resume' and not operation.get('error') and self.can_auto_resume(candidate):
+                self.select(candidate['project_id'])
+                return
+            if self.db.setting(key(candidate), []):
+                await dispatch(self, candidate, self.native)
+                return
         if not advance or advance == 'blocked' and not self.db.setting('auto_continue', False):
             return
         rows = self.source.rows()
@@ -634,7 +684,13 @@ class Controller:
                         self.record_goal(project, goal)
                         self.finish_resume(project, operation, 'active', 'Native goal is running in the mapped session')
                         continue
-                    if goal['status'] in ('usageLimited', 'blocked', 'budgetLimited') and operation.get('sent_at'):
+                    terminal_confirmed = (operation.get('ack_at') or
+                        goal['status'] != operation.get('before_status', goal['status']) or
+                        operation.get('before_updated_at') is not None and
+                        goal.get('updatedAt', 0) > operation['before_updated_at'] or
+                        project['goal_status'] == 'active')
+                    if (goal['status'] in ('usageLimited', 'blocked', 'budgetLimited')
+                            and operation.get('sent_at') and terminal_confirmed):
                         self.record_goal(project, goal)
                         self.finish_resume(project, operation, NATIVE_STATUS[goal['status']], 'Native goal reports ' + NATIVE_STATUS[goal['status']])
                         continue
@@ -644,6 +700,8 @@ class Controller:
                     if not operation.get('sent_at'):
                         # Journal before sending: a crash must not repeat a potentially delivered slash.
                         operation['sent_at'] = time.time()
+                        operation['before_status'] = goal['status']
+                        operation['before_updated_at'] = goal.get('updatedAt')
                         with self.db.transaction():
                             self.db.update(project['project_id'], operation=json.dumps(operation))
                             if operation.get('source') == 'unsnooze':
@@ -709,25 +767,53 @@ class Controller:
         self.unsnooze = json.loads(status['stdout'])
         self.last_unsnooze_poll = time.monotonic()
         self.persist_usage_resets()
-        if not selected or self.db.setting('pause_all', False):
+        if self.db.setting('pause_all', False):
             return
+        # Reordering never changes selection/preempts a running project. After a
+        # real reset, however, an idle quota waiter must not pin selection to an
+        # obsolete queue position and prevent the restored head from waking.
+        head = next((p for p in self.db.all() if p['queue_position'] == 1), None)
+        if not head:
+            return
+        previous_project = project
+        project = head
         if (project['lifecycle'] != 'ready' or project['operation'] or
                 project['goal_status'] != 'usage limited' or project['queue_position'] != 1):
             return
         if not self.can_auto_resume(project):
             return
-        project = self.db.get(selected)  # Includes the reset just persisted above.
+        project = self.db.get(project['project_id'])  # Includes the reset just persisted above.
         metadata = json.loads(project['usage_limit'] or '{}')
         reset = metadata.get('resetAt')
         if (metadata.get('resetSource') not in ('unsnooze', 'native-account') or not reset
                 or reset > time.time() * 1000):
             return
-        previous = self.db.setting('usage_wake/' + selected, {})
+        previous = self.db.setting('usage_wake/' + project['project_id'], {})
         if reset <= previous.get('reset_at', 0):
             return  # One automatic attempt per real reset, including after crashes.
         goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
         if not goal or goal['status'] != 'usageLimited':
             return
+        if selected != project['project_id']:
+            if previous_project:
+                if (previous_project['lifecycle'] != 'ready' or previous_project['operation']
+                        or previous_project['goal_status'] != 'usage limited'):
+                    return
+                previous_goal = (await self.native.rpc('thread/goal/get', {
+                    'threadId': previous_project['codex_session_id']})).get('goal')
+                if not previous_goal or previous_goal['status'] != 'usageLimited':
+                    return
+                if not await idle_thread(self.native, previous_project['codex_session_id']):
+                    return
+            if self.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone():
+                return
+            from .prompts import active
+            if any(active(self, p) for p in self.db.all()):
+                return
+            if not await idle_thread(self.native, project['codex_session_id']):
+                return
+            self.select(project['project_id'])
+            selected = project['project_id']
         item = next((s for s in self.unsnooze.get('sessions', []) if
                      s.get('sessionId') == project['codex_session_id'] and s.get('status') == 'stopped'), {})
         operation = {'kind': 'resume', 'id': str(uuid.uuid4()), 'source': 'unsnooze',

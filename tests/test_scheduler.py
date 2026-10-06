@@ -31,10 +31,11 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         controller.wait_idle = AsyncMock()
         controller.pane_exists = AsyncMock(return_value=True)
         self.native_status = 'paused'
+        self.goal_updated_at = int(time.time()) - 60
         self.thread_status = 'idle'
         async def native_rpc(method, params, **kwargs):
             if method == 'thread/goal/get':
-                return {'goal': {'status': self.native_status} if self.native_status else None}
+                return {'goal': {'status': self.native_status, 'updatedAt': self.goal_updated_at} if self.native_status else None}
             if method == 'thread/read':
                 return {'thread': {'id': params['threadId'], 'cwd': str(self.root / params['threadId']),
                                    'status': {'type': self.thread_status}}}
@@ -55,6 +56,96 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
     def tearDown(self):
         self.controller.db.conn.close()
         self.temp.cleanup()
+
+    async def test_user_prompt_queue_survives_restart_and_never_starts_a_second_turn(self):
+        from app.prompts import active, reconcile, submit
+        c = self.controller
+        c.select('first')
+        c.db.update('first', goal_status='active')
+        params = {'threadId': 'second', 'clientUserMessageId': 'user-message',
+                  'input': [{'type': 'text', 'text': 'User prompt'}], 'cwd': '/outside',
+                  'permissions': 'danger-full-access', 'runtimeWorkspaceRoots': ['/outside']}
+        c.source = SimpleNamespace(rows=lambda: {})
+        upstream = SimpleNamespace(rpc=AsyncMock())
+        for _ in range(2):
+            with self.assertRaisesRegex(ValueError, 'Prompt saved'):
+                await submit(c, c.db.get('second'), params, upstream)
+        upstream.rpc.assert_not_awaited()
+        self.assertEqual(len(c.db.setting('prompts/second')), 1)
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'first')
+        c.db.set_setting('selected', None)
+        c.db.update('first', goal_status='paused')
+        c.db.set_setting('manual_pause/second', True)
+        await c.advance_queue()
+        self.assertIsNone(c.db.setting('selected'))
+
+        c.db.set_setting('manual_pause/second', False)
+        original_rpc = c.native.rpc
+        async def rpc(method, args, **kwargs):
+            if method == 'turn/start':
+                self.assertEqual(active(c, c.db.get('second'))['phase'], 'submitting')
+                return {'turn': {'id': 'real-native-turn', 'status': 'inProgress'}}
+            if method == 'thread/turns/list':
+                return {'data': [{'id': 'real-native-turn', 'status': 'completed'}]}
+            return await original_rpc(method, args, **kwargs)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        await c.advance_queue()
+        sent = next(call.args[1] for call in c.native.rpc.await_args_list if call.args[0] == 'turn/start')
+        self.assertEqual(sent['cwd'], str(self.root / 'second'))
+        self.assertEqual(sent['runtimeWorkspaceRoots'], [str(self.root / 'second')])
+        self.assertEqual(sent['sandboxPolicy']['type'], 'workspaceWrite')
+        self.assertNotIn('permissions', sent)
+        self.assertEqual(c.db.setting('selected'), 'second')
+        self.assertEqual(c.db.get('second')['goal_status'], 'active')
+        # A repeated native client message gets its original receipt, not a second turn.
+        receipt = await submit(c, c.db.get('second'), params, upstream)
+        self.assertEqual(receipt['turn']['id'], 'real-native-turn')
+        upstream.rpc.assert_not_awaited()
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        await reconcile(c, c.db.get('second'))
+        self.assertIsNone(active(c, c.db.get('second')))
+        self.assertEqual(c.db.get('second')['goal_status'], 'paused')
+        self.assertIsNone(c.db.setting('selected'))
+
+
+    async def test_cli_update_defers_for_users_execution_and_unknown_native_state(self):
+        from app.maintenance import daily_update, idle
+        c = self.controller
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/loaded/list':
+                return {'data': ['first']}
+            if method == 'thread/read':
+                return {'thread': {'status': {'type': self.thread_status}}}
+            if method == 'thread/turns/list':
+                return {'data': [{'status': 'failed'}]}
+            return {}
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        command = AsyncMock(return_value={'stdout': '0 1', 'stderr': '', 'exit_code': 0})
+        with patch('app.maintenance.command', command):
+            self.assertTrue(await idle(c))
+            for field, value in (('goal_status', 'active'), ('operation', '{"kind":"resume"}'), ('lifecycle', 'deleting')):
+                original = c.db.get('first')[field]
+                c.db.update('first', **{field: value})
+                self.assertFalse(await idle(c))
+                c.db.update('first', **{field: original})
+            command.return_value['stdout'] = '1 1'
+            self.assertFalse(await idle(c))
+            command.return_value['stdout'] = '0 1'
+            self.thread_status = 'active'
+            self.assertFalse(await idle(c))
+            self.thread_status = 'systemError'
+            self.assertTrue(await idle(c))
+            c.db.set_setting('last_tui_activity', time.time())
+            self.assertFalse(await idle(c))
+            c.db.set_setting('last_tui_activity', 0)
+            c.db.set_setting('cli_update', {'phase': 'complete', 'attempted_at': time.time()})
+            command.reset_mock()
+            await daily_update(c)
+            command.assert_not_awaited()
 
     async def test_pause_releases_system_error_only_after_native_terminal_turn(self):
         c = self.controller
@@ -649,7 +740,10 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 await c.selective_wake()
                 self.assertEqual(bool(c.db.get('first')['operation']), not held)
             await c.resume_ready()
-            await c.resume_ready()  # Still limited: finish without a retry storm.
+            await c.resume_ready()  # An unchanged old limit is not a resume acknowledgement.
+            self.assertIsNotNone(c.db.get('first')['operation'])
+            self.goal_updated_at += 1  # Native acknowledgement/real new provider limit.
+            await c.resume_ready()
             c.last_unsnooze_poll = 0
             await c.selective_wake()
             c.slash.assert_awaited_once()
@@ -661,6 +755,60 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
             await c.resume_ready()
             self.assertEqual(c.slash.await_count, 2)
             self.assertEqual(c.slash.await_args.args[1], '/goal resume')
+
+    async def test_usage_reset_reconciles_reordered_head_without_preempting_or_losing_wake(self):
+        c = self.controller
+        c.select('second')
+        c.db.reorder(['first', 'second'])  # Running selection is now the old head, at position 2.
+        self.native_status = 'usageLimited'
+        reset = (time.time() - 60) * 1000
+        for ident in ('first', 'second'):
+            c.db.update(ident, goal_status='usage limited', usage_limit=json.dumps({
+                'resetAt': reset, 'resetSource': 'native-account'}))
+        c.slash = AsyncMock()
+        c.attach_ready = AsyncMock()
+        c.tui_connections['first'] = {1: time.monotonic() - 2}
+        async def poll():
+            c.last_unsnooze_poll = 0
+            await c.selective_wake()
+        with patch('app.controller.command', AsyncMock(return_value={'stdout': '{"sessions":[]}'})):
+            # Neither current work, manual intent nor ambiguous Windows work can be preempted.
+            for status in ('active', 'paused', 'stalled'):
+                c.db.update('second', goal_status=status)
+                await poll()
+                self.assertEqual(c.db.setting('selected'), 'second')
+                self.assertIsNone(c.db.get('first')['operation'])
+            c.db.update('second', goal_status='usage limited')
+            c.db.set_setting('manual_pause/first', True)
+            await poll()
+            self.assertEqual(c.db.setting('selected'), 'second')
+            c.db.set_setting('manual_pause/first', False)
+            self.thread_status = 'active'
+            await poll()
+            self.assertEqual(c.db.setting('selected'), 'second')
+            self.thread_status = 'idle'
+            c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,status,created_at,updated_at) VALUES(?,?,?,?,?,?)',
+                              ('ambiguous', 'second', '{}', 'sent', 1, 1))
+            await poll()
+            self.assertEqual(c.db.setting('selected'), 'second')
+            c.db.conn.execute('DELETE FROM jobs')
+            await poll()
+            self.assertEqual(c.db.setting('selected'), 'first')
+            self.assertEqual(c.db.get('first')['queue_position'], 1)
+            c.db.reorder(['second', 'first'])
+            await c.resume_ready()  # Cancel before delivery while temporarily moved away.
+            c.slash.assert_not_awaited()
+            self.assertIsNone(c.db.setting('usage_wake/first'))
+            c.db.reorder(['first', 'second'])
+            await poll()
+            await c.resume_ready()
+            self.goal_updated_at += 1
+            await c.resume_ready()
+            await poll()
+            c.slash.assert_awaited_once()
+            self.assertEqual(c.slash.await_args.args[1], '/goal resume')
+            self.assertEqual(c.db.setting('usage_wake/first')['reset_at'], reset)
+            self.assertIsNone(c.db.get('second')['operation'])
 
     async def test_auto_continue_skips_blockers_but_never_usage_limits_or_manual_holds(self):
         c = self.controller

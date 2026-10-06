@@ -246,9 +246,11 @@ function showLifecycle(project, action) {
   $('lifecycle-title').textContent = action === 'rename' ? 'Project umbenennen' : 'Project löschen';
   $('lifecycle-description').textContent = action === 'rename'
     ? 'Das Projekt wird pausiert. Name, Ordner, Repo, Discord und Session-Zuordnung werden konsistent aktualisiert. Anschließend kannst du es wieder starten.'
-    : 'Das Projekt wird gestoppt und aus CodexPi entfernt. Der Discord Channel wird gelöscht. GitHub bleibt erhalten; lokale Pi-Daten bleiben in einem Recovery-Backup. Windows-Checkouts werden nicht gelöscht.';
+    : 'Das Projekt wird gestoppt und aus CodexPi entfernt. Der Discord Channel wird gelöscht. GitHub bleibt standardmäßig erhalten; lokale Pi-Daten bleiben in einem Recovery-Backup. Windows-Checkouts werden nicht gelöscht.';
   $('lifecycle-label').textContent = action === 'rename' ? 'Neuer Projektname' : 'Zur Bestätigung exakt eingeben: ' + project.display_name;
   $('lifecycle-input').value = action === 'rename' ? project.display_name : '';
+  $('lifecycle-github-option').hidden = action !== 'delete';
+  $('lifecycle-delete-github').checked = false;
   $('lifecycle-error').textContent = '';
   $('lifecycle-submit').textContent = action === 'rename' ? 'Umbenennen' : 'Löschen bestätigen';
   $('lifecycle-submit').className = action === 'rename' ? 'primary' : 'danger';
@@ -260,9 +262,12 @@ $('lifecycle-form').onsubmit = async event => {
   const {project, action} = lifecycleIntent, value = $('lifecycle-input').value;
   if (action === 'delete' && value !== project.display_name) { $('lifecycle-error').textContent = 'Der Projektname stimmt nicht überein.'; return; }
   $('lifecycle-submit').disabled = true; $('lifecycle-cancel').disabled = true;
-  const ok = await act(action, project.project_id, action === 'rename' ? {name: value} : {confirmation: value});
+  const deleteGithub = action === 'delete' && $('lifecycle-delete-github').checked;
+  const ok = await act(action, project.project_id, action === 'rename' ? {name: value} : {confirmation: value, delete_github: deleteGithub});
   $('lifecycle-submit').disabled = false; $('lifecycle-cancel').disabled = false;
-  if (ok) { $('lifecycle-dialog').close(); if (action === 'delete') $('notice').textContent = 'Projekt entfernt. GitHub und das lokale Recovery-Backup bleiben erhalten.'; }
+  if (ok) { $('lifecycle-dialog').close(); if (action === 'delete') $('notice').textContent = deleteGithub
+    ? 'Projekt und GitHub-Repository entfernt. Das lokale Recovery-Backup bleibt erhalten.'
+    : 'Projekt entfernt. GitHub und das lokale Recovery-Backup bleiben erhalten.'; }
   else $('lifecycle-error').textContent = $('notice').textContent;
 };
 $('pause-all').onclick = () => act('pause-all'); $('logout').onclick = () => act('logout');

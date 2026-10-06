@@ -1,8 +1,9 @@
-"""Native Codex 0.155.1 RPC and the scheduler's local TUI admission gate."""
+"""Native Codex RPC and the scheduler's local TUI admission gate."""
 import asyncio
 import contextlib
 import importlib.util
 import json
+import logging
 import time
 from pathlib import Path
 
@@ -19,6 +20,28 @@ def project_thread_config(path):
     # Scope unattended Git writes to this project's metadata; retain the workspace sandbox.
     return {'features.multi_agent': False, 'sandbox_workspace_write.network_access': True,
             'sandbox_workspace_write.writable_roots': [str(Path(path) / '.git')]}
+
+
+def turn_params(project, params):
+    params = {**params, 'cwd': project['project_path'], 'runtimeWorkspaceRoots': [project['project_path']],
+              'approvalPolicy': 'never', 'sandboxPolicy': {'type': 'workspaceWrite',
+              'writableRoots': [str(Path(project['project_path']) / '.git')], 'networkAccess': True,
+              'excludeTmpdirEnvVar': False, 'excludeSlashTmp': False}}
+    params.pop('permissions', None)
+    return params
+
+
+async def idle_thread(native, session):
+    """Read-only proof; never interrupt a turn merely to schedule a reset wake."""
+    thread = (await native.rpc('thread/read', {'threadId': session, 'includeTurns': False}))['thread']
+    status = thread['status']['type']
+    if status in ('idle', 'notLoaded'):
+        return True
+    if status != 'systemError':
+        return False
+    turns = (await native.rpc('thread/turns/list', {'threadId': session, 'limit': 1,
+                                                 'sortDirection': 'desc'}))['data']
+    return bool(turns) and turns[0]['status'] in ('completed', 'failed', 'interrupted')
 
 
 def validate_model_selection(params):
@@ -48,14 +71,16 @@ def validate_model_selection(params):
 
 
 class Native:
-    def __init__(self, socket, event=None):
+    def __init__(self, socket, event=None, disconnected=None):
         self.socket = str(socket)
         self.event = event
+        self.disconnected = disconnected
         self.pending = {}
         self.sequence = 0
         self.client = None
         self.ws = None
         self.reader = None
+        self.closing = False
 
     async def connect(self, initialize=True):
         self.client = ClientSession(connector=UnixConnector(path=self.socket))
@@ -88,6 +113,8 @@ class Native:
                 if not future.done():
                     future.set_exception(NativeError('Native Codex connection closed'))
             self.pending.clear()
+            if self.disconnected and not self.closing:
+                await self.disconnected()
 
     async def rpc(self, method, params, timeout=90):
         if self.ws is None or self.ws.closed:
@@ -106,6 +133,7 @@ class Native:
         return value.get('result', {})
 
     async def close(self):
+        self.closing = True
         if self.ws:
             await self.ws.close()
         if self.reader:
@@ -152,8 +180,12 @@ async def tui_proxy(request):
     async def event(value):
         await client.send_json(value)
 
+    async def disconnected():
+        logging.getLogger('tui').warning('Native transport closed for TUI connection %s', id(client))
+        await client.close(code=1011, message=b'Native bridge connection closed; reopen codexpi')
+
     try:
-        upstream = await Native(controller.root / 'state/native.sock', event).connect(initialize=False)
+        upstream = await Native(controller.root / 'state/native.sock', event, disconnected).connect(initialize=False)
     except Exception:
         request.app['sockets'].discard(client)
         await client.close(code=1011, message=b'Native bridge unavailable')
@@ -167,6 +199,11 @@ async def tui_proxy(request):
         method = value.get('method')
         params = value.get('params') or {}
         try:
+            if getattr(controller, 'maintenance', False):
+                raise ValueError('Codex CLI maintenance in progress; reopen codexpi afterwards')
+            if method in ('thread/resume', 'turn/start', 'turn/steer', 'thread/goal/set', 'thread/goal/clear',
+                          'thread/name/set', 'thread/settings/update', 'config/batchWrite', 'thread/shellCommand'):
+                controller.db.set_setting('last_tui_activity', time.time())
             if method in ('thread/start', 'thread/fork'):
                 raise ValueError('New projects must be created using codexpi and /rename')
             if (method in ('review/start', 'thread/realtime/start', 'thread/archive', 'thread/delete',
@@ -174,7 +211,29 @@ async def tui_proxy(request):
                     (method and method.startswith(('process/', 'command/exec', 'experimentalFeature/enablement/'))) or
                     (method and method.startswith('thread/queue/') and method != 'thread/queue/list')):
                 raise ValueError('This operation bypasses the CodexPi single-project queue')
-            if method == 'config/batchWrite':
+            if method == 'thread/list':
+                result = await upstream.rpc(method, params)
+                result['data'] = [thread for thread in result.get('data', [])
+                    if (project := controller.db.by_session(thread['id'])) and project['lifecycle'] == 'ready']
+                if not params.get('cursor') and not params.get('archived'):
+                    ids = {thread['id'] for thread in result['data']}
+                    # Native lists omit newly created, empty threads. Read their real
+                    # persisted metadata; do not invent preview/history records.
+                    for project in controller.db.all():
+                        if project['lifecycle'] != 'ready' or project['codex_session_id'] in ids:
+                            continue
+                        thread = (await upstream.rpc('thread/read', {'threadId': project['codex_session_id'],
+                                                                    'includeTurns': False}))['thread']
+                        if not params.get('searchTerm') or params['searchTerm'].lower() in (
+                                str(thread.get('name', '')) + ' ' + str(thread.get('preview', ''))).lower():
+                            result['data'].append(thread)
+            elif method == 'thread/unsubscribe':
+                result = await upstream.rpc(method, params)
+                project = controller.db.by_session(params.get('threadId'))
+                if project:
+                    resumed.discard(project['project_id'])
+                    controller.tui_connections.get(project['project_id'], {}).pop(connection_id, None)
+            elif method == 'config/batchWrite':
                 async with controller.lock:
                     if not any(p['project_id'] in resumed and p['lifecycle'] == 'ready' for p in controller.db.all()):
                         raise ValueError('Model selection requires a mapped ready TUI session')
@@ -207,11 +266,7 @@ async def tui_proxy(request):
                                   'config': {**(params.get('config') or {}), **project_thread_config(project['project_path'])}}
                         params.pop('permissions', None)
                     if method in ('thread/settings/update', 'turn/start'):
-                        params = {**params, 'cwd': project['project_path'], 'approvalPolicy': 'never',
-                            'sandboxPolicy': {'type': 'workspaceWrite',
-                                'writableRoots': [str(Path(project['project_path']) / '.git')], 'networkAccess': True,
-                                'excludeTmpdirEnvVar': False, 'excludeSlashTmp': False}}
-                        params.pop('permissions', None)
+                        params = turn_params(project, params)
                     selected = controller.db.setting('selected')
                     if method == 'thread/goal/set':
                         status = params.get('status')
@@ -225,18 +280,32 @@ async def tui_proxy(request):
                             if controller.db.setting('pause_all', False) or (selected and selected != project['project_id']):
                                 # Store the exact objective but never start a second model turn.
                                 params = {**params, 'status': 'paused'}
+                                import uuid
+                                controller.db.update(project['project_id'], operation=json.dumps({
+                                    'kind': 'resume', 'source': 'queue', 'id': str(uuid.uuid4()),
+                                    'requested_at': time.time()}))
                             else:
                                 controller.select(project['project_id'])
-                    if method in ('turn/start', 'turn/steer', 'thread/compact/start',
+                    if method in ('turn/steer', 'thread/compact/start',
                                   'thread/shellCommand', 'thread/inject_items') and (selected != project['project_id']
                             or controller.db.setting('pause_all', False)
                             or controller.db.setting('manual_pause/' + project['project_id'], False)):
                         raise ValueError('Project is queued. Use Run now in the dashboard to work on it.')
-                    result = await upstream.rpc(method, params)
+                    if method == 'turn/start':
+                        from .prompts import submit
+                        result = await submit(controller, project, params, upstream)
+                    else:
+                        result = await upstream.rpc(method, params)
                     if method == 'thread/resume':
                         resumed.add(project['project_id'])
                         controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = time.monotonic()
+                        logging.getLogger('tui').info('TUI %s resumed mapped session %s', connection_id, project['codex_session_id'])
                     if method == 'thread/goal/set':
+                        current = controller.db.get(project['project_id'])
+                        operation = json.loads(current['operation'] or '{}')
+                        if params.get('status') == 'active' and operation.get('kind') == 'resume' and operation.get('sent_at'):
+                            operation['ack_at'] = time.time()
+                            controller.db.update(project['project_id'], operation=json.dumps(operation))
                         if result['goal']['status'] == 'paused':
                             await controller.wait_idle(project)
                             if controller.db.setting('manual_pause/' + project['project_id'], False):
@@ -272,6 +341,8 @@ async def tui_proxy(request):
                 tasks.add(task)
                 task.add_done_callback(tasks.discard)
     finally:
+        logging.getLogger('tui').info('TUI %s disconnected; mapped projects %s; close code %s',
+                                    connection_id, sorted(resumed), client.close_code)
         request.app['sockets'].discard(client)
         for project_id in resumed:
             controller.tui_connections.get(project_id, {}).pop(connection_id, None)

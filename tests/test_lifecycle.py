@@ -32,6 +32,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
         controller.lock, controller.redactor = asyncio.Lock(), Redactor(root)
         controller.config = {'github_account': 'owner', 'discord_category': '123'}
         controller.unsnooze = {}
+        controller.health_errors = {}
         controller.db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,
             codex_session_id,tmux_session_name,github_repo,discord_channel_id,queue_position,
             goal_status,lifecycle,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)''',
@@ -39,7 +40,8 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
              'active', 'ready', 1, 1))
         controller.db.set_setting('selected', 'project-1')
         state = {'repo': 'owner/first', 'channel': 'first', 'deleted': False, 'archived': False,
-                 'native_status': 'active', 'native_name': 'First', 'cwd': str(path), 'calls': []}
+                 'native_status': 'active', 'native_name': 'First', 'cwd': str(path), 'calls': [],
+                 'repo_deleted': False, 'scopes': 'repo, delete_repo'}
 
         class Native:
             async def rpc(self, method, params):
@@ -80,12 +82,20 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
             if args[:2] == ('unsnooze', 'status'):
                 return {'stdout': '{"sessions":[]}', 'stderr': '', 'exit_code': 0}
             if args[:2] == ('gh', 'api'):
-                if '--method' in args:
+                if args[2] == 'user':
+                    return {'stdout': '{"login":"owner"}', 'stderr': '', 'exit_code': 0}
+                if args[2].startswith('repositories/') and state['repo_deleted']:
+                    return {'stdout': '', 'stderr': 'HTTP 404', 'exit_code': 1}
+                if '--method' in args and args[-1] == 'DELETE':
+                    state['repo_deleted'] = True
+                    return {'stdout': '', 'stderr': '', 'exit_code': 0}
+                if '--method' in args and 'PATCH' in args:
                     state['repo'] = 'owner/' + args[-1].removeprefix('name=')
                 if args[2] == 'repos/renamed' or (args[2].startswith('repos/') and args[2][6:] != state['repo']):
                     return {'stdout': '', 'stderr': 'HTTP 404', 'exit_code': 1}
-                return {'stdout': json.dumps({'id': 1234, 'private': True, 'full_name': state['repo'],
-                    'description': 'Managed by CodexPi project project-1'}), 'stderr': '', 'exit_code': 0}
+                prefix = 'HTTP/2.0 200 OK\nX-OAuth-Scopes: ' + state['scopes'] + '\n\n' if '--include' in args else ''
+                return {'stdout': prefix + json.dumps({'id': 1234, 'private': True, 'full_name': state['repo'],
+                    'permissions': {'admin': True}, 'description': 'Managed by CodexPi project project-1'}), 'stderr': '', 'exit_code': 0}
             return {'stdout': '', 'stderr': '', 'exit_code': 1 if args[:2] == ('tmux', 'has-session') else 0}
 
         controller.native, controller.bot = Native(), Bot()
@@ -129,6 +139,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                         self.assertTrue(state['deleted'])
                         self.assertTrue(state['archived'])
                         self.assertEqual(state['repo'], 'owner/first')
+                        self.assertFalse(state['repo_deleted'])
                         backup = controller.root / 'backups/deleted/project-1/project'
                         self.assertEqual((backup / '.env').read_text(), 'PRIVATE=test-secret')
                         self.assertFalse(Path(original['project_path']).exists())
@@ -159,12 +170,60 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(state['calls'], [])
             controller.db.conn.close()
 
+    async def test_optional_repository_delete_is_explicit_owned_and_crash_recoverable(self):
+        for interrupted in ('403', 'lost_ack'):
+            with self.subTest(interrupted=interrupted), tempfile.TemporaryDirectory() as temp:
+                c, state, original = self.make_controller(temp)
+                fault = True
+                async def command(*args, **kwargs):
+                    nonlocal fault
+                    if args[:3] == ('gh', 'api', 'repositories/1234') and args[-1] == 'DELETE' and fault:
+                        fault = False
+                        if interrupted == '403':
+                            raise RuntimeError('GitHub HTTP 403')
+                        await original(*args, **kwargs)
+                        raise Crash('DELETE accepted but acknowledgement lost')
+                    return await original(*args, **kwargs)
+                with patch('app.lifecycle.command', command), patch('app.controller.command', original):
+                    with self.assertRaisesRegex(ValueError, 'explicit boolean'):
+                        await lifecycle.begin(c, 'project-1', 'delete', confirmation='First', delete_github='true')
+                    self.assertEqual(state['calls'], [])
+                    state['scopes'] = 'repo'
+                    with self.assertRaisesRegex(ValueError, 'delete_repo'):
+                        await lifecycle.begin(c, 'project-1', 'delete', confirmation='First', delete_github=True)
+                    self.assertEqual(c.db.get('project-1')['lifecycle'], 'ready')
+                    self.assertFalse(state['repo_deleted'])
+                    state['scopes'] = 'repo, delete_repo'
+                    with self.assertRaises(RuntimeError if interrupted == '403' else Crash):
+                        await lifecycle.begin(c, 'project-1', 'delete', confirmation='First', delete_github=True)
+                    project = c.db.get('project-1')
+                    self.assertEqual(project['lifecycle'], 'deleting')
+                    self.assertEqual(json.loads(project['operation'])['repo_id'], 1234)
+                    self.assertTrue((c.root / 'backups/deleted/project-1/project/.env').exists())
+                    self.assertFalse(state['deleted'])
+                    op = json.loads(project['operation'])
+                    op['retry_at'] = 0
+                    c.db.update('project-1', operation=json.dumps(op))
+                    db_path = c.db.path
+                    c.db.conn.close()
+                    c.db = Database(db_path)
+                    await lifecycle.recover(c)
+                self.assertTrue(state['repo_deleted'])
+                self.assertTrue(state['deleted'])
+                self.assertEqual(c.db.all(), [])
+                manifest = json.loads((c.root / 'backups/deleted/project-1/manifest.json').read_text())
+                self.assertFalse(manifest['github_preserved'])
+                self.assertEqual(manifest['github_repo_id'], 1234)
+                c.db.conn.close()
+
     async def test_delete_supersedes_resume_for_paused_and_limited_projects(self):
         for status in ('paused', 'usage limited'):
             with self.subTest(status=status), tempfile.TemporaryDirectory() as temp:
                 c, state, command = self.make_controller(temp)
                 state['native_status'] = 'paused' if status == 'paused' else 'usageLimited'
                 c.db.set_setting('usage_wake/project-1', {'reset_at': 1})
+                c.db.set_setting('prompts/project-1', [{'id': 'queued-user-prompt'}])
+                c.db.set_setting('prompt_active/project-1', {'id': 'old-turn'})
                 c.db.update('project-1', goal_status=status,
                             operation=json.dumps({'kind': 'resume', 'source': 'unsnooze', 'sent_at': 1}))
                 c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,created_at,updated_at) VALUES(?,?,?,?,?)',
@@ -178,6 +237,8 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                     await c.resume_ready()
                 self.assertEqual(c.db.all(), [])
                 self.assertIsNone(c.db.setting('usage_wake/project-1'))
+                self.assertIsNone(c.db.setting('prompts/project-1'))
+                self.assertIsNone(c.db.setting('prompt_active/project-1'))
                 self.assertTrue(state['archived'])
                 self.assertTrue(state['deleted'])
                 self.assertEqual(state['repo'], 'owner/first')

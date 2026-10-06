@@ -46,5 +46,9 @@
   "44": "DeploymentTests",
   "45": "Selected Windows session migration",
   "46": "test-live-lifecycle.py",
-  "47": "Durable manual pause and real quota evidence, 2026-09-24"
+  "47": "Durable manual pause and real quota evidence, 2026-09-24",
+  "48": "db.py",
+  "49": "Database",
+  "50": "DeploymentTests",
+  "51": "verify-backup-restore.py"
 }

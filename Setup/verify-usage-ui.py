@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--live', action='store_true')
     parser.add_argument('--check-auto-continue', action='store_true', help='Toggle and restore policy only with a sole usage-limited project')
+    parser.add_argument('--check-delete-option', action='store_true', help='Open/cancel real delete dialogs; never submit a deletion')
     args = parser.parse_args()
     now = time.time()
     data = {'windows': {'daily': {'remaining': 0, 'duration': 300, 'reset_at': now - 1},
@@ -42,6 +43,30 @@ def main():
             expect(page.locator('#usage-freshness')).to_contain_text('Letzte Messung')
             data = page.request.get('http://192.168.2.105:8787/api/usage').json()
             assert data['history']['weekly'] and data['history']['daily']
+            if args.check_delete_option:
+                row = page.locator('#projects > article').first
+                expect(row).to_have_count(1)
+                def open_delete():
+                    row.get_by_role('button', name='Details', exact=True).click()
+                    page.locator('#project-dialog').get_by_role('button', name='Delete', exact=True).click()
+                for width in (1440, 390):
+                    page.set_viewport_size({'width': width, 'height': 1080})
+                    open_delete()
+                    checkbox = page.get_by_role('checkbox', name='GitHub-Repository ebenfalls löschen')
+                    expect(checkbox).to_be_visible()
+                    expect(checkbox).not_to_be_checked()
+                    checkbox.check()
+                    expect(checkbox).to_be_checked()
+                    page.locator('#lifecycle-dialog').screenshot(path=str(ROOT / f'state/delete-option-live-{width}.png'))
+                    page.locator('#lifecycle-cancel').click()
+                    open_delete()
+                    expect(checkbox).not_to_be_checked()
+                    page.locator('#lifecycle-cancel').click()
+                row.get_by_role('button', name='Details', exact=True).click()
+                page.locator('#project-dialog').get_by_role('button', name='Rename', exact=True).click()
+                expect(page.locator('#lifecycle-github-option')).to_be_hidden()
+                page.locator('#lifecycle-cancel').click()
+                print('DELETE_OPTION_LIVE: default unchecked, selectable, resets on reopen, hidden for rename; no deletion submitted')
             if args.check_auto_continue:
                 current = page.request.get('http://192.168.2.105:8787/api/state').json()
                 assert len(current['projects']) == 1
@@ -122,7 +147,9 @@ def main():
         page.locator('#usage-section').screenshot(path=str(ROOT / 'state' / (prefix + '-desktop.png')))
         for width in (390, 320):
             page.set_viewport_size({'width': width, 'height': 1000})
-            assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
+            assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), page.evaluate('''
+                [...document.querySelectorAll('body *')].filter(e => e.getBoundingClientRect().right > innerWidth + 1)
+                .slice(0, 12).map(e => ({tag:e.tagName, id:e.id, cls:e.className, right:e.getBoundingClientRect().right}))''')
             expect(page.locator('#usage-weekly')).to_be_visible()
             page.locator('#usage-section').screenshot(path=str(ROOT / 'state' / (prefix + '-mobile-' + str(width) + '.png')))
         if not args.live:

@@ -42,6 +42,10 @@ class MigrationTests(unittest.TestCase):
             git('remote', 'add', 'origin', 'https://github.com/example/private.git')
             tracked.write_text('uncommitted\n')
             (project / 'new.txt').write_text('not yet tracked\n')
+            (project / 'gradlew').write_text('#!/bin/sh\nexit 0\n')
+            (project / 'gradlew').chmod(0o700)
+            git('add', 'gradlew')
+            git('update-index', '--chmod=+x', 'gradlew')
             (project / '.venv').mkdir()
             (project / '.venv/cache').write_text('rebuild me')
             sid = '00000000-0000-4000-8000-000000000001'
@@ -164,6 +168,8 @@ class MigrationTests(unittest.TestCase):
                         self.assertNotIn('turn/start', calls)
                         self.assertFalse(c.db.setting('selected'))
                         self.assertEqual(len(c.db.all()), 1)
+                        if __import__('os').name == 'posix':
+                            self.assertTrue((Path(migrated['project_path']) / 'gradlew').stat().st_mode & 0o100)
                 finally:
                     c.db.conn.close()
             asyncio.run(journal_check())

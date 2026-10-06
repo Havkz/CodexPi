@@ -232,11 +232,14 @@ async def action(request):
     if not isinstance(body, dict):
         raise ValueError('Action payload must be an object')
     action_name = body.get('action')
+    if getattr(controller, 'maintenance', False) and action_name != 'logout':
+        raise ValueError('Codex CLI update is in progress; retry after maintenance completes')
     ident = body.get('project_id')
     if action_name in ('rename', 'delete'):
         from .lifecycle import begin
         try:
-            await begin(controller, ident, action_name, name=body.get('name'), confirmation=body.get('confirmation'))
+            await begin(controller, ident, action_name, name=body.get('name'), confirmation=body.get('confirmation'),
+                        delete_github=body.get('delete_github', False))
         except RuntimeError as exc:
             response = safe_json(controller, {'error': str(exc),
                 'recovery_pending': controller.db.get(ident)['lifecycle'] != 'ready'})

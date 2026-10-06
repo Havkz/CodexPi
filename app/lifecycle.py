@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import time
 
 import discord
@@ -66,7 +67,9 @@ def save(controller, project, operation, phase):
     controller.db.update(project['project_id'], operation=json.dumps(operation))
 
 
-async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=False):
+async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=False, delete_github=False):
+    if type(delete_github) is not bool or delete_github and kind != 'delete':
+        raise ValueError('delete_github must be an explicit boolean for Delete only')
     async with controller.lock:
         project = controller.db.get(ident)
         pending = json.loads(project['operation'] or '{}')
@@ -114,6 +117,18 @@ async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=
             if target.exists() or target.is_symlink():
                 raise ValueError('Recovery backup already exists; refusing to overwrite it')
             operation['backup'] = str(target)
+            operation['delete_github'] = delete_github
+            if delete_github:
+                response = await command('gh', 'api', 'repos/' + project['github_repo'], '--include')
+                body = response['stdout']
+                current = json.loads(body[body.index('{'):])
+                verify_repository(controller, project, current)
+                scopes = re.search(r'^x-oauth-scopes:\s*(.*)$', body, re.I | re.M)
+                if scopes and 'delete_repo' not in {s.strip() for s in scopes[1].split(',')}:
+                    raise ValueError('GitHub token on the Pi lacks delete_repo; grant that scope or leave repository deletion unchecked')
+                if current.get('permissions', {}).get('admin') is not True:
+                    raise ValueError('GitHub repository deletion requires administration permission')
+                operation['repo_id'] = current['id']
         else:
             raise ValueError('Unsupported lifecycle action')
         await channel(controller, project)  # permission/ownership preflight before any mutation
@@ -138,6 +153,37 @@ def record_error(controller, ident, exc):
     operation = json.loads(project['operation'])
     operation.update(error=controller.redactor.clean(str(exc)), retry_at=time.time() + 30)
     controller.db.update(ident, operation=json.dumps(operation))
+
+
+def verify_repository(controller, project, repository):
+    if (type(repository.get('id')) is not int or repository.get('private') is not True
+            or repository.get('description') != 'Managed by CodexPi project ' + project['project_id']
+            or repository.get('full_name', '').lower() != project['github_repo'].lower()
+            or repository['full_name'].split('/')[0].lower() != controller.config['github_account'].lower()):
+        raise ValueError('GitHub repository ownership mismatch; nothing was deleted')
+
+
+async def delete_repository(controller, project, operation):
+    endpoint = 'repositories/' + str(operation['repo_id'])
+    check = await command('gh', 'api', endpoint, check=False)
+    if check['exit_code']:
+        if 'HTTP 404' not in check['stderr'] or not operation.get('repo_delete_requested'):
+            raise RuntimeError('Cannot confirm the exact repository for deletion')
+        # A lost DELETE acknowledgement can be retried only by its immutable ID.
+        user = json.loads((await command('gh', 'api', 'user'))['stdout'])
+        if user.get('login', '').lower() != controller.config['github_account'].lower():
+            raise ValueError('GitHub recovery authentication does not match the project owner')
+        return
+    current = json.loads(check['stdout'])
+    verify_repository(controller, project, current)
+    if current['id'] != operation['repo_id']:
+        raise ValueError('GitHub immutable repository identity changed')
+    operation['repo_delete_requested'] = True
+    save(controller, project, operation, operation['phase'])
+    await command('gh', 'api', endpoint, '--method', 'DELETE')
+    gone = await command('gh', 'api', endpoint, check=False)
+    if not gone['exit_code'] or 'HTTP 404' not in gone['stderr']:
+        raise RuntimeError('GitHub did not confirm repository removal')
 
 
 async def finish(controller, project):
@@ -226,10 +272,19 @@ async def finish(controller, project):
                 raise ValueError('Unsafe recovery backup path')
             backup.mkdir(parents=True, exist_ok=True)
             atomic_write(backup / 'manifest.json', json.dumps({'project': old, 'deleted_at': time.time(),
-                          'github_preserved': True, 'deployment': controller.db.setting(deployment.key(project))}, indent=2))
+                          'github_preserved': True, 'github_delete_requested': operation.get('delete_github', False),
+                          'deployment': controller.db.setting(deployment.key(project))}, indent=2))
             move_owned(source, backup / 'project', ident)
             save(controller, project, operation, 'directory')
         if operation['phase'] == 'directory':
+            if operation.get('delete_github'):
+                await delete_repository(controller, old, operation)
+                manifest_path = Path(operation['backup']) / 'manifest.json'
+                manifest = json.loads(manifest_path.read_text())
+                manifest.update(github_preserved=False, github_deleted_at=time.time(), github_repo_id=operation['repo_id'])
+                atomic_write(manifest_path, json.dumps(manifest, indent=2))
+            save(controller, project, operation, 'repository')
+        if operation['phase'] == 'repository':
             item = await channel(controller, project)
             if item:
                 await item.delete(reason='CodexPi user-confirmed project deletion')
@@ -242,11 +297,14 @@ async def finish(controller, project):
             with controller.db.transaction():
                 if controller.db.setting('selected') == ident:
                     controller.db.set_setting('selected', None)
-                controller.db.set_setting('deleted/' + ident, {'backup': operation['backup'], 'repo': old['github_repo']})
+                controller.db.set_setting('deleted/' + ident, {'backup': operation['backup'], 'repo': old['github_repo'],
+                    'github_deleted': operation.get('delete_github', False), 'repo_id': operation.get('repo_id')})
                 controller.db.conn.execute('DELETE FROM projects WHERE project_id=?', (ident,))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', (deployment.key(project),))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('manual_pause/' + ident,))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('usage_wake/' + ident,))
+                controller.db.conn.execute('DELETE FROM settings WHERE key IN (?,?,?)',
+                                          ('prompts/' + ident, 'prompt_active/' + ident, 'prompt_receipts/' + ident))
                 controller.db.compact_queue()
 
 

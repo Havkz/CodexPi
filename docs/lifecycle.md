@@ -32,7 +32,8 @@ is independently checked by the server. The UI explicitly describes its scope.
 Delete pauses/stops the project, archives its native session, atomically moves
 Pi project data into `backups/deleted/<project-id>/project`, deletes its owned
 Discord channel, and removes its SQLite/tmux association. A manifest alongside
-the backup retains the old mapping. GitHub is never deleted. Existing Windows
+the backup retains the old mapping. GitHub is retained by default and deleted
+only with the explicitly selected confirmation option. Existing Windows
 worker checkouts remain; they are disclosed in the confirmation dialog.
 
 Recovery backups include the project's `.env`; they are private local backups,

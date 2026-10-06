@@ -8,9 +8,15 @@ from aiohttp import ClientSession, UnixConnector
 
 
 async def choose():
-    if len(sys.argv) != 1:
-        raise SystemExit('Use codexpi without arguments, then /rename <Projektname>.')
+    if sys.argv[1:] not in ([], ['--all']):
+        raise SystemExit('Use codexpi, then /rename <Projektname>, or codexpi --all.')
     async with ClientSession(connector=UnixConnector(path='/home/raspberry/CodexPi/state/local.sock')) as client:
+        if sys.argv[1:] == ['--all']:
+            async with client.post('http://localhost/sessions/browse') as response:
+                result = await response.json()
+                if response.status != 200:
+                    raise SystemExit(result.get('error', 'Session-Auswahl konnte nicht geoeffnet werden.'))
+                return result['tmux_session_name']
         while True:
             try:
                 text = input('CodexPi > ').strip()

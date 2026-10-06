@@ -95,7 +95,7 @@ tbody tr:hover { background: var(--surface-raised); }
 .queue-position { display: flex; align-items: center; gap: 5px; }
 .queue-position span { font: 12px ui-monospace, monospace; color: var(--secondary); min-width: 20px; }
 .queue-position button { padding: 6px; min-width: 30px; background: transparent; }
-.queue-actions { flex-wrap: nowrap; }
+.table-scroll .queue-actions { flex-wrap: nowrap; }
 .queue-actions button { white-space: nowrap; }
 .dragging { opacity: .4; }
 .drop-target { outline: 1px solid var(--accent); outline-offset: -1px; }
@@ -150,6 +150,8 @@ dialog::backdrop { background: rgb(0 0 0 / .72); }
 .lifecycle-dialog { max-width: 520px; }
 .lifecycle-dialog p { margin-block: 18px; }
 .lifecycle-dialog .actions { justify-content: flex-end; margin-top: 20px; }
+.github-delete-option { display: flex; align-items: center; gap: 12px; margin-top: 22px; cursor: pointer; }
+.github-delete-option input { flex: 0 0 20px; width: 20px; min-height: 20px; height: 20px; padding: 0; accent-color: var(--accent); }
 .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .detail-grid .metadata { grid-template-columns: 1fr 1fr; }
 .detail-wide { grid-column: 1 / -1; }

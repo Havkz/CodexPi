@@ -241,6 +241,15 @@ async def finish(controller, project):
         if head != manifest['git']['head']:
             raise ValueError('Migrated Git HEAD mismatch')
         await command('git', 'fsck', '--full', cwd=path)
+        # Windows exports cannot express POSIX execute bits. Restore only the
+        # executable regular files recorded by this project's original Git index.
+        index = (await command('git', 'ls-files', '--stage', '-z', cwd=path))['stdout']
+        for entry in index.split('\0'):
+            if entry.startswith('100755 '):
+                tracked = path / entry.split('\t', 1)[1]
+                if not tracked.resolve().is_relative_to(path.resolve()) or not tracked.is_file() or tracked.is_symlink():
+                    raise ValueError('Unsafe executable index path during migration')
+                tracked.chmod(0o700)
         # Exclude management metadata locally without changing the source tree.
         exclude = path / '.git/info/exclude'
         original = exclude.read_text() if exclude.exists() else ''
