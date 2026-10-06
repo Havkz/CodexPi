@@ -141,7 +141,30 @@ creation time and nondecreasing token count. It does not test native-process
 crash, reboot, kernel panic or physical power loss.
 
 The Windows reboot/logon, full Pi reboot, active native crash recovery and
-coordinated disaster-restore drills remain separate final audit requirements.
+coordinated whole-system disaster-restore drills remain separate final audit requirements.
+
+### Isolated SQLite restore, 2026-10-06
+
+`Setup/verify-backup-restore.py` passed on the Pi against the real published
+`backups/sqlite/codexpi-20261006-072833-1791264513813946921.db` snapshot (SHA-256
+`ca963c990540ff1dd6b5f74c8257c25f7bb28fec7bcf13a4cc63086705ad444c`).
+It restored only into a private temporary directory and opened the copy through
+the production Database class. Exact SQL schema/all rows, integrity, foreign keys,
+project identities, queue/status/manual-hold mappings and the native session's
+Linux workspace/non-archived rollout mapping passed. The copy retained one
+project, 19 settings, five authentication sessions, four events, five historical
+jobs and 21,536 usage samples. The source hash and all three service PID/invocation
+records remained unchanged. No controller or AI session was started from the copy.
+Temporary restored files were removed; the original snapshot remains intact.
+
+Private evidence: `state/backup-restore-20261006-073815.json`. Current snapshot
+retention was independently checked at seven files; backup directories are 0700
+and the live DB/snapshots 0600. The verifier refuses pending operations/jobs,
+stale mappings/holds/status, missing native history and a snapshot with WAL data.
+Run it on the Pi with `.venv/bin/python Setup/verify-backup-restore.py`.
+This proves infrastructure DB restore only: it does not restore native history,
+credentials, project files, Discord/GitHub objects or Windows DPAPI, and does not
+prove a coordinated whole-system rebuild or actual resumed model execution.
 
 ### Live controller crash, 2026-09-25
 
@@ -189,4 +212,6 @@ completion event, matching exactly one actual Discord message
 `1554213028038451292`, including that commit and the Close button.
 `state/active-recovery-e2e-20260928.json` stores this completion evidence.
 The Close button was not clicked; its interaction and native-bridge/full-Pi
-restart recovery remain separate, unproven checks. The fixture is retained.
+restart recovery remain separate, unproven checks. The fixture was subsequently
+deleted with the user's explicit test-cleanup authorization on October 5/6;
+its private lifecycle recovery backup remains. See `progress.md`.

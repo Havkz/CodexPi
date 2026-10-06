@@ -51,6 +51,7 @@
   "complete": false,
   "latest_verification": {
     "date": "2026-10-06",
+    "sqlite_restore_L0308_L0310_L1807": "docs/recovery.md; real Pi snapshot restored in isolation using production Database class: exact schema/all rows including 21536 usage samples, integrity/FKs, live mappings/holds/status and native session/workspace/rollout existence pass. Snapshot hash and service identities unchanged. Seven published backups, 0700/0600 permissions verified. Private evidence state/backup-restore-20261006-073815.json. Not a whole-system restore.",
     "migration": "docs/migration.md: all 664 original non-Git members, Git fsck/exact dirty state, 56 turns/2762 items, original rollout prefix, same-ID attached TUI and dashboard verified. Explicit Leave paused selected; original goal prompt/counters retained. Startup-dialog test mistake and real provider rejection documented, not hidden.",
     "cleanup_L3001_L3005": "docs/progress.md; state/test-cleanup-20261005.json on both hosts: all ten approved lifecycles archived with Git-valid backups, Discord channels absent, GitHub repositories identity-checked and deleted after user granted delete_repo. Donut and CodexPi preserved; only Donut in DB/category.",
     "manual_tests_L2997": "User reported failed overnight reset on 2026-10-06; root cause fixed and deployed, next real reset still pending. Full-Pi-reboot acceptance unverified.",
@@ -1596,15 +1597,15 @@
       "id": "L0308",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "Regelmäßige SQLite-Backups erstellen.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["app/controller.py scheduler hourly online backups; actual hourly Pi snapshots observed 2026-10-06. docs/recovery.md: latest real snapshot restored in isolation with exact schema/all rows and integrity/FK checks."]
     },
     {
       "id": "L0310",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "Behalte z. B. die letzten 7 sinnvollen Snapshots.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["app/db.py Database.backup retains seven atomically published snapshots; tests/test_core.py existing retention test; 2026-10-06 live Pi count exactly seven. Latest snapshot passed isolated restore."]
     },
     {
       "id": "L0312",
@@ -8440,8 +8441,8 @@
       "id": "L1807",
       "section": "42.3 HARTE NICHT-OPTIMIERBARE ANFORDERUNGEN",
       "text": "* SQLite-Backups",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": ["Backup functionality preserved; docs/recovery.md 2026-10-06 isolated restore, exact schema/data and live seven-snapshot retention. No backup feature removed for token/resource optimization."]
     },
     {
       "id": "L1808",

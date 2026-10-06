@@ -8,6 +8,15 @@ because a related file exists. The dashboard password is deliberately omitted.
 
 ## 2026-10-06 missed reset wake and Auto Continue
 
+Follow-up: an isolated restore of the actual Pi infrastructure SQLite snapshot
+passed via `Setup/verify-backup-restore.py`; exact schema/all rows (including
+21,536 usage points), integrity/FKs, live mappings/holds/status and native
+session/workspace/rollout existence match. All service processes and source
+snapshot remained unchanged. See `recovery.md` for private evidence and scope;
+this is not a full-system disaster rebuild. Current backup retention is seven
+and access permissions were verified. The prior functional commit `677b6f5`
+passed all four CI jobs in GitHub Actions run `37419089920`.
+
 The user-reported overnight failure is confirmed, not passed acceptance. Real
 transcript replay and hourly DB snapshots isolate a missing Unsnooze detector
 record when starting with quota already exhausted. CodexPi persisted/displayed

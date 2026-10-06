@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1791264688.4392648,
-    "ast_hash": "1d099969a28c7dd915d0b58fd904689a",
+    "mtime": 1791265131.885163,
+    "ast_hash": "a0fb1edfff55fdebd213a1d073059aca",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -165,8 +165,8 @@
     "semantic_hash": ""
   },
   "docs/progress.md": {
-    "mtime": 1791264644.8244448,
-    "ast_hash": "e7a3a1191525af56cff7a3592bebdda6",
+    "mtime": 1791265131.88298,
+    "ast_hash": "3b38388a49dda9d0dcb01dbbd7b72aa8",
     "semantic_hash": ""
   },
   "requirements.txt": {
@@ -370,8 +370,8 @@
     "semantic_hash": ""
   },
   "docs/recovery.md": {
-    "mtime": 1790709240.8283508,
-    "ast_hash": "c219c02272d1a9f35133f8f27394745c",
+    "mtime": 1791265131.8813598,
+    "ast_hash": "caf2416aa73a792e3561be58f304bcdc",
     "semantic_hash": ""
   },
   "Setup/verify-optimization.py": {
@@ -417,6 +417,11 @@
   "docs/pi-restart-investigation.md": {
     "mtime": 1791236314.6190145,
     "ast_hash": "d25b68ef315204e084f0063c548e9ff1",
+    "semantic_hash": ""
+  },
+  "Setup/verify-backup-restore.py": {
+    "mtime": 1791265086.5812495,
+    "ast_hash": "2c43156d787eed835007d3d3e1bf12e3",
     "semantic_hash": ""
   }
 }

@@ -109,8 +109,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "configure.py"
     },
     {
@@ -120,8 +120,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "setup_configure_preserve",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "preserve()"
     },
     {
@@ -131,8 +131,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_rationale_1",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "run on pi after copying reviewed sources; preserve and back up user config."
     },
     {
@@ -208,8 +208,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_export_migration",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "export-migration.py"
     },
     {
@@ -219,8 +219,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "setup_export_migration_git",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "git()"
     },
     {
@@ -230,8 +230,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "setup_export_migration_regular",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "regular()"
     },
     {
@@ -241,8 +241,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "setup_export_migration_digest",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "digest()"
     },
     {
@@ -252,8 +252,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "setup_export_migration_native_state",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "native_state()"
     },
     {
@@ -263,8 +263,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "setup_export_migration_export",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "export()"
     },
     {
@@ -274,8 +274,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "setup_export_migration_main",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "main()"
     },
     {
@@ -285,8 +285,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_export_migration_rationale_1",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "export one explicitly selected windows project/session without changing it.  the"
     },
     {
@@ -296,8 +296,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "setup_export_migration_rationale_47",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 27,
+      "community_name": "export-migration.py",
       "norm_label": "keep only this thread's indexed history/metadata, never another thread."
     },
     {
@@ -385,8 +385,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_measure_idle",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "measure-idle.py"
     },
     {
@@ -396,8 +396,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "setup_measure_idle_sample",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "sample()"
     },
     {
@@ -407,8 +407,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_measure_idle_rationale_1",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "read-only pi resource sample; refuse to label an active-goal run as idle."
     },
     {
@@ -597,6 +597,72 @@
       "community": 11,
       "community_name": "Bot",
       "norm_label": "trust only the reviewed goal/ponytail and optional token optimizer definitions."
+    },
+    {
+      "label": "verify-backup-restore.py",
+      "file_type": "code",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_backup_restore",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "verify-backup-restore.py"
+    },
+    {
+      "label": "readonly()",
+      "file_type": "code",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "setup_verify_backup_restore_readonly",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "readonly()"
+    },
+    {
+      "label": "identities()",
+      "file_type": "code",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "setup_verify_backup_restore_identities",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "identities()"
+    },
+    {
+      "label": "services()",
+      "file_type": "code",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "setup_verify_backup_restore_services",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "services()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "setup_verify_backup_restore_main",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "main()"
+    },
+    {
+      "label": "Isolated infrastructure-DB restore drill on Pi; never starts or restores live se",
+      "file_type": "rationale",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_backup_restore_rationale_1",
+      "community": 21,
+      "community_name": "main.py",
+      "norm_label": "isolated infrastructure-db restore drill on pi; never starts or restores live se"
     },
     {
       "label": "verify-controller-recovery.py",
@@ -1001,8 +1067,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "verify-secrets.py"
     },
     {
@@ -1012,8 +1078,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets_rationale_1",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "fail closed if a tracked file contains a configured secret; never print its valu"
     },
     {
@@ -1144,8 +1210,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_common",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "common.py"
     },
     {
@@ -1155,8 +1221,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_common_slugify",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "slugify()"
     },
     {
@@ -1210,8 +1276,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "app_common_canonical",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "canonical()"
     },
     {
@@ -1221,8 +1287,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "app_common_signedchannel",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "signedchannel"
     },
     {
@@ -1232,8 +1298,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_common_signedchannel_init",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".__init__()"
     },
     {
@@ -1243,8 +1309,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "app_common_signedchannel_sign",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".sign()"
     },
     {
@@ -1254,8 +1320,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "app_common_signedchannel_verify",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".verify()"
     },
     {
@@ -1298,8 +1364,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "app_common_rationale_80",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "per-connection random challenge + directional mac + monotonic sequence."
     },
     {
@@ -1309,8 +1375,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_controller",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "controller.py"
     },
     {
@@ -1342,8 +1408,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "app_controller_controller_init",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".__init__()"
     },
     {
@@ -1837,8 +1903,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "app_db_database_backup",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".backup()"
     },
     {
@@ -2002,8 +2068,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_discord_bot",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "discord_bot.py"
     },
     {
@@ -2112,8 +2178,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "app_discord_bot_bot_category",
-      "community": 38,
-      "community_name": "main",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".category()"
     },
     {
@@ -2123,8 +2189,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_discord_bot_bot_ensure_channel",
-      "community": 38,
-      "community_name": "main",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".ensure_channel()"
     },
     {
@@ -2409,8 +2475,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "native.py"
     },
     {
@@ -2442,8 +2508,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_native_project_thread_config",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "project_thread_config()"
     },
     {
@@ -2453,8 +2519,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_native_validate_model_selection",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "validate_model_selection()"
     },
     {
@@ -2530,8 +2596,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "app_native_goalsource",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "goalsource"
     },
     {
@@ -2541,8 +2607,8 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "app_native_goalsource_init",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".__init__()"
     },
     {
@@ -2574,8 +2640,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native_rationale_1",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "native codex 0.155.1 rpc and the scheduler's local tui admission gate."
     },
     {
@@ -2585,8 +2651,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "app_native_rationale_120",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "reuse upstream parsing and event comparison; never retain objective text."
     },
     {
@@ -3278,8 +3344,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "app_worker_server_cancel_pending",
-      "community": 38,
-      "community_name": "main",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "cancel_pending()"
     },
     {
@@ -3289,8 +3355,8 @@
       "source_location": "L144",
       "_origin": "ast",
       "id": "app_worker_server_unblock_windows",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "unblock_windows()"
     },
     {
@@ -3388,8 +3454,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_core",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "test_core.py"
     },
     {
@@ -3399,8 +3465,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_core_coretests",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "coretests"
     },
     {
@@ -3410,8 +3476,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_auth_and_replay",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_auth_and_replay()"
     },
     {
@@ -3421,8 +3487,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_db_constraints_rollback_and_backup()"
     },
     {
@@ -3432,8 +3498,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_project_names",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_project_names()"
     },
     {
@@ -3619,8 +3685,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests",
-      "community": 38,
-      "community_name": "main",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": "lifecycletests"
     },
     {
@@ -3630,8 +3696,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_make_controller",
-      "community": 38,
-      "community_name": "main",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".make_controller()"
     },
     {
@@ -3641,8 +3707,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_rename_and_delete_recover_after_every_effect",
-      "community": 38,
-      "community_name": "main",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_rename_and_delete_recover_after_every_effect()"
     },
     {
@@ -3652,8 +3718,8 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_confirmation_ownership_and_pending_jobs_fail_closed",
-      "community": 38,
-      "community_name": "main",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_confirmation_ownership_and_pending_jobs_fail_closed()"
     },
     {
@@ -3663,8 +3729,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_delete_supersedes_resume_for_paused_and_limited_projects",
-      "community": 38,
-      "community_name": "main",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_delete_supersedes_resume_for_paused_and_limited_projects()"
     },
     {
@@ -3707,8 +3773,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_scheduler",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "test_scheduler.py"
     },
     {
@@ -3729,8 +3795,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_setup",
-      "community": 38,
-      "community_name": "main",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".setup()"
     },
     {
@@ -3762,8 +3828,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_recovery_records_native_limit_once_and_clears_resume_intent",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_recovery_records_native_limit_once_and_clears_resume_intent()"
     },
     {
@@ -3828,8 +3894,8 @@
       "source_location": "L228",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_account_telemetry_persists_without_resuming_or_inventing_limit",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_account_telemetry_persists_without_resuming_or_inventing_limit()"
     },
     {
@@ -4367,8 +4433,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_architecture",
-      "community": 42,
-      "community_name": "Architecture and data ownership",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "architecture.md"
     },
     {
@@ -4521,8 +4587,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_lifecycle_fixes_20260923",
-      "community": 42,
-      "community_name": "Architecture and data ownership",
+      "community": 0,
+      "community_name": "common.py",
       "norm_label": "lifecycle-fixes-20260923.md"
     },
     {
@@ -4664,7 +4730,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_manual_pause",
-      "community": 31,
+      "community": 47,
       "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "manual-pause.md"
     },
@@ -4675,7 +4741,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_manual_pause_durable_manual_pause_and_real_quota_evidence_2026_09_24",
-      "community": 31,
+      "community": 47,
       "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "durable manual pause and real quota evidence, 2026-09-24"
     },
@@ -4686,7 +4752,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "docs_manual_pause_pause_authority",
-      "community": 31,
+      "community": 47,
       "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "pause authority"
     },
@@ -4697,7 +4763,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "docs_manual_pause_real_usage_limit_history",
-      "community": 31,
+      "community": 47,
       "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "real usage-limit history"
     },
@@ -4969,7 +5035,7 @@
       "label": "2026-10-05 migration and final cleanup",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L31",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "docs_progress_2026_10_05_migration_and_final_cleanup",
       "community": 8,
@@ -4980,7 +5046,7 @@
       "label": "2026-10-01 native Optimizer execution and migration priority",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L67",
+      "source_location": "L76",
       "_origin": "ast",
       "id": "docs_progress_2026_10_01_native_optimizer_execution_and_migration_priority",
       "community": 8,
@@ -4991,7 +5057,7 @@
       "label": "2026-09-30 Token Optimizer compatibility patch and installation",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L86",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "docs_progress_2026_09_30_token_optimizer_compatibility_patch_and_installation",
       "community": 8,
@@ -5002,7 +5068,7 @@
       "label": "2026-09-29 optimization inventory and installer defects",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L100",
+      "source_location": "L109",
       "_origin": "ast",
       "id": "docs_progress_2026_09_29_optimization_inventory_and_installer_defects",
       "community": 8,
@@ -5013,7 +5079,7 @@
       "label": "2026-09-29 active-goal recovery evidence closure",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L116",
+      "source_location": "L125",
       "_origin": "ast",
       "id": "docs_progress_2026_09_29_active_goal_recovery_evidence_closure",
       "community": 8,
@@ -5024,7 +5090,7 @@
       "label": "2026-09-28 Windows heartbeat and worker recovery",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L134",
+      "source_location": "L143",
       "_origin": "ast",
       "id": "docs_progress_2026_09_28_windows_heartbeat_and_worker_recovery",
       "community": 8,
@@ -5035,7 +5101,7 @@
       "label": "2026-09-27/28 worker admission and top-of-dashboard usage",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L148",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "docs_progress_2026_09_27_28_worker_admission_and_top_of_dashboard_usage",
       "community": 8,
@@ -5046,7 +5112,7 @@
       "label": "2026-09-25 usage-history implementation and live verification",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L170",
+      "source_location": "L179",
       "_origin": "ast",
       "id": "docs_progress_2026_09_25_usage_history_implementation_and_live_verification",
       "community": 8,
@@ -5057,7 +5123,7 @@
       "label": "2026-09-25 controller-crash verification and runbooks",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L184",
+      "source_location": "L193",
       "_origin": "ast",
       "id": "docs_progress_2026_09_25_controller_crash_verification_and_runbooks",
       "community": 8,
@@ -5068,7 +5134,7 @@
       "label": "Verified 2026-09-19",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L195",
+      "source_location": "L204",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_19",
       "community": 8,
@@ -5079,7 +5145,7 @@
       "label": "Verified 2026-09-20 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L216",
+      "source_location": "L225",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_20_incremental_not_final_acceptance",
       "community": 8,
@@ -5090,7 +5156,7 @@
       "label": "Verified 2026-09-21 (incremental, not final acceptance)",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L246",
+      "source_location": "L255",
       "_origin": "ast",
       "id": "docs_progress_verified_2026_09_21_incremental_not_final_acceptance",
       "community": 8,
@@ -5101,7 +5167,7 @@
       "label": "Work still required",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L288",
+      "source_location": "L297",
       "_origin": "ast",
       "id": "docs_progress_work_still_required",
       "community": 8,
@@ -5112,7 +5178,7 @@
       "label": "Source references",
       "file_type": "document",
       "source_file": "docs/progress.md",
-      "source_location": "L340",
+      "source_location": "L349",
       "_origin": "ast",
       "id": "docs_progress_source_references",
       "community": 8,
@@ -5197,10 +5263,21 @@
       "norm_label": "verification"
     },
     {
-      "label": "Live controller crash, 2026-09-25",
+      "label": "Isolated SQLite restore, 2026-10-06",
       "file_type": "document",
       "source_file": "docs/recovery.md",
       "source_location": "L146",
+      "_origin": "ast",
+      "id": "docs_recovery_isolated_sqlite_restore_2026_10_06",
+      "community": 41,
+      "community_name": "Recovery and operator runbook",
+      "norm_label": "isolated sqlite restore, 2026-10-06"
+    },
+    {
+      "label": "Live controller crash, 2026-09-25",
+      "file_type": "document",
+      "source_file": "docs/recovery.md",
+      "source_location": "L169",
       "_origin": "ast",
       "id": "docs_recovery_live_controller_crash_2026_09_25",
       "community": 41,
@@ -5211,7 +5288,7 @@
       "label": "Live active-goal controller crash, 2026-09-28",
       "file_type": "document",
       "source_file": "docs/recovery.md",
-      "source_location": "L162",
+      "source_location": "L185",
       "_origin": "ast",
       "id": "docs_recovery_live_active_goal_controller_crash_2026_09_28",
       "community": 41,
@@ -5291,8 +5368,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_unsnooze",
-      "community": 26,
-      "community_name": "Unsnooze integration",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "unsnooze.md"
     },
     {
@@ -5423,8 +5500,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_windows_worker",
-      "community": 9,
-      "community_name": "build_audit.py",
+      "community": 31,
+      "community_name": "Durable manual pause and real quota evidence, 2026-09-24",
       "norm_label": "windows-worker.md"
     },
     {
@@ -6369,6 +6446,181 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_trust_hooks_main",
+      "target": "runtimeerror"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "app_common",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "app_db",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "app_db_database",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "setup_verify_backup_restore_identities",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "setup_verify_backup_restore_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "setup_verify_backup_restore_readonly",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore",
+      "target": "setup_verify_backup_restore_services",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore_rationale_1",
+      "target": "setup_verify_backup_restore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore_main",
+      "target": "setup_verify_backup_restore_readonly",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore_main",
+      "target": "setup_verify_backup_restore_identities",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore_main",
+      "target": "setup_verify_backup_restore_services",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore_main",
+      "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore_main",
+      "target": "app_db_database",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Setup/verify-backup-restore.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_backup_restore_main",
       "target": "runtimeerror"
     },
     {
@@ -17036,7 +17288,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L184",
+      "source_location": "L193",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17047,7 +17299,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L170",
+      "source_location": "L179",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17058,7 +17310,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L148",
+      "source_location": "L157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17069,7 +17321,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L134",
+      "source_location": "L143",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17080,7 +17332,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L116",
+      "source_location": "L125",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17091,7 +17343,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L100",
+      "source_location": "L109",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17102,7 +17354,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L86",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17113,7 +17365,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L67",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17124,7 +17376,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L31",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17146,7 +17398,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L340",
+      "source_location": "L349",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17157,7 +17409,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L195",
+      "source_location": "L204",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17168,7 +17420,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L216",
+      "source_location": "L225",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17179,7 +17431,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L246",
+      "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17190,7 +17442,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/progress.md",
-      "source_location": "L288",
+      "source_location": "L297",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_progress_codexpi_installation_progress",
@@ -17267,7 +17519,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/recovery.md",
-      "source_location": "L162",
+      "source_location": "L146",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_recovery_verification",
+      "target": "docs_recovery_isolated_sqlite_restore_2026_10_06",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/recovery.md",
+      "source_location": "L185",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_recovery_verification",
@@ -17278,7 +17541,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/recovery.md",
-      "source_location": "L146",
+      "source_location": "L169",
       "weight": 1.0,
       "_origin": "ast",
       "source": "docs_recovery_verification",
@@ -17507,5 +17770,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5f2e6318db325d92a081e7043df610d3802d8b66"
+  "built_at_commit": "677b6f5027284d2c36385fe6f2506f99c7b4d6d9"
 }
