@@ -246,6 +246,7 @@ async def finish(controller, project):
                 controller.db.conn.execute('DELETE FROM projects WHERE project_id=?', (ident,))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', (deployment.key(project),))
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('manual_pause/' + ident,))
+                controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('usage_wake/' + ident,))
                 controller.db.compact_queue()
 
 

@@ -6,6 +6,28 @@ the appended binding design, lifecycle, migration and usage-chart requirements).
 evidence assignment. A pending item is not implemented or verified merely
 because a related file exists. The dashboard password is deliberately omitted.
 
+## 2026-10-06 missed reset wake and Auto Continue
+
+The user-reported overnight failure is confirmed, not passed acceptance. Real
+transcript replay and hourly DB snapshots isolate a missing Unsnooze detector
+record when starting with quota already exhausted. CodexPi persisted/displayed
+the native-account reset but previously did not schedule from it. The controller
+now uses that authoritative reset through the existing gated native slash resume,
+with a durable once-per-reset submission marker. See `unsnooze.md` for evidence.
+
+Auto Continue is a new persistent opt-in switch above Queue. Native blocked or
+budget-limited projects yield only after confirmed idleness and no ambiguous
+Windows work. Usage limits retain the selected slot. The original project's
+blocker is not cleared; manual holds and all admission gates remain enforced.
+Two focused combined regressions were added, existing API/admission/lifecycle
+checks reused. Scheduler/web checks passed on Windows and Pi (25 each); the
+11 relevant lifecycle/worker/audit checks passed locally. Live dashboard switch
+interaction, persistence across reload, retained usage-limit selection, desktop/
+mobile rendering and no JS/CSP errors passed. Native read-only verification
+confirmed Donut's original ID, Linux workspace, `usageLimited` goal and idle
+thread. The real next provider reset and a real multi-project blocked handoff
+are not claimed passed; no artificial quota or new external test projects made.
+
 ## 2026-10-05 migration and final cleanup
 
 The user subsequently identified a power outage. Read-only diagnostics and
@@ -28,9 +50,11 @@ project. Quiesce/archive through lifecycle deletion before external repository
 deletion; preserve recovery data and evidence. All ten selected test lifecycles
 are now independently verified deleted/archived, with Git-valid recovery
 backups and absent Discord channels. Only Donut remains in both DB and Discord
-category. The ten repositories remain pending: the Pi token received HTTP 403,
-and Windows CLI lacks `delete_repo`. User was asked to authorize that scope;
-no credentials or permissions were changed automatically.
+category. After the user granted Windows CLI `delete_repo`, all ten approved
+test repositories were identity/ownership checked and deleted; completed private
+evidence is `state/test-cleanup-20261005.json` on both hosts. CodexPi and Donut
+repositories remain private and untouched. Recovery Git/file backups remain;
+deleted Discord history and GitHub issues are not guaranteed recoverable.
 
 The intermittent CSRF failure in CI was reproduced by a valid URL-safe session
 token matching the provider-secret regex. Only the authenticated CSRF field

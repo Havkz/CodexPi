@@ -13,6 +13,7 @@ ASSETS = ROOT / 'app/web_assets'
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--live', action='store_true')
+    parser.add_argument('--check-auto-continue', action='store_true', help='Toggle and restore policy only with a sole usage-limited project')
     args = parser.parse_args()
     now = time.time()
     data = {'windows': {'daily': {'remaining': 0, 'duration': 300, 'reset_at': now - 1},
@@ -41,6 +42,32 @@ def main():
             expect(page.locator('#usage-freshness')).to_contain_text('Letzte Messung')
             data = page.request.get('http://192.168.2.105:8787/api/usage').json()
             assert data['history']['weekly'] and data['history']['daily']
+            if args.check_auto_continue:
+                current = page.request.get('http://192.168.2.105:8787/api/state').json()
+                assert len(current['projects']) == 1
+                project = current['projects'][0]
+                assert project['goal_status'] == 'usage limited' and not project['operation']
+                switch = page.get_by_role('switch', name='Auto Continue')
+                expect(switch).to_be_enabled()
+                original = current['auto_continue']
+                try:
+                    switch.set_checked(not original)
+                    expect(switch).to_be_enabled()
+                    page.reload()
+                    expect(switch).to_be_checked(checked=not original)
+                    fresh = page.request.get('http://192.168.2.105:8787/api/state').json()
+                    assert fresh['auto_continue'] is not original
+                    assert fresh['selected'] == current['selected']
+                    assert fresh['projects'][0]['goal_status'] == 'usage limited'
+                    assert not fresh['projects'][0]['operation']
+                    assert switch.bounding_box()['y'] < page.locator('#queue-title').bounding_box()['y']
+                    page.locator('.queue-policy').screenshot(path=str(ROOT / 'state/auto-continue-live.png'))
+                finally:
+                    switch.set_checked(original)
+                    expect(switch).to_be_enabled()
+                    page.reload()
+                    expect(switch).to_be_checked(checked=original)
+                print('AUTO_CONTINUE_LIVE: persisted across reload; usage-limit slot retained; original policy restored')
         else:
             def route(request):
                 path = request.request.url.removeprefix('http://codexpi.test')

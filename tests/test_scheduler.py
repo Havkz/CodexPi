@@ -536,6 +536,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt(self):
         controller = self.controller
+        self.native_status = 'usageLimited'
         controller.health_errors = {}
         controller.select('first')
         controller.db.update('first', goal_status='usage limited')
@@ -562,6 +563,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                                  ('status', 'resumed'), ('sessionId', 'unmapped')):
                 original = item[field]
                 item[field] = value
+                controller.db.update('first', usage_limit=None)
                 await poll()
                 self.assertIsNone(controller.db.get('first')['operation'])
                 item[field] = original
@@ -626,6 +628,86 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
             controller.last_unsnooze_poll = time.monotonic() - 61
             await controller.selective_wake()
             self.assertEqual(status.await_count, 2)
+
+    async def test_native_reset_wakes_without_unsnooze_record_once_per_reset(self):
+        c = self.controller
+        c.select('first')
+        self.native_status = 'usageLimited'
+        reset = (time.time() - 60) * 1000
+        c.db.update('first', goal_status='usage limited', usage_limit=json.dumps({
+            'resetAt': reset, 'resetSource': 'native-account'}))
+        c.slash = AsyncMock()
+        c.tui_connections['first'] = {1: time.monotonic() - 2}
+        # The real overnight case: empty premium sample left no detector record.
+        # Its authoritative account reset survives a controller restart/refill.
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        with patch('app.controller.command', AsyncMock(return_value={'stdout': '{"sessions":[]}'})):
+            for held in (True, False):
+                c.db.set_setting('manual_pause/first', held)
+                c.last_unsnooze_poll = 0
+                await c.selective_wake()
+                self.assertEqual(bool(c.db.get('first')['operation']), not held)
+            await c.resume_ready()
+            await c.resume_ready()  # Still limited: finish without a retry storm.
+            c.last_unsnooze_poll = 0
+            await c.selective_wake()
+            c.slash.assert_awaited_once()
+            self.assertIsNone(c.db.get('first')['operation'])
+            self.assertEqual(c.db.setting('usage_wake/first')['reset_at'], reset)
+            c.db.update('first', usage_limit=json.dumps({'resetAt': reset + 1000, 'resetSource': 'native-account'}))
+            c.last_unsnooze_poll = 0
+            await c.selective_wake()
+            await c.resume_ready()
+            self.assertEqual(c.slash.await_count, 2)
+            self.assertEqual(c.slash.await_args.args[1], '/goal resume')
+
+    async def test_auto_continue_skips_blockers_but_never_usage_limits_or_manual_holds(self):
+        c = self.controller
+        c.source = SimpleNamespace(rows=lambda: {p['codex_session_id']: {} for p in c.db.all()})
+        c.attach_ready = AsyncMock()
+        c.select('first')
+        c.db.update('first', goal_status='stalled', block_reason='{"requires_user":true,"reason":"Windows needed"}')
+        self.native_status = 'blocked'
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'first')  # Opt in only.
+        c.db.set_setting('auto_continue', True)
+        c.db.set_setting('pause_all', True)
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'first')
+        c.db.set_setting('pause_all', False)
+        c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,status,created_at,updated_at) VALUES(?,?,?,?,?,?)',
+                          ('job', 'first', '{}', 'running', 1, 1))
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'first')
+        c.db.conn.execute("UPDATE jobs SET status='finished'")
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'second')
+        self.assertEqual(c.db.get('first')['goal_status'], 'stalled')
+        c.wait_idle.assert_awaited_once()
+        self.assertEqual(json.loads(c.db.get('second')['operation'])['source'], 'auto-continue')
+        # Turning the switch off also cancels a not-yet-submitted handoff.
+        c.db.set_setting('auto_continue', False)
+        await c.resume_ready()
+        self.assertIsNone(c.db.get('second')['operation'])
+        c.db.set_setting('auto_continue', True)
+        c.db.update('second', goal_status='usage limited')
+        self.native_status = 'usageLimited'
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'second')
+        # A third eligible project can run after the second becomes blocked.
+        c.db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,codex_session_id,
+            tmux_session_name,created_at,updated_at,queue_position,lifecycle) VALUES(?,?,?,?,?,?,?,?,?,?)''',
+            ('third', 'third', 'third', str(self.root / 'third'), 'third', 'third', 1, 1, 3, 'ready'))
+        c.db.set_setting('manual_pause/third', True)
+        c.db.update('second', goal_status='stalled')
+        self.native_status = 'blocked'
+        await c.advance_queue()
+        self.assertIsNone(c.db.setting('selected'))
+        c.db.set_setting('manual_pause/third', False)
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'third')
+        self.assertEqual(c.db.get('third')['queue_position'], 1)
 
 
 if __name__ == '__main__':

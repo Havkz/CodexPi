@@ -529,18 +529,7 @@ class Controller:
                     if time.monotonic() - self.last_backup > 3600:
                         self.db.backup(self.root / 'backups/sqlite')
                         self.last_backup = time.monotonic()
-                    selected = self.db.setting('selected')
-                    if not selected and self.db.setting('advance_queue', False) and not self.db.setting('pause_all', False):
-                        self.db.set_setting('advance_queue', False)
-                        next_project = next((p for p in self.db.all() if p['lifecycle'] == 'ready' and p['queue_position'] is not None and
-                                             p['goal_status'] == 'paused' and p['codex_session_id'] in self.source.rows() and
-                                             self.can_auto_resume(p)), None)
-                        if next_project:
-                            self.select(next_project['project_id'])
-                            await self.attach_ready(next_project)
-                            operation = json.loads(next_project['operation'] or '{}')
-                            self.db.update(next_project['project_id'], operation=json.dumps({**operation, 'kind': 'resume', 'source': 'queue',
-                                'id': operation.get('id') or str(uuid.uuid4()), 'requested_at': time.time()}), resume_result=None)
+                    await self.advance_queue()
                     await self.resume_ready()
                     await self.selective_wake()
                     await self.release_idle_tuis()
@@ -569,6 +558,45 @@ class Controller:
                 self.health_errors['discord'] = self.redactor.clean(str(exc))
             await asyncio.sleep(2)
 
+    async def advance_queue(self):
+        if self.db.setting('pause_all', False):
+            return
+        selected = self.db.setting('selected')
+        if selected:
+            project = self.db.get(selected)
+            if (not self.db.setting('auto_continue', False) or project['lifecycle'] != 'ready'
+                    or project['operation'] or project['goal_status'] not in ('stalled', 'limited by budget')
+                    or self.db.setting('manual_pause/' + selected, False)):
+                return
+            if self.db.conn.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('sent','running')", (selected,)).fetchone():
+                return
+            goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+            if not goal or goal['status'] not in ('blocked', 'budgetLimited'):
+                return
+            await self.wait_idle(project)
+            await self.cancel_wakes(project)
+            with self.db.transaction():
+                self.db.set_setting('selected', None)
+                self.db.set_setting('advance_queue', 'blocked')
+        advance = self.db.setting('advance_queue', False)
+        if not advance or advance == 'blocked' and not self.db.setting('auto_continue', False):
+            return
+        rows = self.source.rows()
+        next_project = next((p for p in self.db.all() if p['queue_position'] is not None
+            and p['goal_status'] == 'paused' and p['codex_session_id'] in rows
+            and (not p['operation'] or (json.loads(p['operation']).get('kind') == 'resume'
+                 and not json.loads(p['operation']).get('error')))
+            and self.can_auto_resume(p)), None)
+        if next_project:
+            operation = json.loads(next_project['operation'] or '{}') or {
+                'kind': 'resume', 'source': 'auto-continue' if advance == 'blocked' else 'queue',
+                'id': str(uuid.uuid4()), 'requested_at': time.time()}
+            # Persist intent before the atomic selection; recovery can reuse it.
+            self.db.update(next_project['project_id'], operation=json.dumps(operation), resume_result=None)
+            self.select(next_project['project_id'])
+            self.db.set_setting('advance_queue', False)
+            await self.attach_ready(next_project)
+
     async def resume_ready(self):
         if self.db.setting('pause_all', False):
             return
@@ -580,7 +608,8 @@ class Controller:
             if operation.get('error'):
                 continue
             if (self.db.setting('manual_pause/' + project['project_id'], False) or
-                    operation.get('source') in ('unsnooze', 'queue', 'windows', 'recovery') and not self.can_auto_resume(project)):
+                    operation.get('source') == 'auto-continue' and not self.db.setting('auto_continue', False) or
+                    operation.get('source') in ('unsnooze', 'queue', 'auto-continue', 'windows', 'recovery') and not self.can_auto_resume(project)):
                 self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
                 continue
             try:
@@ -615,7 +644,11 @@ class Controller:
                     if not operation.get('sent_at'):
                         # Journal before sending: a crash must not repeat a potentially delivered slash.
                         operation['sent_at'] = time.time()
-                        self.db.update(project['project_id'], operation=json.dumps(operation))
+                        with self.db.transaction():
+                            self.db.update(project['project_id'], operation=json.dumps(operation))
+                            if operation.get('source') == 'unsnooze':
+                                self.db.set_setting('usage_wake/' + project['project_id'], {
+                                    'reset_at': operation['reset_at'], 'operation_id': operation['id']})
                         await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Escape')
                         await self.slash(project, '/goal resume')
                 elif not operation.get('sent_at'):
@@ -683,17 +716,26 @@ class Controller:
             return
         if not self.can_auto_resume(project):
             return
-        for item in self.unsnooze.get('sessions', []):
-            if (item.get('sessionId') == project['codex_session_id'] and item['status'] == 'stopped'
-                    and item.get('resetSource') != 'fallback' and item.get('resetAt')
-                    and item['resetAt'] <= time.time() * 1000):
-                # 1.19.0 resume-now delegates asynchronously and may revive a lost
-                # pane using `codex resume ID MESSAGE`, bypassing the slash command
-                # and our admission gate. Reuse our durable mapped-TUI resume instead.
-                self.db.update(selected, operation=json.dumps({'kind': 'resume',
-                    'id': str(uuid.uuid4()), 'source': 'unsnooze', 'requested_at': time.time(),
-                    'reset_at': item['resetAt'], 'unsnooze_key': item['key']}))
-                break
+        project = self.db.get(selected)  # Includes the reset just persisted above.
+        metadata = json.loads(project['usage_limit'] or '{}')
+        reset = metadata.get('resetAt')
+        if (metadata.get('resetSource') not in ('unsnooze', 'native-account') or not reset
+                or reset > time.time() * 1000):
+            return
+        previous = self.db.setting('usage_wake/' + selected, {})
+        if reset <= previous.get('reset_at', 0):
+            return  # One automatic attempt per real reset, including after crashes.
+        goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+        if not goal or goal['status'] != 'usageLimited':
+            return
+        item = next((s for s in self.unsnooze.get('sessions', []) if
+                     s.get('sessionId') == project['codex_session_id'] and s.get('status') == 'stopped'), {})
+        operation = {'kind': 'resume', 'id': str(uuid.uuid4()), 'source': 'unsnooze',
+                     'requested_at': time.time(), 'reset_at': reset, 'reset_source': metadata['resetSource'],
+                     'unsnooze_key': item.get('key')}
+        # Same durable mapped-TUI path for either authoritative reset source.
+        # Never call resume-now: its daemon can reopen an ungated argv prompt.
+        self.db.update(selected, operation=json.dumps(operation))
 
     def persist_usage_resets(self):
         account = self.db.setting('account_usage', {})
@@ -706,8 +748,10 @@ class Controller:
             tracked = next((s for s in self.unsnooze.get('sessions', []) if
                 s.get('sessionId') == project['codex_session_id'] and s.get('status') == 'stopped'
                 and s.get('resetSource') != 'fallback' and s.get('resetAt')), None)
-            metadata = ({'resetAt': tracked['resetAt'], 'resetSource': 'unsnooze'} if tracked else
-                        {'resetAt': max(resets), 'resetSource': 'native-account'} if resets else None)
+            candidates = ([{'resetAt': tracked['resetAt'], 'resetSource': 'unsnooze'}] if tracked else [])
+            if resets:
+                candidates.append({'resetAt': max(resets), 'resetSource': 'native-account'})
+            metadata = max(candidates, key=lambda m: m['resetAt']) if candidates else None
             if metadata:
                 with self.db.transaction():
                     self.db.update(project['project_id'], usage_limit=json.dumps(metadata))

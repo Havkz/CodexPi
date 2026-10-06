@@ -4,8 +4,8 @@ Installed on Pi: Unsnooze 1.19.0. Inspection on 2026-09-21 covered package.json,
 `--help`, `status --json`, `doctor`, and the installed `src/cli.js`,
 `src/resumer.js`, `src/agents/codex.js`, and `src/settings.js`.
 
-Unsnooze remains the limit detector and reset-time source. CodexPi consumes its
-structured session records; it does not implement a second banner parser.
+Unsnooze remains a limit detector and reset-time source. CodexPi consumes its
+structured session records and native account reset metadata; it does not implement a second banner parser.
 `autoResume=false` is configured persistently and enforced by environment in
 both systemd units (also inherited by their tmux/Unsnooze children). Codex's
 configured wake message is `/goal resume`; tmux is the configured multiplexer.
@@ -42,6 +42,48 @@ repeated while waiting for native acknowledgement; an acknowledgement timeout
 is surfaced as an error rather than triggering an uncontrolled retry loop.
 
 ## Verification boundaries
+
+### Overnight missed wake, 2026-10-06
+
+Donut was resumed at 23:42 on October 5 while already exhausted. Its real native
+turn failed with `usage_limit_exceeded` and the goal became `usageLimited`.
+The persisted native-account reset was October 6 at 02:57:28 Europe/Berlin.
+Hourly SQLite backups through 06:18 retain that reset, selected project,
+queue position 1, no manual hold, no pause-all and no pending resume operation.
+This was not an inactivity inference or a lost selected project.
+
+Replaying the actual transcript batch through installed Unsnooze 1.19.0 produced
+zero candidates. Its token-count record had `limit_id=premium`, null primary
+and secondary windows, and zero credits. The detector needs a recent exhausted
+Codex sample before accepting this empty-premium record; it does not consume
+the task-complete error. Starting while already exhausted lacked that sample.
+CodexPi displayed the native-account reset but previously scheduled only from
+Unsnooze session records. This mismatch caused the missed overnight wake.
+
+The scheduler now accepts either persisted authoritative reset source, confirms
+the native goal still reports `usageLimited`, and journals the same mapped-TUI
+resume operation. If both exhausted windows/sources exist it waits for the latest
+binding reset. Before sending the slash it atomically records that reset as
+attempted. A still-limited result, crash, or lost acknowledgement cannot trigger
+another automatic attempt for that reset. A later genuine reset can. Cancellation
+before submission does not consume the attempt. Deletion removes its marker.
+No upstream fork, banner parser, extra daemon, or independent AI session is added.
+
+Focused regressions cover the missing-detector-record case across DB reopen,
+manual holds, once-per-reset submission, and a subsequent distinct reset.
+These are simulations of scheduling, not proof of a real provider refill.
+
+### Auto Continue
+
+The dashboard switch above Queue persists `auto_continue` (default false).
+Only a selected native `blocked`/`budgetLimited` goal may yield its slot, after
+confirmed turn idleness and with no sent/running Windows job. Its own blocker
+remains intact. The next eligible paused project uses the existing durable
+resume path and acknowledgement. Usage limits keep their slot; manual holds,
+pause-all and lifecycle gates remain enforced. Turning the switch off cancels
+unsubmitted automatic handoffs. Completion handoff retains its existing behavior.
+The regression exercises first-to-second-to-third selection, quota waiting,
+user blockers, Windows work, switch-off and manually held projects.
 
 `tests/test_scheduler.py` covers due/future/fallback resets, wrong sessions,
 excluded goal states, pause-all, priority changes, durable reopen after simulated

@@ -133,6 +133,8 @@ function render() {
   const active = state.projects.find(p => p.project_id === state.selected);
   const stalled = state.projects.filter(p => p.goal_status === 'stalled').length;
   $('pause-all').disabled = busy || !connected; $('logout').disabled = busy || !connected;
+  if (!busy) $('auto-continue').checked = Boolean(state.auto_continue);
+  $('auto-continue').disabled = busy || !connected;
   const summary = [
     [String(state.projects.filter(p => p.goal_status === 'active').length), 'Active Project', active?.display_name || 'Kein aktives Projekt'],
     [String(queue.filter(p => p.project_id !== state.selected).length), 'Queue Length', 'Wartende Projekte'],
@@ -264,6 +266,7 @@ $('lifecycle-form').onsubmit = async event => {
   else $('lifecycle-error').textContent = $('notice').textContent;
 };
 $('pause-all').onclick = () => act('pause-all'); $('logout').onclick = () => act('logout');
+$('auto-continue').onchange = event => act('auto-continue', null, {enabled: event.target.checked});
 $('close-detail').onclick = () => $('project-dialog').close();
 $('project-dialog').addEventListener('close', () => { detailId = null; });
 refresh(); setInterval(() => { if (!dragging && (!busy || pendingAction) && (!document.hidden || pendingAction)) refresh(); }, 2000);

@@ -164,6 +164,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
             with self.subTest(status=status), tempfile.TemporaryDirectory() as temp:
                 c, state, command = self.make_controller(temp)
                 state['native_status'] = 'paused' if status == 'paused' else 'usageLimited'
+                c.db.set_setting('usage_wake/project-1', {'reset_at': 1})
                 c.db.update('project-1', goal_status=status,
                             operation=json.dumps({'kind': 'resume', 'source': 'unsnooze', 'sent_at': 1}))
                 c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,created_at,updated_at) VALUES(?,?,?,?,?)',
@@ -176,6 +177,7 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
                     await lifecycle.recover(c)
                     await c.resume_ready()
                 self.assertEqual(c.db.all(), [])
+                self.assertIsNone(c.db.setting('usage_wake/project-1'))
                 self.assertTrue(state['archived'])
                 self.assertTrue(state['deleted'])
                 self.assertEqual(state['repo'], 'owner/first')

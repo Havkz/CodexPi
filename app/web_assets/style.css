@@ -200,6 +200,14 @@ input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var
   .detail-grid .metadata { grid-template-columns: 1fr; }
   .login-card { padding: 28px; }
 }
+.queue-policy { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+.queue-policy label { font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; }
+.queue-policy p { margin-bottom: 0; }
+#auto-continue { appearance: none; flex: 0 0 46px; width: 46px; height: 26px; min-height: 26px; padding: 3px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface-raised); cursor: pointer; }
+#auto-continue::before { content: ''; display: block; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); }
+#auto-continue:checked { background: var(--accent); }
+#auto-continue:checked::before { transform: translateX(20px); background: white; }
+#auto-continue:disabled { opacity: .5; cursor: wait; }
 .loading::before { content: ''; display: inline-block; width: .85em; height: .85em; margin-right: .5em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: resume-spin .8s linear infinite; }
 @keyframes resume-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .loading::before { animation: none; } }

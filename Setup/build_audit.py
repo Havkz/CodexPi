@@ -49,7 +49,7 @@ def reconcile(raw, previous=None, accept_append=False):
     revisions = list(previous.get('source_revisions', [])) if previous else []
     if changed:
         revisions.append({'source_sha256': previous['source_sha256'], 'source_lines': previous['source_lines']})
-    return {'source': str(SOURCE), 'source_sha256': digest, 'source_lines': len(lines),
+    return {**(previous or {}), 'source': str(SOURCE), 'source_sha256': digest, 'source_lines': len(lines),
             'source_revisions': revisions, 'complete': False, 'requirements': entries}
 
 

@@ -159,7 +159,8 @@ async def state(request):
                 for p in controller.db.all()]
     payload = {'projects': projects, 'selected': controller.db.setting('selected'),
         'account_usage': controller.db.setting('account_usage', {}),
-        'pause_all': controller.db.setting('pause_all', False), 'windows_online': controller.windows_online,
+        'pause_all': controller.db.setting('pause_all', False),
+        'auto_continue': controller.db.setting('auto_continue', False), 'windows_online': controller.windows_online,
         'discord_online': bool(controller.bot and controller.bot.is_ready()),
         'unsnooze': controller.unsnooze, 'github_account': controller.config['github_account'],
         'infrastructure': infrastructure, 'server_time': now}
@@ -258,6 +259,11 @@ async def action(request):
                 if project['lifecycle'] == 'ready' and project['codex_session_id'] and project['goal_status'] != 'complete':
                     await controller.pause(project, manual=True,
                         preserve_status=project['goal_status'] not in ('active', 'usage limited'))
+    elif action_name == 'auto-continue':
+        if type(body.get('enabled')) is not bool:
+            raise ValueError('Auto Continue requires a boolean enabled value')
+        async with controller.lock:
+            controller.db.set_setting('auto_continue', body['enabled'])
     elif action_name == 'reorder':
         async with controller.lock:
             controller.db.reorder(body['ids'])

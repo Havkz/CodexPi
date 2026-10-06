@@ -22,7 +22,7 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
             root = Path(__file__).resolve().parents[1]
             controller = SimpleNamespace(root=root, db=db, redactor=Redactor(temp),
                 config={'lan_subnet': '192.168.2.0/24', 'password_hash': password_hash('test-pass'),
-                        'github_account': 'test'}, windows_online=False, bot=None, unsnooze={})
+                        'github_account': 'test'}, windows_online=False, bot=None, unsnooze={}, lock=asyncio.Lock())
             app = make_app(controller)
             async with TestClient(TestServer(app), cookie_jar=CookieJar(unsafe=True)) as client:
                 response = await client.get('/api/state')
@@ -58,6 +58,13 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 db.conn.execute('UPDATE sessions SET csrf=?', (csrf,))
                 state = await (await client.get('/api/state')).json()
                 self.assertEqual(state['csrf'], csrf)
+                self.assertFalse(state['auto_continue'])
+                for enabled, expected in [('true', 400), (True, 200), (False, 200)]:
+                    result = await client.post('/api/action', json={'action': 'auto-continue', 'enabled': enabled},
+                        headers={'X-CSRF-Token': csrf})
+                    self.assertEqual(result.status, expected)
+                    if expected == 200:
+                        self.assertEqual((await (await client.get('/api/state')).json())['auto_continue'], enabled)
                 self.assertNotIn('password_hash', str(state))
                 self.assertEqual(len(state['infrastructure']), 6)
                 self.assertEqual(state['infrastructure'][3]['status'], 'unknown')
