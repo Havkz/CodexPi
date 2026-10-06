@@ -69,13 +69,15 @@
     "date": "2026-10-06",
     "sqlite_restore_L0308_L0310_L1807": "docs/recovery.md; real Pi snapshot restored in isolation using production Database class: exact schema/all rows including 21536 usage samples, integrity/FKs, live mappings/holds/status and native session/workspace/rollout existence pass. Snapshot hash and service identities unchanged. Seven published backups, 0700/0600 permissions verified. Private evidence state/backup-restore-20261006-073815.json. Not a whole-system restore.",
     "migration": "docs/migration.md: all 664 original non-Git members, Git fsck/exact dirty state, 56 turns/2762 items, original rollout prefix, same-ID attached TUI and dashboard verified. Explicit Leave paused selected; original goal prompt/counters retained. Startup-dialog test mistake and real provider rejection documented, not hidden.",
-    "cleanup_L3001_L3005": "docs/progress.md; state/test-cleanup-20261005.json on both hosts: all ten approved lifecycles archived with Git-valid backups, Discord channels absent, GitHub repositories identity-checked and deleted after user granted delete_repo. Donut and CodexPi preserved; only Donut in DB/category.",
+    "cleanup_L3001_L3005": "docs/progress.md; state/test-cleanup-20261005.json on both hosts: all ten approved lifecycles archived with Git-valid backups, Discord channels absent, GitHub repositories identity-checked and deleted after user granted delete_repo. Donut and CodexPi preserved; only Donut in DB/category at that cleanup checkpoint, before subsequent authorized Sybu migration. New ordinary-prompt quota fixture also deleted with its Discord channel/repository, retaining recovery backup.",
     "manual_tests_L2997": "Real elapsed provider reset verified on 2026-10-06: native Donut goal and thread active in original SID/cwd following one journaled genuine TUI /goal resume. A later genuinely exhausted window persisted and notified with its next reset. Full-Pi-reboot acceptance remains unverified.",
-    "unsnooze_auto_continue_L3009_L3011": "docs/unsnooze.md and docs/progress.md: actual overnight trace/DB replay; missing detector fallback and once-per-reset marker; blocked queue handoff with preserved gates. Scheduler/web 25 checks pass on Windows and Pi, lifecycle/worker/audit 11 locally. Live switch persists; quota-limited Donut slot retained, native same-ID/cwd idle/usageLimited confirmed, desktop/mobile clean. Auto Continue restored OFF. Real provider-reset and multi-project handoff acceptance remain pending.",
+    "unsnooze_auto_continue_L3009_L3011": "Actual overnight trace/DB replay; missing detector fallback and once-per-reset marker; blocked queue handoff with preserved gates covered by existing combined regression. Live switch on/off/reload verified; current user setting ON preserved. Real elapsed provider-reset continuation now verified in state/unsnooze-queue-live-20261006.json. Real blocked multi-project handoff remains unverified; quota waiting does not advance to bypass limits.",
     "targeted_regressions": "tests/test_web.py reproduces CSRF redaction collision; tests/test_scheduler.py verifies native terminal systemError before slot release. Live hook checks support reviewed Ponytail 4.12.0 without trust-all; docs/optimization.md.",
     "unsnooze_queue_L3031": "Actual hourly DB snapshots showed selected SwingSpeed at rank 2 while usage-limited Donut was head; deleting selected project then left selection empty. select/reorder + reset paths reproduced. Regression covers 1 -> other -> 1, stale/absent selection, manual/user/job/active-native denial, cancellation before send and once-per-reset. Old unchanged native usageLimited is no longer a premature resume receipt. Live original Donut SID/cwd active after automatic wake operation c8bafe82-657b-4ee5-9e94-4c49f0528eb7; persisted reset marker 1791298811000. Later native quota failure generated the next distinct Discord notification/reset, not an inferred limit.",
     "cli_update_L3015": "Production idle update ran automatically: codex-cli 0.155.1 -> 0.160.1; persisted complete phase, SQLite/native recovery backup backups/native-updates/1791302971. No active turns, Windows jobs or attached user views. Mapped same-ID resume, historical items and /model checked with actual 0.160.1 TUI. Idle/unknown-state deferral regression passes.",
-    "cli_picker_L3019": "Actual remote native resume --all picker opened both existing projects. RegionMap cross-project prompt persisted once without preempting the selected project or starting a turn; only that verification prompt was removed. Migrated Sybu original session/history opened, Leave paused selected, no model work started. Queued acknowledgment is an explicit native failed-start notice because the upstream TUI has no CodexPi-specific queue receipt UI. Broader ordinary-prompt quota recovery acceptance remains pending.",
+    "cli_picker_L3019": "Actual remote native resume --all picker opened both existing projects. RegionMap cross-project prompt persisted once without preempting the selected project or starting a turn; only that verification prompt was removed. Migrated Sybu original session/history opened without execution. Connected mapped TUI ordinary prompt genuinely failed usageLimitExceeded with no goal; persisted quota/reset survived controller restart, exactly one actual Discord message and dashboard confirmed, fixture lifecycle fully cleaned. Failed ordinary prompts are not replayed after reset; ordinary post-reset successful completion remains unverified live.",
+    "quota_resume_fix_20261006": "state/prompt-quota-live-20261006.json; source d2d86d943812102bc36fe1c3dae835628b9bdb70. Actual Sybu dashboard resume confirmed active in original native session, followed by genuine usageLimited and known reset. Queue wait excluded from bounded selected restoration timeout; atomic quota-marker/status/reset handling and deletion cancellation covered by focused regressions. All four GitHub Actions jobs successful, run 37519901601.",
+    "installation_sqlite_20261006": "state/installation-sqlite-audit-20261006.json; read-only actual Pi runtime/config inspection and existing DB/migration checks on both hosts. System-wide Node LTS, Python venv, lightweight dependencies, every required central mapping column, WAL/FULL/FK and integrity verified. Historical installation sequence and full reboot not inferred from current installed state.",
     "delete_optin_L3023": "Strict bool/owned immutable repository ID, preflight scope checks, backup-before-delete journal and crash/lost-ack regression pass. Real dashboard checkbox unchecked by default, selected, reset on reopen and hidden for rename at 1440/390. Dedicated fixture fe1ac4c9-3462-4fb9-a0fd-7a5d1250968c deleted via dashboard: GitHub immutable ID 1407574473 and Discord 1557058888937902102 both verified absent; native archived, mappings/wakes/prompts removed, local recovery Git fsck passes. Private evidence state/delete-optin-live-20261006.json. No user project deleted for verification.",
     "sybu_migration_L3033": "state/sybu-migration-live-20261006.json: same-ID native restore, 25 turns/1306 original items, no schema loss, exact objective, 1241 archive members verified and 1240 original files unchanged on Windows. Git fsck/clean state, four local commits pushed to existing authorized-private Havkz/Sybu-Debug; build run 37513965561 success. Explicit source attachments/final JARs and original Meteor reference source retained; missing external historical JAR not invented. Actual native picker/Leave paused and dashboard SID/cwd/repo/queue/channel verified. Original goal complete is retained in original snapshot; managed native goal intentionally paused. No second model turn. POSIX executable Git entries restored; existing migration regression passes on Windows/Pi.",
     "overall": "Full requirement-by-requirement audit remains incomplete. Evidence here does not promote unrelated pending lines."
@@ -1296,15 +1298,19 @@
       "id": "L0243",
       "section": "4. SOFTWARE AUF DEM PI",
       "text": "* systemweit verfügbares Node LTS statt nvm, sofern möglich, damit systemd zuverlässig funktioniert",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Live production installed stack and service verified in state/installation-sqlite-audit-20261006.json; requirements.txt, config/codexpi.service, app/main.py and directly served vanilla-JS/CSS/HTML inspected. No frontend buildchain or systemd nvm dependency."
+      ]
     },
     {
       "id": "L0244",
       "section": "4. SOFTWARE AUF DEM PI",
       "text": "* Python 3 + venv für Controller/Web/Discord, falls Python die leichteste Lösung ist",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Live production installed stack and service verified in state/installation-sqlite-audit-20261006.json; requirements.txt, config/codexpi.service, app/main.py and directly served vanilla-JS/CSS/HTML inspected. No frontend buildchain or systemd nvm dependency."
+      ]
     },
     {
       "id": "L0245",
@@ -1338,22 +1344,28 @@
       "id": "L0251",
       "section": "4. SOFTWARE AUF DEM PI",
       "text": "* discord.py",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Live production installed stack and service verified in state/installation-sqlite-audit-20261006.json; requirements.txt, config/codexpi.service, app/main.py and directly served vanilla-JS/CSS/HTML inspected. No frontend buildchain or systemd nvm dependency."
+      ]
     },
     {
       "id": "L0252",
       "section": "4. SOFTWARE AUF DEM PI",
       "text": "* SQLite / sqlite3",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Live production installed stack and service verified in state/installation-sqlite-audit-20261006.json; requirements.txt, config/codexpi.service, app/main.py and directly served vanilla-JS/CSS/HTML inspected. No frontend buildchain or systemd nvm dependency."
+      ]
     },
     {
       "id": "L0253",
       "section": "4. SOFTWARE AUF DEM PI",
       "text": "* Jinja2 / HTMX / kleines Vanilla-JS",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Live production installed stack and service verified in state/installation-sqlite-audit-20261006.json; requirements.txt, config/codexpi.service, app/main.py and directly served vanilla-JS/CSS/HTML inspected. No frontend buildchain or systemd nvm dependency."
+      ]
     },
     {
       "id": "L0254",
@@ -1366,8 +1378,10 @@
       "id": "L0256",
       "section": "4. SOFTWARE AUF DEM PI",
       "text": "Schwere Frontend-Buildchains vermeiden, wenn kein echter Vorteil besteht.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "Live production installed stack and service verified in state/installation-sqlite-audit-20261006.json; requirements.txt, config/codexpi.service, app/main.py and directly served vanilla-JS/CSS/HTML inspected. No frontend buildchain or systemd nvm dependency."
+      ]
     },
     {
       "id": "L0258",
@@ -1429,8 +1443,10 @@
       "id": "L0272",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "`~/CodexPi/state/codexpi.db`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0274",
@@ -1443,36 +1459,46 @@
       "id": "L0276",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* WAL",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0277",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* sinnvolle Transaktionen",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0278",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* Foreign Keys",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0280",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "Projektname, Session-ID, tmux-Zuordnung, GitHub-Repo, Discord-Channel und Queue NICHT aus Prozessnamen erraten.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0282",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "Alles zentral persistent verknüpfen.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0284",
@@ -1485,134 +1511,172 @@
       "id": "L0286",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `project_id`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0287",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `display_name`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0288",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `slug`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0289",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `project_path`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0290",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `codex_session_id`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0291",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `tmux_session_name`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0292",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `github_repo`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0293",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `discord_channel_id`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0294",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `queue_position`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0295",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `goal_status`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0296",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `block_reason`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0297",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `created_at`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0298",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `updated_at`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0299",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `last_commit`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0300",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `last_ci_status`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0301",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `windows_required`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0302",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* `last_activity`",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0304",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "KEINE proprietären oder erfundenen Goal-Statuscodes hinzufügen.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0306",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "Für `block_reason` dürfen selbstverständlich zusätzliche Metadaten gespeichert werden.",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0308",
@@ -1643,22 +1707,28 @@
       "id": "L0314",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* DB Integrity Check",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0315",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* Migrationen transaktional",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0316",
       "section": "5. SQLITE ALS ZENTRALE ZUSTANDSDATENBANK",
       "text": "* niemals still eine beschädigte DB überschreiben",
-      "status": "pending",
-      "evidence": []
+      "status": "tested",
+      "evidence": [
+        "app/db.py schema/mapping/transaction/integrity handling inspected; exact production columns and WAL/FULL/FK/integrity verified in state/installation-sqlite-audit-20261006.json. Existing combined DB constraints/rollback/corruption/backup and usage migration/restart tests pass on Windows and Pi."
+      ]
     },
     {
       "id": "L0318",
