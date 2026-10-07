@@ -43,8 +43,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit",
-      "community": 46,
-      "community_name": "db.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "build_audit.py"
     },
     {
@@ -54,8 +54,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_build_audit_reconcile",
-      "community": 46,
-      "community_name": "db.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "reconcile()"
     },
     {
@@ -65,8 +65,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "setup_build_audit_main",
-      "community": 46,
-      "community_name": "db.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "main()"
     },
     {
@@ -76,8 +76,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit_rationale_1",
-      "community": 46,
-      "community_name": "db.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "create a lossless, line-addressed audit from the user's specification.  every no"
     },
     {
@@ -109,8 +109,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "configure.py"
     },
     {
@@ -120,8 +120,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "setup_configure_preserve",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "preserve()"
     },
     {
@@ -131,8 +131,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_rationale_1",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": "run on pi after copying reviewed sources; preserve and back up user config."
     },
     {
@@ -418,8 +418,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "probe-native.py"
     },
     {
@@ -429,8 +429,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "setup_probe_native_rpc",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "rpc()"
     },
     {
@@ -440,8 +440,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_probe_native_rationale_1",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "probe the installed native protocol without requesting any model work."
     },
     {
@@ -539,8 +539,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_queue",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "test-live-queue.py"
     },
     {
@@ -550,8 +550,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "setup_test_live_queue_state",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "state()"
     },
     {
@@ -561,8 +561,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_test_live_queue_rationale_1",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "exercise the two explicitly named e2e projects through the authenticated dashboa"
     },
     {
@@ -704,8 +704,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_controller_recovery",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "verify-controller-recovery.py"
     },
     {
@@ -715,8 +715,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "setup_verify_controller_recovery_main",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "main()"
     },
     {
@@ -726,8 +726,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_controller_recovery_rationale_1",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "live recovery; explicit --crash or --worker-restart injects a fault.  never kill"
     },
     {
@@ -924,8 +924,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_live_resume",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "verify-live-resume.py"
     },
     {
@@ -935,8 +935,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "setup_verify_live_resume_main",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "main()"
     },
     {
@@ -946,8 +946,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_live_resume_rationale_1",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "resume only the existing queue e2e goal; never create or replace an objective."
     },
     {
@@ -1292,10 +1292,21 @@
       "norm_label": "accounts.py"
     },
     {
+      "label": "choose_account()",
+      "file_type": "code",
+      "source_file": "app/accounts.py",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "app_accounts_choose_account",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "choose_account()"
+    },
+    {
       "label": "auth_identity()",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L12",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "app_accounts_auth_identity",
       "community": 34,
@@ -1306,7 +1317,7 @@
       "label": "AccountVault",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L35",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "app_accounts_accountvault",
       "community": 34,
@@ -1317,7 +1328,7 @@
       "label": ".__init__()",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L36",
+      "source_location": "L92",
       "_origin": "ast",
       "id": "app_accounts_accountvault_init",
       "community": 34,
@@ -1328,7 +1339,7 @@
       "label": ".path()",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L45",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "app_accounts_accountvault_path",
       "community": 34,
@@ -1339,7 +1350,7 @@
       "label": ".read()",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L53",
+      "source_location": "L109",
       "_origin": "ast",
       "id": "app_accounts_accountvault_read",
       "community": 34,
@@ -1350,7 +1361,7 @@
       "label": ".checkpoint()",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L58",
+      "source_location": "L114",
       "_origin": "ast",
       "id": "app_accounts_accountvault_checkpoint",
       "community": 34,
@@ -1361,7 +1372,7 @@
       "label": ".install()",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L72",
+      "source_location": "L128",
       "_origin": "ast",
       "id": "app_accounts_accountvault_install",
       "community": 34,
@@ -1372,7 +1383,7 @@
       "label": ".remove()",
       "file_type": "code",
       "source_file": "app/accounts.py",
-      "source_location": "L79",
+      "source_location": "L135",
       "_origin": "ast",
       "id": "app_accounts_accountvault_remove",
       "community": 34,
@@ -1391,12 +1402,23 @@
       "norm_label": "private managed-codex auth slots. never store tokens in db, browser state or log"
     },
     {
+      "label": "Choose a quota check or reset wait, never authorize a goal from cached usage.",
+      "file_type": "rationale",
+      "source_file": "app/accounts.py",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "app_accounts_rationale_14",
+      "community": 34,
+      "community_name": "migration.py",
+      "norm_label": "choose a quota check or reset wait, never authorize a goal from cached usage."
+    },
+    {
       "label": "Decode identity, not authenticity; the native account/limits RPC confirms the lo",
       "file_type": "rationale",
       "source_file": "app/accounts.py",
-      "source_location": "L13",
+      "source_location": "L65",
       "_origin": "ast",
-      "id": "app_accounts_rationale_13",
+      "id": "app_accounts_rationale_65",
       "community": 34,
       "community_name": "migration.py",
       "norm_label": "decode identity, not authenticity; the native account/limits rpc confirms the lo"
@@ -1405,9 +1427,9 @@
       "label": "Controller only, after its durable idle barrier. Changes auth.json, never CODEX_",
       "file_type": "rationale",
       "source_file": "app/accounts.py",
-      "source_location": "L73",
+      "source_location": "L129",
       "_origin": "ast",
-      "id": "app_accounts_rationale_73",
+      "id": "app_accounts_rationale_129",
       "community": 34,
       "community_name": "migration.py",
       "norm_label": "controller only, after its durable idle barrier. changes auth.json, never codex_"
@@ -2123,8 +2145,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "app_db_database_record_usage",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".record_usage()"
     },
     {
@@ -2178,8 +2200,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "app_db_database_event",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".event()"
     },
     {
@@ -2200,8 +2222,8 @@
       "source_location": "L235",
       "_origin": "ast",
       "id": "app_db_database_backup",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".backup()"
     },
     {
@@ -2486,8 +2508,8 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "app_discord_bot_bot_category",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".category()"
     },
     {
@@ -2497,8 +2519,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "app_discord_bot_bot_ensure_channel",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".ensure_channel()"
     },
     {
@@ -2739,8 +2761,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_migration",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "migration.py"
     },
     {
@@ -2750,8 +2772,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_migration_digest",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "digest()"
     },
     {
@@ -2761,8 +2783,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_migration_inspect_archive",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "inspect_archive()"
     },
     {
@@ -2772,8 +2794,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "app_migration_extract_project",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "extract_project()"
     },
     {
@@ -2783,8 +2805,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "app_migration_verify_project_files",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "verify_project_files()"
     },
     {
@@ -2794,8 +2816,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "app_migration_restore_native",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "restore_native()"
     },
     {
@@ -2805,8 +2827,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "app_migration_request",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "request()"
     },
     {
@@ -2816,8 +2838,8 @@
       "source_location": "L228",
       "_origin": "ast",
       "id": "app_migration_finish",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "finish()"
     },
     {
@@ -2827,8 +2849,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_migration_rationale_1",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "explicit, journaled import of one private windows project/native session.  no mo"
     },
     {
@@ -2838,8 +2860,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "app_migration_rationale_111",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "insert only absent selected-thread rows. never replace a live db/file."
     },
     {
@@ -2871,8 +2893,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "runtimeerror",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "runtimeerror"
     },
     {
@@ -3976,10 +3998,21 @@
       "norm_label": "accounttests"
     },
     {
-      "label": ".test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration()",
+      "label": ".test_account_choice_respects_both_windows_real_observations_and_bounded_probes()",
       "file_type": "code",
       "source_file": "tests/test_accounts.py",
       "source_location": "L23",
+      "_origin": "ast",
+      "id": "tests_test_accounts_accounttests_test_account_choice_respects_both_windows_real_observations_and_bounded_probes",
+      "community": 11,
+      "community_name": "Bot",
+      "norm_label": ".test_account_choice_respects_both_windows_real_observations_and_bounded_probes()"
+    },
+    {
+      "label": ".test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration()",
+      "file_type": "code",
+      "source_file": "tests/test_accounts.py",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "tests_test_accounts_accounttests_test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration",
       "community": 34,
@@ -3990,7 +4023,7 @@
       "label": ".test_usage_is_account_scoped_persistent_and_removal_keeps_other_accounts()",
       "file_type": "code",
       "source_file": "tests/test_accounts.py",
-      "source_location": "L71",
+      "source_location": "L111",
       "_origin": "ast",
       "id": "tests_test_accounts_accounttests_test_usage_is_account_scoped_persistent_and_removal_keeps_other_accounts",
       "community": 34,
@@ -4004,8 +4037,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_audit",
-      "community": 46,
-      "community_name": "db.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "test_audit.py"
     },
     {
@@ -4015,8 +4048,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_audit_audittests",
-      "community": 46,
-      "community_name": "db.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "audittests"
     },
     {
@@ -4026,8 +4059,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
-      "community": 46,
-      "community_name": "db.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_append_preserves_evidence_and_rejects_edits()"
     },
     {
@@ -4070,8 +4103,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 6,
+      "community_name": "web.py",
       "norm_label": ".test_db_constraints_rollback_and_backup()"
     },
     {
@@ -4257,8 +4290,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lifecycle",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "test_lifecycle.py"
     },
     {
@@ -4268,8 +4301,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_lifecycle_crash",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "crash"
     },
     {
@@ -4279,8 +4312,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseexception",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "baseexception"
     },
     {
@@ -4290,8 +4323,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "lifecycletests"
     },
     {
@@ -4301,8 +4334,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_make_controller",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".make_controller()"
     },
     {
@@ -4312,8 +4345,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_rename_and_delete_recover_after_every_effect",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_rename_and_delete_recover_after_every_effect()"
     },
     {
@@ -4323,8 +4356,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_confirmation_ownership_and_pending_jobs_fail_closed",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_confirmation_ownership_and_pending_jobs_fail_closed()"
     },
     {
@@ -4334,8 +4367,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_optional_repository_delete_is_explicit_owned_and_crash_recoverable",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_optional_repository_delete_is_explicit_owned_and_crash_recoverable()"
     },
     {
@@ -4345,8 +4378,8 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_delete_supersedes_resume_for_paused_and_limited_projects",
-      "community": 6,
-      "community_name": "web.py",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_delete_supersedes_resume_for_paused_and_limited_projects()"
     },
     {
@@ -4356,8 +4389,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_migration",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "test_migration.py"
     },
     {
@@ -4367,8 +4400,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "tests_test_migration_migrationtests",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": "migrationtests"
     },
     {
@@ -4378,8 +4411,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "main",
       "norm_label": ".test_private_export_preserves_dirty_git_session_and_goal()"
     },
     {
@@ -4466,8 +4499,8 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_pause_releases_system_error_only_after_native_terminal_turn",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".test_pause_releases_system_error_only_after_native_terminal_turn()"
     },
     {
@@ -4477,8 +4510,8 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_recovery_records_native_limit_once_and_clears_resume_intent",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_recovery_records_native_limit_once_and_clears_resume_intent()"
     },
     {
@@ -4543,8 +4576,8 @@
       "source_location": "L401",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_account_telemetry_persists_without_resuming_or_inventing_limit",
-      "community": 48,
-      "community_name": "RuntimeError",
+      "community": 21,
+      "community_name": "main.py",
       "norm_label": ".test_account_telemetry_persists_without_resuming_or_inventing_limit()"
     },
     {
@@ -4675,8 +4708,8 @@
       "source_location": "L644",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_gate_pauses_second_goal_before_native_execution",
-      "community": 21,
-      "community_name": "main.py",
+      "community": 11,
+      "community_name": "Bot",
       "norm_label": ".test_gate_pauses_second_goal_before_native_execution()"
     },
     {
@@ -6842,6 +6875,18 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/test_accounts.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_accounts_accounttests_test_account_choice_respects_both_windows_real_observations_and_bounded_probes",
+      "target": "setup_measure_idle_sample"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Setup/probe-native.py",
@@ -7978,7 +8023,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L35",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts",
@@ -7989,11 +8034,22 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L12",
+      "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts",
       "target": "app_accounts_auth_identity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/accounts.py",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_accounts",
+      "target": "app_accounts_choose_account",
       "confidence_score": 1.0
     },
     {
@@ -8018,6 +8074,42 @@
       "_origin": "ast",
       "source": "app_accounts",
       "target": "app_common_atomic_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/accounts.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_accounts",
+      "target": "app_usage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/accounts.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_accounts",
+      "target": "app_usage_number",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/accounts.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_accounts",
+      "target": "app_usage_windows",
       "confidence_score": 1.0
     },
     {
@@ -8048,7 +8140,66 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L60",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_accounts_choose_account",
+      "target": "app_usage_number",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/accounts.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_accounts_choose_account",
+      "target": "app_usage_windows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "app/accounts.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "app_accounts_rationale_14",
+      "target": "app_accounts_choose_account",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_accounts.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_accounts",
+      "target": "app_accounts_choose_account",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/test_accounts.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_accounts_accounttests_test_account_choice_respects_both_windows_real_observations_and_bounded_probes",
+      "target": "app_accounts_choose_account"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/accounts.py",
+      "source_location": "L116",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_checkpoint",
@@ -8060,7 +8211,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L75",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_install",
@@ -8071,10 +8222,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L13",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_accounts_rationale_13",
+      "source": "app_accounts_rationale_65",
       "target": "app_accounts_auth_identity",
       "confidence_score": 1.0
     },
@@ -8096,7 +8247,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_accounts.py",
-      "source_location": "L52",
+      "source_location": "L92",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests_test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration",
@@ -8106,7 +8257,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L58",
+      "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault",
@@ -8117,7 +8268,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L36",
+      "source_location": "L92",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault",
@@ -8128,7 +8279,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L72",
+      "source_location": "L128",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault",
@@ -8139,7 +8290,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L45",
+      "source_location": "L101",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault",
@@ -8150,7 +8301,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L53",
+      "source_location": "L109",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault",
@@ -8161,7 +8312,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L79",
+      "source_location": "L135",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault",
@@ -8197,7 +8348,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_accounts.py",
-      "source_location": "L31",
+      "source_location": "L71",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests_test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration",
@@ -8208,7 +8359,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L68",
+      "source_location": "L124",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_checkpoint",
@@ -8220,7 +8371,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L74",
+      "source_location": "L130",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_install",
@@ -8232,7 +8383,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L80",
+      "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_remove",
@@ -8244,7 +8395,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L59",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_checkpoint",
@@ -8256,7 +8407,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L74",
+      "source_location": "L130",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_install",
@@ -8269,7 +8420,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/accounts.py",
-      "source_location": "L68",
+      "source_location": "L124",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_checkpoint",
@@ -8281,7 +8432,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/accounts.py",
-      "source_location": "L77",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_accounts_accountvault_install",
@@ -8291,10 +8442,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "app/accounts.py",
-      "source_location": "L73",
+      "source_location": "L129",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "app_accounts_rationale_73",
+      "source": "app_accounts_rationale_129",
       "target": "app_accounts_accountvault_install",
       "confidence_score": 1.0
     },
@@ -8990,7 +9141,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_accounts.py",
-      "source_location": "L27",
+      "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests_test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration",
@@ -12416,7 +12567,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_accounts.py",
-      "source_location": "L74",
+      "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests_test_usage_is_account_scoped_persistent_and_removal_keeps_other_accounts",
@@ -18609,7 +18760,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_accounts.py",
-      "source_location": "L29",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests_test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration",
@@ -18624,6 +18775,17 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests",
+      "target": "tests_test_accounts_accounttests_test_account_choice_respects_both_windows_real_observations_and_bounded_probes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_accounts.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_accounts_accounttests",
       "target": "tests_test_accounts_accounttests_test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration",
       "confidence_score": 1.0
     },
@@ -18631,7 +18793,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_accounts.py",
-      "source_location": "L71",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests",
@@ -18644,7 +18806,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_accounts.py",
-      "source_location": "L76",
+      "source_location": "L116",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_accounts_accounttests_test_usage_is_account_scoped_persistent_and_removal_keeps_other_accounts",
@@ -20899,5 +21061,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5862d39b681a085f47c5658984656b0f5d551ba9"
+  "built_at_commit": "e99a75fc89c88bec048783494b674e33ea0ded1d"
 }

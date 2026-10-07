@@ -6,7 +6,7 @@ import stat
 import tempfile
 import unittest
 
-from app.accounts import AccountVault, auth_identity
+from app.accounts import AccountVault, auth_identity, choose_account
 from app.common import atomic_write
 from app.db import Database
 from tests.test_usage import account
@@ -20,6 +20,46 @@ def login(user, token='test-access-token'):
 
 
 class AccountTests(unittest.TestCase):
+    def test_account_choice_respects_both_windows_real_observations_and_bounded_probes(self):
+        now = 1800000
+        accounts = [{'account_id': key, 'status': 'ready'} for key in ('a', 'b')]
+        def sample(key, daily, weekly, reset, stamp=now):
+            return {**account(stamp, daily, weekly, reset), 'account_id': key}
+
+        samples = {'a': sample('a', 50, 100, now + 60),
+                   'b': sample('b', 50, 50, now + 300)}
+        self.assertEqual(choose_account(accounts, samples, now)['account_id'], 'b')
+        samples['a'] = sample('a', 50, 80, now + 60)
+        self.assertEqual(choose_account(accounts, samples, now)['account_id'], 'a')
+        samples['b'] = sample('b', 50, 20, now + 90)
+        self.assertEqual(choose_account(accounts, samples, now)['account_id'], 'b')  # Near reset: more weekly.
+        samples['b'] = sample('b', 50, 50, now + 300, stamp=now + 61)
+        self.assertEqual(choose_account(accounts, samples, now + 61)['account_id'], 'b')  # A crossed reset; no assumed refill.
+        samples['a'] = sample('a', 0, 0, now + 60, stamp=now - 3600)
+        samples['b'] = sample('b', 50, 50, now + 300)
+        self.assertEqual(choose_account(accounts, samples, now)['account_id'], 'b')  # Fresh before stale.
+        samples['a'] = sample('a', 100, 80, now + 60)
+        self.assertEqual(choose_account(accounts, samples, now)['account_id'], 'b')
+        samples['b'] = sample('b', 100, 20, now + 300)
+        decision = choose_account(accounts, samples, now, attempted=['a', 'b'])
+        self.assertEqual((decision['account_id'], decision['mode'], decision['reset_at']), ('a', 'wait', now + 60))
+        samples['a'] = sample('a', 100, 100, now + 60)
+        self.assertEqual(choose_account(accounts, samples, now)['account_id'], 'b')  # Never wait on A's 5h alone.
+        accounts[1]['status'] = 'needs_login'
+        decision = choose_account(accounts, samples, now)
+        self.assertEqual((decision['mode'], decision['reset_at']), ('wait', now + 60 + 86400))
+        accounts[1]['status'] = 'ready'
+        later = now + 60 + 86401
+        decision = choose_account(accounts, samples, later)
+        self.assertEqual(decision['mode'], 'verify')  # Time passed: check, never assert 100%.
+        self.assertIsNone(choose_account(accounts, samples, later, attempted=['a', 'b']))
+        samples['a'] = sample('a', 0, 0, now + 60, stamp=now - 3600)
+        decision = choose_account(accounts[:1], samples, now)
+        self.assertEqual(decision['mode'], 'verify')  # Stale positive values are not usable proof.
+        samples['a']['account_id'] = 'b'
+        self.assertEqual(choose_account(accounts[:1], samples, now)['mode'], 'verify')
+        self.assertIsNone(choose_account(accounts[:1], samples, now, attempted=['a']))
+
     def test_private_slots_refresh_identity_and_do_not_copy_sessions_or_configuration(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -47,7 +87,7 @@ class AccountTests(unittest.TestCase):
             for bad in ('../auth', '', None, 'a' * 65):
                 with self.assertRaises(ValueError):
                     vault.path(bad)
-            for bad in (b'not-json', b'{}', b'[]'):
+            for bad in (b'not-json', b'{}', b'[]', b'{"tokens": []}', b'{"tokens": null}'):
                 with self.assertRaisesRegex(ValueError, 'sign in again'):
                     auth_identity(bad)
             atomic_write(vault.path(one['account_id']), second)
