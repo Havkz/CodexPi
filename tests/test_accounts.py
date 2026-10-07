@@ -614,10 +614,45 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual((operation['source'], operation['id']), ('account-switch', result['operation_id']))
             self.assertNotIn('sent_at', operation)  # HTTP/account confirmation isn't goal confirmation.
             self.assertEqual(mapping, [(p['project_id'], p['codex_session_id'], p['project_path'], p['queue_position']) for p in c.db.all()])
+            # Switching away from a quota-empty account must carry the controller's
+            # own continuation pause, not strand the goal or borrow its old reset.
+            from app.accounts import finish_switch
+            c.db.update('first', operation=None, goal_status='paused')
+            c.db.record_usage({**account(time.time(), daily=100), 'ordinaryUsageAllowed': False})
+            await finish_switch(c, c.db.setting('account_switch'))
+            self.assertTrue(c.db.setting('account_wait')['goal_hold'])
+            saved_wait = c.db.setting('account_wait')
+            saved_switch = c.db.setting('account_switch')
+            for field in ('account_id', 'session_id', 'objective_hash'):
+                c.db.set_setting('account_wait', {**saved_wait, field: 'obsolete'})
+                await request_switch(c, ids[0])
+                self.assertNotIn('project_id', c.db.setting('account_switch'))
+                c.db.set_setting('account_switch', saved_switch)
+            c.db.set_setting('account_wait', saved_wait)
+            c.db.set_setting('manual_pause/first', True)
+            await request_switch(c, ids[0])
+            self.assertNotIn('project_id', c.db.setting('account_switch'))
+            c.db.set_setting('manual_pause/first', False)
+            c.db.set_setting('account_switch', saved_switch)
+            returning = await request_switch(c, ids[0])
+            self.assertEqual(c.db.setting('account_switch').get('project_id'), 'first')
+            self.assertTrue(c.db.setting('account_switch')['goal_hold'])
+            await c.poll_goals()
+            self.assertEqual(c.db.setting('selected'), 'first')
+            self.assertFalse(c.db.setting('manual_pause/first', False))
+            with patch('app.accounts.reload_native', AsyncMock(side_effect=reload_runtime)):
+                for _ in range(6):
+                    await tick(c)
+            self.assertEqual(c.db.setting('active_account'), ids[0])
+            self.assertIsNone(c.db.setting('account_wait'))
+            operation = json.loads(c.db.get('first')['operation'])
+            self.assertEqual(operation['id'], returning['operation_id'])
+            self.assertEqual(operation['account_id'], ids[0])
+            self.assertNotIn('sent_at', operation)
             # A user pause during another switch revokes the continuation, not the account change.
             c.db.update('first', operation=None, goal_status='active')
             loaded['goal'] = 'active'
-            await request_switch(c, ids[0])
+            await request_switch(c, ids[1])
             c.db.set_setting('manual_pause/first', True)
             with patch('app.accounts.reload_native', AsyncMock(side_effect=reload_runtime)):
                 for _ in range(6):

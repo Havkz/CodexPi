@@ -392,11 +392,20 @@ async def request_switch(controller, account_id, *, automatic=False, adding=Fals
     if selected:
         project = controller.db.get(selected)
         goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
-        if goal and goal['status'] in ('active', 'usageLimited') and controller.can_auto_resume(project):
+        wait = controller.db.setting('account_wait') or {}
+        objective_hash = hashlib.sha256(goal['objective'].encode()).hexdigest() if goal else None
+        # Only carry our own confirmed continuation pause, never a user pause
+        # or a wait belonging to another account/session/goal.
+        held_pause = bool(goal and goal['status'] == 'paused' and wait.get('goal_hold')
+            and all(wait.get(key) == value for key, value in (
+                ('account_id', current), ('project_id', selected),
+                ('session_id', project['codex_session_id']), ('project_path', project['project_path']),
+                ('goal_created_at', goal.get('createdAt')), ('objective_hash', objective_hash))))
+        if goal and (goal['status'] in ('active', 'usageLimited') or held_pause) and controller.can_auto_resume(project):
             state.update(project_id=selected, session_id=project['codex_session_id'],
                 project_path=project['project_path'], goal_created_at=goal.get('createdAt'),
-                objective_hash=hashlib.sha256(goal['objective'].encode()).hexdigest(),
-                before_status=goal['status'], goal_hold=goal['status'] == 'active')
+                objective_hash=objective_hash,
+                before_status=goal['status'], goal_hold=goal['status'] == 'active' or held_pause)
     if automatic:
         if (not controller.db.setting('auto_account_change', False) or not selected
                 or not await native_limit(controller, project, goal)):
