@@ -124,7 +124,7 @@ class Controller:
                    and self.db.setting('usage_account/' + project['project_id']) != self.db.setting('active_account'))
         if status != 'usage limited' or changed:
             fields['usage_limit'] = None
-        if changed and status != 'complete':
+        if status != 'complete':
             fields['completion_notified'] = 0
         if status in ('stalled', 'usage limited', 'limited by budget') and changed and operation.get('kind') == 'resume':
             fields['operation'] = None

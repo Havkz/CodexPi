@@ -413,7 +413,8 @@ async def tui_proxy(request):
                         operation = json.loads(project['operation'] or '{}')
                         if operation.get('kind') == 'resume':
                             controller.finish_resume(project, operation, 'cancelled', 'Native goal was cleared')
-                        controller.db.update(project['project_id'], goal_status='paused', operation=None, usage_limit=None)
+                        controller.db.update(project['project_id'], goal_status='paused', operation=None,
+                                             usage_limit=None, completion_notified=0)
                         await controller.cancel_wakes(project)
                         if selected == project['project_id']:
                             controller.db.set_setting('selected', None)

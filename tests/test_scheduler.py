@@ -732,7 +732,8 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
     async def test_gate_pauses_second_goal_before_native_execution(self):
         controller = self.controller
         controller.select('first')
-        controller.db.update('second', goal_status='complete', completion_notified=1, queue_position=None)
+        # The former goal may already have been cleared/paused before the new one.
+        controller.db.update('second', goal_status='paused', completion_notified=1, queue_position=None)
         calls = []
 
         class Upstream:
