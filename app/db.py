@@ -232,6 +232,11 @@ class Database:
         for position, project in enumerate((p for p in self.all() if p['queue_position'] is not None), 1):
             self.update(project['project_id'], queue_position=position)
 
+    def enqueue(self, project_id):
+        if self.get(project_id)['queue_position'] is None:
+            position = self.conn.execute('SELECT COALESCE(MAX(queue_position),0)+1 FROM projects').fetchone()[0]
+            self.update(project_id, queue_position=position)
+
     def backup(self, directory, keep=7):
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)

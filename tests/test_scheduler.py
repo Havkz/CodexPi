@@ -66,6 +66,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         c = self.controller
         c.select('first')
         c.db.update('first', goal_status='active')
+        c.db.update('second', queue_position=None)  # New prompt on a previously completed project.
         params = {'threadId': 'second', 'clientUserMessageId': 'user-message',
                   'input': [{'type': 'text', 'text': 'User prompt'}], 'cwd': '/outside',
                   'permissions': 'danger-full-access', 'runtimeWorkspaceRoots': ['/outside']}
@@ -76,6 +77,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 await submit(c, c.db.get('second'), params, upstream)
         upstream.rpc.assert_not_awaited()
         self.assertEqual(len(c.db.setting('prompts/second')), 1)
+        self.assertEqual(c.db.get('second')['queue_position'], 2)
         c.db.conn.close()
         c.db = Database(self.root / 'test.db')
         await c.advance_queue()
@@ -380,12 +382,18 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         c = self.controller
         c.select('first')
         c.db.update('first', goal_status='active')
+        c.db.update('second', queue_position=None)  # Reopened project was removed on completion.
         c.pause = AsyncMock(wraps=c.pause)
         await c.resume('second')
         self.assertEqual(c.db.setting('selected'), 'first')
         self.assertEqual(c.db.get('second')['queue_position'], 2)
         self.assertEqual(json.loads(c.db.get('second')['resume_result'])['status'], 'queued')
         c.pause.assert_not_awaited()
+        pending = json.loads(c.db.get('second')['operation'])
+        c.db.update('second', queue_position=None)  # Repair an already persisted legacy orphan.
+        self.assertEqual((await c.resume('second'))['operation_id'], pending['id'])
+        self.assertEqual(c.db.get('second')['queue_position'], 2)
+        self.assertEqual(json.loads(c.db.get('second')['operation']), pending)
         await c.run_now('second')
         self.assertEqual(c.db.setting('selected'), 'second')
         self.assertEqual(c.db.get('second')['queue_position'], 1)
@@ -724,6 +732,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
     async def test_gate_pauses_second_goal_before_native_execution(self):
         controller = self.controller
         controller.select('first')
+        controller.db.update('second', goal_status='complete', completion_notified=1, queue_position=None)
         calls = []
 
         class Upstream:
@@ -753,6 +762,8 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(response['result']['goal']['status'], 'paused')
                     self.assertEqual(calls[-1][1]['objective'], 'EXACT user objective')
                     self.assertEqual(controller.db.setting('selected'), 'first')
+                    self.assertEqual(controller.db.get('second')['queue_position'], 2)
+                    self.assertEqual(controller.db.get('second')['completion_notified'], 0)
                     before = len(calls)
                     for ident, method, params in ((2, 'turn/start', {'threadId': 'second'}),
                             (3, 'thread/fork', {'threadId': 'first'}),

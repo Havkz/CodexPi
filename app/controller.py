@@ -381,6 +381,7 @@ class Controller:
             if (operation.get('kind') == 'resume' and not operation.get('error')
                     and not self.db.setting('manual_pause/' + project_id, False)
                     and (not promote or self.db.setting('selected') == project_id)):
+                self.db.enqueue(project_id)
                 return {'ok': True, 'operation_id': operation.get('id')}
             if operation and operation.get('kind') != 'resume':
                 raise ValueError('Project has a pending lifecycle operation')
@@ -389,6 +390,8 @@ class Controller:
             goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
             if goal and goal['status'] == 'complete':
                 raise ValueError('Completed goals are never automatically restarted')
+            self.db.enqueue(project_id)
+            project = self.db.get(project_id)
             selected = self.db.setting('selected')
             if promote and selected and selected != project_id:
                 await self.pause(self.db.get(selected), preserve_status=True)
@@ -426,9 +429,15 @@ class Controller:
     async def recover(self):
         from .lifecycle import recover
         await recover(self)
-        with self.db.transaction():
-            self.db.compact_queue()
         rows = self.source.rows()
+        with self.db.transaction():
+            for project in self.db.all():
+                operation = json.loads(project['operation'] or '{}')
+                row = rows.get(project['codex_session_id'])
+                if (project['lifecycle'] == 'ready' and operation.get('kind') == 'resume'
+                        and not operation.get('error') and row and row['status'] != 'complete'):
+                    self.db.enqueue(project['project_id'])
+            self.db.compact_queue()
         if not self.db.setting('manual_pause_policy_initialized', False):
             # Legacy paused rows did not distinguish a user pause from queue
             # suspension. Do not guess authority to restart those sessions.

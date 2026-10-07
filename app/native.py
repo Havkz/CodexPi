@@ -368,9 +368,11 @@ async def tui_proxy(request):
                                 # Store the exact objective but never start a second model turn.
                                 params = {**params, 'status': 'paused'}
                                 import uuid
-                                controller.db.update(project['project_id'], operation=json.dumps({
-                                    'kind': 'resume', 'source': 'queue', 'id': str(uuid.uuid4()),
-                                    'requested_at': time.time()}))
+                                with controller.db.transaction():
+                                    controller.db.enqueue(project['project_id'])
+                                    controller.db.update(project['project_id'], operation=json.dumps({
+                                        'kind': 'resume', 'source': 'queue', 'id': str(uuid.uuid4()),
+                                        'requested_at': time.time()}))
                             else:
                                 controller.select(project['project_id'])
                     if method in ('turn/steer', 'thread/compact/start',

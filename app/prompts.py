@@ -37,6 +37,7 @@ async def submit(controller, project, params, upstream):
         with controller.db.transaction():
             controller.db.set_setting(key(project), queue)
             controller.db.set_setting('manual_pause/' + project['project_id'], False)
+            controller.db.enqueue(project['project_id'])
     selected = controller.db.setting('selected')
     if not controller.db.setting('pause_all', False) and (not selected or selected == project['project_id']):
         if not current and not project['operation']:
