@@ -37,9 +37,10 @@ def status_embed(controller, project, event, payload):
     status = kind if kind in titles and kind != 'critical' else project['goal_status']
     sections = []
     if offline:
-        age = max(0, int(time.monotonic() - controller.worker_seen)) if controller.worker_seen else None
-        sections.append('**Windows Worker**\n- Offline\n'
-            '│ Last heartbeat: ' + code(str(age) + 's ago' if age is not None else 'unavailable') + '\n'
+        heartbeat = controller.db.setting('windows_last_heartbeat')
+        last_seen = f'<t:{int(heartbeat)}:F> (<t:{int(heartbeat)}:R>)' if heartbeat else '`unavailable`'
+        sections.append('**Windows Worker**\n- ' + ('Online' if getattr(controller, 'windows_online', False) else 'Offline') + '\n'
+            '│ Last heartbeat: ' + last_seen + '\n'
             '│ Required: **yes**\n│ Auto resume: **' + ('enabled' if reason.get('requires_user') is False else 'disabled') + '**')
     lines = ['**Project**', '- ' + label, '│ Name: ' + code(project['display_name']),
              '│ Status: **' + plain(status) + '**']

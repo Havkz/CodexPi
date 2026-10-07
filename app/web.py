@@ -135,7 +135,8 @@ async def state(request):
     native = getattr(controller, 'native', None)
     native_online = bool(native and native.ws and not native.ws.closed)
     seen = getattr(controller, 'worker_seen', 0)
-    worker_age = max(0, time.monotonic() - seen) if seen else None
+    heartbeat = controller.db.setting('windows_last_heartbeat')
+    worker_age = max(0, time.monotonic() - seen) if seen else max(0, now - heartbeat) if heartbeat else None
     git_poll = getattr(controller, 'last_git_poll', 0)
     unsnooze_poll = getattr(controller, 'last_unsnooze_poll', 0)
     errors = getattr(controller, 'health_errors', {})
@@ -145,7 +146,8 @@ async def state(request):
         {'name': 'Native Codex Bridge', 'status': 'online' if native_online else 'offline',
          'checked_at': now, 'detail': 'Local native session connection'},
         {'name': 'Windows Worker', 'status': 'online' if controller.windows_online else 'offline',
-         'checked_at': now, 'heartbeat_age': worker_age, 'detail': 'Authenticated outbound connection'},
+         'checked_at': now, 'heartbeat_age': worker_age, 'heartbeat_at': heartbeat,
+         'detail': 'Authenticated outbound connection'},
         {'name': 'GitHub', 'status': 'error' if errors.get('github') else 'connected' if git_poll else 'unknown',
          'checked_at': now - (time.monotonic() - git_poll) if git_poll else None,
          'detail': controller.config['github_account'] + ' · private repositories', 'error': errors.get('github')},

@@ -65,6 +65,7 @@ async def worker_socket(request):
             elif body == {'type': 'alive'} and reconciled:
                 was_online = controller.windows_online
                 controller.worker_seen = time.monotonic()
+                controller.db.set_setting('windows_last_heartbeat', time.time())
                 if not was_online:
                     controller.db.set_setting('windows_availability', {'id': str(uuid.uuid4()), 'attempted': []})
                 # The first heartbeat may arrive while another project owns the

@@ -1,4 +1,5 @@
 import json
+from contextlib import closing
 from pathlib import Path
 import tempfile
 import time
@@ -12,6 +13,30 @@ from app.discord_bot import Bot, EMBED_COLORS, status_embed
 
 
 class DiscordTests(unittest.IsolatedAsyncioTestCase):
+    async def test_last_signed_windows_heartbeat_survives_disconnect_and_restart(self):
+        directory = self.enterContext(tempfile.TemporaryDirectory())
+        path = Path(directory) / 'test.db'
+        db = Database(path)
+        db.set_setting('windows_last_heartbeat', 1791370000)
+        db.conn.close()
+        db = Database(path)
+        self.enterContext(closing(db.conn))
+        controller = SimpleNamespace(db=db, redactor=Redactor(directory), worker_seen=0,
+                                     windows_online=False, unsnooze={})
+        project = {'display_name': 'Test', 'goal_status': 'stalled', 'codex_session_id': 's',
+                   'github_repo': None, 'project_id': 'p', 'queue_position': 1}
+        event = {'kind': 'stalled', 'event_id': 1, 'created_at': time.time()}
+        payload = {'embed_color': EMBED_COLORS[0],
+                   'reason': {'reason': 'Windows offline', 'requires_user': False}}
+        text = status_embed(controller, project, event, payload).description
+        self.assertIn('<t:1791370000:F>', text)
+        self.assertIn('Offline', text)
+        self.assertNotIn('unavailable', text)
+        controller.windows_online = True
+        self.assertIn('Online', status_embed(controller, project, event, payload).description)
+        db.set_setting('windows_last_heartbeat', None)
+        self.assertIn('unavailable', status_embed(controller, project, event, payload).description)
+
     async def test_embeds_and_crash_deduplication(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

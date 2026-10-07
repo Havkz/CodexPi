@@ -76,6 +76,7 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
                     await socket.send_json(channel.sign({'type': 'hello'}))
                     self.assertEqual(channel.verify(await socket.receive_json()), {'type': 'accepted'})
                     await socket.send_json(channel.sign({'type': 'inventory', 'jobs': []}))
+                    self.assertIsNone(c.db.setting('windows_last_heartbeat'))
 
                     async def heartbeat():
                         delivered.clear()
@@ -83,6 +84,8 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
                         await asyncio.wait_for(delivered.wait(), 2)
 
                     await heartbeat()
+                    heartbeat_at = c.db.setting('windows_last_heartbeat')
+                    self.assertAlmostEqual(heartbeat_at, time.time(), delta=2)
                     self.assertIsNone(c.db.get('first')['operation'])  # Other selected project retains its slot.
                     c.db.set_setting('selected', None)
                     await heartbeat()  # Already online, but the slot has become eligible.
