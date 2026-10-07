@@ -76,7 +76,8 @@ class Controller:
                     time.monotonic() - self.worker_seen < 60)
 
     async def start(self):
-        self.native = await Native(self.root / 'state/native.sock').connect()
+        from .accounts import notification
+        self.native = await Native(self.root / 'state/native.sock', lambda value: notification(self, value)).connect()
         async with self.lock:
             if not self.account_switch_pending:
                 from .accounts import refresh
@@ -98,7 +99,13 @@ class Controller:
 
     def record_goal(self, project, goal):
         status = NATIVE_STATUS[goal['status']]
-        self.record_status(project, status, last_activity=time.time())
+        operation = json.loads(project['operation'] or '{}')
+        owner = self.db.setting('usage_account/' + project['project_id'])
+        new_limit = bool(status == 'usage limited' and operation.get('sent_at')
+            and operation.get('account_id') == self.db.setting('active_account')
+            and owner != operation.get('account_id') and operation.get('before_updated_at') is not None
+            and goal.get('updatedAt', 0) > operation['before_updated_at'])
+        self.record_status(project, status, new_limit=new_limit, last_activity=time.time())
         if status == 'active':
             if project['goal_status'] != 'active':
                 self.clear_block(project)
@@ -106,11 +113,13 @@ class Controller:
                 and not self.account_holds_goal(project)):
             self.db.set_setting('selected', None)
 
-    def record_status(self, project, status, *, prompt_limit=None, **fields):
+    def record_status(self, project, status, *, prompt_limit=None, new_limit=False, **fields):
         # State and notification outbox must survive (or roll back) together,
         # including changes first observed during restart recovery.
         operation = json.loads(project['operation'] or '{}')
-        changed = status != project['goal_status']
+        changed = (status != project['goal_status'] or new_limit or prompt_limit is not None
+                   and self.db.setting('active_account')
+                   and self.db.setting('usage_account/' + project['project_id']) != self.db.setting('active_account'))
         if status != 'usage limited' or changed:
             fields['usage_limit'] = None
         if status in ('stalled', 'usage limited', 'limited by budget') and changed and operation.get('kind') == 'resume':
@@ -610,7 +619,8 @@ class Controller:
                 async with self.lock:
                     if self.native.ws is None or self.native.ws.closed:
                         await self.native.close()
-                        self.native = await Native(self.root / 'state/native.sock').connect()
+                        from .accounts import notification
+                        self.native = await Native(self.root / 'state/native.sock', lambda value: notification(self, value)).connect()
                         await self.recover()
                     from .lifecycle import recover
                     await recover(self)

@@ -195,7 +195,7 @@ class Database:
     def delete_account_usage(self, account_id):
         if not account_id or self.setting('active_account', '') == account_id:
             raise ValueError('Switch away from this account before removing it')
-        with self.transaction():
+        with contextlib.nullcontext() if self.conn.in_transaction else self.transaction():
             self.conn.execute('DELETE FROM usage_samples WHERE account_id=?', (account_id,))
             self.conn.execute('DELETE FROM settings WHERE key=?', ('account_usage/' + account_id,))
 

@@ -1,6 +1,7 @@
 'use strict';
 // No chart dependency, synthetic samples or client-side quota reset predictions.
 let usageView = 'weekly', usageData, usageLoading = false, usageRetryAt = 0;
+let usageAccount = null;
 const usageElement = id => document.getElementById('usage-' + id);
 const usagePercent = value => Number.isFinite(value) ? value.toLocaleString('de-DE', {maximumFractionDigits: 1}) + ' %' : '—';
 const usageDate = stamp => new Date(stamp * 1000).toLocaleString('de-DE', {day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'});
@@ -64,15 +65,23 @@ function renderUsage() {
     : samples.length === 1 ? 'Erster Messpunkt gespeichert · der Verlauf wächst mit weiteren Messungen.'
     : '0–100 % verfügbar · Linie verbindet echte Messpunkte · Messlücken bleiben offen · ältere Werte verdichtet.';
 }
-async function refreshUsage(checked) {
+async function refreshUsage(checked, accountId = null) {
+  if (usageAccount !== accountId) {
+    usageAccount = accountId; usageRetryAt = 0;
+    usageData = {account_id: accountId, windows: {}, history: {}, checked_at: null, server_time: Date.now() / 1000};
+    renderUsage(); // Never leave another account's percentages/history on screen.
+  }
   if (usageLoading || Date.now() < usageRetryAt || (usageData && checked === usageData.checked_at && Date.now() < usageData.refreshAfter)) return;
   usageLoading = true;
   try {
     const response = await fetch('/api/usage', {signal: AbortSignal.timeout(10000)});
     if (!response.ok) throw new Error('Usage-Verlauf nicht erreichbar (' + response.status + ')');
-    usageData = await response.json(); usageData.refreshAfter = Date.now() + 60000;
+    const data = await response.json();
+    if ((data.account_id ?? null) !== usageAccount) return; // A previous account's in-flight response.
+    usageData = data; usageData.refreshAfter = Date.now() + 60000;
     renderUsage();
   } catch (error) {
+    if (accountId !== usageAccount) return;
     usageElement('freshness').textContent = error.message + ' · angezeigte Werte möglicherweise veraltet';
     usageRetryAt = Date.now() + 60000;
   } finally { usageLoading = false; }

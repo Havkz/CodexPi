@@ -188,6 +188,186 @@ class AccountObservationTests(unittest.IsolatedAsyncioTestCase):
 
 
 class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
+    async def test_automatic_change_requires_native_limit_and_waits_or_probes_without_ping_pong(self):
+        from app.accounts import automatic_change, remember
+        from tests.test_scheduler import SchedulerTests
+        fixture = SchedulerTests()
+        fixture.setUp()
+        c, home, now = fixture.controller, fixture.root / 'codex-home', time.time()
+        c.account_vault = AccountVault(c.root, home)
+        raws = [login('first'), login('second')]
+        ids = [auth_identity(raw)[0] for raw in raws]
+        loaded = {'raw': raws[0], 'goal': 'usageLimited'}
+        samples = {ids[0]: {**account(now, daily=100, reset=now + 60), 'ordinaryUsageAllowed': False},
+                   ids[1]: {**account(now, daily=20, reset=now + 120), 'ordinaryUsageAllowed': True}}
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/goal/get':
+                return {'goal': {'status': loaded['goal'], 'objective': 'Same goal', 'createdAt': 1, 'updatedAt': 10}}
+            if method == 'account/read':
+                return {'account': {'type': 'chatgpt'}}
+            if method == 'account/rateLimits/read':
+                return {**samples[auth_identity(loaded['raw'])[0]], 'accountId': 'workspace'}
+            if method == 'getAuthStatus':
+                return {'authMethod': 'chatgpt', 'authToken': json.loads(loaded['raw'])['tokens']['access_token']}
+            raise AssertionError('Automatic selection sent an execution RPC: ' + method)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        try:
+            for index in reversed(range(2)):
+                atomic_write(home / 'auth.json', raws[index]); loaded['raw'] = raws[index]
+                metadata, sample = await observe_account(c.native, c.account_vault)
+                remember(c, metadata, sample)
+            c.db.activate_account(ids[0]); c.select('first')
+            c.record_status(c.db.get('first'), 'usage limited')
+            c.native.rpc.reset_mock()
+            await automatic_change(c)
+            c.native.rpc.assert_not_awaited()  # Default off really means no automatic decision.
+            c.db.set_setting('auto_account_change', True)
+            loaded['goal'] = 'paused'
+            await automatic_change(c)
+            self.assertFalse(switching(c))  # No inference from DB status, stale usage or inactivity.
+            loaded['goal'] = 'usageLimited'
+            c.db.set_setting('account_selection', {**c.db.setting('account_selection'), 'next_check': 0})
+            await automatic_change(c)
+            self.assertEqual(c.db.setting('account_switch')['target_account'], ids[1])
+            self.assertEqual(c.db.setting('account_selection')['attempted'], ids)
+            c.db.set_setting('account_switch', {'phase': 'complete'})
+            c.db.activate_account(ids[1])
+            loaded['raw'] = raws[1]
+            atomic_write(home / 'auth.json', raws[1])
+            samples[ids[1]] = {**account(now, daily=100, reset=now + 120), 'ordinaryUsageAllowed': False}
+            c.db.record_usage({**samples[ids[1]], 'checked_at': now})
+            c.db.record_usage({**samples[ids[0]], 'checked_at': now}, ids[0])
+            c.db.set_setting('account_selection', {**c.db.setting('account_selection'), 'next_check': 0})
+            await automatic_change(c)
+            self.assertEqual(c.db.setting('account_selection')['waiting_for']['account_id'], ids[0])
+            self.assertEqual(c.db.setting('account_switch')['target_account'], ids[0])  # A's earlier 5h reset.
+            c.db.set_setting('auto_account_change', False)
+            with patch('app.native.idle_thread', AsyncMock(return_value=False)):
+                c.native.rpc.side_effect = lambda method, params, **kw: {'data': ['first']} if method == 'thread/loaded/list' else {}
+                await tick(c)
+            self.assertEqual(c.db.setting('account_switch')['target_account'], ids[1])
+            self.assertEqual(c.db.setting('account_switch')['phase'], 'waiting_turn')
+            self.assertFalse(c.db.setting('account_switch')['automatic'])
+            # A new native limit after the mapped B-resume is a B event, even if
+            # polling did not observe the brief active transition.
+            c.db.set_setting('account_switch', {'phase': 'complete'})
+            c.db.update('first', operation=json.dumps({'kind': 'resume', 'id': 'b-resume', 'account_id': ids[1],
+                                                     'sent_at': now, 'before_updated_at': 10}))
+            c.record_goal(c.db.get('first'), {'status': 'usageLimited', 'updatedAt': 11})
+            self.assertEqual(c.db.setting('usage_account/first'), ids[1])
+            self.assertEqual(c.db.conn.execute("SELECT COUNT(*) FROM events WHERE kind='usage limited'").fetchone()[0], 2)
+            c.record_goal(c.db.get('first'), {'status': 'usageLimited', 'updatedAt': 11})
+            self.assertEqual(c.db.conn.execute("SELECT COUNT(*) FROM events WHERE kind='usage limited'").fetchone()[0], 2)
+        finally:
+            fixture.tearDown()
+
+    async def test_regular_browser_login_cancel_and_removal_preserve_accounts_and_native_context(self):
+        from app.accounts import public_state, recover_switch, remove_account
+        from tests.test_scheduler import SchedulerTests
+        import uuid
+        fixture = SchedulerTests()
+        fixture.setUp()
+        c, home = fixture.controller, fixture.root / 'codex-home'
+        c.account_vault = AccountVault(c.root, home)
+        raws = [login('first'), login('second')]
+        ids = [auth_identity(raw)[0] for raw in raws]
+        loaded = {'raw': raws[0], 'goal': 'active', 'turn': 'idle'}
+        goal = {'objective': 'Keep context', 'createdAt': 17, 'updatedAt': 20}
+        url = ('https://auth.openai.com/oauth/authorize?response_type=code&'
+               'redirect_uri=http%3A%2F%2Flocalhost%3A1455%2Fauth%2Fcallback&state=test-state&'
+               'code_challenge=test-pkce&code_challenge_method=S256')
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/goal/get':
+                return {'goal': {**goal, 'status': loaded['goal']}}
+            if method == 'thread/goal/set':
+                loaded['goal'] = params['status']; return {}
+            if method == 'thread/loaded/list':
+                return {'data': ['first']}
+            if method == 'thread/read':
+                return {'thread': {'status': {'type': loaded['turn']}}}
+            if method == 'account/read':
+                return {'account': {'type': 'chatgpt'} if loaded['raw'] else None}
+            if method == 'account/rateLimits/read':
+                return {**account(time.time()), 'accountId': 'workspace', 'ordinaryUsageAllowed': True}
+            if method == 'getAuthStatus':
+                return {'authMethod': 'chatgpt', 'authToken': json.loads(loaded['raw'])['tokens']['access_token']}
+            if method == 'account/login/start':
+                self.assertIsNone(loaded['raw'])  # Native reload actually signed out locally.
+                return {'type': 'chatgpt', 'loginId': str(uuid.uuid4()), 'authUrl': url}
+            if method == 'account/login/cancel':
+                return {}
+            raise AssertionError('Unexpected native execution: ' + method)
+        async def reloaded(controller, state):
+            loaded['raw'] = home.joinpath('auth.json').read_text() if home.joinpath('auth.json').exists() else None
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        c.worker, c.worker_seen = SimpleNamespace(closed=False), time.monotonic()
+        c.cancel_wakes = AsyncMock()
+        atomic_write(home / 'auth.json', raws[0])
+        atomic_write(home / 'sessions/original.jsonl', 'Original native history')
+        atomic_write(home / 'config.toml', 'preserve = true')
+        try:
+            await refresh(c)
+            c.select('first')
+            c.db.update('first', goal_status='active')
+            mapping = [(p['codex_session_id'], p['project_path'], p['queue_position']) for p in c.db.all()]
+            with patch('app.accounts.reload_native', AsyncMock(side_effect=reloaded)), patch('app.worker_server.send', AsyncMock()) as send:
+                await request_switch(c, None, adding=True)
+                # A forged early cancel cannot bypass the running-turn barrier.
+                with self.assertRaisesRegex(ValueError, 'No failed or pending'):
+                    await recover_switch(c, restore=True)
+                for _ in range(6):
+                    await tick(c)
+                self.assertEqual(c.db.setting('account_switch')['phase'], 'logging_in')
+                self.assertFalse(home.joinpath('auth.json').exists())
+                self.assertEqual(c.account_vault.path(ids[0]).read_text(), raws[0])
+                self.assertEqual(send.await_args.args[1]['url'], url)
+                exported = json.dumps(public_state(c))
+                self.assertNotIn(url, exported)
+                self.assertNotIn('test-access', exported)
+                atomic_write(home / 'auth.json', raws[1])
+                loaded['raw'] = raws[1]  # Actual native callback; notification may have been lost.
+                for _ in range(3):
+                    await tick(c)
+                self.assertEqual(c.db.setting('active_account'), ids[1])
+                self.assertEqual(len(c.db.setting('accounts')), 2)
+                self.assertEqual(public_state(c)['account_operation']['phase'], 'confirming_resume')
+                self.assertIsNone(c.db.get('first')['resume_result'])
+                c.db.update('first', operation=None)
+                loaded['goal'] = 'paused'
+                c.db.set_setting('manual_pause/first', True)
+                await request_switch(c, None, adding=True)
+                for _ in range(5):
+                    await tick(c)
+                self.assertEqual(c.db.setting('account_switch')['phase'], 'logging_in')
+                await recover_switch(c, restore=True)
+                loaded['turn'] = 'active'
+                await tick(c)
+                self.assertEqual(c.db.setting('account_switch')['phase'], 'waiting_turn')
+                self.assertFalse(home.joinpath('auth.json').exists())
+                loaded['turn'] = 'idle'
+                for _ in range(6):
+                    await tick(c)
+                self.assertEqual(c.db.setting('active_account'), ids[1])
+                self.assertTrue(c.db.setting('manual_pause/first'))
+                self.assertIsNone(c.db.get('first')['operation'])
+            with self.assertRaisesRegex(ValueError, 'exact account name'):
+                remove_account(c, ids[0], 'wrong')
+            with self.assertRaisesRegex(ValueError, 'active account'):
+                remove_account(c, ids[1], 'second@example.test')
+            with patch.object(c.db, 'delete_account_usage', side_effect=RuntimeError('Simulated crash')):
+                with self.assertRaises(RuntimeError):
+                    remove_account(c, ids[0], 'first@example.test')
+            await tick(c)  # The durable removal journal finishes without restoring credentials.
+            self.assertIsNone(c.db.setting('account_remove'))
+            self.assertEqual([a['account_id'] for a in c.db.setting('accounts')], [ids[1]])
+            self.assertTrue(c.account_vault.path(ids[1]).exists())
+            self.assertEqual(home.joinpath('sessions/original.jsonl').read_text(), 'Original native history')
+            self.assertEqual(home.joinpath('config.toml').read_text(), 'preserve = true')
+            self.assertEqual(mapping, [(p['codex_session_id'], p['project_path'], p['queue_position']) for p in c.db.all()])
+            self.assertFalse(any(call.args[0] in ('account/logout', 'logout', 'turn/start', 'turn/interrupt') for call in c.native.rpc.await_args_list))
+        finally:
+            fixture.tearDown()
+
     async def test_account_reset_wait_and_notifications_never_borrow_another_accounts_state(self):
         from app.accounts import bind_legacy_limits, finish_switch, fresh_usage, resume_account_wait, wake_key
         from app.discord_bot import EMBED_COLORS, status_embed

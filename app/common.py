@@ -8,11 +8,29 @@ import secrets
 import tempfile
 import time
 import unicodedata
+from urllib.parse import parse_qs, urlsplit
 
 STATUSES = ('active', 'paused', 'stalled', 'usage limited', 'limited by budget', 'complete')
 NATIVE_STATUS = {'active': 'active', 'paused': 'paused', 'blocked': 'stalled',
                  'usageLimited': 'usage limited', 'budgetLimited': 'limited by budget',
                  'complete': 'complete'}
+
+
+def codex_login_url(value):
+    """Only the native managed OAuth ceremony, never an arbitrary worker/browser URL."""
+    if not isinstance(value, str) or len(value) > 8192 or any(ord(c) < 33 for c in value):
+        raise ValueError('Invalid native Codex login URL')
+    url = urlsplit(value)
+    query = parse_qs(url.query)
+    if (url.scheme != 'https' or url.netloc not in ('auth.openai.com', 'chatgpt.com')
+            or url.path not in ('/oauth/authorize', '/auth/authorize') or url.fragment
+            or query.get('redirect_uri') != ['http://localhost:1455/auth/callback']
+            or query.get('response_type') != ['code'] or len(query.get('state', [])) != 1
+            or len(query.get('code_challenge', [])) != 1
+            or query.get('code_challenge_method') != ['S256']
+            or any(key in query for key in ('access_token', 'refresh_token', 'id_token', 'code'))):
+        raise ValueError('Login requires the official Codex OAuth URL and its local callback')
+    return value
 
 
 def block_summary(project, reason=None, status=None):

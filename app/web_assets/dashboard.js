@@ -1,5 +1,6 @@
 'use strict';
 let state, dragging, refreshing = false, busy = false, connected = false, detailId = null, lifecycleIntent, pendingAction, submittingProject;
+let accountSubmitting = false, pendingAccount, removingAccount;
 const $ = id => document.getElementById(id);
 const node = (tag, text = '', cls = '') => {
   const el = document.createElement(tag); el.textContent = text; el.className = cls; return el;
@@ -45,6 +46,65 @@ function block(p) {
   }
   return box;
 }
+function accountPending() {
+  return accountSubmitting || Boolean(state?.account_operation?.phase && !['complete', 'failed', 'recovery_required'].includes(state.account_operation.phase));
+}
+function renderAccounts() {
+  const current = state.accounts?.find(a => a.account_id === state.active_account), operation = state.account_operation || {};
+  $('account-current').textContent = current?.name || 'Account noch nicht bestätigt';
+  const pending = accountPending(), blocked = pending || operation.phase === 'recovery_required';
+  const summary = $('account-menu').querySelector('summary');
+  summary.setAttribute('aria-disabled', String(blocked || !connected));
+  summary.classList.toggle('loading', pending); summary.setAttribute('aria-busy', String(pending));
+  if (blocked) $('account-menu').open = false;
+  $('account-options').replaceChildren(...(state.accounts || []).map(account => {
+    const row = node('div', '', 'account-option'), invalid = account.status !== 'ready';
+    const choose = button((invalid ? '⚠ ' : '') + account.name + (account.account_id === state.active_account ? ' · aktiv' : ''),
+      () => accountAct(invalid ? 'account-add' : 'account-switch', {account_id: account.account_id}), null, invalid ? 'account-warning' : '');
+    choose.disabled = blocked || !connected || !invalid && account.account_id === state.active_account;
+    if (invalid) choose.title = 'Erneute reguläre Anmeldung erforderlich';
+    const remove = button('×', () => {
+      removingAccount = account; $('account-remove-name').textContent = account.name;
+      $('account-remove-error').textContent = ''; $('account-menu').open = false;
+      $('account-remove-dialog').showModal();
+    }, null, 'danger');
+    remove.setAttribute('aria-label', account.name + ' entfernen');
+    remove.disabled = blocked || !connected || account.account_id === state.active_account;
+    if (account.account_id === state.active_account) remove.title = 'Vor dem Entfernen zu einem anderen Account wechseln';
+    row.append(choose, remove); return row;
+  }));
+  const add = button('＋ Account hinzufügen', () => accountAct('account-add'));
+  add.disabled = blocked || !connected; $('account-options').append(add);
+  const labels = {waiting_turn: 'Accountwechsel wartet auf den Abschluss des aktuellen Turns …',
+    checkpointing: 'Bisherige Anmeldung wird sicher gespeichert …', installing: 'Anmeldung wird gewechselt …',
+    reloading: 'Native Codex-Verbindung wird wiederhergestellt …', starting_login: 'Regulärer Browserlogin wird gestartet …',
+    logging_in: 'Login im Windows-Browser abschließen (maximal 10 Minuten).',
+    verifying: 'Aktiver Account und echte Limits werden bestätigt …', resuming: 'Bestehende Session wird fortgesetzt …',
+    confirming_resume: 'Account bestätigt; native Fortsetzung wird noch überprüft …'};
+  $('account-status').textContent = accountSubmitting ? 'Anfrage wird übermittelt …' : operation.error || operation.message || labels[operation.phase]
+    || (state.account_wait ? 'Account bestätigt; auf echte verfügbare Usage warten' + (state.account_wait.reset_at ? ' · Reset: ' + date(state.account_wait.reset_at) : '')
+      : operation.phase === 'complete' ? 'Account und Limits bestätigt.' : 'Anmeldungen bleiben geschützt auf dem Pi.');
+  $('account-status').classList.toggle('account-warning', Boolean(operation.error));
+  $('account-recovery').hidden = operation.phase !== 'recovery_required' && operation.phase !== 'logging_in';
+  $('account-retry').hidden = operation.phase !== 'recovery_required' || operation.failed_phase === 'starting_login';
+  $('account-restore').textContent = operation.phase === 'logging_in' ? 'Login abbrechen · bisherigen Account wiederherstellen' : 'Bisherigen Account wiederherstellen';
+  for (const id of ['account-retry', 'account-restore']) $(id).disabled = accountSubmitting || !connected;
+  if (!busy) $('auto-account-change').checked = Boolean(state.auto_account_change);
+  $('auto-account-change').disabled = busy || accountSubmitting || !connected;
+}
+async function accountAct(action, extra = {}) {
+  if (accountSubmitting || !connected || busy) return false;
+  if (accountPending() && action !== 'account-restore') return false;
+  accountSubmitting = true; $('account-menu').open = false; render();
+  try {
+    const response = await fetch('/api/action', {method: 'POST', signal: AbortSignal.timeout(45000),
+      headers: {'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf}, body: JSON.stringify({action, ...extra})});
+    const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Account-Aktion fehlgeschlagen');
+    if (result.operation_id) pendingAccount = {id: result.operation_id, deadline: Date.now() + 75 * 60000};
+    return true;
+  } catch (error) { $('notice').textContent = error.message; return false; }
+  finally { accountSubmitting = false; await refresh(); render(); }
+}
 async function act(action, project_id, extra = {}) {
   if (busy || !connected) return;
   busy = true; submittingProject = ['resume', 'run-now'].includes(action) ? project_id : null;
@@ -75,6 +135,7 @@ function actions(p, compact = false, inDetail = false) {
     const loading = action === 'resume' && (resuming || pendingAction?.project_id === p.project_id || submittingProject === p.project_id);
     if (loading) { b.textContent = 'Resume …'; b.classList.add('loading'); b.setAttribute('aria-busy', 'true'); }
     b.disabled = busy || !connected || p.lifecycle !== 'ready' || p.goal_status === 'complete' ||
+      (['resume', 'run-now'].includes(action) && (accountPending() || state.account_operation?.phase === 'recovery_required')) ||
       (action === 'resume' && (p.goal_status === 'active' || resuming)) ||
       (action === 'pause' && p.goal_status === 'paused' && p.manual_paused && !operation.kind);
     result.append(b);
@@ -145,6 +206,7 @@ function render() {
   const queue = state.projects.filter(p => p.queue_position !== null);
   const active = state.projects.find(p => p.project_id === state.selected);
   const stalled = state.projects.filter(p => p.goal_status === 'stalled').length;
+  renderAccounts();
   $('pause-all').disabled = busy || !connected; $('logout').disabled = busy || !connected;
   if (!busy) $('auto-continue').checked = Boolean(state.auto_continue);
   $('auto-continue').disabled = busy || !connected;
@@ -202,6 +264,16 @@ async function refresh() {
     if (response.status === 401) { location.reload(); return; }
     if (!response.ok) throw new Error('Dashboard nicht erreichbar');
     state = await response.json(); connected = true;
+    if (pendingAccount) {
+      const operation = state.account_operation || {};
+      if (operation.id === pendingAccount.id && ['complete', 'failed', 'recovery_required'].includes(operation.phase)) {
+        if (operation.error) $('notice').textContent = operation.error;
+        pendingAccount = null;
+      } else if (Date.now() > pendingAccount.deadline) {
+        $('notice').textContent = 'Keine Account-Bestätigung erhalten. Controller-Zustand prüfen; kein automatischer erneuter Wechsel.';
+        pendingAccount = null;
+      }
+    }
     if (pendingAction) {
       const project = state.projects.find(p => p.project_id === pendingAction.project_id);
       const result = project?.resume_result ? JSON.parse(project.resume_result) : null;
@@ -213,7 +285,7 @@ async function refresh() {
       }
     }
     $('freshness').textContent = 'Live · ' + new Date().toLocaleTimeString('de-DE'); render();
-    refreshUsage(state.account_usage?.checked_at);
+    refreshUsage(state.account_usage?.checked_at, state.active_account);
   } catch (err) {
     connected = false; $('freshness').textContent = 'Verbindung unterbrochen · Daten möglicherweise veraltet';
     if (pendingAction && Date.now() > pendingAction.deadline) { pendingAction = null; busy = false; }
@@ -286,6 +358,18 @@ $('lifecycle-form').onsubmit = async event => {
 };
 $('pause-all').onclick = () => act('pause-all'); $('logout').onclick = () => act('logout');
 $('auto-continue').onchange = event => act('auto-continue', null, {enabled: event.target.checked});
+$('auto-account-change').onchange = event => act('auto-account-change', null, {enabled: event.target.checked});
+$('account-retry').onclick = () => accountAct('account-retry');
+$('account-restore').onclick = () => accountAct('account-restore');
+$('account-remove-cancel').onclick = () => $('account-remove-dialog').close();
+$('account-remove-form').onsubmit = async event => {
+  event.preventDefault(); if (accountSubmitting || !removingAccount) return;
+  $('account-remove-submit').disabled = true; $('account-remove-cancel').disabled = true;
+  const ok = await accountAct('account-remove', {account_id: removingAccount.account_id, confirmation: removingAccount.name});
+  $('account-remove-submit').disabled = false; $('account-remove-cancel').disabled = false;
+  if (ok) { $('account-remove-dialog').close(); removingAccount = null; }
+  else $('account-remove-error').textContent = $('notice').textContent;
+};
 $('close-detail').onclick = () => $('project-dialog').close();
 $('project-dialog').addEventListener('close', () => { detailId = null; });
-refresh(); setInterval(() => { if (!dragging && (!busy || pendingAction) && (!document.hidden || pendingAction)) refresh(); }, 2000);
+refresh(); setInterval(() => { if (!dragging && (!busy || pendingAction) && (!document.hidden || pendingAction || pendingAccount || accountPending())) refresh(); }, 2000);

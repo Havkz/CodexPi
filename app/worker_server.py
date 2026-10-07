@@ -91,6 +91,13 @@ async def worker_socket(request):
             elif body.get('type') == 'started':
                 controller.db.conn.execute('UPDATE jobs SET status=?,updated_at=? WHERE job_id=? AND status=?',
                                           ('running', time.time(), body['job_id'], 'sent'))
+            elif body.get('type') == 'account_login_result':
+                state = controller.db.setting('account_switch', {})
+                if state.get('id') == body.get('operation_id') and state.get('phase') == 'logging_in':
+                    if type(body.get('opened')) is not bool:
+                        raise ValueError('Invalid account login acknowledgement')
+                    controller.db.set_setting('account_login_browser', {
+                        'operation_id': state['id'], 'opened': body['opened']})
             else:
                 raise ValueError('Unknown worker message')
     except (ValueError, asyncio.TimeoutError, ConnectionError):

@@ -167,6 +167,8 @@ async def state(request):
         'discord_online': bool(controller.bot and controller.bot.is_ready()),
         'unsnooze': controller.unsnooze, 'github_account': controller.config['github_account'],
         'infrastructure': infrastructure, 'server_time': now}
+    from .accounts import public_state
+    payload.update(public_state(controller))
     return safe_json(controller, payload, csrf=session(request)['csrf'])
 
 
@@ -193,6 +195,7 @@ async def usage(request):
     account = controller.db.setting('account_usage', {})
     now = time.time()
     return safe_json(controller, {'windows': windows(account), 'history': controller.db.usage_history(now),
+        'account_id': controller.db.setting('active_account'),
         'checked_at': account.get('checked_at'), 'server_time': now,
         'error': getattr(controller, 'health_errors', {}).get('account_usage')})
 
@@ -239,7 +242,16 @@ async def action(request):
     if getattr(controller, 'maintenance', False) and action_name != 'logout':
         raise ValueError('Codex CLI update is in progress; retry after maintenance completes')
     ident = body.get('project_id')
-    if action_name in ('rename', 'delete'):
+    if action_name in ('account-switch', 'account-add', 'account-remove', 'account-retry', 'account-restore'):
+        from .accounts import request_switch, recover_switch, remove_account
+        async with controller.lock:
+            if action_name in ('account-switch', 'account-add'):
+                return safe_json(controller, await request_switch(controller, body.get('account_id'),
+                    adding=action_name == 'account-add'))
+            if action_name in ('account-retry', 'account-restore'):
+                return safe_json(controller, await recover_switch(controller, restore=action_name == 'account-restore'))
+            remove_account(controller, body.get('account_id'), body.get('confirmation'))
+    elif action_name in ('rename', 'delete'):
         from .lifecycle import begin
         try:
             await begin(controller, ident, action_name, name=body.get('name'), confirmation=body.get('confirmation'),
@@ -266,11 +278,11 @@ async def action(request):
                 if project['lifecycle'] == 'ready' and project['codex_session_id'] and project['goal_status'] != 'complete':
                     await controller.pause(project, manual=True,
                         preserve_status=project['goal_status'] not in ('active', 'usage limited'))
-    elif action_name == 'auto-continue':
+    elif action_name in ('auto-continue', 'auto-account-change'):
         if type(body.get('enabled')) is not bool:
-            raise ValueError('Auto Continue requires a boolean enabled value')
+            raise ValueError('Automatic policy requires a boolean enabled value')
         async with controller.lock:
-            controller.db.set_setting('auto_continue', body['enabled'])
+            controller.db.set_setting('auto_continue' if action_name == 'auto-continue' else 'auto_account_change', body['enabled'])
     elif action_name == 'reorder':
         async with controller.lock:
             controller.db.reorder(body['ids'])

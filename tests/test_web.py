@@ -59,12 +59,33 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 state = await (await client.get('/api/state')).json()
                 self.assertEqual(state['csrf'], csrf)
                 self.assertFalse(state['auto_continue'])
+                self.assertFalse(state['auto_account_change'])
+                db.set_setting('accounts', [{'account_id': 'saved', 'name': 'Visible account', 'status': 'ready',
+                                             'access_token': 'must-never-be-exposed'}])
+                db.set_setting('account_switch', {'id': 'pending', 'phase': 'logging_in',
+                                                 'login_url': 'private-oauth-url', 'authToken': 'private-native-proof'})
+                account_state = await (await client.get('/api/state')).json()
+                self.assertEqual(account_state['accounts'][0]['name'], 'Visible account')
+                for hidden in ('must-never-be-exposed', 'private-oauth-url', 'private-native-proof'):
+                    self.assertNotIn(hidden, json.dumps(account_state))
+                db.set_setting('account_switch', {})
+                with patch('app.accounts.request_switch', AsyncMock(return_value={'ok': True, 'operation_id': 'account-operation'})) as switch:
+                    body = {'action': 'account-switch', 'account_id': 'saved'}
+                    self.assertEqual((await client.post('/api/action', json=body)).status, 403)
+                    self.assertEqual((await client.post('/api/action', json=body, headers={'X-CSRF-Token': csrf})).status, 200)
+                    switch.assert_awaited_once()
                 for enabled, expected in [('true', 400), (True, 200), (False, 200)]:
                     result = await client.post('/api/action', json={'action': 'auto-continue', 'enabled': enabled},
                         headers={'X-CSRF-Token': csrf})
                     self.assertEqual(result.status, expected)
                     if expected == 200:
                         self.assertEqual((await (await client.get('/api/state')).json())['auto_continue'], enabled)
+                for enabled, expected in [('true', 400), (True, 200), (False, 200)]:
+                    result = await client.post('/api/action', json={'action': 'auto-account-change', 'enabled': enabled},
+                        headers={'X-CSRF-Token': csrf})
+                    self.assertEqual(result.status, expected)
+                    if expected == 200:
+                        self.assertEqual((await (await client.get('/api/state')).json())['auto_account_change'], enabled)
                 self.assertNotIn('password_hash', str(state))
                 self.assertEqual(len(state['infrastructure']), 6)
                 self.assertEqual(state['infrastructure'][3]['status'], 'unknown')

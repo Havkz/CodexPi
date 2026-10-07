@@ -10,7 +10,7 @@ import re
 import time
 import uuid
 
-from .common import atomic_write
+from .common import atomic_write, codex_login_url
 from .usage import number, windows
 
 
@@ -144,6 +144,17 @@ class AccountVault:
             raise ValueError('Saved login identity does not match the selected account')
         atomic_write(self.auth_path, raw)
 
+    def clear_active(self, account_id):
+        # Local sign-out only, after checkpointing and the idle barrier. Upstream
+        # logout can revoke the saved OAuth login and must never be used here.
+        if auth_identity(self.read(self.path(account_id)))[0] != account_id:
+            raise ValueError('The previous login is not safely saved')
+        if self.auth_path.is_symlink():
+            raise ValueError('Active credentials must not be a symlink')
+        if self.auth_path.exists() and auth_identity(self.read(self.auth_path))[0] != account_id:
+            raise ValueError('The active login changed during local sign-out')
+        self.auth_path.unlink(missing_ok=True)
+
     def remove(self, account_id):
         self.path(account_id).unlink(missing_ok=True)
 
@@ -247,28 +258,109 @@ async def refresh(controller):
     return usage
 
 
-async def request_switch(controller, account_id, *, automatic=False):
+def failed_resume(project):
+    operation = json.loads(project['operation'] or '{}')
+    result = json.loads(project['resume_result'] or '{}')
+    return bool(operation.get('kind') == 'resume' and operation.get('error') and operation.get('id')
+                and result.get('id') == operation['id'] and result.get('status') == 'failed')
+
+
+async def native_limit(controller, project, goal):
+    if goal and goal.get('status') == 'usageLimited':
+        return True
+    receipt = controller.db.setting('prompt_limit/' + project['project_id']) or {}
+    if receipt.get('turn_id'):
+        turns = (await controller.native.rpc('thread/turns/list', {
+            'threadId': project['codex_session_id'], 'limit': 100, 'sortDirection': 'desc'}))['data']
+        return any(t['id'] == receipt['turn_id'] and t['status'] == 'failed'
+                   and (t.get('error') or {}).get('codexErrorInfo') == 'usageLimitExceeded' for t in turns)
+    return False
+
+
+async def automatic_change(controller):
+    """Existing scheduler only: one durable probe per account and real reset epoch."""
+    if not controller.db.setting('auto_account_change', False) or controller.db.setting('pause_all', False):
+        return
+    selected, current = controller.db.setting('selected'), controller.db.setting('active_account')
+    if not selected or not current:
+        return
+    project = controller.db.get(selected)
+    if (project['queue_position'] != 1 or not controller.can_auto_resume(project)
+            or project['goal_status'] != 'usage limited' or project['operation'] and not failed_resume(project)):
+        return
+    event = controller.db.conn.execute("SELECT event_id FROM events WHERE project_id=? AND kind='usage limited' "
+                                      "ORDER BY event_id DESC LIMIT 1", (selected,)).fetchone()
+    if not event:
+        return  # No invented limit events from idle time or account availability.
+    state = controller.db.setting('account_selection', {})
+    if state.get('event_id') != event['event_id']:
+        state = {'event_id': event['event_id'], 'project_id': selected, 'attempted': [], 'reset_probes': {}}
+    if time.time() < state.get('next_check', 0):
+        return
+    state['next_check'] = time.time() + 20
+    controller.db.set_setting('account_selection', state)
+    goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+    if not await native_limit(controller, project, goal):
+        return
+    # Fresh current usage can keep the current account. Cached positive usage
+    # is never sufficient to start work or avoid a needed account check.
+    usage = await refresh(controller)
+    if fresh_usage(usage, current):
+        return  # Unsnooze/confirmation handles the current session, not another switch.
+    accounts = controller.db.setting('accounts', [])
+    snapshots = {a['account_id']: controller.db.setting('account_usage/' + a['account_id'], {}) for a in accounts}
+    if current not in state['attempted']:
+        state['attempted'].append(current)
+    now = time.time()
+    for account_id, snapshot in snapshots.items():
+        resets = [w['reset_at'] for w in windows(snapshot).values()
+                  if w['remaining'] == 0 and w['reset_at'] and w['reset_at'] <= now]
+        reset = max(resets, default=0)
+        if reset > state['reset_probes'].get(account_id, 0):
+            state['reset_probes'][account_id] = reset
+            state['attempted'] = [a for a in state['attempted'] if a != account_id]
+    candidate = choose_account(accounts, snapshots, now, state['attempted'])
+    state['next_check'] = now + 20
+    state['waiting_for'] = candidate
+    if candidate and candidate['mode'] == 'wait':
+        state['next_check'] = min(candidate['reset_at'], now + 60)
+    controller.db.set_setting('account_selection', state)
+    if not candidate or candidate['account_id'] == current:
+        return
+    if candidate['mode'] == 'wait' and candidate['reason'] == 'weekly exhausted':
+        return  # Weekly-empty logins are never installed before their real reset.
+    target = candidate['account_id']
+    state['attempted'] = list(dict.fromkeys(state['attempted'] + [target]))
+    controller.db.set_setting('account_selection', state)  # Persist before touching auth or sending anything.
+    await request_switch(controller, target, automatic=True)
+
+
+async def request_switch(controller, account_id, *, automatic=False, adding=False):
     """Called under the controller lock; persist intent before stopping continuation."""
     if switching(controller):
         raise ValueError('An account change is already pending')
-    saved = next((a for a in controller.db.setting('accounts', []) if a['account_id'] == account_id), None)
-    if not saved or saved.get('status') != 'ready':
-        raise ValueError('Selected account needs a regular Codex login')
-    try:
-        if auth_identity(vault(controller).read(vault(controller).path(account_id)))[0] != account_id:
-            raise ValueError('Saved login identity does not match the selected account')
-    except ValueError:
-        controller.db.set_setting('accounts', [dict(a, status='needs_login') if a['account_id'] == account_id else a
-                                             for a in controller.db.setting('accounts', [])])
-        raise
+    if adding:
+        if automatic or not controller.windows_online:
+            raise ValueError('Connect the Windows worker before adding an account')
+    else:
+        saved = next((a for a in controller.db.setting('accounts', []) if a['account_id'] == account_id), None)
+        if not saved or saved.get('status') != 'ready':
+            raise ValueError('Selected account needs a regular Codex login')
+        try:
+            if auth_identity(vault(controller).read(vault(controller).path(account_id)))[0] != account_id:
+                raise ValueError('Saved login identity does not match the selected account')
+        except ValueError:
+            controller.db.set_setting('accounts', [dict(a, status='needs_login') if a['account_id'] == account_id else a
+                                                 for a in controller.db.setting('accounts', [])])
+            raise
     current = controller.db.setting('active_account')
     if not current:
         raise ValueError('The current native account has not been confirmed yet')
-    if any(p['lifecycle'] != 'ready' or p['operation'] for p in controller.db.all()):
+    if any(p['lifecycle'] != 'ready' or p['operation'] and not failed_resume(p) for p in controller.db.all()):
         raise ValueError('Wait for project lifecycle/resume operations before changing account')
     state = {'id': str(uuid.uuid4()), 'phase': 'complete' if current == account_id else 'waiting_turn',
              'old_account': current, 'target_account': account_id, 'requested_at': time.time(),
-             'automatic': automatic}
+             'automatic': automatic, 'kind': 'add' if adding else 'switch'}
     selected = controller.db.setting('selected')
     if selected:
         project = controller.db.get(selected)
@@ -278,11 +370,92 @@ async def request_switch(controller, account_id, *, automatic=False):
                 project_path=project['project_path'], goal_created_at=goal.get('createdAt'),
                 objective_hash=hashlib.sha256(goal['objective'].encode()).hexdigest(),
                 before_status=goal['status'], goal_hold=goal['status'] == 'active')
-    if automatic and (not controller.db.setting('auto_account_change', False)
-                      or state.get('before_status') != 'usageLimited'):
-        raise ValueError('Automatic account changes require Auto Account Change and a genuine native usage-limited goal')
+    if automatic:
+        if (not controller.db.setting('auto_account_change', False) or not selected
+                or not await native_limit(controller, project, goal)):
+            raise ValueError('Automatic account changes require Auto Account Change and a genuine native usage-limited goal or turn')
+        if not goal or goal['status'] != 'usageLimited':
+            state.pop('project_id', None)  # Failed user prompts are never replayed.
     controller.db.set_setting('account_switch', state)
     return {'ok': True, 'operation_id': state['id']}
+
+
+def public_state(controller):
+    """Explicit allowlist: never serialize an auth file, OAuth URL or raw RPC error."""
+    state = controller.db.setting('account_switch', {})
+    operation = {key: state[key] for key in ('id', 'phase', 'kind', 'old_account', 'target_account',
+        'requested_at', 'completed_at', 'error', 'failed_phase', 'project_id') if key in state}
+    if state.get('phase') == 'complete' and state.get('project_id'):
+        try:
+            project = controller.db.get(state['project_id'])
+        except KeyError:
+            pass
+        else:
+            pending = json.loads(project['operation'] or '{}')
+            result = json.loads(project['resume_result'] or '{}')
+            if pending.get('id') == state['id'] and not pending.get('error'):
+                operation['phase'] = 'confirming_resume'
+            elif result.get('id') == state['id']:
+                operation['resume_status'] = result.get('status')
+                operation['message'] = controller.redactor.clean(str(result.get('message', '')))
+                if result.get('status') in ('failed', 'cancelled'):
+                    operation.update(phase='failed', error=operation['message'])
+    return {'active_account': controller.db.setting('active_account'),
+            'accounts': [{key: item.get(key) for key in ('account_id', 'name', 'plan', 'status')}
+                         for item in controller.db.setting('accounts', [])],
+            'auto_account_change': controller.db.setting('auto_account_change', False),
+            'account_operation': operation, 'account_wait': controller.db.setting('account_wait'),
+            'account_selection': controller.db.setting('account_selection', {}).get('waiting_for')}
+
+
+async def notification(controller, value):
+    if value.get('method') == 'account/login/completed':
+        params = value.get('params', {})
+        # No RPC/lock wait here: the native reader must keep delivering replies.
+        controller.db.set_setting('account_login_result', {
+            'login_id': params.get('loginId'), 'success': params.get('success') is True})
+
+
+async def recover_switch(controller, *, restore=False):
+    state = controller.db.setting('account_switch', {})
+    if state.get('phase') != 'recovery_required' and not (restore and state.get('kind') == 'add' and state.get('phase') == 'logging_in'):
+        raise ValueError('No failed or pending login is waiting for account recovery')
+    if restore:
+        if state.get('login_id'):
+            await controller.native.rpc('account/login/cancel', {'loginId': state['login_id']}, timeout=15)
+        vault(controller).read(vault(controller).path(state['old_account']))
+        state.update(kind='switch', target_account=state['old_account'], phase='waiting_turn',
+                     automatic=False, restoring=True, requested_at=time.time())
+        for key in ('restart_requested_at', 'login_id', 'login_url', 'login_requested_at', 'login_sent_at'):
+            state.pop(key, None)
+    else:
+        if state.get('failed_phase') == 'starting_login':
+            raise ValueError('Login startup was interrupted; restore the previous account before starting a new login')
+        state['phase'] = state['failed_phase']
+    state.pop('error', None)
+    controller.db.set_setting('account_switch', state)
+    return {'ok': True, 'operation_id': state['id']}
+
+
+def remove_account(controller, account_id, confirmation, *, recovering=False):
+    if switching(controller):
+        raise ValueError('Wait for the pending account change before removing an account')
+    account = next((a for a in controller.db.setting('accounts', []) if a['account_id'] == account_id), None)
+    if not account and not recovering:
+        raise ValueError('Saved account was not found')
+    if controller.db.setting('active_account') == account_id:
+        raise ValueError('Switch to another account before removing the active account')
+    if not recovering and (not isinstance(confirmation, str) or confirmation != account['name']):
+        raise ValueError('Confirm removal with the exact account name')
+    controller.db.set_setting('account_remove', {'account_id': account_id})
+    vault(controller).remove(account_id)
+    with controller.db.transaction():
+        controller.db.delete_account_usage(account_id)
+        controller.db.conn.execute("DELETE FROM settings WHERE substr(key,1,length(?))=? OR substr(key,1,length(?))=?",
+            ('usage_wake/' + account_id + '/', 'usage_wake/' + account_id + '/',
+             'usage_limits/' + account_id + '/', 'usage_limits/' + account_id + '/'))
+        controller.db.set_setting('accounts', [a for a in controller.db.setting('accounts', []) if a['account_id'] != account_id])
+        controller.db.set_setting('account_remove', None)
 
 
 async def reload_native(controller, state):
@@ -302,7 +475,7 @@ async def reload_native(controller, state):
         while True:
             try:
                 controller.native = await asyncio.wait_for(
-                    Native(controller.root / 'state/native.sock').connect(),
+                    Native(controller.root / 'state/native.sock', lambda value: notification(controller, value)).connect(),
                     min(15, max(0.1, deadline - time.monotonic())))
                 return
             except Exception:
@@ -316,9 +489,22 @@ async def reload_native(controller, state):
 async def tick(controller):
     """Advance the durable account operation under the same single-project lock."""
     from .native import idle_thread
+    removing = controller.db.setting('account_remove')
+    if removing:
+        remove_account(controller, removing['account_id'], None, recovering=True)
     state = controller.db.setting('account_switch', {})
-    if not switching(controller) or state.get('phase') == 'recovery_required':
+    if not switching(controller):
+        await automatic_change(controller)
         return
+    if state.get('phase') == 'recovery_required':
+        return
+    if state.get('automatic') and not controller.db.setting('auto_account_change', False):
+        # Disabling the policy cancels an uninstalled target or safely rolls
+        # back an already installed login, through the same idle barrier.
+        state.update(automatic=False, restoring=True, target_account=state['old_account'],
+                     phase='waiting_turn', requested_at=time.time())
+        state.pop('restart_requested_at', None)
+        controller.db.set_setting('account_switch', state)
     try:
         if state['phase'] == 'waiting_turn':
             if state.get('goal_hold'):
@@ -351,23 +537,61 @@ async def tick(controller):
                 return  # Reconciliation, not a second send, must settle user prompts.
             state['phase'] = 'checkpointing'
         elif state['phase'] == 'checkpointing':
-            await refresh(controller)  # Save any native-managed token rotation to the OLD slot.
+            if not state.get('restoring'):
+                await refresh(controller)  # Save any native-managed token rotation to the OLD slot.
             state['phase'] = 'installing'
         elif state['phase'] == 'installing':
             # The previous tick persisted this phase before touching auth.json.
-            vault(controller).install(state['target_account'])
+            if state.get('kind') == 'add':
+                vault(controller).clear_active(state['old_account'])
+            else:
+                vault(controller).install(state['target_account'])
             state['phase'] = 'reloading'
         elif state['phase'] == 'reloading':
             await reload_native(controller, state)
-            state['phase'] = 'verifying'
+            state['phase'] = 'starting_login' if state.get('kind') == 'add' else 'verifying'
+        elif state['phase'] == 'starting_login':
+            if state.get('login_requested_at'):
+                raise RuntimeError('Ambiguous native login startup; restore the saved account')
+            state['login_requested_at'] = time.time()
+            controller.db.set_setting('account_login_result', None)
+            controller.db.set_setting('account_login_browser', None)
+            controller.db.set_setting('account_switch', state)
+            result = await controller.native.rpc('account/login/start', {'type': 'chatgpt'}, timeout=30)
+            if result.get('type') != 'chatgpt' or str(uuid.UUID(result['loginId'])) != result['loginId']:
+                raise ValueError('Unexpected native login result')
+            state.update(login_id=result['loginId'], login_url=codex_login_url(result['authUrl']), phase='logging_in')
+        elif state['phase'] == 'logging_in':
+            if time.time() - state['login_requested_at'] > 600:
+                raise RuntimeError('Native browser login timed out')
+            result = controller.db.setting('account_login_result') or {}
+            browser = controller.db.setting('account_login_browser') or {}
+            if browser.get('operation_id') == state['id'] and browser.get('opened') is False:
+                raise RuntimeError('The Windows worker could not open the browser callback tunnel')
+            if result.get('login_id') == state['login_id'] and not result['success']:
+                raise RuntimeError('Native browser login was not completed')
+            if vault(controller).auth_path.exists():
+                # Also recover a successful callback whose notification was lost
+                # during a controller restart. Fresh native proof still follows.
+                state['phase'] = 'verifying'
+            elif controller.windows_online and time.time() - state.get('login_sent_at', 0) >= 20:
+                from .worker_server import send
+                await send(controller, {'type': 'account_login', 'operation_id': state['id'],
+                    'url': state['login_url'], 'expires_at': state['login_requested_at'] + 600})
+                state['login_sent_at'] = time.time()
         elif state['phase'] == 'verifying':
             metadata, usage = await observe_account(controller.native, vault(controller), state['target_account'])
+            if state.get('kind') == 'add' and controller.windows_online:
+                from .worker_server import send
+                await send(controller, {'type': 'account_login_close', 'operation_id': state['id']})
             remember(controller, metadata, usage)
             for index, project in enumerate(controller.db.all()):
                 # Upstream Snooze entries are keyed by session, not account. Retain
                 # their DB reset history, but disarm timers from the previous login.
                 await controller.cancel_wakes(project, refresh=index == 0)
             controller.db.activate_account(metadata['account_id'])
+            state['target_account'] = metadata['account_id']
+            state.pop('login_url', None)
             state['phase'] = 'resuming'
         elif state['phase'] == 'resuming':
             await finish_switch(controller, state)
@@ -375,11 +599,28 @@ async def tick(controller):
             state['completed_at'] = time.time()
         controller.db.set_setting('account_switch', state)
         controller.health_errors.pop('accounts', None)
-    except Exception:
+    except Exception as exc:
         # Native errors may contain provider/auth details. A recovery journal
         # needs the phase, not credential-bearing response text.
+        errors = {'waiting_turn': 'The current native turn did not settle; it was not interrupted.',
+            'checkpointing': 'The previous account could not be confirmed and safely saved.',
+            'installing': 'The selected login could not be installed safely.',
+            'reloading': 'Native Codex did not reconnect after changing the login.',
+            'starting_login': 'Native browser login could not be started; restore the saved account.',
+            'logging_in': 'Browser login failed or timed out; restore the saved account or retry verification.',
+            'verifying': 'The loaded account and its fresh quota could not be confirmed.',
+            'resuming': 'Account changed, but the original project continuation could not be confirmed.'}
         state.update(failed_phase=state['phase'], phase='recovery_required',
-                     error='Account change could not be confirmed; controller recovery is required. No work was resumed.')
+                     error=errors.get(state['phase'], 'Account change could not be confirmed.'))
+        from .native import NativeError
+        if (state['failed_phase'] == 'verifying' and state.get('kind') != 'add' and isinstance(exc, NativeError)
+                and any(word in str(exc).lower() for word in ('refresh token', 'unauthorized', 'not authenticated', 'login required'))):
+            target = state['target_account']
+            controller.db.set_setting('accounts', [dict(a, status='needs_login') if a['account_id'] == target else a
+                                                 for a in controller.db.setting('accounts', [])])
+            if state.get('automatic') and target != state['old_account']:
+                state.update(target_account=state['old_account'], phase='waiting_turn', restoring=True, requested_at=time.time())
+                state.pop('restart_requested_at', None)  # One new reload for this bounded rollback.
         controller.db.set_setting('account_switch', state)
         controller.health_errors['accounts'] = state['error']
 
@@ -394,7 +635,7 @@ async def finish_switch(controller, state):
         return
     if (controller.db.setting('selected') != project['project_id'] or not controller.can_auto_resume(project)
             or project['codex_session_id'] != state['session_id'] or project['project_path'] != state['project_path']
-            or project['operation']):
+            or project['operation'] and not failed_resume(project)):
         return
     goal = (await controller.native.rpc('thread/goal/get', {'threadId': state['session_id']})).get('goal')
     if (not goal or goal.get('createdAt') != state['goal_created_at']
@@ -403,6 +644,10 @@ async def finish_switch(controller, state):
         return
     account = controller.db.setting('account_usage', {})
     quota = windows(account)
+    if failed_resume(project):
+        # The shared barrier already proved all native turns/jobs idle and the
+        # same goal. A terminal failed receipt is not another executing operation.
+        controller.db.update(project['project_id'], operation=None)
     if not fresh_usage(account, state['target_account']):
         controller.db.set_setting('account_wait', {key: state[key] for key in (
             'project_id', 'session_id', 'project_path', 'goal_created_at', 'objective_hash', 'goal_hold')}

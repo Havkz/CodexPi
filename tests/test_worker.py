@@ -1,4 +1,5 @@
 import json
+from contextlib import closing
 import os
 from pathlib import Path
 import secrets
@@ -7,12 +8,40 @@ import tempfile
 import time
 import unittest
 import uuid
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
+from types import SimpleNamespace
 
 from app.windows_worker import Worker, execute, protect_secret, relative_path, validate_job
 
 
 class WorkerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_account_login_opens_only_official_url_and_one_owned_callback_tunnel(self):
+        url = ('https://auth.openai.com/oauth/authorize?response_type=code&'
+               'redirect_uri=http%3A%2F%2Flocalhost%3A1455%2Fauth%2Fcallback&state=test&'
+               'code_challenge=pkce&code_challenge_method=S256')
+        with tempfile.TemporaryDirectory() as directory, closing((worker := Worker(directory, 'test-secret', 'http://unused')).db):
+            body = {'operation_id': str(uuid.uuid4()), 'url': url, 'expires_at': time.time() + 300}
+            process = SimpleNamespace(returncode=None, terminate=lambda: setattr(process, 'returncode', 0), wait=AsyncMock())
+            writer = SimpleNamespace(close=lambda: None, wait_closed=AsyncMock())
+            with patch('app.windows_worker.asyncio.create_subprocess_exec', AsyncMock(return_value=process)) as spawn, \
+                    patch('app.windows_worker.asyncio.open_connection', AsyncMock(return_value=(None, writer))), \
+                    patch('app.windows_worker.webbrowser.open', return_value=True) as browser:
+                await worker.open_login(body)
+                await worker.open_login(body)
+                spawn.assert_awaited_once()
+                browser.assert_called_once_with(url)
+                self.assertIn('127.0.0.1:1455:127.0.0.1:1455', spawn.await_args.args)
+                self.assertIn('ExitOnForwardFailure=yes', spawn.await_args.args)
+                for bad in (url.replace('auth.openai.com', 'evil.example'),
+                            url.replace('localhost%3A1455', 'evil.example%3A1455'),
+                            url + '&access_token=not-allowed', 'file:///C:/secret', url.replace('S256', 'plain')):
+                    with self.assertRaises(ValueError):
+                        await worker.open_login({**body, 'url': bad})
+                await worker.close_login_tunnel()
+                self.assertIsNone(worker.login_tunnel)
+                self.assertIsNone(worker.execution)
+                self.assertEqual(worker.db.execute('SELECT COUNT(*) FROM jobs').fetchone()[0], 0)
+
     async def test_checkout_auth_uses_gh_only_for_git_children(self):
         with tempfile.TemporaryDirectory() as directory:
             worker = Worker(directory, secrets.token_hex(32), 'http://unused')

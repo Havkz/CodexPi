@@ -15,10 +15,11 @@ import sqlite3
 import subprocess
 import time
 import uuid
+import webbrowser
 
 from aiohttp import ClientSession, ClientTimeout, WSMsgType
 
-from .common import SignedChannel, atomic_write, read_env
+from .common import SignedChannel, atomic_write, codex_login_url, read_env
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_LIMIT = 2 * 1024 * 1024
@@ -142,6 +143,59 @@ class Worker:
         self.db.execute("UPDATE jobs SET status='finished',result=?,updated=? WHERE status='running'",
                         (interrupted, time.time()))
         self.execution = None
+        self.login_tunnel = None
+        self.login_operation = None
+        self.login_opened = None
+
+    async def close_login_tunnel(self):
+        if self.login_tunnel and self.login_tunnel.returncode is None:
+            self.login_tunnel.terminate()
+            try:
+                await asyncio.wait_for(self.login_tunnel.wait(), 5)
+            except asyncio.TimeoutError:
+                self.login_tunnel.kill()
+                await self.login_tunnel.wait()
+        self.login_tunnel = None
+
+    async def open_login(self, body):
+        """One owned callback tunnel. No AI, logout, saved tokens or project execution."""
+        operation = body.get('operation_id')
+        if not isinstance(operation, str) or str(uuid.UUID(operation)) != operation:
+            raise ValueError('Invalid account login operation')
+        url = codex_login_url(body.get('url'))
+        expires = body.get('expires_at')
+        if type(expires) not in (int, float) or not time.time() < expires <= time.time() + 900:
+            raise ValueError('Account login has expired')
+        self.login_expires = expires
+        if self.login_operation != operation:
+            await self.close_login_tunnel()
+        if self.login_tunnel is None or self.login_tunnel.returncode is not None:
+            self.login_tunnel = await asyncio.create_subprocess_exec('ssh', '-N',
+                '-L', '127.0.0.1:1455:127.0.0.1:1455', '-o', 'BatchMode=yes',
+                '-o', 'ConnectTimeout=8', '-o', 'ExitOnForwardFailure=yes',
+                '-o', 'ServerAliveInterval=30', 'raspberry@192.168.2.105',
+                stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL,
+                **({'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}))
+            self.login_operation = operation
+            deadline = time.monotonic() + 10
+            while True:
+                await asyncio.sleep(.1)
+                if self.login_tunnel.returncode is not None:
+                    raise ValueError('The Codex login callback tunnel could not open; check local port 1455 and SSH')
+                try:
+                    _, writer = await asyncio.wait_for(asyncio.open_connection('127.0.0.1', 1455), 1)
+                    writer.close()
+                    await writer.wait_closed()
+                    break
+                except (OSError, asyncio.TimeoutError):
+                    if time.monotonic() >= deadline:
+                        await self.close_login_tunnel()
+                        raise ValueError('The Codex login callback tunnel did not become ready') from None
+        if self.login_opened != operation:
+            if not await asyncio.to_thread(webbrowser.open, url):
+                await self.close_login_tunnel()
+                raise ValueError('The Windows default browser could not open the Codex login')
+            self.login_opened = operation
 
     def clean(self, text, project=None):
         text = text.replace(self.secret, '[REDACTED]')
@@ -225,6 +279,8 @@ class Worker:
 
                 async def heartbeat():
                     while True:
+                        if self.login_tunnel and time.time() >= getattr(self, 'login_expires', 0):
+                            await self.close_login_tunnel()
                         await send({'type': 'alive'})
                         await asyncio.sleep(20)
 
@@ -242,7 +298,19 @@ class Worker:
                         if packet.type != WSMsgType.TEXT:
                             continue
                         body = channel.verify(json.loads(packet.data))
-                        if body.get('type') == 'ack':
+                        if body.get('type') == 'account_login':
+                            try:
+                                await self.open_login(body)
+                                self.login_expires = body['expires_at']
+                                await send({'type': 'account_login_result', 'operation_id': body['operation_id'], 'opened': True})
+                            except (ValueError, OSError):
+                                await self.close_login_tunnel()
+                                await send({'type': 'account_login_result', 'operation_id': body.get('operation_id'),
+                                            'opened': False})
+                        elif body.get('type') == 'account_login_close':
+                            if body.get('operation_id') == self.login_operation:
+                                await self.close_login_tunnel()
+                        elif body.get('type') == 'ack':
                             self.db.execute("UPDATE jobs SET status='delivered',updated=? WHERE id=? AND status='finished'",
                                             (time.time(), body['job_id']))
                         elif body.get('type') == 'job':
@@ -275,6 +343,7 @@ class Worker:
                     for task in tasks:
                         task.cancel()
                     await asyncio.gather(*tasks, return_exceptions=True)
+                    await self.close_login_tunnel()
 
     async def run(self):
         delay = 1
