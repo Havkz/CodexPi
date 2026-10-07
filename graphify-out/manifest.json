@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "app/db.py": {
-    "mtime": 1791212585.2846413,
-    "ast_hash": "d7360aff328d1998b136fd20473893c0",
+    "mtime": 1791383224.266951,
+    "ast_hash": "d2f4e2d49a9955c7671b17ded01fae18",
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
@@ -340,8 +340,8 @@
     "semantic_hash": ""
   },
   "tests/test_usage.py": {
-    "mtime": 1790339558.2539623,
-    "ast_hash": "1024b4250a4b688a090dd8a48733de13",
+    "mtime": 1791383224.2679515,
+    "ast_hash": "bdcbb2c7192477b612031a0649f86167",
     "semantic_hash": ""
   },
   "docs/usage-history.md": {
@@ -442,6 +442,16 @@
   "Setup/verify-tui-scrolling.py": {
     "mtime": 1791382042.8286715,
     "ast_hash": "57e42d45d274ead087752bce114459b4",
+    "semantic_hash": ""
+  },
+  "app/accounts.py": {
+    "mtime": 1791383402.2756948,
+    "ast_hash": "403480acacb82b2dc4bc106cbede7077",
+    "semantic_hash": ""
+  },
+  "tests/test_accounts.py": {
+    "mtime": 1791383494.4715025,
+    "ast_hash": "267a46996496edf3255d82aacf2a8893",
     "semantic_hash": ""
   }
 }

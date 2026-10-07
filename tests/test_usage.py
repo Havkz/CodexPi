@@ -67,7 +67,7 @@ class UsageTests(unittest.TestCase):
             # Hard count ceiling even for existing too-dense input; age retention also applies.
             now = start + 10 * 86400
             with db.transaction():
-                db.conn.executemany('INSERT INTO usage_samples VALUES (?,?,?,?,?)',
+                db.conn.executemany('INSERT INTO usage_samples(series,observed_at,remaining,duration,reset_at) VALUES (?,?,?,?,?)',
                     [('weekly', now - n, n % 101, 10080, now + 86400) for n in range(1, 12010)])
             db.record_usage(account(now))
             self.assertEqual(db.conn.execute("SELECT count(*) FROM usage_samples WHERE series='weekly'").fetchone()[0], 12000)

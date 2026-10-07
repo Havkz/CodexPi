@@ -53,7 +53,7 @@ class Database:
         self.conn.execute('PRAGMA synchronous=FULL')
         self.conn.execute('PRAGMA foreign_keys=ON')
         version = self.conn.execute('PRAGMA user_version').fetchone()[0]
-        if version > 3:
+        if version > 4:
             raise RuntimeError('Database was created by a newer CodexPi version')
         if version == 0:
             with self.transaction():
@@ -73,6 +73,19 @@ class Database:
                     duration INTEGER NOT NULL, reset_at REAL,
                     PRIMARY KEY(series, observed_at)) WITHOUT ROWID''')
                 self.conn.execute('PRAGMA user_version=3')
+        if version < 4:
+            with self.transaction():
+                self.conn.execute('ALTER TABLE usage_samples RENAME TO legacy_usage_samples')
+                self.conn.execute('''CREATE TABLE usage_samples (
+                    account_id TEXT NOT NULL DEFAULT '', series TEXT NOT NULL, observed_at REAL NOT NULL,
+                    remaining REAL NOT NULL CHECK(remaining BETWEEN 0 AND 100),
+                    duration INTEGER NOT NULL, reset_at REAL,
+                    PRIMARY KEY(account_id, series, observed_at)) WITHOUT ROWID''')
+                # Legacy measurements remain unassigned until the original account is confirmed.
+                self.conn.execute('INSERT INTO usage_samples SELECT ?,series,observed_at,remaining,duration,reset_at '
+                                  'FROM legacy_usage_samples', ('',))
+                self.conn.execute('DROP TABLE legacy_usage_samples')
+                self.conn.execute('PRAGMA user_version=4')
 
     @contextlib.contextmanager
     def transaction(self):
@@ -129,33 +142,71 @@ class Database:
             for position, project_id in enumerate(ids, 1):
                 self.update(project_id, queue_position=position)
 
-    def record_usage(self, account):
+    def record_usage(self, account, account_id=None):
         stamp = account.get('checked_at')
         if not number(stamp) or stamp <= 0:
             raise ValueError('Usage observation requires a finite timestamp')
+        active = self.setting('active_account', '')
+        account_id = active if account_id is None else account_id
+        snapshot = {**account, 'account_id': account_id} if account_id else account
         with self.transaction():
-            self.set_setting('account_usage', account)
+            if account_id:
+                self.set_setting('account_usage/' + account_id, snapshot)
+            if account_id == active:
+                self.set_setting('account_usage', snapshot)
             for series, window in windows(account).items():
-                previous = self.conn.execute('SELECT observed_at FROM usage_samples WHERE series=? '
-                    'ORDER BY observed_at DESC LIMIT 1', (series,)).fetchone()
+                previous = self.conn.execute('SELECT observed_at FROM usage_samples WHERE account_id=? AND series=? '
+                    'ORDER BY observed_at DESC LIMIT 1', (account_id, series)).fetchone()
                 # One real observation per minute, including while Unsnooze polls faster.
                 # Clock rollback never rewrites an existing observation.
                 if previous and stamp - previous[0] < 60:
                     continue
-                self.conn.execute('INSERT INTO usage_samples VALUES (?,?,?,?,?)',
-                    (series, stamp, window['remaining'], window['duration'], window['reset_at']))
+                self.conn.execute('INSERT INTO usage_samples VALUES (?,?,?,?,?,?)',
+                    (account_id, series, stamp, window['remaining'], window['duration'], window['reset_at']))
             self.conn.execute('DELETE FROM usage_samples WHERE observed_at < ?', (stamp - 8 * 86400,))
             for series in ('daily', 'weekly'):
-                self.conn.execute('DELETE FROM usage_samples WHERE series=? AND observed_at IN '
-                    '(SELECT observed_at FROM usage_samples WHERE series=? ORDER BY observed_at DESC LIMIT -1 OFFSET 12000)',
-                    (series, series))
+                self.conn.execute('DELETE FROM usage_samples WHERE account_id=? AND series=? AND observed_at IN '
+                    '(SELECT observed_at FROM usage_samples WHERE account_id=? AND series=? '
+                    'ORDER BY observed_at DESC LIMIT -1 OFFSET 12000)',
+                    (account_id, series, account_id, series))
 
-    def usage_history(self, now):
+    def activate_account(self, account_id):
+        with self.transaction():
+            self.set_setting('active_account', account_id)
+            cached = self.setting('account_usage/' + account_id, {})
+            self.set_setting('account_usage', cached if cached.get('account_id') == account_id
+                             else {'account_id': account_id, 'checked_at': None})
+
+    def bind_legacy_usage(self, account_id):
+        """Only after confirming the original single-account identity; never guess on switch."""
+        if not account_id:
+            raise ValueError('A confirmed original account is required')
+        with self.transaction():
+            if self.setting('legacy_usage_account'):
+                if self.setting('legacy_usage_account') != account_id:
+                    raise ValueError('Legacy history is already assigned to a different account')
+                return
+            self.conn.execute('UPDATE usage_samples SET account_id=? WHERE account_id=?', (account_id, ''))
+            old = self.setting('account_usage', {})
+            if old and not old.get('account_id'):
+                self.set_setting('account_usage/' + account_id, {**old, 'account_id': account_id})
+            self.set_setting('legacy_usage_account', account_id)
+
+    def delete_account_usage(self, account_id):
+        if not account_id or self.setting('active_account', '') == account_id:
+            raise ValueError('Switch away from this account before removing it')
+        with self.transaction():
+            self.conn.execute('DELETE FROM usage_samples WHERE account_id=?', (account_id,))
+            self.conn.execute('DELETE FROM settings WHERE key=?', ('account_usage/' + account_id,))
+
+    def usage_history(self, now, account_id=None):
+        account_id = self.setting('active_account', '') if account_id is None else account_id
         result = {}
         for series, span, bucket_seconds in (('daily', 86400, 300), ('weekly', 7 * 86400, 3600)):
             rows = [dict(row) for row in self.conn.execute(
                 'SELECT observed_at,remaining,duration,reset_at FROM usage_samples '
-                'WHERE series=? AND observed_at BETWEEN ? AND ? ORDER BY observed_at', (series, now - span, now))]
+                'WHERE account_id=? AND series=? AND observed_at BETWEEN ? AND ? ORDER BY observed_at',
+                (account_id, series, now - span, now))]
             # Keep actual first/min/max/last observations, never averages/interpolated data.
             # Split outages before reducing so the chart cannot bridge missing measurements.
             groups, previous, segment = {}, None, 0
