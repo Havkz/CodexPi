@@ -605,8 +605,10 @@ class Controller:
         selected = self.db.setting('selected')
         if selected:
             project = self.db.get(selected)
+            operation = json.loads(project['operation'] or '{}')
             if (not self.db.setting('auto_continue', False) or project['lifecycle'] != 'ready'
-                    or project['operation'] or project['goal_status'] not in ('stalled', 'limited by budget')
+                    or project['operation'] and not (operation.get('kind') == 'resume' and operation.get('error'))
+                    or project['goal_status'] not in ('stalled', 'limited by budget')
                     or self.db.setting('manual_pause/' + selected, False)):
                 return
             if self.db.conn.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('sent','running')", (selected,)).fetchone():
@@ -614,9 +616,15 @@ class Controller:
             goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
             if not goal or goal['status'] not in ('blocked', 'budgetLimited'):
                 return
+            if not await idle_thread(self.native, project['codex_session_id']):
+                return
             await self.wait_idle(project)
             await self.cancel_wakes(project)
             with self.db.transaction():
+                # A failed resume is terminal, not a lifecycle lock. Preserve its
+                # result only after native blocker/idleness proof; never resend it.
+                if operation.get('kind') == 'resume' and operation.get('error'):
+                    self.finish_resume(project, operation, 'failed', operation['error'])
                 self.db.set_setting('selected', None)
                 self.db.set_setting('advance_queue', 'blocked')
         advance = self.db.setting('advance_queue', False)

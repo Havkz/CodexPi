@@ -890,6 +890,44 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(c.db.setting('usage_wake/first')['reset_at'], reset)
             self.assertIsNone(c.db.get('second')['operation'])
 
+    async def test_auto_continue_releases_a_confirmed_blocker_after_failed_resume(self):
+        c = self.controller
+        c.source = SimpleNamespace(rows=lambda: {p['codex_session_id']: {} for p in c.db.all()})
+        c.attach_ready = AsyncMock()
+        c.select('first')
+        c.db.set_setting('auto_continue', True)
+        operation = {'kind': 'resume', 'id': 'failed-resume', 'sent_at': time.time() - 120,
+                     'error': 'Resume timed out'}
+        c.db.update('first', goal_status='stalled', windows_required=1,
+                    block_reason='{"reason":"Windows offline","requires_user":false}',
+                    operation=json.dumps(operation))
+        self.native_status = 'blocked'
+        # An error journal is not proof of idleness or permission to run another goal.
+        for native, thread in (('active', 'active'), ('usageLimited', 'idle'), ('blocked', 'active')):
+            self.native_status, self.thread_status = native, thread
+            await c.advance_queue()
+            self.assertEqual(c.db.setting('selected'), 'first')
+            self.assertEqual(json.loads(c.db.get('first')['operation']), operation)
+        self.native_status, self.thread_status = 'blocked', 'idle'
+        c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,status,created_at,updated_at) VALUES(?,?,?,?,?,?)',
+                          ('job', 'first', '{}', 'sent', 1, 1))
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'first')
+        c.db.conn.execute("UPDATE jobs SET status='finished'")
+        c.db.set_setting('manual_pause/second', True)
+        await c.advance_queue()
+        self.assertIsNone(c.db.setting('selected'))
+        first = c.db.get('first')
+        self.assertIsNone(first['operation'])
+        self.assertEqual(first['goal_status'], 'stalled')
+        self.assertEqual(json.loads(first['resume_result']), {
+            'id': 'failed-resume', 'status': 'failed', 'message': 'Resume timed out'})
+        c.db.set_setting('manual_pause/second', False)
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'second')
+        self.assertEqual(json.loads(c.db.get('second')['operation'])['source'], 'auto-continue')
+        c.native.rpc.assert_any_await('thread/read', {'threadId': 'first', 'includeTurns': False})
+
     async def test_auto_continue_skips_blockers_but_never_usage_limits_or_manual_holds(self):
         c = self.controller
         c.source = SimpleNamespace(rows=lambda: {p['codex_session_id']: {} for p in c.db.all()})
