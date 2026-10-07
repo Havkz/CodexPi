@@ -14,6 +14,17 @@ from .common import atomic_write, codex_login_url
 from .usage import number, windows
 
 
+class LoginRequired(ValueError):
+    """Explicit native auth rejection, never a timeout or identity mismatch."""
+
+
+def mark_login_required(controller, account_id):
+    controller.db.set_setting('accounts', [dict(a, status='needs_login') if a['account_id'] == account_id else a
+                                         for a in controller.db.setting('accounts', [])])
+    if controller.db.setting('active_account') == account_id:
+        controller.db.set_setting('account_usage', {'account_id': account_id, 'checked_at': None})
+
+
 def choose_account(accounts, snapshots, now, attempted=()):
     """Choose a quota check or reset wait, never authorize a goal from cached usage.
 
@@ -165,9 +176,20 @@ async def observe_account(native, vault, expected_id=None):
     The legacy token-bearing RPC is private to the controller; its response must
     never enter dashboard state, notification payloads, journals or logs.
     """
-    account = (await native.rpc('account/read', {'refreshToken': False}, timeout=20)).get('account')
-    limits = await native.rpc('account/rateLimits/read', {}, timeout=20)
-    proof = await native.rpc('getAuthStatus', {'includeToken': True, 'refreshToken': False}, timeout=20)
+    from .native import NativeError
+    try:
+        state = await native.rpc('account/read', {'refreshToken': False}, timeout=20)
+        account = state.get('account')
+        if account is None and state.get('requiresOpenaiAuth') is True:
+            raise LoginRequired('Native Codex requires a regular login; sign in again')
+        limits = await native.rpc('account/rateLimits/read', {}, timeout=20)
+        proof = await native.rpc('getAuthStatus', {'includeToken': True, 'refreshToken': False}, timeout=20)
+    except NativeError as exc:
+        if any(word in str(exc).lower() for word in ('unauthorized', 'not authenticated', 'login required',
+                'refresh_token_reused', 'refresh_token_expired', 'refresh_token_invalidated',
+                'refresh token has expired', 'refresh token has already been used', 'refresh token was invalidated')):
+            raise LoginRequired('Native Codex rejected the saved login; sign in again') from None
+        raise  # Network/provider failures never invalidate a stored account.
     try:
         metadata = vault.checkpoint(account, {**proof, 'accountId': limits.get('accountId')}, expected_id)
     finally:
@@ -247,7 +269,12 @@ def remember(controller, metadata, usage):
 
 async def refresh(controller):
     expected = controller.db.setting('active_account')
-    metadata, usage = await observe_account(controller.native, vault(controller), expected)
+    try:
+        metadata, usage = await observe_account(controller.native, vault(controller), expected)
+    except LoginRequired:
+        if expected:
+            mark_login_required(controller, expected)
+        raise
     if not expected:
         controller.db.bind_legacy_usage(metadata['account_id'])
         bind_legacy_limits(controller, metadata['account_id'])
@@ -538,7 +565,15 @@ async def tick(controller):
             state['phase'] = 'checkpointing'
         elif state['phase'] == 'checkpointing':
             if not state.get('restoring'):
-                await refresh(controller)  # Save any native-managed token rotation to the OLD slot.
+                try:
+                    await refresh(controller)  # Save native-managed token rotation to the OLD slot.
+                except LoginRequired:
+                    # Keep the previously confirmed recovery slot untouched. An
+                    # expired login must not prevent a normal login/new valid account.
+                    saved = vault(controller)
+                    if (auth_identity(saved.read(saved.path(state['old_account'])))[0] != state['old_account']
+                            or saved.auth_path.exists() and auth_identity(saved.read(saved.auth_path))[0] != state['old_account']):
+                        raise ValueError('The previous account identity changed; recovery is required')
             state['phase'] = 'installing'
         elif state['phase'] == 'installing':
             # The previous tick persisted this phase before touching auth.json.
@@ -612,12 +647,9 @@ async def tick(controller):
             'resuming': 'Account changed, but the original project continuation could not be confirmed.'}
         state.update(failed_phase=state['phase'], phase='recovery_required',
                      error=errors.get(state['phase'], 'Account change could not be confirmed.'))
-        from .native import NativeError
-        if (state['failed_phase'] == 'verifying' and state.get('kind') != 'add' and isinstance(exc, NativeError)
-                and any(word in str(exc).lower() for word in ('refresh token', 'unauthorized', 'not authenticated', 'login required'))):
+        if state['failed_phase'] == 'verifying' and state.get('kind') != 'add' and isinstance(exc, LoginRequired):
             target = state['target_account']
-            controller.db.set_setting('accounts', [dict(a, status='needs_login') if a['account_id'] == target else a
-                                                 for a in controller.db.setting('accounts', [])])
+            mark_login_required(controller, target)
             if state.get('automatic') and target != state['old_account']:
                 state.update(target_account=state['old_account'], phase='waiting_turn', restoring=True, requested_at=time.time())
                 state.pop('restart_requested_at', None)  # One new reload for this bounded rollback.

@@ -185,6 +185,24 @@ class AccountObservationTests(unittest.IsolatedAsyncioTestCase):
                 await observe_account(rpc('test-access-first'), vault)
             self.assertFalse(vault.path(auth_identity(second)[0]).exists())
             self.assertEqual(vault.path(ident).read_bytes(), before)
+            from app.native import NativeError
+            atomic_write(home / 'auth.json', first)
+            db = Database(root / 'test.db')
+            c = SimpleNamespace(db=db, account_vault=vault, native=rpc('test-access-first'), health_errors={})
+            try:
+                await refresh(c)
+                c.native.rpc = AsyncMock(side_effect=NativeError('Network timeout while refreshing token'))
+                with self.assertRaises(NativeError):
+                    await refresh(c)
+                self.assertEqual(db.setting('accounts')[0]['status'], 'ready')
+                c.native.rpc.side_effect = NativeError('refresh_token_reused')
+                with self.assertRaisesRegex(ValueError, 'sign in again'):
+                    await refresh(c)
+                self.assertEqual(db.setting('accounts')[0]['status'], 'needs_login')
+                self.assertIsNone(db.setting('account_usage')['checked_at'])
+                self.assertEqual(vault.path(ident).read_bytes(), before)
+            finally:
+                db.conn.close()
 
 
 class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
@@ -286,6 +304,8 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             if method == 'thread/read':
                 return {'thread': {'status': {'type': loaded['turn']}}}
             if method == 'account/read':
+                if loaded.get('requires_login'):
+                    return {'account': None, 'requiresOpenaiAuth': True}
                 return {'account': {'type': 'chatgpt'} if loaded['raw'] else None}
             if method == 'account/rateLimits/read':
                 return {**account(time.time()), 'accountId': 'workspace', 'ordinaryUsageAllowed': True}
@@ -348,6 +368,25 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
                 for _ in range(6):
                     await tick(c)
                 self.assertEqual(c.db.setting('active_account'), ids[1])
+                self.assertTrue(c.db.setting('manual_pause/first'))
+                self.assertIsNone(c.db.get('first')['operation'])
+                # A natively missing/expired login must not lock out regular reauthentication.
+                loaded['requires_login'] = True
+                with self.assertRaisesRegex(ValueError, 'sign in again'):
+                    await refresh(c)
+                self.assertEqual(next(a for a in c.db.setting('accounts') if a['account_id'] == ids[1])['status'], 'needs_login')
+                self.assertIsNone(c.db.setting('account_usage').get('checked_at'))
+                await request_switch(c, None, adding=True)
+                for _ in range(5):
+                    await tick(c)
+                self.assertEqual(c.db.setting('account_switch')['phase'], 'logging_in')
+                self.assertEqual(c.account_vault.path(ids[1]).read_text(), raws[1])
+                loaded['requires_login'] = False
+                loaded['raw'] = raws[1]
+                atomic_write(home / 'auth.json', raws[1])
+                for _ in range(3):
+                    await tick(c)
+                self.assertEqual(next(a for a in c.db.setting('accounts') if a['account_id'] == ids[1])['status'], 'ready')
                 self.assertTrue(c.db.setting('manual_pause/first'))
                 self.assertIsNone(c.db.get('first')['operation'])
             with self.assertRaisesRegex(ValueError, 'exact account name'):
