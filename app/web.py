@@ -158,6 +158,7 @@ async def state(request):
          'detail': 'Selective wake · queue position 1', 'error': errors.get('unsnooze')},
     ]
     projects = [{**p, 'block_summary': block_summary(p),
+                 'completion_check': controller.db.setting('completion_check/' + p['project_id']),
                  'manual_paused': bool(controller.db.setting('manual_pause/' + p['project_id'], False))}
                 for p in controller.db.all()]
     payload = {'projects': projects, 'selected': controller.db.setting('selected'),

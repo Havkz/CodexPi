@@ -110,7 +110,7 @@ class CloseView(discord.ui.View):
         controller = self.bot.controller
         project = next((p for p in controller.db.all()
                         if p['discord_channel_id'] == str(interaction.channel_id)), None)
-        if (not project or project['goal_status'] != 'complete' or not interaction.guild or
+        if (not project or project['goal_status'] != 'complete' or not project['completion_notified'] or not interaction.guild or
                 not interaction.user.guild_permissions.manage_channels):
             embed = discord.Embed(title='CodexPi — Action unavailable', color=secrets.choice(EMBED_COLORS),
                 description='**Close**\n- Permission required\n│ Project must be **complete**.\n│ Member needs **Manage Channels**.',

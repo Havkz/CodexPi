@@ -10,6 +10,8 @@ import signal
 import time
 import uuid
 
+import yaml
+
 from .common import NATIVE_STATUS, Redactor, atomic_write, slugify
 from .db import Database
 from .native import GoalSource, Native, idle_thread, process_in_pane, project_thread_config
@@ -122,6 +124,8 @@ class Controller:
                    and self.db.setting('usage_account/' + project['project_id']) != self.db.setting('active_account'))
         if status != 'usage limited' or changed:
             fields['usage_limit'] = None
+        if changed and status != 'complete':
+            fields['completion_notified'] = 0
         if status in ('stalled', 'usage limited', 'limited by budget') and changed and operation.get('kind') == 'resume':
             fields['operation'] = None
             fields['resume_result'] = json.dumps({'id': operation.get('id'), 'status': status,
@@ -462,7 +466,7 @@ class Controller:
             if row and row['status'] == 'active' and project['project_id'] != selected:
                 await self.pause(project, release=False)
                 row['status'] = 'paused'
-        for project in self.db.all():
+        for project in sorted(self.db.all(), key=lambda p: rows.get(p['codex_session_id'], {}).get('status') != 'complete'):
             if project['lifecycle'] != 'ready':
                 continue
             if await reconcile(self, project):
@@ -494,7 +498,9 @@ class Controller:
 
     async def poll_goals(self):
         rows = self.source.rows()
-        for project in self.db.all():
+        # Reconcile finished goals before admitting another native active row.
+        # A stale active DB row must not trip the single-project UNIQUE gate.
+        for project in sorted(self.db.all(), key=lambda p: rows.get(p['codex_session_id'], {}).get('status') != 'complete'):
             if project['lifecycle'] != 'ready':
                 continue
             from .prompts import reconcile
@@ -538,6 +544,30 @@ class Controller:
                 self.clear_block(project)
 
     async def complete(self, project):
+        if not await idle_thread(self.native, project['codex_session_id']):
+            return  # A terminal goal alone does not prove its final turn settled.
+        if self.db.conn.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('sent','running')",
+                                (project['project_id'],)).fetchone():
+            return
+        # Persist the native outcome independently of release verification. Do
+        # not publish the completion outbox/queue advancement until checks pass.
+        with self.db.transaction():
+            self.db.update(project['project_id'], goal_status='complete')
+            if self.db.setting('selected') == project['project_id']:
+                self.db.set_setting('selected', None)
+        check_key = 'completion_check/' + project['project_id']
+        check = self.db.setting(check_key, {})
+        if time.time() - check.get('checked_at', 0) < 30:
+            return  # Bounded network polling, not a push/API loop every two seconds.
+        self.db.set_setting(check_key, {'checked_at': time.time(), 'message': 'Native goal finished; verifying Git, CI and delivery'})
+        try:
+            await self.verify_completion(self.db.get(project['project_id']))
+        except Exception as exc:
+            message = self.redactor.clean(str(exc))
+            self.db.set_setting(check_key, {'checked_at': time.time(), 'message': 'Completion verification: ' + message})
+            logging.getLogger('completion').warning('%s: %s', project['slug'], message)
+
+    async def verify_completion(self, project):
         path = Path(project['project_path'])
         dirty = await command('git', 'status', '--porcelain', cwd=path)
         if dirty['stdout'].strip():
@@ -554,6 +584,9 @@ class Controller:
                 await self.native.rpc('thread/goal/set', {'threadId': project['codex_session_id'], 'status': 'blocked'})
                 self.record_status(project, 'stalled', block_reason=json.dumps(
                     {'reason': 'Completion verification failed', 'details': 'Final CI failed', 'requires_user': False}))
+            else:
+                self.db.set_setting('completion_check/' + project['project_id'], {
+                    'checked_at': time.time(), 'message': 'Native goal finished; waiting for final CI for ' + project['last_commit']})
             return
         from .deployment import complete as deploy
         if not await deploy(self, project):
@@ -569,9 +602,12 @@ class Controller:
             self.db.event(project['project_id'], 'complete', {'repo': project['github_repo'],
                           'commit': project['last_commit'], 'ci': project['last_ci_status']})
             self.db.compact_queue()
-            if self.db.setting('selected') == project['project_id']:
+            # Completion may have released its idle slot while CI was pending.
+            # Never clear another project's selection or preempt its work.
+            if self.db.setting('selected') in (None, project['project_id']):
                 self.db.set_setting('selected', None)
                 self.db.set_setting('advance_queue', True)
+            self.db.conn.execute('DELETE FROM settings WHERE key=?', ('completion_check/' + project['project_id'],))
         await self.cancel_wakes(project)
 
     async def refresh_git(self, project):
@@ -595,9 +631,29 @@ class Controller:
                     latest[key] = run
         data = list(latest.values())
         observed = {r['path'].split('@', 1)[0] for r in data}
+        missing = workflows - observed
+        pr_only = set()
+        for workflow in missing:
+            text = (await command('git', 'show', commit + ':' + workflow, cwd=project['project_path']))['stdout']
+            try:
+                config = yaml.safe_load(text)
+                # YAML 1.1 interprets GitHub's unquoted "on" as boolean True.
+                triggers = config.get('on', config.get(True)) if isinstance(config, dict) else None
+                events = ({triggers} if isinstance(triggers, str) else set(triggers)
+                          if isinstance(triggers, (dict, list)) and all(isinstance(k, str) for k in triggers) else set())
+            except yaml.YAMLError:
+                events = set()  # Unknown syntax stays pending, never invent success.
+            if events and events <= {'pull_request', 'pull_request_target'}:
+                pr_only.add(workflow)
+        if pr_only:
+            pulls = json.loads((await command('gh', 'api', '--paginate', '--slurp',
+                f"repos/{project['github_repo']}/commits/{commit}/pulls?per_page=100"))['stdout'])
+            if not any(p.get('state') == 'open' and p.get('head', {}).get('sha') == commit
+                       for page in pulls for p in page):
+                missing -= pr_only  # A plain push does not trigger PR-only CI.
         state = 'not configured' if not workflows and not data else 'passed'
         # No run is not proof of success (including disabled/manual/path-filtered workflows).
-        if workflows - observed or any(r['status'] != 'completed' or not r['conclusion'] for r in data):
+        if missing or any(r['status'] != 'completed' or not r['conclusion'] for r in data):
             state = 'pending'
         if any(r['status'] == 'completed' and r['conclusion'] and
                r['conclusion'] not in ('success', 'skipped', 'neutral') for r in data):

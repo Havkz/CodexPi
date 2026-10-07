@@ -489,6 +489,8 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                         output = sha
                     elif args[:2] == ('git', 'ls-tree'):
                         output = '\0'.join(workflows) + ('\0' if workflows else '')
+                    elif args[:2] == ('git', 'show'):
+                        output = 'on: push\njobs: {}'
                     elif args[:2] == ('gh', 'api'):
                         output = json.dumps([{'workflow_runs': runs[:1]}, {'workflow_runs': runs[1:]}])
                     else:
@@ -515,7 +517,74 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(c.db.setting('advance_queue', False))
         self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], 0)
         self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='stalled'").fetchone()[0], 1)
-        c.native.rpc.assert_awaited_once_with('thread/goal/set', {'threadId': 'first', 'status': 'blocked'})
+        c.native.rpc.assert_any_await('thread/goal/set', {'threadId': 'first', 'status': 'blocked'})
+
+    async def test_native_completion_releases_stale_active_slot_while_ci_is_verified(self):
+        c = self.controller
+        c.db.update('second', goal_status='active', github_repo='owner/second', last_commit='a' * 40)
+        c.db.set_setting('selected', 'first')
+        c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'active'}, 'second': {'status': 'complete'}})
+        c.refresh_git = AsyncMock(side_effect=lambda p: c.db.update(p['project_id'], last_ci_status='pending'))
+        c.cancel_wakes = AsyncMock()
+        command = AsyncMock(return_value={'stdout': '', 'stderr': '', 'exit_code': 0})
+        with patch('app.controller.command', command):
+            await c.poll_goals()
+            self.assertEqual(c.db.get('second')['goal_status'], 'complete')
+            self.assertEqual(c.db.get('first')['goal_status'], 'active')  # UNIQUE gate is preserved.
+            self.assertEqual(c.db.setting('selected'), 'first')
+            self.assertEqual(c.db.get('second')['completion_notified'], 0)
+            self.assertEqual(c.db.get('second')['queue_position'], 2)
+            self.assertIn('final CI', c.db.setting('completion_check/second')['message'])
+            self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], 0)
+            await c.poll_goals()
+            c.refresh_git.assert_awaited_once()  # No push/API retry storm.
+            c.db.conn.close()
+            c.db = Database(self.root / 'test.db')
+            stamp = c.db.setting('completion_check/second')['checked_at']
+            c.refresh_git.side_effect = lambda p: c.db.update(p['project_id'], last_ci_status='passed')
+            with patch('app.controller.time.time', return_value=stamp + 31):
+                await c.poll_goals()
+                await c.poll_goals()
+            self.assertEqual(c.db.get('second')['completion_notified'], 1)
+            self.assertIsNone(c.db.get('second')['queue_position'])
+            self.assertEqual(c.db.setting('selected'), 'first')
+            self.assertIsNone(c.db.setting('completion_check/second'))
+            self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], 1)
+
+    async def test_ci_does_not_wait_for_pr_only_workflow_on_plain_push(self):
+        c, sha = self.controller, 'a' * 40
+        c.db.update('first', github_repo='owner/first')
+        runs = [{'id': 1, 'run_attempt': 1, 'workflow_id': 1, 'event': 'push', 'head_sha': sha,
+                 'path': '.github/workflows/build.yml', 'status': 'completed', 'conclusion': 'success'}]
+        workflow, pulls = {'text': 'on: pull_request\njobs: {}'}, []
+        async def command(*args, **kwargs):
+            if args[:2] == ('git', 'rev-parse'):
+                output = sha
+            elif args[:2] == ('git', 'ls-tree'):
+                output = '.github/workflows/build.yml\0.github/workflows/pr.yml\0'
+            elif args[:2] == ('git', 'show'):
+                self.assertEqual(args[2], sha + ':.github/workflows/pr.yml')
+                output = workflow['text']
+            elif args[:2] == ('gh', 'api'):
+                output = json.dumps([pulls]) if '/pulls?' in args[-1] else json.dumps([{'workflow_runs': runs}])
+            else:
+                raise AssertionError(args)
+            return {'stdout': output, 'stderr': '', 'exit_code': 0}
+        with patch('app.controller.command', command):
+            for text in ('on: pull_request\njobs: {}', '"on": [pull_request, pull_request_target]\njobs: {}',
+                         'on:\n  pull_request:\n    branches: [main]\njobs: {}'):
+                workflow['text'] = text
+                await c.refresh_git(c.db.get('first'))
+                self.assertEqual(c.db.get('first')['last_ci_status'], 'passed')
+            pulls.append({'state': 'open', 'head': {'sha': sha}})
+            await c.refresh_git(c.db.get('first'))
+            self.assertEqual(c.db.get('first')['last_ci_status'], 'pending')
+            pulls.clear()
+            for text in ('on: [push, pull_request]\njobs: {}', 'on: workflow_dispatch\njobs: {}',
+                         'on: [', 'jobs: {}'):
+                workflow['text'] = text
+                await c.refresh_git(c.db.get('first'))
+                self.assertEqual(c.db.get('first')['last_ci_status'], 'pending')
 
     async def test_promotion_preserves_inactive_limit_and_user_blockers(self):
         c = self.controller

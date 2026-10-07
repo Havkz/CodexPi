@@ -86,6 +86,7 @@ section { margin-top: 36px; }
 .status-usage-limited, .status-offline { --status: var(--usage-limited); }
 .status-limited-by-budget { --status: var(--limited-by-budget); }
 .status-complete, .status-passed { --status: var(--complete); }
+.status-verifying { --status: var(--orange); }
 .metadata { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
 .metadata > div { min-width: 0; }
 dt { font-size: 11px; color: var(--secondary); margin-bottom: 6px; }

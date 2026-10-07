@@ -7,6 +7,7 @@ const node = (tag, text = '', cls = '') => {
 };
 const date = stamp => stamp ? new Date(stamp * 1000).toLocaleString('de-DE') : 'Noch nicht verfügbar';
 const badge = status => node('span', status || 'unknown', 'badge status-' + (status || 'unknown').replaceAll(' ', '-'));
+const projectStatus = p => p.goal_status === 'complete' && !p.completion_notified ? 'verifying' : p.goal_status;
 function button(text, callback, key, cls = '') {
   const el = node('button', text, cls); el.type = 'button'; el.onclick = callback;
   if (key) el.dataset.key = key;
@@ -150,7 +151,7 @@ function actions(p, compact = false, inDetail = false) {
 }
 function projectOverview(p, inDetail = false) {
   const body = node('div'), header = node('div', '', 'project-header'), name = node('div', '', 'project-name');
-  name.append(node('h3', p.display_name), badge(p.goal_status)); header.append(name);
+  name.append(node('h3', p.display_name), badge(projectStatus(p))); header.append(name);
   header.append(node('span', p.queue_position == null ? 'Nicht in Queue' : 'Priority ' + p.queue_position, 'counter')); body.append(header);
   body.append(metadata([
     ['Repo', repo(p)], ['Session', p.codex_session_id, true], ['tmux', p.tmux_session_name, true], ['CI', p.last_ci_status || 'unknown'],
@@ -158,6 +159,7 @@ function projectOverview(p, inDetail = false) {
     ['Windows Requirement', p.windows_required ? 'Required' : 'Nicht angefordert'], ['Discord Channel', p.discord_channel_id, true]
   ]));
   const blocker = block(p); if (blocker) body.append(blocker);
+  if (projectStatus(p) === 'verifying') body.append(node('p', p.completion_check?.message || 'Goal beendet. Abschlussprüfung läuft.', 'notice'));
   const controls = actions(p, false, inDetail); controls.classList.add('active-actions'); body.append(controls);
   if (p.resume_result) { const result = JSON.parse(p.resume_result); body.append(node('p', result.message, result.status === 'failed' ? 'error' : 'notice')); }
   if (p.lifecycle !== 'ready' || p.operation) {
@@ -181,7 +183,7 @@ function renderQueue(queue) {
     }
     position.append(controls);
     const name = node('td'); name.append(button(p.display_name, () => showDetail(p.project_id), p.project_id + ':name', 'queue-name'), node('span', p.github_repo || 'Repo nicht verfügbar', 'queue-repo mono'));
-    const status = node('td'); status.append(badge(p.goal_status));
+    const status = node('td'); status.append(badge(projectStatus(p)));
     const actionCell = node('td'); actionCell.append(actions(p, true));
     row.append(position, name, status, node('td', date(p.last_activity), 'muted'), node('td', p.windows_required ? 'Required' : '—'), actionCell);
     row.ondragstart = event => { dragging = p.project_id; event.dataTransfer.setData('text/plain', dragging); event.dataTransfer.effectAllowed = 'move'; row.classList.add('dragging'); };
@@ -214,7 +216,7 @@ function render() {
     [String(state.projects.filter(p => p.goal_status === 'active').length), 'Active Project', active?.display_name || 'Kein aktives Projekt'],
     [String(queue.filter(p => p.project_id !== state.selected).length), 'Queue Length', 'Wartende Projekte'],
     [state.windows_online ? 'Online' : 'Offline', 'Windows Worker', 'Heartbeat alle 20 Sekunden'],
-    [String(state.projects.filter(p => p.goal_status === 'complete').length), 'Completed Projects', stalled + ' stalled']
+    [String(state.projects.filter(p => p.goal_status === 'complete' && p.completion_notified).length), 'Completed Projects', stalled + ' stalled']
   ];
   $('summary').replaceChildren(...summary.map(([value, label, note]) => {
     const card = node('div', '', 'kpi'); card.append(node('div', value, 'kpi-value' + (/\D/.test(value) ? ' word' : '')), node('div', label, 'kpi-label'), node('div', note, 'kpi-note')); return card;
@@ -226,7 +228,7 @@ function render() {
   $('active').replaceChildren(active ? projectOverview(active) : node('p', state.pause_all ? 'Alle Arbeit pausiert. Mit Resume das erste Projekt fortsetzen.' : 'Kein Projekt ausgewählt. Die Queue wartet auf deine Freigabe.', 'empty'));
   renderQueue(queue);
   $('projects').replaceChildren(...state.projects.map(p => {
-    const card = node('article', '', 'project-card'); card.append(badge(p.goal_status), node('h3', p.display_name));
+    const card = node('article', '', 'project-card'); card.append(badge(projectStatus(p)), node('h3', p.display_name));
     const repository = node('p', '', 'mono'); repository.append(repo(p)); card.append(repository, node('p', 'CI · ' + (p.last_ci_status || 'unknown'), 'muted'));
     card.append(actions(p, true)); return card;
   }));

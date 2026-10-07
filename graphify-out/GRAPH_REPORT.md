@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-07)
 
 ## Corpus Check
-- 88 files · ~114,152 words
+- 88 files · ~114,888 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 629 nodes · 1609 edges · 54 communities (35 shown, 19 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 176 edges (avg confidence: 0.69)
+- 633 nodes · 1622 edges · 48 communities (33 shown, 15 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 177 edges (avg confidence: 0.69)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ab889a18`
+- Built from commit: `c1ff0bc6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -49,7 +49,6 @@
 - Bot
 - usage.js
 - db.py
-- Bot
 - verify-usage-ui.py
 - build-favicon.py
 - Recovery and operator runbook
@@ -60,17 +59,12 @@
 - SchedulerTests
 - Durable manual pause and real quota evidence, 2026-09-24
 - verify-account-ui.py
-- Redactor
-- export
-- db.py
-- DeploymentTests
-- .make_controller
 
 ## God Nodes (most connected - your core abstractions)
-1. `Database` - 70 edges
-2. `Controller` - 54 edges
-3. `SchedulerTests` - 45 edges
-4. `command()` - 40 edges
+1. `Database` - 71 edges
+2. `Controller` - 55 edges
+3. `SchedulerTests` - 47 edges
+4. `command()` - 41 edges
 5. `atomic_write()` - 37 edges
 6. `tick()` - 29 edges
 7. `Native` - 28 edges
@@ -83,29 +77,33 @@
   Setup/discord-token.py → app/lifecycle.py
 - `main()` --indirect_call--> `action()`  [INFERRED]
   Setup/verify-lifecycle-fixes.py → app/web.py
+- `Crash` --uses--> `Redactor`  [INFERRED]
+  tests/test_lifecycle.py → app/common.py
 - `LifecycleTests` --uses--> `Redactor`  [INFERRED]
   tests/test_lifecycle.py → app/common.py
 - `SchedulerTests` --uses--> `Redactor`  [INFERRED]
   tests/test_scheduler.py → app/common.py
-- `WorkerAdmissionTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_worker_server.py → app/common.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (54 total, 19 thin omitted)
+## Communities (48 total, 15 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
 Nodes (6): Changes, Completion gate follow-up, Lifecycle repair evidence, 2026-09-23, Reproduction and exact causes, Verification boundaries and remaining work, Verified live
 
 ### Community 1 - "Controller"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (3): notification(), command(), Controller
 
+### Community 2 - "windows_worker.py"
+Cohesion: 0.14
+Nodes (14): codex_login_url(), Only the native managed OAuth ceremony, never an arbitrary worker/browser URL., execute(), main(), protect_secret(), Outbound-only native Windows executor. This process never starts an AI agent., One owned callback tunnel. No AI, logout, saved tokens or project execution., Windows DPAPI CurrentUser; no machine-wide or plaintext key file. (+6 more)
+
 ### Community 3 - "deployment.py"
-Cohesion: 0.11
-Nodes (40): slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+32 more)
+Cohesion: 0.09
+Nodes (49): complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session(), render() (+41 more)
 
 ### Community 4 - "Native"
 Cohesion: 0.22
@@ -116,12 +114,12 @@ Cohesion: 0.33
 Nodes (5): Delete, Interrupted operation recovery, Project lifecycle, Rename, Verified on 2026-09-20
 
 ### Community 6 - "web.py"
-Cohesion: 0.06
-Nodes (33): canonical(), codex_login_url(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., Only the native managed OAuth ceremony, never an arbitrary worker/browser URL., read_env(), SignedChannel (+25 more)
+Cohesion: 0.07
+Nodes (28): block_summary(), canonical(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., Presentation only: never change native status or resume authorization., read_env(), Redactor (+20 more)
 
 ### Community 7 - "dashboard.js"
-Cohesion: 0.31
-Nodes (20): accountAct(), accountPending(), act(), actions(), badge(), block(), button(), date() (+12 more)
+Cohesion: 0.30
+Nodes (21): accountAct(), accountPending(), act(), actions(), badge(), block(), button(), date() (+13 more)
 
 ### Community 8 - "CodexPi installation progress"
 Cohesion: 0.12
@@ -132,12 +130,16 @@ Cohesion: 0.50
 Nodes (4): Installation and autostart, Protocol and jobs, Verification status, Windows worker
 
 ### Community 11 - "Bot"
-Cohesion: 0.10
-Nodes (24): daily_update(), idle(), Daily official CLI update, only at a proven idle single-runtime boundary., GoalSource, idle_thread(), process_in_pane(), project_thread_config(), Native Codex RPC and the scheduler's local TUI admission gate. (+16 more)
+Cohesion: 0.08
+Nodes (31): daily_update(), idle(), Daily official CLI update, only at a proven idle single-runtime boundary., GoalSource, idle_thread(), Native, process_in_pane(), project_thread_config() (+23 more)
 
 ### Community 15 - "codexpi"
-Cohesion: 0.08
-Nodes (21): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+13 more)
+Cohesion: 0.09
+Nodes (19): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+11 more)
+
+### Community 21 - "main.py"
+Cohesion: 0.06
+Nodes (7): Database, Only after confirming the original single-account identity; never guess on switc, BaseException, DeploymentTests, Crash, LifecycleTests, SchedulerTests
 
 ### Community 23 - "verify-design.py"
 Cohesion: 0.67
@@ -160,8 +162,8 @@ Cohesion: 0.67
 Nodes (3): main(), observe(), Start/observe one real deployment goal; never replace an existing objective.  De
 
 ### Community 34 - "migration.py"
-Cohesion: 0.10
-Nodes (47): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), failed_resume(), finish_switch(), fresh_usage(), holds_goal() (+39 more)
+Cohesion: 0.09
+Nodes (50): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), choose_account(), failed_resume(), finish_switch(), fresh_usage() (+42 more)
 
 ### Community 35 - "Bot"
 Cohesion: 0.33
@@ -174,10 +176,6 @@ Nodes (6): refreshUsage(), renderUsage(), usageDate(), usageElement(), usagePerc
 ### Community 37 - "db.py"
 Cohesion: 0.17
 Nodes (19): action(), authorize(), favicon(), index(), login(), make_app(), project_detail(), safe_json() (+11 more)
-
-### Community 38 - "Bot"
-Cohesion: 0.19
-Nodes (6): block_summary(), Presentation only: never change native status or resume authorization., Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed()
 
 ### Community 41 - "Recovery and operator runbook"
 Cohesion: 0.20
@@ -207,32 +205,20 @@ Nodes (4): main(), Create a lossless, line-addressed audit from the user's speci
 Cohesion: 0.50
 Nodes (3): Durable manual pause and real quota evidence, 2026-09-24, Pause authority, Real usage-limit history
 
-### Community 49 - "Redactor"
-Cohesion: 0.21
-Nodes (5): Redactor, BaseException, DiscordTests, Crash, WebTests
-
-### Community 50 - "export"
-Cohesion: 0.23
-Nodes (11): digest(), export(), git(), main(), native_state(), Export one explicitly selected Windows project/session without changing it.  The, Keep only this thread's indexed history/metadata, never another thread., regular() (+3 more)
-
-### Community 51 - "db.py"
-Cohesion: 0.29
-Nodes (6): choose_account(), Choose a quota check or reset wait, never authorize a goal from cached usage., number(), Read-only account telemetry; never decides whether a goal may execute., windows(), UsageTests
-
 ## Knowledge Gaps
 - **76 isolated node(s):** `install-base.sh script`, `PATH`, `Alltag`, `Installation und Betrieb`, `Dokumentation` (+71 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `windows_worker.py` to `Controller`, `migration.py`, `deployment.py`, `web.py`, `Bot`, `Bot`, `codexpi`, `Redactor`, `db.py`, `DeploymentTests`, `.make_controller`, `main.py`?**
-  _High betweenness centrality (0.080) - this node is a cross-community bridge._
-- **Why does `Controller` connect `Controller` to `windows_worker.py`, `deployment.py`, `migration.py`, `Bot`, `web.py`, `Bot`, `Redactor`, `.make_controller`, `main.py`?**
+- **Why does `Database` connect `main.py` to `Controller`, `migration.py`, `deployment.py`, `web.py`, `Bot`, `codexpi`?**
+  _High betweenness centrality (0.081) - this node is a cross-community bridge._
+- **Why does `Controller` connect `Controller` to `deployment.py`, `Bot`, `main.py`, `web.py`?**
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+- **Why does `SchedulerTests` connect `main.py` to `Controller`, `migration.py`, `web.py`, `Bot`, `codexpi`?**
   _High betweenness centrality (0.049) - this node is a cross-community bridge._
-- **Why does `SchedulerTests` connect `main.py` to `Controller`, `windows_worker.py`, `migration.py`, `Bot`, `codexpi`, `Redactor`?**
-  _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **Are the 14 inferred relationships involving `Database` (e.g. with `Controller` and `AccountObservationTests`) actually correct?**
   _`Database` has 14 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 47 inferred relationships involving `ValueError` (e.g. with `codex_login_url()` and `.__init__()`) actually correct?**
