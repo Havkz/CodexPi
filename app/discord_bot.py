@@ -64,7 +64,7 @@ def status_embed(controller, project, event, payload):
         tracked = next((s for s in controller.unsnooze.get('sessions', [])
                         if s.get('sessionId') == project['codex_session_id']), {})
         reset = (payload.get('usage_limit') or json.loads(project.get('usage_limit') or '{}')).get('resetAt') or tracked.get('resetAt')
-        lines.append('│ Reset: ' + (f'<t:{int(reset / 1000)}:F>' if reset else '`unknown`'))
+        lines.append('│ Reset: ' + (f'<t:{int(reset / 1000)}:F> (<t:{int(reset / 1000)}:R>)' if reset else '`unknown`'))
     if kind not in ('complete', 'stalled', 'usage limited', 'limited by budget'):
         lines.append('│ Session: ' + code(project['codex_session_id']))
     lines.append('│ Repo: ' + code(project['github_repo']))
