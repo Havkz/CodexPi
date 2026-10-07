@@ -105,6 +105,9 @@ async def reconcile(controller, project):
             return False
         metadata = json.loads(project['usage_limit'] or '{}')
         account = controller.db.setting('account_usage', {})
+        owner = controller.db.setting('usage_account/' + project['project_id'])
+        if owner and account.get('account_id') != owner:
+            return True  # Another login's quota never clears a failed prompt receipt.
         reset = metadata.get('resetAt')
         if (not reset or reset > time.time() * 1000 or account.get('checked_at', 0) * 1000 <= reset
                 or account.get('ordinaryUsageAllowed') is not True

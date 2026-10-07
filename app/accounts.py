@@ -169,10 +169,54 @@ def switching(controller):
     return controller.db.setting('account_switch', {}).get('phase') not in (None, 'complete', 'failed')
 
 
+def wake_key(controller, project):
+    account_id = controller.db.setting('active_account')
+    return 'usage_wake/' + (account_id + '/' if account_id else '') + project['project_id']
+
+
+def fresh_usage(account, account_id):
+    stamp = account.get('checked_at')
+    quota = windows(account)
+    now = time.time()
+    return bool(account.get('account_id') == account_id and account.get('ordinaryUsageAllowed') is True
+                and number(stamp) and 0 <= now - stamp <= 90 and quota
+                and not any(w['remaining'] == 0 or w['reset_at'] and stamp < w['reset_at'] <= now
+                            for w in quota.values()))
+
+
+def bind_legacy_limits(controller, account_id):
+    """One-time original-account attribution, only after native identity confirmation."""
+    with controller.db.transaction():
+        for project in controller.db.all():
+            ident = project['project_id']
+            old_wake = controller.db.setting('usage_wake/' + ident)
+            if old_wake:
+                controller.db.set_setting('usage_wake/' + account_id + '/' + ident, old_wake)
+            if project['goal_status'] != 'usage limited' or controller.db.setting('usage_account/' + ident):
+                continue
+            controller.db.set_setting('usage_account/' + ident, account_id)
+            metadata = json.loads(project['usage_limit'] or '{}')
+            if metadata:
+                metadata['account_id'] = account_id
+                controller.db.update(ident, usage_limit=json.dumps(metadata))
+                controller.db.set_setting('usage_limits/' + account_id + '/' + ident, metadata)
+            event = controller.db.conn.execute("SELECT event_id,payload FROM events WHERE project_id=? "
+                "AND kind='usage limited' ORDER BY event_id DESC LIMIT 1", (ident,)).fetchone()
+            if event:
+                payload = json.loads(event['payload'])
+                payload['account_id'] = account_id
+                payload['failed_prompt'] = bool(controller.db.setting('prompt_limit/' + ident))
+                if metadata:
+                    payload['usage_limit'] = metadata
+                controller.db.conn.execute('UPDATE events SET payload=? WHERE event_id=?', (json.dumps(payload), event['event_id']))
+
+
 def holds_goal(controller, project):
     state = controller.db.setting('account_switch', {})
-    return bool(switching(controller) and state.get('project_id') == project['project_id']
-                and state.get('goal_hold'))
+    wait = controller.db.setting('account_wait') or {}
+    return bool((switching(controller) and state.get('project_id') == project['project_id'] and state.get('goal_hold'))
+                or (wait.get('account_id') == controller.db.setting('active_account')
+                    and wait.get('project_id') == project['project_id'] and wait.get('goal_hold')))
 
 
 def vault(controller):
@@ -195,6 +239,7 @@ async def refresh(controller):
     metadata, usage = await observe_account(controller.native, vault(controller), expected)
     if not expected:
         controller.db.bind_legacy_usage(metadata['account_id'])
+        bind_legacy_limits(controller, metadata['account_id'])
     remember(controller, metadata, usage)
     if not expected:
         controller.db.activate_account(metadata['account_id'])
@@ -318,6 +363,10 @@ async def tick(controller):
         elif state['phase'] == 'verifying':
             metadata, usage = await observe_account(controller.native, vault(controller), state['target_account'])
             remember(controller, metadata, usage)
+            for index, project in enumerate(controller.db.all()):
+                # Upstream Snooze entries are keyed by session, not account. Retain
+                # their DB reset history, but disarm timers from the previous login.
+                await controller.cancel_wakes(project, refresh=index == 0)
             controller.db.activate_account(metadata['account_id'])
             state['phase'] = 'resuming'
         elif state['phase'] == 'resuming':
@@ -354,10 +403,52 @@ async def finish_switch(controller, state):
         return
     account = controller.db.setting('account_usage', {})
     quota = windows(account)
-    if (account.get('account_id') != state['target_account'] or account.get('ordinaryUsageAllowed') is not True
-            or not quota or any(w['remaining'] == 0 for w in quota.values())):
+    if not fresh_usage(account, state['target_account']):
+        controller.db.set_setting('account_wait', {key: state[key] for key in (
+            'project_id', 'session_id', 'project_path', 'goal_created_at', 'objective_hash', 'goal_hold')}
+            | {'account_id': state['target_account'], 'checked_at': account.get('checked_at'),
+               'reset_at': max((w['reset_at'] for w in quota.values() if w['remaining'] == 0 and w['reset_at']), default=None)})
         return  # No quota is invented; retain the real native limit for Unsnooze.
-    await controller.cancel_wakes(project, refresh=True)
+    controller.db.set_setting('account_wait', None)
     controller.db.update(project['project_id'], usage_limit=None, resume_result=None,
         operation=json.dumps({'kind': 'resume', 'source': 'account-switch', 'id': state['id'],
                               'requested_at': time.time(), 'account_id': state['target_account']}))
+
+
+async def resume_account_wait(controller):
+    """Use the existing reset poll and mapped resume, not another scheduler/daemon."""
+    from .native import idle_thread
+    wait = controller.db.setting('account_wait') or {}
+    if not wait or wait.get('account_id') != controller.db.setting('active_account'):
+        return False
+    try:
+        project = controller.db.get(wait['project_id'])
+    except KeyError:
+        controller.db.set_setting('account_wait', None)
+        return False
+    if (not controller.can_auto_resume(project)
+            or project['codex_session_id'] != wait['session_id'] or project['project_path'] != wait['project_path']):
+        controller.db.set_setting('account_wait', None)
+        return False
+    if controller.db.setting('selected') != project['project_id'] or project['queue_position'] != 1:
+        return False  # Reordering defers this waiter; it never revokes reset eligibility.
+    if project['operation']:
+        return True  # An existing resume owns its own confirmation/deduplication.
+    goal = (await controller.native.rpc('thread/goal/get', {'threadId': wait['session_id']})).get('goal')
+    if (not goal or goal.get('createdAt') != wait['goal_created_at']
+            or hashlib.sha256(goal['objective'].encode()).hexdigest() != wait['objective_hash']
+            or goal['status'] not in ('paused', 'usageLimited')):
+        controller.db.set_setting('account_wait', None)
+        return False
+    account = controller.db.setting('account_usage', {})
+    if (not fresh_usage(account, wait['account_id']) or not number(wait.get('checked_at'))
+            or account['checked_at'] <= wait['checked_at']
+            or controller.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone()
+            or not await idle_thread(controller.native, wait['session_id'])):
+        return True
+    with controller.db.transaction():
+        controller.db.update(project['project_id'], usage_limit=None, resume_result=None,
+            operation=json.dumps({'kind': 'resume', 'source': 'account-reset', 'id': str(uuid.uuid4()),
+                'requested_at': time.time(), 'account_id': wait['account_id']}))
+        controller.db.set_setting('account_wait', None)
+    return True

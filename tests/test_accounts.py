@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import stat
 import tempfile
+import time
 import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
@@ -187,6 +188,93 @@ class AccountObservationTests(unittest.IsolatedAsyncioTestCase):
 
 
 class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
+    async def test_account_reset_wait_and_notifications_never_borrow_another_accounts_state(self):
+        from app.accounts import bind_legacy_limits, finish_switch, fresh_usage, resume_account_wait, wake_key
+        from app.discord_bot import EMBED_COLORS, status_embed
+        from app.prompts import reconcile
+        from tests.test_scheduler import SchedulerTests
+        import hashlib
+        fixture = SchedulerTests()
+        fixture.setUp()
+        c, now = fixture.controller, time.time()
+        goal = {'objective': 'Original goal', 'createdAt': 17, 'updatedAt': 20, 'status': 'usageLimited'}
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/goal/get':
+                return {'goal': goal}
+            if method == 'thread/read':
+                return {'thread': {'id': params['threadId'], 'cwd': str(c.root / params['threadId']),
+                                   'status': {'type': 'idle'}}}
+            raise AssertionError('Unexpected execution RPC: ' + method)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        try:
+            c.select('first')
+            reset_a, reset_b = int((now + 300) * 1000), int((now + 900) * 1000)
+            c.db.update('first', goal_status='usage limited', usage_limit=json.dumps({'resetAt': reset_a}))
+            c.db.set_setting('usage_wake/first', {'reset_at': reset_a})
+            c.db.event('first', 'usage limited', {'reason': None})
+            bind_legacy_limits(c, 'a')
+            c.db.set_setting('accounts', [{'account_id': 'a', 'name': 'Account A'},
+                                          {'account_id': 'b', 'name': 'Account B'}])
+            c.db.activate_account('a')
+            self.assertEqual(c.db.setting(wake_key(c, c.db.get('first')))['reset_at'], reset_a)
+            old_event = dict(c.db.conn.execute('SELECT * FROM events').fetchone())
+            old_payload = json.loads(old_event['payload']) | {'embed_color': EMBED_COLORS[0]}
+            c.db.activate_account('b')
+            self.assertIsNone(c.db.setting(wake_key(c, c.db.get('first'))))
+            c.db.record_usage({**account(now, daily=100, reset=now + 900), 'ordinaryUsageAllowed': False})
+            c.unsnooze = {'sessions': [{'sessionId': 'first', 'status': 'stopped', 'resetAt': reset_b}]}
+            c.persist_usage_resets()
+            self.assertEqual(json.loads(c.db.get('first')['usage_limit'])['resetAt'], reset_a)
+            self.assertEqual(json.loads(c.db.conn.execute('SELECT payload FROM events').fetchone()[0]),
+                             json.loads(old_event['payload']))
+            c.db.update('first', usage_limit=json.dumps({'resetAt': reset_b}))
+            c.db.set_setting('prompt_limit/first', {'goal_status': goal['status'], 'goal_updated_at': 20})
+            text = status_embed(c, c.db.get('first'), old_event, old_payload).description
+            self.assertIn('Account A', text)
+            self.assertIn(f'<t:{int(reset_a / 1000)}:R>', text)
+            self.assertNotIn(f'<t:{int(reset_b / 1000)}:', text)
+            self.assertNotIn('failed prompt is not replayed', text)  # Policy belongs to the old event.
+            self.assertTrue(await reconcile(c, c.db.get('first')))
+            c.db.conn.execute("DELETE FROM settings WHERE key='prompt_limit/first'")
+            c.db.update('first', operation=json.dumps({'kind': 'resume', 'id': 'old-wake',
+                                                      'source': 'unsnooze', 'account_id': 'a'}))
+            await c.resume_ready()
+            self.assertIsNone(c.db.get('first')['operation'])
+            self.assertEqual(json.loads(c.db.get('first')['resume_result'])['status'], 'cancelled')
+            state = {'id': 'new-switch', 'project_id': 'first', 'session_id': 'first',
+                     'project_path': str(c.root / 'first'), 'goal_created_at': 17,
+                     'objective_hash': hashlib.sha256(goal['objective'].encode()).hexdigest(),
+                     'goal_hold': True, 'target_account': 'b'}
+            await finish_switch(c, state)
+            self.assertEqual(c.db.setting('account_wait')['account_id'], 'b')
+            self.assertIsNone(c.db.get('first')['operation'])  # No refill invented from A's reset.
+            c.db.conn.close()
+            c.db = Database(c.root / 'test.db')
+            self.assertTrue(await resume_account_wait(c))
+            c.select('second')
+            self.assertFalse(await resume_account_wait(c))
+            self.assertIsNotNone(c.db.setting('account_wait'))  # Queue-away/back survives.
+            c.select('first')
+            c.db.record_usage({**account(now + 5, reset=now + 900), 'ordinaryUsageAllowed': True})
+            self.assertFalse(fresh_usage(c.db.setting('account_usage'), 'b'))  # Future sample.
+            with patch('app.accounts.time.time', return_value=now + 10):
+                self.assertTrue(await resume_account_wait(c))
+                self.assertFalse(await resume_account_wait(c))  # One durable attempt, no second send.
+            operation = json.loads(c.db.get('first')['operation'])
+            self.assertEqual((operation['source'], operation['account_id']), ('account-reset', 'b'))
+            self.assertNotIn('sent_at', operation)
+            self.assertIsNone(c.db.setting('account_wait'))
+            c.db.update('first', operation=None)
+            c.db.record_usage({**account(now, daily=100), 'ordinaryUsageAllowed': False})
+            await finish_switch(c, state)
+            c.db.set_setting('manual_pause/first', True)
+            self.assertFalse(await resume_account_wait(c))
+            self.assertIsNone(c.db.setting('account_wait'))
+            self.assertIsNone(c.db.get('first')['operation'])
+            self.assertFalse(any(call.args[0] in ('turn/start', 'thread/goal/set') for call in c.native.rpc.await_args_list))
+        finally:
+            fixture.tearDown()
+
     async def test_switch_waits_for_turn_and_jobs_recovers_journal_and_respects_manual_pause(self):
         # Reuse the scheduler's existing two-project fixture, not a parallel harness.
         from tests.test_scheduler import SchedulerTests

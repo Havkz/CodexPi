@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791392969.4543533,
-    "ast_hash": "ae473df62c90e303828f774abf431a3e",
+    "mtime": 1791394273.9007025,
+    "ast_hash": "4f4ff10cf64170943c8922e67b11b424",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
-    "mtime": 1791382157.093209,
-    "ast_hash": "7cff591067e03e095cc4bf3063c2fb3e",
+    "mtime": 1791394155.3006997,
+    "ast_hash": "b41421b23a12430104203e57c96d6ad5",
     "semantic_hash": ""
   },
   "app/main.py": {
@@ -225,13 +225,13 @@
     "semantic_hash": ""
   },
   "app/lifecycle.py": {
-    "mtime": 1791313596.685785,
-    "ast_hash": "7c08c7baff064b9c9d3f6be58838f29b",
+    "mtime": 1791394155.2991903,
+    "ast_hash": "7b27053b0658e9368cca09fa17230417",
     "semantic_hash": ""
   },
   "tests/test_lifecycle.py": {
-    "mtime": 1791313769.6429973,
-    "ast_hash": "9e264de2e7eeb09b59b6e9307c68bf7c",
+    "mtime": 1791394786.7574055,
+    "ast_hash": "3d404026e3eb3a2675b712396bda5f24",
     "semantic_hash": ""
   },
   "docs/lifecycle.md": {
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "app/prompts.py": {
-    "mtime": 1791392345.7193105,
-    "ast_hash": "972d519111daa314e91d1f13781722bd",
+    "mtime": 1791393901.5215893,
+    "ast_hash": "3a77519d85e19b7614cef77fb2e98137",
     "semantic_hash": ""
   },
   "Setup/verify-blocking-ui.py": {
@@ -445,13 +445,13 @@
     "semantic_hash": ""
   },
   "app/accounts.py": {
-    "mtime": 1791393431.1914985,
-    "ast_hash": "f7305686cf41e77061e2404ca2452af0",
+    "mtime": 1791394786.7543519,
+    "ast_hash": "7627e90a185dd77384f0a6b0bc893024",
     "semantic_hash": ""
   },
   "tests/test_accounts.py": {
-    "mtime": 1791392969.462987,
-    "ast_hash": "899d3f34c91e0a82bec654141ad8d366",
+    "mtime": 1791394805.3002932,
+    "ast_hash": "bb30f0a86e835483be05fd9af66492a5",
     "semantic_hash": ""
   }
 }

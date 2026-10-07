@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-07)
 
 ## Corpus Check
-- 87 files · ~108,160 words
+- 87 files · ~109,254 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 593 nodes · 1380 edges · 48 communities (33 shown, 15 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 120 edges (avg confidence: 0.66)
+- 600 nodes · 1418 edges · 49 communities (33 shown, 16 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 120 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `decb936a`
+- Built from commit: `f68a8c76`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -56,13 +56,14 @@
 - CodexPi
 - DeploymentTests
 - Selected Windows session migration
+- SchedulerTests
 - Durable manual pause and real quota evidence, 2026-09-24
 - test-live-lifecycle.py
 
 ## God Nodes (most connected - your core abstractions)
-1. `Database` - 68 edges
+1. `Database` - 69 edges
 2. `Controller` - 54 edges
-3. `SchedulerTests` - 42 edges
+3. `SchedulerTests` - 43 edges
 4. `command()` - 40 edges
 5. `atomic_write()` - 35 edges
 6. `Redactor` - 27 edges
@@ -76,17 +77,17 @@
   Setup/discord-token.py → app/lifecycle.py
 - `main()` --indirect_call--> `action()`  [INFERRED]
   Setup/verify-lifecycle-fixes.py → app/web.py
-- `AccountSwitchTests` --uses--> `AccountVault`  [INFERRED]
-  tests/test_accounts.py → app/accounts.py
-- `AccountTests` --uses--> `AccountVault`  [INFERRED]
-  tests/test_accounts.py → app/accounts.py
-- `Crash` --uses--> `Redactor`  [INFERRED]
-  tests/test_lifecycle.py → app/common.py
+- `SchedulerTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_scheduler.py → app/common.py
+- `WebTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_web.py → app/common.py
+- `WorkerAdmissionTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_worker_server.py → app/common.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (48 total, 15 thin omitted)
+## Communities (49 total, 16 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
@@ -97,7 +98,7 @@ Cohesion: 0.19
 Nodes (11): execute(), main(), protect_secret(), Outbound-only native Windows executor. This process never starts an AI agent., Windows DPAPI CurrentUser; no machine-wide or plaintext key file., relative_path(), validate_job(), Worker (+3 more)
 
 ### Community 3 - "deployment.py"
-Cohesion: 0.08
+Cohesion: 0.09
 Nodes (39): slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+31 more)
 
 ### Community 4 - "Native"
@@ -129,8 +130,8 @@ Cohesion: 0.08
 Nodes (32): daily_update(), idle(), Daily official CLI update, only at a proven idle single-runtime boundary., GoalSource, idle_thread(), Native, NativeError, process_in_pane() (+24 more)
 
 ### Community 21 - "main.py"
-Cohesion: 0.05
-Nodes (9): Database, Only after confirming the original single-account identity; never guess on switc, BaseException, AccountSwitchTests, AccountTests, DeploymentTests, Crash, LifecycleTests (+1 more)
+Cohesion: 0.07
+Nodes (14): block_summary(), Presentation only: never change native status or resume authorization., Redactor, Database, Only after confirming the original single-account identity; never guess on switc, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields. (+6 more)
 
 ### Community 23 - "verify-design.py"
 Cohesion: 0.67
@@ -153,8 +154,8 @@ Cohesion: 0.67
 Nodes (3): main(), observe(), Start/observe one real deployment goal; never replace an existing objective.  De
 
 ### Community 34 - "migration.py"
-Cohesion: 0.11
-Nodes (29): AccountVault, auth_identity(), choose_account(), finish_switch(), holds_goal(), observe_account(), Private managed-Codex auth slots. Never store tokens in DB, browser state or log, Controller only, after its durable idle barrier. Changes auth.json, never CODEX_ (+21 more)
+Cohesion: 0.09
+Nodes (37): AccountVault, auth_identity(), bind_legacy_limits(), choose_account(), finish_switch(), fresh_usage(), holds_goal(), observe_account() (+29 more)
 
 ### Community 35 - "Bot"
 Cohesion: 0.33
@@ -165,8 +166,8 @@ Cohesion: 0.57
 Nodes (6): refreshUsage(), renderUsage(), usageDate(), usageElement(), usagePercent(), usageSvg()
 
 ### Community 37 - "db.py"
-Cohesion: 0.08
-Nodes (28): block_summary(), Presentation only: never change native status or resume authorization., Redactor, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed(), action() (+20 more)
+Cohesion: 0.15
+Nodes (20): action(), authorize(), favicon(), index(), login(), make_app(), project_detail(), safe_json() (+12 more)
 
 ### Community 38 - "main"
 Cohesion: 0.11
@@ -203,16 +204,16 @@ Nodes (5): main(), open_project(), Create, rename and delete ONLY a dedicated li
 ## Knowledge Gaps
 - **76 isolated node(s):** `install-base.sh script`, `PATH`, `Alltag`, `Installation und Betrieb`, `Dokumentation` (+71 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `main.py` to `Controller`, `migration.py`, `deployment.py`, `db.py`, `main`, `web.py`, `Bot`?**
-  _High betweenness centrality (0.096) - this node is a cross-community bridge._
-- **Why does `Controller` connect `Controller` to `db.py`, `main`, `web.py`, `Bot`, `main.py`?**
-  _High betweenness centrality (0.062) - this node is a cross-community bridge._
-- **Why does `SchedulerTests` connect `main.py` to `Controller`, `migration.py`, `deployment.py`, `db.py`, `web.py`, `Bot`?**
+- **Why does `Database` connect `main.py` to `Controller`, `migration.py`, `deployment.py`, `db.py`, `main`, `web.py`, `Bot`, `SchedulerTests`?**
+  _High betweenness centrality (0.095) - this node is a cross-community bridge._
+- **Why does `Controller` connect `Controller` to `main`, `web.py`, `Bot`, `SchedulerTests`, `main.py`?**
+  _High betweenness centrality (0.060) - this node is a cross-community bridge._
+- **Why does `SchedulerTests` connect `SchedulerTests` to `Controller`, `migration.py`, `Bot`, `main.py`?**
   _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Are the 14 inferred relationships involving `Database` (e.g. with `Controller` and `AccountObservationTests`) actually correct?**
   _`Database` has 14 INFERRED edges - model-reasoned connections that need verification._

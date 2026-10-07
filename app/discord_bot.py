@@ -22,7 +22,7 @@ def status_embed(controller, project, event, payload):
         return '`' + controller.redactor.clean(str(value or '—')).replace('`', 'ˋ').replace('\n', ' ')[:180] + '`'
 
     kind = event['kind']
-    reason = payload.get('reason') or project.get('block_reason') or {}
+    reason = payload.get('reason', project.get('block_reason')) or {}
     if isinstance(reason, str):
         try:
             reason = json.loads(reason)
@@ -39,7 +39,12 @@ def status_embed(controller, project, event, payload):
              'usage limited': 'Waiting for reset', 'limited by budget': 'Budget reached',
              'complete': 'Finished', 'critical': 'Attention required'}.get(kind, 'Updated')
     status = kind if kind in titles and kind != 'critical' else project['goal_status']
-    summary = block_summary(project, reason, status)
+    event_project = project
+    if kind == 'usage limited' and payload.get('account_id'):
+        # An old outbox event may be delivered after the project changed account.
+        # Never borrow the new account's reset or blocker for that old event.
+        event_project = dict(project, usage_limit=payload.get('usage_limit'))
+    summary = block_summary(event_project, reason, status)
     sections = []
     if summary:
         sections.append('**' + ('Reasons' if len(summary['reasons']) > 1 else 'Reason') + '**\n' +
@@ -61,9 +66,13 @@ def status_embed(controller, project, event, payload):
         lines += ['│ Final Commit: ' + code(payload.get('commit') or project['last_commit']),
                   '│ CI: **' + plain(payload.get('ci') or project['last_ci_status'] or 'unknown') + '**']
     elif kind == 'usage limited':
+        account_id = payload.get('account_id')
+        if account_id:
+            account = next((a for a in controller.db.setting('accounts', []) if a['account_id'] == account_id), {})
+            lines.append('│ Account: ' + code(account.get('name') or ('Account ' + account_id[:8])))
         tracked = next((s for s in controller.unsnooze.get('sessions', [])
-                        if s.get('sessionId') == project['codex_session_id']), {})
-        reset = (payload.get('usage_limit') or json.loads(project.get('usage_limit') or '{}')).get('resetAt') or tracked.get('resetAt')
+                        if s.get('sessionId') == project['codex_session_id']), {}) if not account_id else {}
+        reset = (payload.get('usage_limit') or json.loads(event_project.get('usage_limit') or '{}')).get('resetAt') or tracked.get('resetAt')
         lines.append('│ Reset: ' + (f'<t:{int(reset / 1000)}:F> (<t:{int(reset / 1000)}:R>)' if reset else '`unknown`'))
     if kind not in ('complete', 'stalled', 'usage limited', 'limited by budget'):
         lines.append('│ Session: ' + code(project['codex_session_id']))
@@ -74,7 +83,7 @@ def status_embed(controller, project, event, payload):
     elif payload.get('message'):
         sections.append('**Details**\n│ ' + plain(payload['message'], 650))
     if kind == 'usage limited':
-        prompt_limit = controller.db.setting('prompt_limit/' + project['project_id'])
+        prompt_limit = payload.get('failed_prompt', controller.db.setting('prompt_limit/' + project['project_id']))
         policy = 'New prompt required after reset; failed prompt is not replayed' if prompt_limit else 'Unsnooze'
         sections.append('**Resume**\n- Scheduler-controlled\n│ Policy: ' + code(policy) + '\n│ Queue position: ' +
                         code(project['queue_position']))

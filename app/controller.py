@@ -122,7 +122,17 @@ class Controller:
             if prompt_limit is not None:
                 self.db.set_setting('prompt_limit/' + project['project_id'], prompt_limit)
             if changed and status in ('stalled', 'usage limited', 'limited by budget'):
-                self.db.event(project['project_id'], status, {'reason': fields.get('block_reason', project['block_reason'])})
+                payload = {'reason': fields.get('block_reason', project['block_reason'])}
+                if status == 'usage limited':
+                    # No work starts under the new login until its barrier clears.
+                    # Any late native limit while switching still belongs to the old turn.
+                    switch = self.db.setting('account_switch', {})
+                    owner = switch.get('old_account') if self.account_switch_pending else self.db.setting('active_account')
+                    if owner:
+                        payload['account_id'] = owner
+                        self.db.set_setting('usage_account/' + project['project_id'], owner)
+                    payload['failed_prompt'] = prompt_limit is not None
+                self.db.event(project['project_id'], status, payload)
 
     def clear_block(self, project):
         (Path(project['project_path']) / '.codexpi/block.json').unlink(missing_ok=True)
@@ -390,6 +400,9 @@ class Controller:
             'id': operation.get('id'), 'status': status, 'message': message}))
 
     async def cancel_wakes(self, project, *, refresh=False):
+        wait = self.db.setting('account_wait') or {}
+        if wait.get('project_id') == project['project_id']:
+            self.db.set_setting('account_wait', None)
         if refresh:
             self.unsnooze = json.loads((await command('unsnooze', 'status', '--json'))['stdout'])
         for item in self.unsnooze.get('sessions', []):
@@ -710,9 +723,12 @@ class Controller:
                 continue
             if operation.get('error'):
                 continue
+            if operation.get('account_id') and operation['account_id'] != self.db.setting('active_account'):
+                self.finish_resume(project, operation, 'cancelled', 'Resume belongs to a different Codex account')
+                continue
             if (self.db.setting('manual_pause/' + project['project_id'], False) or
                     operation.get('source') == 'auto-continue' and not self.db.setting('auto_continue', False) or
-                    operation.get('source') in ('unsnooze', 'queue', 'auto-continue', 'windows', 'recovery', 'account-switch') and not self.can_auto_resume(project)):
+                    operation.get('source') in ('unsnooze', 'queue', 'auto-continue', 'windows', 'recovery', 'account-switch', 'account-reset') and not self.can_auto_resume(project)):
                 self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
                 continue
             try:
@@ -761,7 +777,8 @@ class Controller:
                         with self.db.transaction():
                             self.db.update(project['project_id'], operation=json.dumps(operation))
                             if operation.get('source') == 'unsnooze':
-                                self.db.set_setting('usage_wake/' + project['project_id'], {
+                                from .accounts import wake_key
+                                self.db.set_setting(wake_key(self, project), {
                                     'reset_at': operation['reset_at'], 'operation_id': operation['id']})
                         await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Escape')
                         await self.slash(project, '/goal resume')
@@ -805,7 +822,7 @@ class Controller:
         project = self.db.get(selected) if selected else None
         # The upstream CLI takes ~2 CPU seconds on Pi; keep fast reset polling
         # only while a selected goal can need a wake. Idle health stays timestamped.
-        interval = 10 if project and project['goal_status'] == 'usage limited' else 60
+        interval = 10 if project and (project['goal_status'] == 'usage limited' or self.db.setting('account_wait')) else 60
         if self.last_unsnooze_poll and time.monotonic() - self.last_unsnooze_poll < interval:
             return
         # Account availability is metadata, never a substitute for native goal status.
@@ -832,6 +849,9 @@ class Controller:
         self.persist_usage_resets()
         if self.db.setting('pause_all', False):
             return
+        from .accounts import resume_account_wait
+        if await resume_account_wait(self):
+            return
         # Reordering never changes selection/preempts a running project. After a
         # real reset, however, an idle quota waiter must not pin selection to an
         # obsolete queue position and prevent the restored head from waking.
@@ -847,11 +867,19 @@ class Controller:
             return
         project = self.db.get(project['project_id'])  # Includes the reset just persisted above.
         metadata = json.loads(project['usage_limit'] or '{}')
+        account_id = self.db.setting('active_account')
+        if account_id and self.db.setting('usage_account/' + project['project_id']) != account_id:
+            return  # A different login's native limit/reset is not this account's wake.
+        if account_id:
+            from .accounts import fresh_usage
+            if not fresh_usage(self.db.setting('account_usage', {}), account_id):
+                return
         reset = metadata.get('resetAt')
         if (metadata.get('resetSource') not in ('unsnooze', 'native-account') or not reset
                 or reset > time.time() * 1000):
             return
-        previous = self.db.setting('usage_wake/' + project['project_id'], {})
+        from .accounts import wake_key
+        previous = self.db.setting(wake_key(self, project), {})
         if reset <= previous.get('reset_at', 0):
             return  # One automatic attempt per real reset, including after crashes.
         goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
@@ -882,6 +910,8 @@ class Controller:
         operation = {'kind': 'resume', 'id': str(uuid.uuid4()), 'source': 'unsnooze',
                      'requested_at': time.time(), 'reset_at': reset, 'reset_source': metadata['resetSource'],
                      'unsnooze_key': item.get('key')}
+        if account_id:
+            operation['account_id'] = account_id
         # Same durable mapped-TUI path for either authoritative reset source.
         # Never call resume-now: its daemon can reopen an ungated argv prompt.
         self.db.update(selected, operation=json.dumps(operation))
@@ -894,6 +924,9 @@ class Controller:
         for project in self.db.all():
             if project['lifecycle'] != 'ready' or project['goal_status'] != 'usage limited':
                 continue
+            account_id = self.db.setting('active_account')
+            if account_id and self.db.setting('usage_account/' + project['project_id']) != account_id:
+                continue
             tracked = next((s for s in self.unsnooze.get('sessions', []) if
                 s.get('sessionId') == project['codex_session_id'] and s.get('status') == 'stopped'
                 and s.get('resetSource') != 'fallback' and s.get('resetAt')), None)
@@ -902,12 +935,18 @@ class Controller:
                 candidates.append({'resetAt': max(resets), 'resetSource': 'native-account'})
             metadata = max(candidates, key=lambda m: m['resetAt']) if candidates else None
             if metadata:
+                if account_id:
+                    metadata['account_id'] = account_id
                 with self.db.transaction():
                     self.db.update(project['project_id'], usage_limit=json.dumps(metadata))
+                    if account_id:
+                        self.db.set_setting('usage_limits/' + account_id + '/' + project['project_id'], metadata)
                     event = self.db.conn.execute("SELECT event_id,payload FROM events WHERE project_id=? AND kind='usage limited' ORDER BY event_id DESC LIMIT 1",
                         (project['project_id'],)).fetchone()
                     if event:
                         payload = json.loads(event['payload'])
+                        if account_id and payload.get('account_id') != account_id:
+                            continue  # Never rewrite an older account's notification.
                         if payload.get('usage_limit') != metadata:
                             payload.pop('reset_notified', None)
                         payload['usage_limit'] = metadata
