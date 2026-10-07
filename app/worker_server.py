@@ -128,12 +128,25 @@ async def dispatch_pending(controller):
 
 
 async def job_denial(controller, project):
+    account_hold = controller.account_holds_goal(project)
+    switch = controller.db.setting('account_switch', {})
+    if controller.account_switch_pending and switch.get('phase') != 'waiting_turn':
+        return 'Windows work must wait until the Codex account change is confirmed'
     if (controller.db.setting('selected') != project['project_id'] or project['queue_position'] != 1
-            or project['goal_status'] != 'active' or project['operation'] or not controller.can_auto_resume(project)):
+            or project['goal_status'] != 'active' and not (account_hold and project['goal_status'] == 'paused')
+            or project['operation'] or not controller.can_auto_resume(project)):
         return 'Only the selected, executing project may request Windows jobs'
     goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
     if not goal or goal['status'] != 'active':
-        return 'An active native goal is required for Windows jobs'
+        # An account switch pauses only FUTURE goal continuation, never the
+        # current turn. Allow its Windows tools to finish, not idle/new work.
+        if not (account_hold and switch.get('phase') == 'waiting_turn' and goal and goal['status'] == 'paused'):
+            return 'An active native goal is required for Windows jobs'
+        thread = (await controller.native.rpc('thread/read', {'threadId': project['codex_session_id'],
+                                                             'includeTurns': False}))['thread']
+        if (thread['id'] != project['codex_session_id'] or thread['cwd'] != project['project_path']
+                or thread['status']['type'] != 'active'):
+            return 'The account-switch waiting project has no executing native turn'
     return None
 
 

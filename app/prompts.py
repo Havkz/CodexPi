@@ -49,6 +49,7 @@ async def submit(controller, project, params, upstream):
 async def dispatch(controller, project, native, *, allow_limited=False):
     queue = controller.db.setting(key(project), [])
     if (not queue or active(controller, project) or project['operation'] or project['lifecycle'] != 'ready'
+            or controller.account_switch_pending
             or controller.db.setting('pause_all', False)
             or controller.db.setting('manual_pause/' + project['project_id'], False)
             or project['goal_status'] == 'usage limited' and not allow_limited):
@@ -115,9 +116,11 @@ async def reconcile(controller, project):
         with controller.db.transaction():
             controller.record_status(project, NATIVE_STATUS[goal['status']] if goal else limit['previous_status'])
             controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_limit/' + project['project_id'],))
-            if goal and goal['status'] == 'paused' and not controller.db.setting(key(project), []) and not project['operation']:
+            if (goal and goal['status'] == 'paused' and not controller.db.setting(key(project), [])
+                    and not project['operation'] and not controller.account_holds_goal(project)):
                 controller.db.set_setting('manual_pause/' + project['project_id'], True)
-            if controller.db.setting('selected') == project['project_id'] and not project['operation']:
+            if (controller.db.setting('selected') == project['project_id'] and not project['operation']
+                    and not controller.account_holds_goal(project)):
                 controller.db.set_setting('selected', None)
         return False
     turns = (await controller.native.rpc('thread/turns/list', {'threadId': project['codex_session_id'],
@@ -150,9 +153,11 @@ async def reconcile(controller, project):
         controller.db.set_setting('prompt_receipts/' + project['project_id'],
                                   (receipts + [{'id': item['id'], 'result': item.get('result')}])[-100:])
         controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_active/' + project['project_id'],))
-        if status == 'paused' and goal and not controller.db.setting(key(project), []) and not project['operation']:
+        if (status == 'paused' and goal and not controller.db.setting(key(project), [])
+                and not project['operation'] and not controller.account_holds_goal(project)):
             controller.db.set_setting('manual_pause/' + project['project_id'], True)
-        if status not in ('active', 'usage limited') and controller.db.setting('selected') == project['project_id']:
+        if (status not in ('active', 'usage limited') and controller.db.setting('selected') == project['project_id']
+                and not controller.account_holds_goal(project)):
             controller.db.set_setting('selected', None)
     controller.health_errors.pop('prompt', None)
     return limited

@@ -172,6 +172,8 @@ def restore_native(manifest, project, codex_root):
 
 async def request(controller, data):
     async with controller.lock:
+        if getattr(controller, 'account_switch_pending', False):
+            raise ValueError('Wait for the Codex account change before importing another native session')
         path = Path(data['archive'])
         base = (controller.root / 'backups/migrations').resolve()
         if path.is_symlink() or path.resolve().parent != base or not path.is_file():

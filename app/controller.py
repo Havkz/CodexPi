@@ -62,6 +62,15 @@ class Controller:
         self.maintenance = False
 
     @property
+    def account_switch_pending(self):
+        from .accounts import switching
+        return switching(self)
+
+    def account_holds_goal(self, project):
+        from .accounts import holds_goal
+        return holds_goal(self, project)
+
+    @property
     def windows_online(self):
         return bool(self.worker is not None and not self.worker.closed and self.worker_seen and
                     time.monotonic() - self.worker_seen < 60)
@@ -69,6 +78,13 @@ class Controller:
     async def start(self):
         self.native = await Native(self.root / 'state/native.sock').connect()
         async with self.lock:
+            if not self.account_switch_pending:
+                from .accounts import refresh
+                try:
+                    await refresh(self)
+                except Exception:
+                    self.health_errors['account_usage'] = 'The native account and its fresh quota could not be confirmed'
+                    self.accounts_bootstrap_failed = True
             await self.recover()
         self.task = asyncio.create_task(self.scheduler())
 
@@ -86,7 +102,8 @@ class Controller:
         if status == 'active':
             if project['goal_status'] != 'active':
                 self.clear_block(project)
-        if status == 'paused' and self.db.setting('selected') == project['project_id']:
+        if (status == 'paused' and self.db.setting('selected') == project['project_id']
+                and not self.account_holds_goal(project)):
             self.db.set_setting('selected', None)
 
     def record_status(self, project, status, *, prompt_limit=None, **fields):
@@ -330,6 +347,8 @@ class Controller:
 
     async def resume(self, project_id, *, promote=False):
         async with self.lock:
+            if self.account_switch_pending:
+                raise ValueError('Wait for the pending Codex account change before resuming or promoting a project')
             project = self.db.get(project_id)
             if project['lifecycle'] != 'ready':
                 raise ValueError('Project lifecycle recovery must finish before resuming')
@@ -390,7 +409,8 @@ class Controller:
             with self.db.transaction():
                 for project in self.db.all():
                     pending = json.loads(project['operation'] or '{}')
-                    if project['goal_status'] == 'paused' and not (pending.get('kind') == 'resume' and not pending.get('error')):
+                    if (project['goal_status'] == 'paused' and not self.account_holds_goal(project)
+                            and not (pending.get('kind') == 'resume' and not pending.get('error'))):
                         self.db.set_setting('manual_pause/' + project['project_id'], True)
                 self.db.set_setting('manual_pause_policy_initialized', True)
         selected = self.db.setting('selected')
@@ -469,7 +489,7 @@ class Controller:
                 await self.pause(project, release=False)
                 self.db.event(project['project_id'], 'critical', {'message': 'Unselected native goal was paused'})
                 continue
-            if status == 'paused' and old != 'paused':
+            if status == 'paused' and old != 'paused' and not self.account_holds_goal(project):
                 self.db.set_setting('manual_pause/' + project['project_id'], True)
             block = Path(project['project_path']) / '.codexpi/block.json'
             reason = project['block_reason']
@@ -489,7 +509,7 @@ class Controller:
                            last_activity=row.get('updated_at_ms', 0) / (1000 if row.get('updated_at_ms', 0) > 1e12 else 1))
             operation = json.loads(project['operation'] or '{}')
             if (status == 'paused' and self.db.setting('selected') == project['project_id']
-                    and operation.get('kind') != 'resume'):
+                    and operation.get('kind') != 'resume' and not self.account_holds_goal(project)):
                 await self.wait_idle(project)
                 self.db.set_setting('selected', None)
             if status == 'active' and old != 'active':
@@ -582,15 +602,18 @@ class Controller:
                     from .lifecycle import recover
                     await recover(self)
                     await self.poll_goals()
+                    from .accounts import tick
+                    await tick(self)
                     if time.monotonic() - self.last_backup > 3600:
                         self.db.backup(self.root / 'backups/sqlite')
                         self.last_backup = time.monotonic()
-                    await self.advance_queue()
-                    await self.resume_ready()
-                    await self.selective_wake()
-                    await self.release_idle_tuis()
-                    from .maintenance import daily_update
-                    await daily_update(self)
+                    if not self.account_switch_pending:
+                        await self.advance_queue()
+                        await self.resume_ready()
+                        await self.selective_wake()
+                        await self.release_idle_tuis()
+                        from .maintenance import daily_update
+                        await daily_update(self)
                 if time.monotonic() - self.last_git_poll > 120:
                     try:
                         for project in self.db.all():
@@ -617,7 +640,7 @@ class Controller:
             await asyncio.sleep(2)
 
     async def advance_queue(self):
-        if self.db.setting('pause_all', False):
+        if self.db.setting('pause_all', False) or self.account_switch_pending:
             return
         selected = self.db.setting('selected')
         if selected:
@@ -678,7 +701,7 @@ class Controller:
             await self.attach_ready(next_project)
 
     async def resume_ready(self):
-        if self.db.setting('pause_all', False):
+        if self.db.setting('pause_all', False) or self.account_switch_pending:
             return
         for project in self.db.all():
             operation = json.loads(project['operation']) if project['operation'] else {}
@@ -689,7 +712,7 @@ class Controller:
                 continue
             if (self.db.setting('manual_pause/' + project['project_id'], False) or
                     operation.get('source') == 'auto-continue' and not self.db.setting('auto_continue', False) or
-                    operation.get('source') in ('unsnooze', 'queue', 'auto-continue', 'windows', 'recovery') and not self.can_auto_resume(project)):
+                    operation.get('source') in ('unsnooze', 'queue', 'auto-continue', 'windows', 'recovery', 'account-switch') and not self.can_auto_resume(project)):
                 self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
                 continue
             try:
@@ -787,9 +810,14 @@ class Controller:
             return
         # Account availability is metadata, never a substitute for native goal status.
         try:
-            limits = await self.native.rpc('account/rateLimits/read', {}, timeout=15)
-            self.db.record_usage({key: limits.get(key) for key in
-                ('ordinaryUsageAllowed', 'rateLimits', 'rateLimitsByLimitId')} | {'checked_at': time.time()})
+            if self.db.setting('active_account') or getattr(self, 'accounts_bootstrap_failed', False):
+                from .accounts import refresh
+                await refresh(self)
+                self.accounts_bootstrap_failed = False
+            else:
+                limits = await self.native.rpc('account/rateLimits/read', {}, timeout=15)
+                self.db.record_usage({key: limits.get(key) for key in
+                    ('ordinaryUsageAllowed', 'rateLimits', 'rateLimitsByLimitId')} | {'checked_at': time.time()})
             self.health_errors.pop('account_usage', None)
         except Exception as exc:
             self.health_errors['account_usage'] = self.redactor.clean(str(exc))

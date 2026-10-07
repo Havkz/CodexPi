@@ -193,13 +193,32 @@ async def tui_proxy(request):
     client = web.WebSocketResponse(max_msg_size=32 * 1024 * 1024)
     await client.prepare(request)
     request.app['sockets'].add(client)
+    tasks, resumed, subscriptions = set(), set(), {}
+    initialization = None
+    connection_id = id(client)
+    reconnect_task = None
+    subscriptions_ready = False
 
     async def event(value):
         await client.send_json(value)
 
     async def disconnected():
+        nonlocal reconnect_task
         logging.getLogger('tui').warning('Native transport closed for TUI connection %s', id(client))
-        await client.close(code=1011, message=b'Native bridge connection closed; reopen codexpi')
+        phase = controller.db.setting('account_switch', {}).get('phase')
+        if subscriptions_ready and (getattr(controller, 'account_reloading', False)
+                                   or phase in ('reloading', 'verifying', 'resuming')):
+            if reconnect_task and not reconnect_task.done():
+                return
+            # Keep the frontend socket/composer alive. Reattach subscriptions only;
+            # never replay an in-flight prompt, goal mutation, or arbitrary RPC.
+            for project_id in resumed:
+                controller.tui_connections.get(project_id, {}).pop(connection_id, None)
+            reconnect_task = asyncio.create_task(reconnect())
+            tasks.add(reconnect_task)
+            reconnect_task.add_done_callback(tasks.discard)
+        else:
+            await client.close(code=1011, message=b'Native bridge connection closed; reopen codexpi')
 
     try:
         upstream = await Native(controller.root / 'state/native.sock', event, disconnected).connect(initialize=False)
@@ -207,9 +226,6 @@ async def tui_proxy(request):
         request.app['sockets'].discard(client)
         await client.close(code=1011, message=b'Native bridge unavailable')
         return client
-    tasks = set()
-    resumed = set()
-    connection_id = id(client)
     peer = request.transport.get_extra_info('socket') if request.transport else None
     peer_pid = None
     if peer is not None and hasattr(socket, 'SO_PEERCRED') and peer.family == socket.AF_UNIX:
@@ -219,7 +235,45 @@ async def tui_proxy(request):
             pass  # A closing/unknown peer can never authorize pane input.
     controller.tui_peer_pids[connection_id] = peer_pid
 
+    async def reconnect():
+        nonlocal upstream
+        deadline = time.monotonic() + 120
+        while not client.closed and time.monotonic() < deadline:
+            candidate = None
+            try:
+                candidate = await asyncio.wait_for(
+                    Native(controller.root / 'state/native.sock', event).connect(initialize=False),
+                    min(15, max(0.1, deadline - time.monotonic())))
+                if initialization:
+                    await candidate.rpc('initialize', initialization, timeout=15)
+                    await candidate.ws.send_json({'method': 'initialized', 'params': {}})
+                async with controller.lock:
+                    for project_id, params in list(subscriptions.items()):
+                        try:
+                            project = controller.db.get(project_id)
+                        except KeyError:
+                            continue
+                        if project['lifecycle'] != 'ready' or project['codex_session_id'] != params['threadId']:
+                            continue
+                        await candidate.rpc('thread/resume', params, timeout=20)
+                        controller.tui_connections.setdefault(project_id, {})[connection_id] = time.monotonic()
+                    old = upstream
+                    candidate.disconnected = disconnected
+                    upstream = candidate
+                    candidate = None
+                    await old.close()
+                return
+            except Exception:
+                if candidate:
+                    await candidate.close()
+                await asyncio.sleep(1)
+        controller.health_errors['accounts'] = 'Account change could not restore a mapped TUI connection; no prompt was replayed'
+        await client.close(code=1011, message=b'Account change TUI reconnect timed out')
+
+    subscriptions_ready = True
+
     async def forward(value):
+        nonlocal initialization
         request_id = value.get('id')
         method = value.get('method')
         params = value.get('params') or {}
@@ -260,6 +314,7 @@ async def tui_proxy(request):
                 project = controller.db.by_session(params.get('threadId'))
                 if project:
                     resumed.discard(project['project_id'])
+                    subscriptions.pop(project['project_id'], None)
                     controller.tui_connections.get(project['project_id'], {}).pop(connection_id, None)
             elif method == 'config/batchWrite':
                 async with controller.lock:
@@ -296,6 +351,10 @@ async def tui_proxy(request):
                     if method in ('thread/settings/update', 'turn/start'):
                         params = turn_params(project, params)
                     selected = controller.db.setting('selected')
+                    if controller.account_switch_pending and (
+                            method in ('turn/steer', 'thread/compact/start', 'thread/shellCommand', 'thread/inject_items')
+                            or method == 'thread/goal/set' and params.get('status') != 'paused'):
+                        raise ValueError('Account change is pending; no new native work may start until the controller confirms it')
                     if method == 'thread/goal/set':
                         status = params.get('status')
                         if status == 'paused':
@@ -326,6 +385,7 @@ async def tui_proxy(request):
                         result = await upstream.rpc(method, params)
                     if method == 'thread/resume':
                         resumed.add(project['project_id'])
+                        subscriptions[project['project_id']] = params
                         controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = time.monotonic()
                         logging.getLogger('tui').info('TUI %s (peer PID %s) resumed mapped session %s',
                                                      connection_id, peer_pid, project['codex_session_id'])
@@ -361,6 +421,8 @@ async def tui_proxy(request):
                 result['authToken'] = None
             elif method is not None and request_id is not None:
                 result = await upstream.rpc(method, params)
+                if method == 'initialize':
+                    initialization = params
             else:
                 await upstream.ws.send_json(value)
                 return
