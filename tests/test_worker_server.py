@@ -7,10 +7,13 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, patch
 
-from app.common import Redactor
+from aiohttp import web
+from aiohttp.test_utils import TestClient, TestServer
+
+from app.common import Redactor, SignedChannel
 from app.controller import Controller
 from app.db import Database
-from app.worker_server import dispatch_pending, submit_job
+from app.worker_server import dispatch_pending, submit_job, worker_socket
 
 
 class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
@@ -53,6 +56,53 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(c.windows_online)
         with patch('app.controller.time.monotonic', return_value=61):
             self.assertFalse(c.windows_online)
+
+    async def test_signed_heartbeats_retry_deferred_wake_once_per_availability(self):
+        c = self.c
+        c.config = {'worker_secret': 's' * 32}
+        c.worker, c.worker_key, c.worker_seen = None, None, 0
+        c.db.update('first', goal_status='stalled', windows_required=1,
+                    block_reason=json.dumps({'reason': 'Windows offline', 'requires_user': False}))
+        c.db.set_setting('selected', 'second')
+        app = web.Application()
+        app['controller'] = c
+        app.router.add_get('/worker', worker_socket)
+        delivered = asyncio.Event()
+        with patch('app.worker_server.dispatch_pending', AsyncMock(side_effect=lambda _: delivered.set())):
+            async with TestClient(TestServer(app)) as client:
+                async with client.ws_connect('/worker') as socket:
+                    challenge = (await socket.receive_json())['challenge']
+                    channel = SignedChannel(c.config['worker_secret'], challenge, 'worker')
+                    await socket.send_json(channel.sign({'type': 'hello'}))
+                    self.assertEqual(channel.verify(await socket.receive_json()), {'type': 'accepted'})
+                    await socket.send_json(channel.sign({'type': 'inventory', 'jobs': []}))
+
+                    async def heartbeat():
+                        delivered.clear()
+                        await socket.send_json(channel.sign({'type': 'alive'}))
+                        await asyncio.wait_for(delivered.wait(), 2)
+
+                    await heartbeat()
+                    self.assertIsNone(c.db.get('first')['operation'])  # Other selected project retains its slot.
+                    c.db.set_setting('selected', None)
+                    await heartbeat()  # Already online, but the slot has become eligible.
+                    self.assertIsNotNone(c.db.get('first')['operation'])
+                    operation = json.loads(c.db.get('first')['operation'])
+                    self.assertEqual(operation['source'], 'windows')
+                    operation['error'] = 'TUI confirmation failed'
+                    c.db.update('first', operation=json.dumps(operation))
+                    await heartbeat()
+                    self.assertEqual(json.loads(c.db.get('first')['operation']), operation)
+                    c.worker_seen = time.monotonic() - 61
+                    c.db.set_setting('manual_pause/first', True)
+                    await heartbeat()
+                    self.assertEqual(json.loads(c.db.get('first')['operation']), operation)
+                    c.db.set_setting('manual_pause/first', False)
+                    await heartbeat()
+                    retry = json.loads(c.db.get('first')['operation'])
+                    self.assertNotEqual(retry['id'], operation['id'])
+                    await heartbeat()
+                    self.assertEqual(json.loads(c.db.get('first')['operation']), retry)
 
     async def test_unselected_offline_request_cannot_overwrite_pause_or_user_block(self):
         c = self.c

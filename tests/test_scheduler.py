@@ -26,6 +26,10 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         controller.lock = asyncio.Lock()
         controller.redactor = Redactor(self.root)
         controller.tui_connections = {}
+        controller.tui_peer_pids = {}
+        controller.mapped_tui_ready = AsyncMock(side_effect=lambda project: bool(
+            controller.tui_connections.get(project['project_id']) and time.monotonic() -
+            min(controller.tui_connections[project['project_id']].values()) >= 1))
         controller.unsnooze = {}
         controller.health_errors = {}
         controller.wait_idle = AsyncMock()
@@ -579,6 +583,30 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(c.db.setting('manual_pause/first'))
         self.assertFalse(c.db.setting('manual_pause/second', False))
         self.assertTrue(c.db.setting('manual_pause_policy_initialized'))
+
+    async def test_resume_waits_for_its_own_pane_not_an_older_browser_connection(self):
+        c = self.controller
+        del c.mapped_tui_ready
+        c.attach_ready = AsyncMock()
+        c.slash = AsyncMock()
+        await c.resume('first')
+        c.tui_connections['first'] = {1: time.monotonic() - 100, 2: time.monotonic()}
+        c.tui_peer_pids = {1: 111, 2: 123}
+        command = AsyncMock(return_value={'exit_code': 0, 'stdout': '123\n'})
+        with patch('app.controller.command', command), patch.object(Path, 'read_text', side_effect=FileNotFoundError):
+            await c.resume_ready()
+            c.slash.assert_not_awaited()
+            self.assertNotIn('sent_at', json.loads(c.db.get('first')['operation']))
+            c.tui_connections['first'][2] = time.monotonic() - 2
+            await c.resume_ready()
+            c.slash.assert_awaited_once()
+            self.assertEqual(c.slash.await_args.args[0]['project_id'], 'first')
+            self.assertEqual(c.slash.await_args.args[1], '/goal resume')
+            await c.resume_ready()
+            c.slash.assert_awaited_once()
+            # A respawned pane cannot reuse the previous process's connection.
+            command.return_value['stdout'] = '124\n'
+            self.assertFalse(await c.mapped_tui_ready(c.db.get('first')))
 
     async def test_pending_resume_keeps_selection_until_ack(self):
         controller = self.controller

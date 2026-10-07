@@ -26,7 +26,6 @@
   "24": "Design verification — 2026-09-20",
   "25": "test-live-lifecycle.py",
   "26": "Unsnooze integration",
-  "27": "export-migration.py",
   "28": "GoalSource",
   "29": "Pi infrastructure resource measurements",
   "30": "verify-sandbox.py",
@@ -36,7 +35,6 @@
   "34": "migration.py",
   "35": "Bot",
   "36": "usage.js",
-  "37": "build_audit.py",
   "38": "main",
   "39": "verify-usage-ui.py",
   "40": "build-favicon.py",
@@ -46,11 +44,5 @@
   "44": "DeploymentTests",
   "45": "Selected Windows session migration",
   "46": "test-live-lifecycle.py",
-  "47": "Durable manual pause and real quota evidence, 2026-09-24",
-  "48": "Database",
-  "49": "Redactor",
-  "50": "db.py",
-  "51": "DeploymentTests",
-  "52": "verify-backup-restore.py",
-  "53": ".make_controller"
+  "47": "Durable manual pause and real quota evidence, 2026-09-24"
 }

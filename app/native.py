@@ -4,6 +4,8 @@ import contextlib
 import importlib.util
 import json
 import logging
+import socket
+import struct
 import time
 from pathlib import Path
 
@@ -14,6 +16,21 @@ from .common import NATIVE_STATUS
 
 class NativeError(RuntimeError):
     pass
+
+
+def process_in_pane(pid, pane_pid):
+    """Bind a Unix TUI peer to the current pane, including launcher children."""
+    seen = set()
+    while pid and pid > 1 and pid not in seen:
+        if pid == pane_pid:
+            return True
+        seen.add(pid)
+        try:
+            status = Path(f'/proc/{pid}/status').read_text()
+            pid = int(next(line.split()[1] for line in status.splitlines() if line.startswith('PPid:')))
+        except (OSError, ValueError, StopIteration):
+            return False
+    return False
 
 
 def project_thread_config(path):
@@ -193,6 +210,14 @@ async def tui_proxy(request):
     tasks = set()
     resumed = set()
     connection_id = id(client)
+    peer = request.transport.get_extra_info('socket') if request.transport else None
+    peer_pid = None
+    if peer is not None and hasattr(socket, 'SO_PEERCRED') and peer.family == socket.AF_UNIX:
+        try:
+            peer_pid = struct.unpack('3i', peer.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12))[0]
+        except OSError:
+            pass  # A closing/unknown peer can never authorize pane input.
+    controller.tui_peer_pids[connection_id] = peer_pid
 
     async def forward(value):
         request_id = value.get('id')
@@ -299,7 +324,8 @@ async def tui_proxy(request):
                     if method == 'thread/resume':
                         resumed.add(project['project_id'])
                         controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = time.monotonic()
-                        logging.getLogger('tui').info('TUI %s resumed mapped session %s', connection_id, project['codex_session_id'])
+                        logging.getLogger('tui').info('TUI %s (peer PID %s) resumed mapped session %s',
+                                                     connection_id, peer_pid, project['codex_session_id'])
                     if method == 'thread/goal/set':
                         current = controller.db.get(project['project_id'])
                         operation = json.loads(current['operation'] or '{}')
@@ -346,6 +372,7 @@ async def tui_proxy(request):
         logging.getLogger('tui').info('TUI %s disconnected; mapped projects %s; close code %s',
                                     connection_id, sorted(resumed), client.close_code)
         request.app['sockets'].discard(client)
+        controller.tui_peer_pids.pop(connection_id, None)
         for project_id in resumed:
             controller.tui_connections.get(project_id, {}).pop(connection_id, None)
         for task in tasks:

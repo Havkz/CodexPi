@@ -12,7 +12,7 @@ import uuid
 
 from .common import NATIVE_STATUS, Redactor, atomic_write, slugify
 from .db import Database
-from .native import GoalSource, Native, idle_thread, project_thread_config
+from .native import GoalSource, Native, idle_thread, process_in_pane, project_thread_config
 
 
 async def command(*args, cwd=None, timeout=90, check=True):
@@ -57,6 +57,7 @@ class Controller:
         self.unsnooze = {}
         self.health_errors = {}
         self.tui_connections = {}
+        self.tui_peer_pids = {}
         self.task = None
         self.maintenance = False
 
@@ -72,7 +73,7 @@ class Controller:
         self.task = asyncio.create_task(self.scheduler())
 
     def select(self, project_id):
-        with self.db.transaction():
+        with contextlib.nullcontext() if self.db.conn.in_transaction else self.db.transaction():
             ordered = [p['project_id'] for p in self.db.all() if p['queue_position'] is not None]
             ordered = [project_id] + [i for i in ordered if i != project_id]
             for position, ident in enumerate(ordered, 1):
@@ -221,6 +222,19 @@ class Controller:
         if project['lifecycle'] != 'ready':
             raise ValueError('Project lifecycle recovery must finish before attaching')
         await self.open_tui(project, [project['codex_session_id']])
+
+    async def mapped_tui_ready(self, project):
+        connections = self.tui_connections.get(project['project_id'], {})
+        if not connections:
+            return False
+        pane = await command('tmux', 'display-message', '-p', '-t',
+                             project['tmux_session_name'] + ':0.0', '#{pane_pid}', check=False)
+        if pane['exit_code'] or not pane['stdout'].strip().isdigit():
+            return False
+        pane_pid = int(pane['stdout'].strip())
+        return any(time.monotonic() - since >= 1 and
+                   process_in_pane(self.tui_peer_pids.get(connection_id), pane_pid)
+                   for connection_id, since in connections.items())
 
     async def browse(self):
         if getattr(self, 'maintenance', False):
@@ -687,8 +701,7 @@ class Controller:
                         self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
                         continue
                     await self.cancel_wakes(project)
-                connections = self.tui_connections.get(project['project_id'], {})
-                ready = connections and time.monotonic() - min(connections.values()) >= 1
+                ready = await self.mapped_tui_ready(project)
                 if ready and await self.pane_exists(project):
                     thread = (await self.native.rpc('thread/read', {
                         'threadId': project['codex_session_id'], 'includeTurns': False}))['thread']
@@ -729,7 +742,9 @@ class Controller:
                 elif not operation.get('sent_at'):
                     await self.attach_ready(project)
                 if time.time() - operation.get('sent_at', operation['started_at']) > 60:
-                    raise RuntimeError('Resume timed out: mapped TUI did not confirm a running goal or restored session; inspect the project TUI before retrying')
+                    detail = ('The mapped pane has no confirmed TUI connection for this session' if not ready else
+                              '/goal resume was submitted once, but the native goal still reports ' + goal['status'])
+                    raise RuntimeError('Resume timed out: ' + detail + '; inspect the project TUI before retrying')
             except Exception as exc:
                 operation['error'] = self.redactor.clean(str(exc))
                 self.db.update(project['project_id'], operation=json.dumps(operation), resume_result=json.dumps({

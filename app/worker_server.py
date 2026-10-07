@@ -66,7 +66,10 @@ async def worker_socket(request):
                 was_online = controller.windows_online
                 controller.worker_seen = time.monotonic()
                 if not was_online:
-                    await unblock_windows(controller)
+                    controller.db.set_setting('windows_availability', {'id': str(uuid.uuid4()), 'attempted': []})
+                # The first heartbeat may arrive while another project owns the
+                # slot. Recheck later signed heartbeats without repeating a wake.
+                await unblock_windows(controller)
                 await dispatch_pending(controller)
             elif body.get('type') == 'result':
                 job = controller.db.conn.execute('SELECT * FROM jobs WHERE job_id=?', (body.get('job_id'),)).fetchone()
@@ -145,18 +148,29 @@ async def unblock_windows(controller):
     async with controller.lock:
         if controller.db.setting('pause_all', False):
             return
+        if controller.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone():
+            return
+        availability = controller.db.setting('windows_availability', {})
         for project in controller.db.all():
             reason = json.loads(project['block_reason'] or '{}')
+            operation = json.loads(project['operation'] or '{}')
             if (project['goal_status'] != 'stalled' or reason.get('reason') != 'Windows offline'
                     or reason.get('requires_user') is not False or not project['windows_required']
-                    or project['operation'] or project['queue_position'] != 1 or not controller.can_auto_resume(project)):
+                    or project['queue_position'] != 1 or not controller.can_auto_resume(project)
+                    or project['project_id'] in availability.get('attempted', [])
+                    or project['operation'] and not (operation.get('kind') == 'resume' and operation.get('error')
+                                                     and availability.get('id'))):
                 continue
             selected = controller.db.setting('selected')
             if selected and selected != project['project_id']:
                 continue
-            controller.select(project['project_id'])
-            controller.db.update(project['project_id'], operation=json.dumps({'kind': 'resume', 'source': 'windows',
-                'id': str(uuid.uuid4()), 'requested_at': time.time()}), resume_result=None)
+            with controller.db.transaction():
+                if availability.get('id'):
+                    availability['attempted'].append(project['project_id'])
+                    controller.db.set_setting('windows_availability', availability)
+                controller.select(project['project_id'])
+                controller.db.update(project['project_id'], operation=json.dumps({'kind': 'resume', 'source': 'windows',
+                    'id': str(uuid.uuid4()), 'requested_at': time.time()}), resume_result=None)
             return
 
 
