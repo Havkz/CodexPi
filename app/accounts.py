@@ -648,10 +648,12 @@ async def finish_switch(controller, state):
         # The shared barrier already proved all native turns/jobs idle and the
         # same goal. A terminal failed receipt is not another executing operation.
         controller.db.update(project['project_id'], operation=None)
-    if not fresh_usage(account, state['target_account']):
+    queue_wait = project['queue_position'] != 1
+    if queue_wait or not fresh_usage(account, state['target_account']):
         controller.db.set_setting('account_wait', {key: state[key] for key in (
             'project_id', 'session_id', 'project_path', 'goal_created_at', 'objective_hash', 'goal_hold')}
             | {'account_id': state['target_account'], 'checked_at': account.get('checked_at'),
+               'reason': 'queue' if queue_wait else 'usage',
                'reset_at': max((w['reset_at'] for w in quota.values() if w['remaining'] == 0 and w['reset_at']), default=None)})
         return  # No quota is invented; retain the real native limit for Unsnooze.
     controller.db.set_setting('account_wait', None)
@@ -675,8 +677,11 @@ async def resume_account_wait(controller):
             or project['codex_session_id'] != wait['session_id'] or project['project_path'] != wait['project_path']):
         controller.db.set_setting('account_wait', None)
         return False
-    if controller.db.setting('selected') != project['project_id'] or project['queue_position'] != 1:
+    if project['queue_position'] != 1:
         return False  # Reordering defers this waiter; it never revokes reset eligibility.
+    selected = controller.db.setting('selected')
+    if selected and selected != project['project_id']:
+        return False  # Never preempt another selected project for an account wake.
     if project['operation']:
         return True  # An existing resume owns its own confirmation/deduplication.
     goal = (await controller.native.rpc('thread/goal/get', {'threadId': wait['session_id']})).get('goal')
@@ -691,7 +696,17 @@ async def resume_account_wait(controller):
             or controller.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone()
             or not await idle_thread(controller.native, wait['session_id'])):
         return True
+    if not selected:
+        from .prompts import active
+        if any(p['operation'] or active(controller, p) for p in controller.db.all()):
+            return True
+        loaded = await controller.native.rpc('thread/loaded/list', {})
+        for session in loaded['data']:
+            if not await idle_thread(controller.native, session):
+                return True  # Missing selection is not proof of an idle native runtime.
     with controller.db.transaction():
+        if not selected:
+            controller.select(project['project_id'])  # Already the head; no queue reordering.
         controller.db.update(project['project_id'], usage_limit=None, resume_result=None,
             operation=json.dumps({'kind': 'resume', 'source': 'account-reset', 'id': str(uuid.uuid4()),
                 'requested_at': time.time(), 'account_id': wait['account_id']}))

@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-07)
 
 ## Corpus Check
-- 88 files · ~113,170 words
+- 88 files · ~113,328 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 624 nodes · 1524 edges · 50 communities (35 shown, 15 thin omitted)
+- 624 nodes · 1525 edges · 50 communities (35 shown, 15 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 123 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ca9fd81e`
+- Built from commit: `54da3c36`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

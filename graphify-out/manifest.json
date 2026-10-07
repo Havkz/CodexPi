@@ -105,8 +105,8 @@
     "semantic_hash": ""
   },
   "app/web_assets/dashboard.js": {
-    "mtime": 1791395453.7253454,
-    "ast_hash": "5a2dc2bd53575e30ab239b43a5c58f55",
+    "mtime": 1791397111.7010772,
+    "ast_hash": "4b9c3e108c88fe76c1065990c9d283b6",
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
@@ -445,13 +445,13 @@
     "semantic_hash": ""
   },
   "app/accounts.py": {
-    "mtime": 1791396400.6797705,
-    "ast_hash": "99199242d413ca1b6e2ae0af09f84d94",
+    "mtime": 1791397385.5939047,
+    "ast_hash": "faaa530d49ee421d7627bce3b95827b3",
     "semantic_hash": ""
   },
   "tests/test_accounts.py": {
-    "mtime": 1791396442.6202755,
-    "ast_hash": "d6e9c68dd6c611586dc31aed35e8186e",
+    "mtime": 1791397444.3595793,
+    "ast_hash": "c1be13357716bd1a9aa6b442d489c5aa",
     "semantic_hash": ""
   },
   "Setup/verify-account-ui.py": {

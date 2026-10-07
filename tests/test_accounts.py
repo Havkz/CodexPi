@@ -378,12 +378,15 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
         fixture.setUp()
         c, now = fixture.controller, time.time()
         goal = {'objective': 'Original goal', 'createdAt': 17, 'updatedAt': 20, 'status': 'usageLimited'}
+        running = set()
         async def rpc(method, params, **kwargs):
+            if method == 'thread/loaded/list':
+                return {'data': ['first', 'second']}
             if method == 'thread/goal/get':
                 return {'goal': goal}
             if method == 'thread/read':
                 return {'thread': {'id': params['threadId'], 'cwd': str(c.root / params['threadId']),
-                                   'status': {'type': 'idle'}}}
+                                   'status': {'type': 'active' if params['threadId'] in running else 'idle'}}}
             raise AssertionError('Unexpected execution RPC: ' + method)
         c.native.rpc = AsyncMock(side_effect=rpc)
         try:
@@ -437,9 +440,25 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             c.select('first')
             c.db.record_usage({**account(now + 5, reset=now + 900), 'ordinaryUsageAllowed': True})
             self.assertFalse(fresh_usage(c.db.setting('account_usage'), 'b'))  # Future sample.
+            c.db.set_setting('selected', None)
             with patch('app.accounts.time.time', return_value=now + 10):
+                c.db.set_setting('selected', 'first')
+                c.db.reorder(['second', 'first'])
+                await finish_switch(c, state)
+                self.assertEqual(c.db.setting('account_wait')['reason'], 'queue')
+                self.assertIsNone(c.db.get('first')['operation'])
+                c.db.reorder(['first', 'second'])
+                c.db.set_setting('selected', None)
+                # A later real observation, not the switch request, confirms availability.
+                c.db.record_usage({**account(now + 6, reset=now + 900), 'ordinaryUsageAllowed': True})
+                running.add('second')
+                self.assertTrue(await resume_account_wait(c))
+                self.assertIsNone(c.db.get('first')['operation'])
+                self.assertIsNone(c.db.setting('selected'))
+                running.clear()
                 self.assertTrue(await resume_account_wait(c))
                 self.assertFalse(await resume_account_wait(c))  # One durable attempt, no second send.
+            self.assertEqual(c.db.setting('selected'), 'first')
             operation = json.loads(c.db.get('first')['operation'])
             self.assertEqual((operation['source'], operation['account_id']), ('account-reset', 'b'))
             self.assertNotIn('sent_at', operation)

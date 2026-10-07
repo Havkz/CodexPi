@@ -82,7 +82,7 @@ function renderAccounts() {
     verifying: 'Aktiver Account und echte Limits werden bestätigt …', resuming: 'Bestehende Session wird fortgesetzt …',
     confirming_resume: 'Account bestätigt; native Fortsetzung wird noch überprüft …'};
   $('account-status').textContent = accountSubmitting ? 'Anfrage wird übermittelt …' : operation.error || operation.message || labels[operation.phase]
-    || (state.account_wait ? 'Account bestätigt; auf echte verfügbare Usage warten' + (state.account_wait.reset_at ? ' · Reset: ' + date(state.account_wait.reset_at) : '')
+    || (state.account_wait ? (state.account_wait.reason === 'queue' ? 'Account bestätigt; Fortsetzung wartet auf Queue-Position 1' : 'Account bestätigt; auf echte verfügbare Usage warten') + (state.account_wait.reset_at ? ' · Reset: ' + date(state.account_wait.reset_at) : '')
       : operation.phase === 'complete' ? 'Account und Limits bestätigt.' : 'Anmeldungen bleiben geschützt auf dem Pi.');
   $('account-status').classList.toggle('account-warning', Boolean(operation.error));
   $('account-recovery').hidden = operation.phase !== 'recovery_required' && operation.phase !== 'logging_in';
