@@ -583,6 +583,16 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
                 ('windows-job', 'first', '{}', 'running', None, 1, 1))
             await tick(c)
             self.assertEqual(c.db.setting('account_switch')['phase'], 'waiting_turn')
+            from app.accounts import recover_switch
+            deadline = c.db.setting('account_switch')['requested_at'] + 3601
+            with patch('app.accounts.time.time', return_value=deadline):
+                await tick(c)
+                self.assertEqual(c.db.setting('account_switch')['phase'], 'recovery_required')
+                self.assertEqual(c.account_vault.auth_path.read_text(), logins[0])
+                self.assertEqual(c.db.conn.execute('SELECT status FROM jobs').fetchone()[0], 'running')
+                await recover_switch(c)
+                await tick(c)
+                self.assertEqual(c.db.setting('account_switch')['phase'], 'waiting_turn')
             c.db.conn.execute("UPDATE jobs SET status='finished'")
             await tick(c)
             await tick(c)

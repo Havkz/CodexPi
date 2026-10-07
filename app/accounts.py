@@ -459,6 +459,8 @@ async def recover_switch(controller, *, restore=False):
         if state.get('failed_phase') == 'starting_login':
             raise ValueError('Login startup was interrupted; restore the previous account before starting a new login')
         state['phase'] = state['failed_phase']
+        if state['phase'] == 'waiting_turn':
+            state['requested_at'] = time.time()  # A user retry starts a new bounded wait, never interrupts work.
     state.pop('error', None)
     controller.db.set_setting('account_switch', state)
     return {'ok': True, 'operation_id': state['id']}
@@ -534,6 +536,8 @@ async def tick(controller):
         controller.db.set_setting('account_switch', state)
     try:
         if state['phase'] == 'waiting_turn':
+            if time.time() - state['requested_at'] > 3600:
+                raise RuntimeError('Account change timed out waiting for native work or Windows jobs; nothing was interrupted')
             if state.get('goal_hold'):
                 try:
                     project = controller.db.get(state['project_id'])
@@ -554,8 +558,6 @@ async def tick(controller):
             loaded = await controller.native.rpc('thread/loaded/list', {})
             for session in loaded['data']:
                 if not await idle_thread(controller.native, session):
-                    if time.time() - state['requested_at'] > 3600:
-                        raise RuntimeError('Account change timed out waiting for the current native turn; it was not interrupted')
                     return
             if controller.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone():
                 return
@@ -637,7 +639,7 @@ async def tick(controller):
     except Exception as exc:
         # Native errors may contain provider/auth details. A recovery journal
         # needs the phase, not credential-bearing response text.
-        errors = {'waiting_turn': 'The current native turn did not settle; it was not interrupted.',
+        errors = {'waiting_turn': 'Native work or Windows jobs did not settle; nothing was interrupted.',
             'checkpointing': 'The previous account could not be confirmed and safely saved.',
             'installing': 'The selected login could not be installed safely.',
             'reloading': 'Native Codex did not reconnect after changing the login.',
