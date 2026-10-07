@@ -36,6 +36,7 @@ class DiscordTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('1. Dirty Windows checkout', text)
         self.assertIn('Provide the full runtime.', text)
         self.assertNotIn('UNFILTERED LOG', text)
+        self.assertNotIn('│ Session:', text)
         self.assertNotIn('private-test-value', text)
         self.assertIn('Kein automatisches Resume', text)
         self.assertEqual(json.dumps(project), before)
