@@ -37,6 +37,7 @@
   "35": "Bot",
   "36": "usage.js",
   "37": "db.py",
+  "38": "Bot",
   "39": "verify-usage-ui.py",
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
@@ -46,5 +47,10 @@
   "45": "Selected Windows session migration",
   "46": "SchedulerTests",
   "47": "Durable manual pause and real quota evidence, 2026-09-24",
-  "48": "verify-account-ui.py"
+  "48": "verify-account-ui.py",
+  "49": "Redactor",
+  "50": "export",
+  "51": "db.py",
+  "52": "DeploymentTests",
+  "53": ".make_controller"
 }

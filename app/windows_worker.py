@@ -208,6 +208,7 @@ class Worker:
 
     async def run_job(self, job):
         path = self.projects / job['slug']
+        checkout_status = ''
         try:
             if path.resolve().parent != self.projects.resolve() or path.is_symlink():
                 raise ValueError('Checkout path escapes the project root')
@@ -232,12 +233,25 @@ class Worker:
                 raise ValueError('Existing repository origin does not match the requested project')
             # A new --no-checkout clone has no HEAD files yet. Only skip this guard for that exact state.
             initialized = (path / '.git/codexpi-checkout').exists()
-            if initialized and await checked('git', 'status', '--porcelain'):
-                raise ValueError('Windows checkout contains local changes; preserving them')
             if not initialized and await checked('git', 'ls-files'):
                 raise ValueError('Existing checkout has no CodexPi ownership marker; preserving it')
-            await checked('git', 'fetch', '--no-tags', 'origin', job['commit'])
-            await checked('git', 'checkout', '--detach', job['commit'])
+            diagnostic = initialized and not job['artifacts'] and job['argv'] in (
+                ['git', 'status', '--short'],
+                ['git', 'status', '--porcelain=v1', '--untracked-files=all'])
+            if initialized:
+                checkout_status = await checked('git', 'status', '--porcelain=v1', '--untracked-files=all')
+                if diagnostic:
+                    # Exact read-only argv, not a caller's "diagnostic" label. Do
+                    # not change the checkout just to inspect local changes.
+                    if await checked('git', 'rev-parse', 'HEAD') != job['commit']:
+                        raise ValueError('Diagnostic requires the current checkout SHA; no checkout performed')
+                elif checkout_status and await checked('git', 'status', '--porcelain=v1', '--untracked-files=no'):
+                    raise ValueError('Windows checkout contains tracked local changes; preserving them')
+            if not diagnostic:
+                await checked('git', 'fetch', '--no-tags', 'origin', job['commit'])
+                # Git itself refuses untracked-file collisions. Never force,
+                # clean, stash or delete unrelated runtime/user files.
+                await checked('git', 'checkout', '--detach', '--no-overwrite-ignore', job['commit'])
             actual = await checked('git', 'rev-parse', 'HEAD')
             if actual != job['commit']:
                 raise RuntimeError('Checkout SHA verification failed')
@@ -255,6 +269,11 @@ class Worker:
                 result['artifacts'].append(str(artifact))
         except Exception as exc:
             result = {'stdout': '', 'stderr': str(exc), 'exit_code': -1, 'artifacts': []}
+            if checkout_status:
+                result['stderr'] += '\nCheckout changes:\n' + checkout_status[:8000]
+        if checkout_status:
+            result['checkout_status'] = checkout_status[:8000]
+            result['checkout_status_truncated'] = len(checkout_status) > 8000
         result = self.clean(json.dumps(result), path)
         self.db.execute("UPDATE jobs SET status='finished',result=?,updated=? WHERE id=?",
                         (result, time.time(), job['job_id']))

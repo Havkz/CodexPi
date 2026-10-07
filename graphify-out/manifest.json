@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
-    "mtime": 1791395331.0764163,
-    "ast_hash": "bae7657a64b7bf3c64e632ad5593a468",
+    "mtime": 1791402434.6618693,
+    "ast_hash": "8221dc9ca18843c417eb778e70fcd0b2",
     "semantic_hash": ""
   },
   "app/worker_server.py": {
@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "tests/test_worker.py": {
-    "mtime": 1791401291.662454,
-    "ast_hash": "d2eb657ed296e59f335a59b507c1b5c1",
+    "mtime": 1791402434.663377,
+    "ast_hash": "da2d6854cd2e1ed5feb95a74eec1e8d5",
     "semantic_hash": ""
   },
   "app/web_assets/index.html": {

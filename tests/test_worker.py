@@ -105,6 +105,94 @@ class WorkerTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(result['timed_out'])
             self.assertNotEqual(result['exit_code'], 0)
 
+    async def test_checkout_runtime_files_diagnostics_and_collision_recovery(self):
+        with tempfile.TemporaryDirectory() as directory, closing((worker := Worker(directory, 'test-secret', 'http://unused')).db):
+            path = worker.projects / 'test-project'
+            path.mkdir()
+
+            async def git(*args):
+                result = await execute(['git', *args], path, 15)
+                self.assertEqual(result['exit_code'], 0, result)
+                return result['stdout'].strip()
+
+            await git('init')
+            await git('config', 'user.name', 'Worker Test')
+            await git('config', 'user.email', 'worker@example.invalid')
+            await git('config', 'core.autocrlf', 'false')
+            await git('remote', 'add', 'origin', 'https://github.com/test/test-project.git')
+            source = path / 'source.txt'
+            source.write_text('original\n')
+            await git('add', 'source.txt')
+            await git('commit', '-m', 'original')
+            first = await git('rev-parse', 'HEAD')
+            source.write_text('next\n')
+            collision = path / 'new-file.txt'
+            collision.write_text('repository version\n')
+            await git('add', 'source.txt', 'new-file.txt')
+            await git('commit', '-m', 'next')
+            second = await git('rev-parse', 'HEAD')
+            await git('checkout', '--detach', first)
+            (path / '.git/codexpi-checkout').write_text('test/test-project')
+            (path / 'logs').mkdir()
+            runtime = path / 'logs/latest.log'
+            runtime.write_bytes(b'runtime data\n')
+            calls = []
+
+            async def child(argv, cwd, timeout, *, env=None):
+                calls.append(argv)
+                # Both exact commits are real local Git objects; only network
+                # fetching is mocked. Status, checkout and the test run are real.
+                if argv[0] == 'git' and len(argv) > 5 and argv[5] == 'fetch':
+                    return {'stdout': '', 'stderr': '', 'exit_code': 0, 'timed_out': False}
+                return await execute(argv, cwd, timeout, env=env)
+
+            async def run(argv, commit=first):
+                job = {'job_id': str(uuid.uuid4()), 'slug': 'test-project', 'repo': 'test/test-project',
+                       'commit': commit, 'argv': argv, 'timeout': 15, 'artifacts': []}
+                worker.db.execute('INSERT INTO jobs VALUES (?,?,?,?,?)',
+                                  (job['job_id'], json.dumps(job), 'running', None, time.time()))
+                await worker.run_job(job)
+                return json.loads(worker.db.execute('SELECT result FROM jobs WHERE id=?', (job['job_id'],)).fetchone()[0])
+
+            command = [sys.executable, '-c', 'print("native-test-ok")']
+            with patch('app.windows_worker.execute', child):
+                result = await run(command)
+                self.assertEqual(result['exit_code'], 0, result)
+                self.assertIn('native-test-ok', result['stdout'])
+                self.assertEqual(result['commit'], first)
+                self.assertIn('logs/latest.log', result['checkout_status'])
+                source.write_text('protected user change\n')
+                calls.clear()
+                diagnostic = await run(['git', 'status', '--short'])
+                self.assertEqual(diagnostic['exit_code'], 0, diagnostic)
+                self.assertIn('source.txt', diagnostic['stdout'])
+                self.assertFalse(any('fetch' in args or 'checkout' in args for args in calls))
+                for argv, commit in ((command, first), (['git', 'status', '--ignored'], first),
+                                     (['git', 'status', '--short'], second)):
+                    result = await run(argv, commit)
+                    self.assertEqual(result['exit_code'], -1, result)
+                    self.assertIn('source.txt', result['stderr'])
+                    self.assertEqual(source.read_text(), 'protected user change\n')
+                    self.assertEqual(await git('rev-parse', 'HEAD'), first)
+                source.write_text('original\n')
+                collision.write_text('protected untracked file\n')
+                result = await run(command, second)
+                self.assertEqual(result['exit_code'], -1, result)
+                self.assertIn('new-file.txt', result['stderr'])
+                self.assertEqual(collision.read_text(), 'protected untracked file\n')
+                self.assertEqual(await git('rev-parse', 'HEAD'), first)
+                (path / '.git/info/exclude').write_text('new-file.txt\n')
+                result = await run(command, second)
+                self.assertEqual(result['exit_code'], -1, result)
+                self.assertEqual(collision.read_text(), 'protected untracked file\n')
+                self.assertEqual(await git('rev-parse', 'HEAD'), first)
+                collision.unlink()  # Only this test's own file inside its TemporaryDirectory.
+                result = await run(command, second)
+                self.assertEqual(result['exit_code'], 0, result)
+                self.assertEqual(result['commit'], second)
+                self.assertEqual(source.read_text(), 'next\n')
+                self.assertEqual(runtime.read_bytes(), b'runtime data\n')
+
     def test_validation_and_restart_does_not_repeat(self):
         job = {'type': 'job', 'job_id': str(uuid.uuid4()), 'slug': 'test-project',
                'repo': 'test/test-project', 'commit': 'a' * 40, 'timeout': 10,
