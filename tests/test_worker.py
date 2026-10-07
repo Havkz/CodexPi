@@ -17,7 +17,7 @@ from app.windows_worker import Worker, execute, protect_secret, relative_path, v
 class WorkerTests(unittest.IsolatedAsyncioTestCase):
     async def test_account_login_opens_only_official_url_and_one_owned_callback_tunnel(self):
         url = ('https://auth.openai.com/oauth/authorize?response_type=code&'
-               'redirect_uri=http%3A%2F%2Flocalhost%3A1455%2Fauth%2Fcallback&state=test&'
+               'redirect_uri=http%3A%2F%2F127.0.0.1%3A1455%2Fauth%2Fcallback&state=test&'
                'code_challenge=pkce&code_challenge_method=S256')
         with tempfile.TemporaryDirectory() as directory, closing((worker := Worker(directory, 'test-secret', 'http://unused')).db):
             body = {'operation_id': str(uuid.uuid4()), 'url': url, 'expires_at': time.time() + 300}
@@ -33,7 +33,8 @@ class WorkerTests(unittest.IsolatedAsyncioTestCase):
                 self.assertIn('127.0.0.1:1455:127.0.0.1:1455', spawn.await_args.args)
                 self.assertIn('ExitOnForwardFailure=yes', spawn.await_args.args)
                 for bad in (url.replace('auth.openai.com', 'evil.example'),
-                            url.replace('localhost%3A1455', 'evil.example%3A1455'),
+                            url.replace('127.0.0.1%3A1455', 'evil.example%3A1455'),
+                            url.replace('1455', '8787'), url.replace('auth%2Fcallback', 'other'),
                             url + '&access_token=not-allowed', 'file:///C:/secret', url.replace('S256', 'plain')):
                     with self.assertRaises(ValueError):
                         await worker.open_login({**body, 'url': bad})
@@ -41,6 +42,9 @@ class WorkerTests(unittest.IsolatedAsyncioTestCase):
                 self.assertIsNone(worker.login_tunnel)
                 self.assertIsNone(worker.execution)
                 self.assertEqual(worker.db.execute('SELECT COUNT(*) FROM jobs').fetchone()[0], 0)
+                from app.common import codex_login_url
+                legacy = url.replace('127.0.0.1', 'localhost')
+                self.assertEqual(codex_login_url(legacy), legacy)
 
     async def test_checkout_auth_uses_gh_only_for_git_children(self):
         with tempfile.TemporaryDirectory() as directory:

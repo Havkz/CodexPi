@@ -292,7 +292,7 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
         loaded = {'raw': raws[0], 'goal': 'active', 'turn': 'idle'}
         goal = {'objective': 'Keep context', 'createdAt': 17, 'updatedAt': 20}
         url = ('https://auth.openai.com/oauth/authorize?response_type=code&'
-               'redirect_uri=http%3A%2F%2Flocalhost%3A1455%2Fauth%2Fcallback&state=test-state&'
+               'redirect_uri=http%3A%2F%2F127.0.0.1%3A1455%2Fauth%2Fcallback&state=test-state&'
                'code_challenge=test-pkce&code_challenge_method=S256')
         async def rpc(method, params, **kwargs):
             if method == 'thread/goal/get':

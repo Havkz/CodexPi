@@ -24,7 +24,10 @@ def codex_login_url(value):
     query = parse_qs(url.query)
     if (url.scheme != 'https' or url.netloc not in ('auth.openai.com', 'chatgpt.com')
             or url.path not in ('/oauth/authorize', '/auth/authorize') or url.fragment
-            or query.get('redirect_uri') != ['http://localhost:1455/auth/callback']
+            # Current native Codex uses the IPv4 loopback spelling; no other
+            # host, port or callback path is admitted by either Pi or worker.
+            or query.get('redirect_uri') not in (['http://localhost:1455/auth/callback'],
+                                                 ['http://127.0.0.1:1455/auth/callback'])
             or query.get('response_type') != ['code'] or len(query.get('state', [])) != 1
             or len(query.get('code_challenge', [])) != 1
             or query.get('code_challenge_method') != ['S256']
