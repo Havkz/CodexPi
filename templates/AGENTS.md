@@ -24,7 +24,11 @@ To run a Windows job, push a commit first, then:
 The worker fetches that exact commit. Windows is an execution worker, never a second AI.
 
 If a decision, secret, permission or human information is missing, write
-`.codexpi/block.json` with `reason`, exact `details`, and `requires_user: true`;
+`.codexpi/block.json` with a short `reason`, optional `reasons` (short strings for
+multiple distinct causes), concise `explanation` (what happened and why it blocks),
+and `solution` (a string or list of exact decisions/actions needed from the user).
+Keep full technical evidence/logs separately in `details`; set `requires_user: true`.
+Never replace a concrete question with generic "user input required" or invent causes;
 set the native goal to blocked and stop. Never auto-resume a human-required blocker.
 Use standard native states only: active, paused, blocked, usageLimited,
 budgetLimited, complete. Queue position and block reasons are separate metadata.

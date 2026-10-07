@@ -209,6 +209,8 @@ async def _submit_job(controller, body):
         raise ValueError('Artifact paths must be relative to the project checkout')
     if not controller.windows_online:
         reason = {'reason': 'Windows offline', 'details': str(body.get('reason', 'Native Windows test required')),
+                  'explanation': 'Der native Windows-Auftrag kann ohne verbundenen Windows-Worker nicht ausgeführt werden.',
+                  'solution': 'Windows-PC und CodexPi-Worker starten; nach gültigem Heartbeat setzt der Controller das berechtigte Queue-Projekt fort.',
                   'requires_user': False}
         clean = controller.redactor.clean(json.dumps(reason))
         atomic_write(__import__('pathlib').Path(project['project_path']) / '.codexpi/block.json', clean)

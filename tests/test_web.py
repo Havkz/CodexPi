@@ -82,6 +82,9 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,
                     tmux_session_name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)''',
                     ('project1', '<script>unsafe</script>', 'test', temp, 'codexpi-test', 1, 1))
+                db.update('project1', goal_status='stalled', block_reason=json.dumps({
+                    'reason': 'Missing choice', 'explanation': 'The next step needs a decision.',
+                    'solution': 'Choose A or B: ' + secret, 'details': secret, 'requires_user': True}))
                 db.event('project1', 'stalled', {'reason': {'details': secret}})
                 db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,status,result,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
                     ('job1', 'project1', '{}', 'finished', json.dumps({'stdout': secret,
@@ -93,6 +96,11 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                     detail = await detail_response.json()
                     self.assertNotIn(secret, json.dumps(detail))
                     self.assertEqual(detail['events'][0]['payload']['reason']['details'], '[REDACTED]')
+                    summary = detail['project']['block_summary']
+                    self.assertEqual(summary['reasons'], ['Missing choice'])
+                    self.assertEqual(summary['solution'], ['Choose A or B: [REDACTED]'])
+                    self.assertTrue(summary['requires_user'])
+                    self.assertEqual(summary['details'], '[REDACTED]')
                     self.assertEqual(detail['jobs'][0]['stdout'], '[REDACTED]')
                     self.assertEqual(detail['jobs'][0]['exit_code'], 1)
                     self.assertEqual(detail['commits'][0]['subject'], 'Commit [REDACTED]')

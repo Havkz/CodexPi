@@ -8,7 +8,7 @@ import time
 
 from aiohttp import web
 
-from .common import password_valid
+from .common import block_summary, password_valid
 from .usage import windows
 
 
@@ -157,7 +157,8 @@ async def state(request):
          'checked_at': now - (time.monotonic() - unsnooze_poll) if unsnooze_poll else None,
          'detail': 'Selective wake · queue position 1', 'error': errors.get('unsnooze')},
     ]
-    projects = [{**p, 'manual_paused': bool(controller.db.setting('manual_pause/' + p['project_id'], False))}
+    projects = [{**p, 'block_summary': block_summary(p),
+                 'manual_paused': bool(controller.db.setting('manual_pause/' + p['project_id'], False))}
                 for p in controller.db.all()]
     payload = {'projects': projects, 'selected': controller.db.setting('selected'),
         'account_usage': controller.db.setting('account_usage', {}),
@@ -200,6 +201,7 @@ async def project_detail(request):
     from .controller import command
     controller = request.app['controller']
     project = controller.db.get(request.match_info['project_id'])
+    project['block_summary'] = block_summary(project)
     events = [dict(row) for row in controller.db.conn.execute(
         'SELECT event_id,kind,payload,created_at,sent_at FROM events WHERE project_id=? ORDER BY event_id DESC LIMIT 30',
         (project['project_id'],))]

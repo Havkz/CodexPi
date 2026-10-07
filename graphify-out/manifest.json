@@ -70,13 +70,13 @@
     "semantic_hash": ""
   },
   "app/common.py": {
-    "mtime": 1789839013.7213318,
-    "ast_hash": "9850c6dfade5acd4b2b3296cb683475c",
+    "mtime": 1791380183.6241775,
+    "ast_hash": "984bbf4b7f95d626aa9712131ceb6a97",
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791378883.9534736,
-    "ast_hash": "242011b5d1eb20d8192c054cadec3eea",
+    "mtime": 1791380087.4510095,
+    "ast_hash": "fb06c62493bc681293b36d58b33d594e",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
-    "mtime": 1791379578.2681193,
-    "ast_hash": "ee6117365f41e7236451e3661b2131b9",
+    "mtime": 1791380305.3318608,
+    "ast_hash": "dfd550b2546c40606f8c9baf9aacba8b",
     "semantic_hash": ""
   },
   "app/main.py": {
@@ -100,13 +100,13 @@
     "semantic_hash": ""
   },
   "app/web.py": {
-    "mtime": 1791379578.2681193,
-    "ast_hash": "1de50a3d8c2257a42c17633d198a009b",
+    "mtime": 1791380087.4520671,
+    "ast_hash": "19d7779ca398bcd7cbe8b82ad9b437e1",
     "semantic_hash": ""
   },
   "app/web_assets/dashboard.js": {
-    "mtime": 1791301119.6765294,
-    "ast_hash": "039bba0d2c1a830b0e7b79f76400860c",
+    "mtime": 1791380391.0917706,
+    "ast_hash": "b45a5a2830fd05f78b4fa2ddc0daf3fc",
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "app/worker_server.py": {
-    "mtime": 1791379578.2670975,
-    "ast_hash": "2783594a167ff3625424c75f4a64f655",
+    "mtime": 1791380183.6241775,
+    "ast_hash": "4f6e9a88f96cc937d78c3c61fd1ee511",
     "semantic_hash": ""
   },
   "bin/codexpi": {
@@ -145,8 +145,8 @@
     "semantic_hash": ""
   },
   "tests/test_web.py": {
-    "mtime": 1791264234.9034321,
-    "ast_hash": "5817d07af0b26f91fece760399230805",
+    "mtime": 1791380616.0598652,
+    "ast_hash": "bb94202392554e4b872710c054c9e7e4",
     "semantic_hash": ""
   },
   "tests/test_worker.py": {
@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "templates/AGENTS.md": {
-    "mtime": 1790256053.8245635,
-    "ast_hash": "45e4efb403e5a82a6137a83eda192803",
+    "mtime": 1791380087.4541519,
+    "ast_hash": "837832b598d24c9408e23e073f0bb29d",
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "tests/test_discord.py": {
-    "mtime": 1791379611.523181,
-    "ast_hash": "61f4bc2a6cb509cc35dfeb5254d4656f",
+    "mtime": 1791380262.397482,
+    "ast_hash": "9a9c2c84918d5495de8d51e1d9826af5",
     "semantic_hash": ""
   },
   "docs/design-verification.md": {
@@ -432,6 +432,11 @@
   "app/prompts.py": {
     "mtime": 1791314713.9849029,
     "ast_hash": "558b75017b416136a7cd855a6dcd3e13",
+    "semantic_hash": ""
+  },
+  "Setup/verify-blocking-ui.py": {
+    "mtime": 1791380391.0917706,
+    "ast_hash": "b23ebe9f475ef16fa0fe518e737011e9",
     "semantic_hash": ""
   }
 }

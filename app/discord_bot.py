@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 
 import discord
 
+from .common import block_summary
+
 
 EMBED_COLORS = (0x8B5CF6, 0x5865F2, 0x00A8DD, 0x00B894, 0xD9A520, 0xF2994A, 0xE64964, 0xD65DB1)
 
@@ -20,12 +22,14 @@ def status_embed(controller, project, event, payload):
         return '`' + controller.redactor.clean(str(value or '—')).replace('`', 'ˋ').replace('\n', ' ')[:180] + '`'
 
     kind = event['kind']
-    reason = payload.get('reason') or {}
+    reason = payload.get('reason') or project.get('block_reason') or {}
     if isinstance(reason, str):
         try:
             reason = json.loads(reason)
         except json.JSONDecodeError:
             reason = {'reason': reason}
+    if not isinstance(reason, dict):
+        reason = {}
     offline = kind == 'stalled' and reason.get('reason') == 'Windows offline'
     titles = {'active': 'Project Status', 'paused': 'Project Paused', 'stalled': 'Project Stalled',
               'usage limited': 'Usage Limited', 'limited by budget': 'Budget Limited',
@@ -35,7 +39,16 @@ def status_embed(controller, project, event, payload):
              'usage limited': 'Waiting for reset', 'limited by budget': 'Budget reached',
              'complete': 'Finished', 'critical': 'Attention required'}.get(kind, 'Updated')
     status = kind if kind in titles and kind != 'critical' else project['goal_status']
+    summary = block_summary(project, reason, status)
     sections = []
+    if summary:
+        sections.append('**' + ('Reasons' if len(summary['reasons']) > 1 else 'Reason') + '**\n' +
+                        '\n'.join(f'{i}. {plain(text, 140)}' for i, text in enumerate(summary['reasons'], 1)))
+        sections.append('**Erklärung**\n' + plain(summary['explanation'], 320))
+        sections.append('**Lösung**\n' + '\n'.join(
+            f'{i}. {plain(text, 240)}' for i, text in enumerate(summary['solution'], 1)))
+        if summary['requires_user']:
+            sections[-1] += '\nKein automatisches Resume ohne Nutzerfreigabe.'
     if offline:
         heartbeat = controller.db.setting('windows_last_heartbeat')
         last_seen = f'<t:{int(heartbeat)}:F> (<t:{int(heartbeat)}:R>)' if heartbeat else '`unavailable`'
@@ -55,12 +68,9 @@ def status_embed(controller, project, event, payload):
     if kind != 'complete':
         lines.append('│ Session: ' + code(project['codex_session_id']))
     lines.append('│ Repo: ' + code(project['github_repo']))
-    if reason.get('reason'):
-        lines.append('│ Block Reason: ' + plain(reason['reason']))
     sections.append('\n'.join(lines))
-    if reason.get('details'):
-        sections.append('**Required**\n- ' + ('User action' if reason.get('requires_user') else 'Dependency') +
-                        '\n│ Detail: ' + plain(reason['details'], 650))
+    if summary and summary['details']:
+        sections.append('**Technische Details**\nDashboard → Projekt → Details; der vollständige Blocker bleibt dort erhalten.')
     elif payload.get('message'):
         sections.append('**Details**\n│ ' + plain(payload['message'], 650))
     if kind == 'usage limited':

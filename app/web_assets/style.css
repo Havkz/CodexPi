@@ -79,6 +79,10 @@ dt { font-size: 11px; color: var(--secondary); margin-bottom: 6px; }
 dd { margin: 0; overflow-wrap: anywhere; font-size: 13px; }
 .block-reason { margin-top: 20px; border-left: 2px solid var(--pink); padding: 12px 16px; background: color-mix(in srgb, var(--pink) 4%, var(--surface)); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; overflow-wrap: anywhere; }
 .block-reason p { margin-top: 5px; color: var(--secondary); }
+.block-reason section + section, .block-reason details { margin-top: 14px; }
+.block-reason ol { padding-left: 22px; margin: 6px 0 0; color: var(--secondary); }
+.block-reason li + li { margin-top: 6px; }
+.block-reason pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .active-actions { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
 .action-note { color: var(--muted); font-size: 11px; margin-top: 10px; }

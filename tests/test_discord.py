@@ -7,12 +7,48 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, patch
 
-from app.common import Redactor, atomic_write
+from app.common import Redactor, atomic_write, block_summary
 from app.db import Database
 from app.discord_bot import Bot, EMBED_COLORS, status_embed
 
 
 class DiscordTests(unittest.IsolatedAsyncioTestCase):
+    async def test_block_sections_are_ordered_actionable_and_do_not_change_admission(self):
+        directory = self.enterContext(tempfile.TemporaryDirectory())
+        db = Database(Path(directory) / 'test.db')
+        self.enterContext(closing(db.conn))
+        atomic_write(Path(directory) / '.env', 'TEST_SECRET=private-test-value\n')
+        c = SimpleNamespace(db=db, redactor=Redactor(directory), unsnooze={})
+        reason = {'reason': 'Two prerequisites', 'reasons': ['Dirty Windows checkout', 'Runtime missing'],
+                  'explanation': 'Windows protects local changes; the required runtime is absent.',
+                  'solution': ['Decide how to preserve the local changes.', 'Provide the full runtime.'],
+                  'details': 'UNFILTERED LOG ' * 1000 + 'private-test-value', 'requires_user': True}
+        project = {'display_name': 'Test', 'goal_status': 'stalled', 'codex_session_id': 's',
+                   'github_repo': None, 'project_id': 'p', 'queue_position': 1,
+                   'block_reason': json.dumps(reason)}
+        before = json.dumps(project)
+        summary = block_summary(project)
+        self.assertEqual(summary['solution'], reason['solution'])
+        event = {'kind': 'stalled', 'event_id': 1, 'created_at': time.time()}
+        text = status_embed(c, project, event, {'reason': reason, 'embed_color': EMBED_COLORS[0]}).description
+        self.assertLess(text.index('**Reasons**'), text.index('**Erklärung**'))
+        self.assertLess(text.index('**Erklärung**'), text.index('**Lösung**'))
+        self.assertIn('1. Dirty Windows checkout', text)
+        self.assertIn('Provide the full runtime.', text)
+        self.assertNotIn('UNFILTERED LOG', text)
+        self.assertNotIn('private-test-value', text)
+        self.assertIn('Kein automatisches Resume', text)
+        self.assertEqual(json.dumps(project), before)
+        self.assertTrue(json.loads(project['block_reason'])['requires_user'])
+        legacy = block_summary({**project, 'block_reason': json.dumps({
+            'reason': 'Decision missing', 'details': 'Evidence. Please choose A or B.', 'requires_user': True})})
+        self.assertEqual(legacy['solution'], ['Please choose A or B.'])
+        quota = block_summary({**project, 'goal_status': 'usage limited', 'usage_limit': '{"resetAt":1800000000000}'})
+        self.assertEqual(quota['reset_at'], 1800000000000)
+        self.assertNotIn('Runtime missing', quota['reasons'])
+        self.assertTrue(quota['requires_user'])
+        self.assertIsNone(block_summary({'goal_status': 'active', 'block_reason': None}))
+
     async def test_last_signed_windows_heartbeat_survives_disconnect_and_restart(self):
         directory = self.enterContext(tempfile.TemporaryDirectory())
         path = Path(directory) / 'test.db'

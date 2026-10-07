@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-07)
 
 ## Corpus Check
-- 83 files · ~102,427 words
+- 84 files · ~103,504 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 537 nodes · 1179 edges · 52 communities (36 shown, 16 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 101 edges (avg confidence: 0.67)
+- 543 nodes · 1196 edges · 48 communities (32 shown, 16 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 101 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8621f70d`
+- Built from commit: `9483fed3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -56,20 +56,16 @@
 - CodexPi
 - DeploymentTests
 - Selected Windows session migration
-- test-live-lifecycle.py
 - Durable manual pause and real quota evidence, 2026-09-24
 - RuntimeError
-- state
-- DeploymentTests
-- verify-backup-restore.py
 
 ## God Nodes (most connected - your core abstractions)
-1. `Database` - 58 edges
+1. `Database` - 59 edges
 2. `Controller` - 52 edges
 3. `command()` - 38 edges
 4. `SchedulerTests` - 36 edges
-5. `atomic_write()` - 27 edges
-6. `Redactor` - 26 edges
+5. `atomic_write()` - 28 edges
+6. `Redactor` - 27 edges
 7. `finish()` - 20 edges
 8. `Native` - 18 edges
 9. `SignedChannel` - 16 edges
@@ -82,23 +78,19 @@
   Setup/verify-lifecycle-fixes.py → app/web.py
 - `CoreTests` --uses--> `SignedChannel`  [INFERRED]
   tests/test_core.py → app/common.py
-- `Crash` --uses--> `Redactor`  [INFERRED]
-  tests/test_lifecycle.py → app/common.py
-- `LifecycleTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_lifecycle.py → app/common.py
+- `SchedulerTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_scheduler.py → app/common.py
+- `WorkerAdmissionTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_worker_server.py → app/common.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (52 total, 16 thin omitted)
+## Communities (48 total, 16 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
 Nodes (6): Changes, Completion gate follow-up, Lifecycle repair evidence, 2026-09-23, Reproduction and exact causes, Verification boundaries and remaining work, Verified live
-
-### Community 1 - "Controller"
-Cohesion: 0.14
-Nodes (5): command(), Controller, BaseException, Crash, LifecycleTests
 
 ### Community 2 - "windows_worker.py"
 Cohesion: 0.19
@@ -106,7 +98,7 @@ Nodes (11): execute(), main(), protect_secret(), Outbound-only native Windows ex
 
 ### Community 3 - "deployment.py"
 Cohesion: 0.15
-Nodes (29): slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+21 more)
+Nodes (30): slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+22 more)
 
 ### Community 4 - "Native"
 Cohesion: 0.22
@@ -118,7 +110,7 @@ Nodes (5): Delete, Interrupted operation recovery, Project lifecycle, Rename, Ve
 
 ### Community 6 - "web.py"
 Cohesion: 0.11
-Nodes (25): password_hash(), password_valid(), action(), authorize(), favicon(), index(), login(), make_app() (+17 more)
+Nodes (25): block_summary(), password_hash(), password_valid(), Presentation only: never change native status or resume authorization., action(), authorize(), favicon(), index() (+17 more)
 
 ### Community 7 - "dashboard.js"
 Cohesion: 0.42
@@ -157,8 +149,8 @@ Cohesion: 0.67
 Nodes (3): main(), observe(), Start/observe one real deployment goal; never replace an existing objective.  De
 
 ### Community 34 - "migration.py"
-Cohesion: 0.12
-Nodes (24): atomic_write(), digest(), extract_project(), finish(), inspect_archive(), Explicit, journaled import of one private Windows project/native session.  No mo, Insert only absent selected-thread rows. Never replace a live DB/file., request() (+16 more)
+Cohesion: 0.10
+Nodes (29): atomic_write(), digest(), extract_project(), finish(), inspect_archive(), Explicit, journaled import of one private Windows project/native session.  No mo, Insert only absent selected-thread rows. Never replace a live DB/file., request() (+21 more)
 
 ### Community 35 - "Bot"
 Cohesion: 0.33
@@ -169,12 +161,12 @@ Cohesion: 0.57
 Nodes (6): refreshUsage(), renderUsage(), usageDate(), usageElement(), usagePercent(), usageSvg()
 
 ### Community 37 - "db.py"
-Cohesion: 0.27
-Nodes (5): number(), Read-only account telemetry; never decides whether a goal may execute., windows(), account(), UsageTests
+Cohesion: 0.07
+Nodes (17): Redactor, Database, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed(), number(), Read-only account telemetry; never decides whether a goal may execute. (+9 more)
 
 ### Community 38 - "main"
-Cohesion: 0.09
-Nodes (19): canonical(), Per-connection random challenge + directional MAC + monotonic sequence., read_env(), Redactor, SignedChannel, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields. (+11 more)
+Cohesion: 0.14
+Nodes (13): canonical(), Per-connection random challenge + directional MAC + monotonic sequence., read_env(), SignedChannel, main(), dispatch_pending(), job_denial(), send() (+5 more)
 
 ### Community 41 - "Recovery and operator runbook"
 Cohesion: 0.20
@@ -196,25 +188,13 @@ Nodes (5): Conclusion and safe next evidence, Existing non-CodexPi services, Obs
 Cohesion: 0.33
 Nodes (5): Current evidence and unfinished verification, Fidelity and compatibility, Reusable mechanism, Scope and source, Selected Windows session migration
 
-### Community 46 - "test-live-lifecycle.py"
-Cohesion: 0.67
-Nodes (5): main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted()
-
 ### Community 47 - "Durable manual pause and real quota evidence, 2026-09-24"
 Cohesion: 0.50
 Nodes (3): Durable manual pause and real quota evidence, 2026-09-24, Pause authority, Real usage-limit history
 
 ### Community 48 - "RuntimeError"
-Cohesion: 0.22
-Nodes (3): RuntimeError, Probe the installed native protocol without requesting any model work., rpc()
-
-### Community 49 - "state"
-Cohesion: 0.22
-Nodes (6): Exercise the two explicitly named E2E projects through the authenticated dashboa, state(), main(), Live recovery; explicit --crash or --worker-restart injects a fault.  Never kill, main(), Resume only the existing queue E2E goal; never create or replace an objective.
-
-### Community 51 - "verify-backup-restore.py"
-Cohesion: 0.53
-Nodes (5): identities(), main(), Isolated infrastructure-DB restore drill on Pi; never starts or restores live se, readonly(), services()
+Cohesion: 0.11
+Nodes (14): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+6 more)
 
 ## Knowledge Gaps
 - **76 isolated node(s):** `install-base.sh script`, `PATH`, `Alltag`, `Installation und Betrieb`, `Dokumentation` (+71 more)
@@ -224,12 +204,12 @@ Nodes (5): identities(), main(), Isolated infrastructure-DB restore drill on Pi;
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `Database` to `Controller`, `migration.py`, `db.py`, `web.py`, `main`, `Bot`, `RuntimeError`, `DeploymentTests`, `verify-backup-restore.py`, `main.py`?**
-  _High betweenness centrality (0.090) - this node is a cross-community bridge._
-- **Why does `Controller` connect `Controller` to `migration.py`, `main`, `Bot`, `main.py`, `Database`?**
-  _High betweenness centrality (0.066) - this node is a cross-community bridge._
-- **Why does `command()` connect `Controller` to `migration.py`, `deployment.py`, `web.py`, `main`, `Bot`, `RuntimeError`, `DeploymentTests`, `main.py`, `Database`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **Why does `Database` connect `db.py` to `Controller`, `migration.py`, `web.py`, `main`, `Bot`, `RuntimeError`, `main.py`?**
+  _High betweenness centrality (0.089) - this node is a cross-community bridge._
+- **Why does `Controller` connect `Controller` to `migration.py`, `db.py`, `main`, `Bot`, `main.py`?**
+  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+- **Why does `command()` connect `Controller` to `migration.py`, `deployment.py`, `db.py`, `web.py`, `main`, `Bot`, `RuntimeError`, `main.py`?**
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Are the 11 inferred relationships involving `Database` (e.g. with `Controller` and `CoreTests`) actually correct?**
   _`Database` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 9 inferred relationships involving `Controller` (e.g. with `Redactor` and `Database`) actually correct?**

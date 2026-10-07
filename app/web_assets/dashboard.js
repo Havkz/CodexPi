@@ -25,12 +25,24 @@ function metadata(rows) {
 }
 function repo(p) { return p.github_repo ? link(p.github_repo, 'https://github.com/' + p.github_repo) : '—'; }
 function block(p) {
-  if (!p.block_reason) return null;
-  let reason; try { reason = JSON.parse(p.block_reason); } catch { reason = {reason: p.block_reason}; }
-  const box = node('div', '', 'block-reason'); box.append(node('strong', 'Block Reason'));
-  box.append(node('p', reason.reason || String(p.block_reason)));
-  if (reason.details) box.append(node('p', reason.details));
-  if (reason.requires_user) box.append(node('p', 'Benutzereingabe erforderlich. Kein automatisches Resume.'));
+  const summary = p.block_summary; if (!summary) return null;
+  const box = node('div', '', 'block-reason');
+  function section(title, values) {
+    const part = node('section'); part.append(node('strong', title));
+    if (values.length === 1) part.append(node('p', values[0]));
+    else { const list = node('ol'); values.forEach(text => list.append(node('li', text))); part.append(list); }
+    box.append(part);
+  }
+  section(summary.reasons.length > 1 ? 'Reasons' : 'Reason', summary.reasons);
+  section('Erklärung', [summary.explanation]);
+  const solutions = [...summary.solution];
+  if (summary.reset_at) solutions.push('Reset: ' + new Date(summary.reset_at).toLocaleString('de-DE'));
+  section('Lösung', solutions);
+  if (summary.requires_user) box.append(node('p', 'Kein automatisches Resume ohne Nutzerfreigabe.', 'muted'));
+  if (summary.details) {
+    const details = node('details'); details.dataset.project = p.project_id;
+    details.append(node('summary', 'Technische Details'), node('pre', summary.details)); box.append(details);
+  }
   return box;
 }
 async function act(action, project_id, extra = {}) {
@@ -128,6 +140,7 @@ function renderQueue(queue) {
 }
 function render() {
   if (!state) return;
+  const expandedBlocks = new Set([...document.querySelectorAll('.block-reason details[open]')].map(el => el.dataset.project));
   const focused = document.activeElement, focus = focused?.dataset.key;
   const queue = state.projects.filter(p => p.queue_position !== null);
   const active = state.projects.find(p => p.project_id === state.selected);
@@ -178,6 +191,7 @@ function render() {
   const detailOverview = $('detail-overview'), currentDetail = state.projects.find(p => p.project_id === detailId);
   if (detailOverview && currentDetail) detailOverview.replaceChildren(node('h3', 'Overview'), projectOverview(currentDetail, true));
   if (detailId && !currentDetail) $('project-dialog').close();
+  document.querySelectorAll('.block-reason details').forEach(el => { el.open = expandedBlocks.has(el.dataset.project); });
   if (focus && !focused.isConnected) document.querySelector('[data-key="' + CSS.escape(focus) + '"]')?.focus({preventScroll: true});
 }
 async function refresh() {

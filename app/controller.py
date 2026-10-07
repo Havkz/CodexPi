@@ -475,7 +475,7 @@ class Controller:
                 if not isinstance(value, dict) or not isinstance(value.get('reason'), str):
                     raise ValueError('Invalid block reason file')
                 reason = self.redactor.clean(json.dumps({k: value[k] for k in
-                    ('reason', 'details', 'requires_user') if k in value}))
+                    ('reason', 'reasons', 'explanation', 'solution', 'details', 'requires_user') if k in value}))
             if status == 'complete':
                 if old != 'complete' or not project['completion_notified']:
                     await self.complete(project)

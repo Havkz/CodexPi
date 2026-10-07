@@ -15,6 +15,75 @@ NATIVE_STATUS = {'active': 'active', 'paused': 'paused', 'blocked': 'stalled',
                  'complete': 'complete'}
 
 
+def block_summary(project, reason=None, status=None):
+    """Presentation only: never change native status or resume authorization."""
+    status = status or project.get('goal_status')
+    raw = project.get('block_reason') if reason is None else reason
+    if isinstance(raw, str):
+        try:
+            raw = json.loads(raw)
+        except ValueError:
+            raw = {'reason': raw}
+    raw = raw if isinstance(raw, dict) else {}
+    if not raw and status not in ('stalled', 'usage limited', 'limited by budget'):
+        return None
+
+    def short(value, limit):
+        value = ' '.join(value.split()) if isinstance(value, str) else ''
+        return value if len(value) <= limit else value[:limit].rsplit(' ', 1)[0] + '…'
+
+    def items(value, limit):
+        values = value if isinstance(value, list) else [value]
+        result = list(dict.fromkeys(text for item in values if (text := short(item, limit))))
+        return result[:5] + ['Weitere Einträge: technische Details öffnen.'] if len(result) > 6 else result
+
+    details = raw.get('details') if isinstance(raw.get('details'), str) else ''
+    reset = None
+    if status == 'usage limited':
+        limit = project.get('usage_limit') or {}
+        if isinstance(limit, str):
+            try:
+                limit = json.loads(limit)
+            except ValueError:
+                limit = {}
+        reset = limit.get('resetAt') if isinstance(limit, dict) else None
+        reasons = ['OpenAI-Codex-Usage-Limit erreicht']
+        explanation = 'Die native Codex-Session meldet ein ausgeschöpftes Usage-Limit.'
+        solution = ['Auf den tatsächlichen Reset warten. Unsnooze setzt nur eine weiterhin berechtigte Session fort.']
+    elif status == 'limited by budget':
+        reasons = ['Goal-Tokenbudget erreicht']
+        explanation = 'Das native Goal kann innerhalb seines gesetzten Tokenbudgets nicht weiterarbeiten.'
+        solution = ['Das Goal-Budget prüfen und bei Bedarf ausdrücklich erhöhen; danach Resume verwenden.']
+    else:
+        reasons = items(raw.get('reasons') or raw.get('reason'), 140) or ['Native Goal blockiert']
+        explanation = short(raw.get('explanation'), 320)
+        solution = items(raw.get('solution'), 240)
+        if raw.get('reason') == 'Windows offline':
+            explanation = explanation or 'Der benötigte Windows-Worker hat keine frische authentifizierte Verbindung.'
+            solution = solution or ['Windows-PC und CodexPi-Worker starten. Nach gültigem Heartbeat wird das berechtigte Queue-Projekt fortgesetzt.']
+        elif raw.get('requires_user'):
+            explanation = explanation or 'Eine Nutzerentscheidung oder Information fehlt; automatisches Resume bleibt gesperrt.'
+            # Preserve an explicitly recorded request; never invent a decision from logs.
+            requests = [s for s in re.split(r'(?<=[.!?])\s+|\n+', details)
+                        if re.match(r'(?i)^(please\b|bitte\b|user direction\b|user decision\b|entscheide\b)', s.strip())]
+            solution = solution or items(requests, 240) or ['Die konkrete fehlende Entscheidung ist nicht separat angegeben. Technische Details öffnen und in der Projekt-Session klären.']
+        elif raw.get('reason') == 'Completion verification failed':
+            explanation = explanation or short(details, 320)
+            solution = solution or ['Uncommittete Änderungen beziehungsweise den fehlgeschlagenen CI-Run prüfen, korrigieren, committen und pushen; danach Resume verwenden.']
+        elif raw.get('reason') == 'Deployment verification failed':
+            explanation = explanation or 'Die Auslieferungsprüfung ist fehlgeschlagen; das Projekt gilt nicht als erfolgreich ausgeliefert.'
+            solution = solution or ['Den Auslieferungsfehler in den technischen Details prüfen und in derselben Projekt-Session beheben; danach erneut verifizieren.']
+        else:
+            explanation = explanation or 'Das native Goal wartet auf die gemeldete Voraussetzung; Details sind separat verfügbar.'
+            solution = solution or ['Die gemeldete Voraussetzung anhand der technischen Details prüfen und beheben; danach Resume verwenden.']
+    if raw.get('requires_user') and status in ('usage limited', 'limited by budget'):
+        solution += items(raw.get('solution'), 240) or ['Die zusätzlich erforderliche Nutzerentscheidung klären; der Reset hebt diese Sperre nicht auf.']
+    if any(isinstance(raw.get(key), list) and len(raw[key]) > 6 for key in ('reasons', 'solution')):
+        details = details + '\n\nVollständige strukturierte Meldung:\n' + json.dumps(raw, ensure_ascii=False)
+    return {'reasons': reasons, 'explanation': explanation, 'solution': solution,
+            'details': details, 'reset_at': reset, 'requires_user': bool(raw.get('requires_user'))}
+
+
 def slugify(name):
     name = name.strip()
     if not name or len(name) > 80 or any(ord(c) < 32 for c in name):
