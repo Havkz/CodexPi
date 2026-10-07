@@ -431,6 +431,14 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('check_for_update_on_startup=false', launch)
         self.assertIn('UNSNOOZE_AUTO_RESUME=false', launch)
         self.assertIn('resume first', launch)
+        mouse = ('tmux', 'set-option', '-t', c.db.get('first')['tmux_session_name'], 'mouse', 'on')
+        self.assertIn(mouse, [call.args for call in command.await_args_list])
+        # Reattaching an existing pane must repair scrolling without respawning its draft.
+        c.pane_exists.return_value = True
+        command.reset_mock()
+        with patch('app.controller.command', command):
+            await c.attach_ready(c.db.get('first'))
+        self.assertEqual([call.args for call in command.await_args_list], [mouse])
 
     async def test_completion_compacts_queue_and_confirms_pending_resume(self):
         c = self.controller

@@ -249,6 +249,7 @@ class Controller:
     async def open_tui(self, project, resume_args):
         self.db.set_setting('last_tui_activity', time.time())
         if await self.pane_exists(project):
+            await command('tmux', 'set-option', '-t', project['tmux_session_name'], 'mouse', 'on')
             return
         args = ['env', 'UNSNOOZE_AUTO_RESUME=false', '/home/raspberry/.local/bin/unsnooze', '_run', 'codex',
                 '-c', 'check_for_update_on_startup=false',
@@ -263,6 +264,8 @@ class Controller:
                           '-c', project['project_path'], '-x', '120', '-y', '36', shlex.join(args))
         await command('tmux', 'set-option', '-t', project['tmux_session_name'], 'status', 'off')
         await command('tmux', 'set-option', '-t', project['tmux_session_name'], 'remain-on-exit', 'on')
+        # Without mouse reporting, terminals can translate wheel events into prompt-history arrows.
+        await command('tmux', 'set-option', '-t', project['tmux_session_name'], 'mouse', 'on')
 
     async def slash(self, project, text):
         if not await self.pane_exists(project):

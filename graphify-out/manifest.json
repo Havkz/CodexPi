@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791380087.4510095,
-    "ast_hash": "fb06c62493bc681293b36d58b33d594e",
+    "mtime": 1791381865.8479211,
+    "ast_hash": "5bc569ab351c31ea3dc66bfd5c10fda8",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1791378280.0328863,
-    "ast_hash": "e015ba242ac32fc37e0a41313f44206d",
+    "mtime": 1791381865.8520095,
+    "ast_hash": "7a355b2b1729a173fec2758e4dd7a170",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -437,6 +437,11 @@
   "Setup/verify-blocking-ui.py": {
     "mtime": 1791380391.0917706,
     "ast_hash": "b23ebe9f475ef16fa0fe518e737011e9",
+    "semantic_hash": ""
+  },
+  "Setup/verify-tui-scrolling.py": {
+    "mtime": 1791382042.8286715,
+    "ast_hash": "57e42d45d274ead087752bce114459b4",
     "semantic_hash": ""
   }
 }
