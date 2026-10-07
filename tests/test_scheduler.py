@@ -323,6 +323,17 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                     c.db.update('first', lifecycle='deleting')
                     self.assertIn('error', await rpc('config/batchWrite', selection))
                     self.assertEqual(upstream.rpc.await_count, before)
+                    # Neither a model picker nor a general TUI RPC may change the
+                    # active saved account or export the controller's bearer token.
+                    for method in ('account/login/start', 'account/login/cancel', 'account/logout',
+                                   'loginApiKey', 'loginChatGpt', 'cancelLoginChatGpt', 'logout'):
+                        self.assertIn('error', await rpc(method, {}))
+                    self.assertEqual(upstream.rpc.await_count, before)
+                    upstream.rpc.return_value = {'authToken': 'private-test-bearer', 'authMethod': 'chatgpt'}
+                    response = await rpc('getAuthStatus', {'includeToken': True})
+                    self.assertIsNone(response['result']['authToken'])
+                    self.assertEqual(upstream.rpc.await_args.args,
+                                     ('getAuthStatus', {'includeToken': False}))
 
     async def test_resume_confirmation_timeout_crash_and_identity(self):
         c = self.controller

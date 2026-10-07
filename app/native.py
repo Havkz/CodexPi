@@ -226,6 +226,9 @@ async def tui_proxy(request):
         try:
             if getattr(controller, 'maintenance', False):
                 raise ValueError('Codex CLI maintenance in progress; reopen codexpi afterwards')
+            if (method in ('loginApiKey', 'loginChatGpt', 'cancelLoginChatGpt', 'logout')
+                    or method and method.startswith(('account/login/', 'account/logout'))):
+                raise ValueError('Manage saved Codex accounts through the CodexPi dashboard; direct auth changes bypass the controller')
             if method in ('thread/resume', 'turn/start', 'turn/steer', 'thread/goal/set', 'thread/goal/clear',
                           'thread/name/set', 'thread/settings/update', 'config/batchWrite', 'thread/shellCommand'):
                 controller.db.set_setting('last_tui_activity', time.time())
@@ -352,6 +355,10 @@ async def tui_proxy(request):
                         await controller.cancel_wakes(project)
                         if selected == project['project_id']:
                             controller.db.set_setting('selected', None)
+            elif method == 'getAuthStatus':
+                result = await upstream.rpc(method, {**params, 'includeToken': False})
+                # Defense in depth: no native bearer token reaches a TUI client.
+                result['authToken'] = None
             elif method is not None and request_id is not None:
                 result = await upstream.rpc(method, params)
             else:

@@ -1,10 +1,12 @@
 """Private managed-Codex auth slots. Never store tokens in DB, browser state or logs."""
 import base64
 import hashlib
+import hmac
 import json
 import os
 from pathlib import Path
 import re
+import time
 
 from .common import atomic_write
 from .usage import number, windows
@@ -111,13 +113,21 @@ class AccountVault:
             raise ValueError('Saved ChatGPT login is unavailable; sign in again')
         return path.read_bytes()
 
-    def checkpoint(self, native_account, expected_id=None):
+    def checkpoint(self, native_account, proof, expected_id=None):
         raw = self.read(self.auth_path)
         ident, claims = auth_identity(raw)
         if expected_id is not None and ident != expected_id:
             raise ValueError('Active login identity changed; refusing to overwrite another account')
         if not isinstance(native_account, dict) or native_account.get('type') != 'chatgpt':
             raise ValueError('A native-confirmed ChatGPT login is required')
+        tokens = json.loads(raw)['tokens']
+        # Metadata/email alone can describe the server's previous cached account.
+        # Compare its loaded bearer only in server memory, never return/store it.
+        if (not isinstance(proof, dict) or proof.get('authMethod') != 'chatgpt'
+                or not isinstance(proof.get('authToken'), str)
+                or not hmac.compare_digest(proof['authToken'].encode(), tokens['access_token'].encode())
+                or proof.get('accountId') != tokens['account_id']):
+            raise ValueError('Native login and fresh usage identity do not match the active credentials')
         email = native_account.get('email')
         if email and claims.get('email') and email != claims['email']:
             raise ValueError('Native account does not match the saved login')
@@ -134,3 +144,20 @@ class AccountVault:
 
     def remove(self, account_id):
         self.path(account_id).unlink(missing_ok=True)
+
+
+async def observe_account(native, vault, expected_id=None):
+    """Controller lock required. Confirm the loaded login plus fresh provider quota.
+
+    The legacy token-bearing RPC is private to the controller; its response must
+    never enter dashboard state, notification payloads, journals or logs.
+    """
+    account = (await native.rpc('account/read', {'refreshToken': False}, timeout=20)).get('account')
+    limits = await native.rpc('account/rateLimits/read', {}, timeout=20)
+    proof = await native.rpc('getAuthStatus', {'includeToken': True, 'refreshToken': False}, timeout=20)
+    try:
+        metadata = vault.checkpoint(account, {**proof, 'accountId': limits.get('accountId')}, expected_id)
+    finally:
+        proof.clear()
+    usage = {key: limits.get(key) for key in ('ordinaryUsageAllowed', 'rateLimits', 'rateLimitsByLimitId')}
+    return metadata, {**usage, 'account_id': metadata['account_id'], 'checked_at': time.time()}

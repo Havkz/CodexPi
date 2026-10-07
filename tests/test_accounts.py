@@ -5,17 +5,19 @@ from pathlib import Path
 import stat
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
-from app.accounts import AccountVault, auth_identity, choose_account
+from app.accounts import AccountVault, auth_identity, choose_account, observe_account
 from app.common import atomic_write
 from app.db import Database
 from tests.test_usage import account
 
 
-def login(user, token='test-access-token'):
+def login(user, token=None):
     claims = base64.urlsafe_b64encode(json.dumps({'sub': user, 'email': user + '@example.test'}).encode()).decode().rstrip('=')
     return json.dumps({'auth_mode': 'chatgpt', 'OPENAI_API_KEY': None,
-                      'tokens': {'id_token': 'header.' + claims + '.signature', 'access_token': token,
+                      'tokens': {'id_token': 'header.' + claims + '.signature', 'access_token': token or 'test-access-' + user,
                                  'refresh_token': 'test-refresh-token', 'account_id': 'workspace'}})
 
 
@@ -69,17 +71,19 @@ class AccountTests(unittest.TestCase):
             first, second = login('first'), login('second')
             atomic_write(codex_home / 'auth.json', first)
             vault = AccountVault(root, codex_home)
-            one = vault.checkpoint({'type': 'chatgpt', 'email': 'first@example.test', 'planType': 'plus'})
+            proof = {'authMethod': 'chatgpt', 'authToken': 'test-access-first', 'accountId': 'workspace'}
+            one = vault.checkpoint({'type': 'chatgpt', 'email': 'first@example.test', 'planType': 'plus'}, proof)
             with self.assertRaisesRegex(ValueError, 'identity changed'):
-                vault.checkpoint({'type': 'chatgpt'}, expected_id='0' * 64)
+                vault.checkpoint({'type': 'chatgpt'}, proof, expected_id='0' * 64)
             atomic_write(codex_home / 'auth.json', second)
-            two = vault.checkpoint({'type': 'chatgpt', 'email': 'second@example.test'})
+            two = vault.checkpoint({'type': 'chatgpt', 'email': 'second@example.test'},
+                                   {**proof, 'authToken': 'test-access-second'})
             self.assertNotEqual(one['account_id'], two['account_id'])
             vault.install(one['account_id'])
             self.assertEqual((codex_home / 'auth.json').read_text(), first)
             refreshed = login('first', 'new-test-access-token')
             atomic_write(codex_home / 'auth.json', refreshed)
-            vault.checkpoint({'type': 'chatgpt'}, expected_id=one['account_id'])
+            vault.checkpoint({'type': 'chatgpt'}, {**proof, 'authToken': 'new-test-access-token'}, expected_id=one['account_id'])
             self.assertEqual(vault.path(one['account_id']).read_text(), refreshed)
             self.assertNotIn('token', json.dumps(one))
             self.assertEqual((codex_home / 'config.toml').read_text(), 'unrelated = true\n')
@@ -144,6 +148,42 @@ class AccountTests(unittest.TestCase):
                 self.assertEqual(db.usage_history(1800060), first)
             finally:
                 db.conn.close()
+
+
+class AccountObservationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_loaded_identity_and_fresh_limits_are_required_without_exporting_credentials(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            home = root / 'codex-home'
+            first, second = login('first'), login('second')
+            atomic_write(home / 'auth.json', first)
+            vault = AccountVault(root, home)
+            ident = auth_identity(first)[0]
+            fresh = {**account(1800000), 'accountId': 'workspace'}
+            def rpc(native_token, provider_id='workspace'):
+                return SimpleNamespace(rpc=AsyncMock(side_effect=[{'account': {'type': 'chatgpt'}},
+                    {**fresh, 'accountId': provider_id}, {'authMethod': 'chatgpt', 'authToken': native_token}]))
+
+            metadata, usage = await observe_account(rpc('test-access-first'), vault, ident)
+            self.assertEqual(metadata['account_id'], ident)
+            self.assertEqual(usage['account_id'], ident)
+            self.assertGreater(usage['checked_at'], 1800000)
+            exported = json.dumps((metadata, usage))
+            self.assertNotIn('test-access', exported)
+            self.assertNotIn('refresh_token', exported)
+            before = vault.path(ident).read_bytes()
+            for native_token, provider in [('test-access-second', 'workspace'), ('test-access-first', 'other'),
+                                          (None, 'workspace'), ('test-access-first', None)]:
+                with self.assertRaisesRegex(ValueError, 'do not match'):
+                    await observe_account(rpc(native_token, provider), vault, ident)
+                self.assertEqual(vault.path(ident).read_bytes(), before)
+            # Two principals can share the same workspace and have no public email.
+            # Installing B while the server still uses A must not attribute A's quota to B.
+            atomic_write(home / 'auth.json', second)
+            with self.assertRaisesRegex(ValueError, 'do not match'):
+                await observe_account(rpc('test-access-first'), vault)
+            self.assertFalse(vault.path(auth_identity(second)[0]).exists())
+            self.assertEqual(vault.path(ident).read_bytes(), before)
 
 
 if __name__ == '__main__':
