@@ -589,6 +589,9 @@ class Controller:
                 self.clear_block(project)
 
     async def complete(self, project):
+        from .prompts import active, key
+        if active(self, project) or self.db.setting(key(project), []):
+            return  # An old completed goal is not delivery proof for newly queued work.
         if not await idle_thread(self.native, project['codex_session_id']):
             return  # A terminal goal alone does not prove its final turn settled.
         if self.db.conn.execute("SELECT 1 FROM jobs WHERE project_id=? AND status IN ('sent','running')",

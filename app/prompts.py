@@ -5,6 +5,7 @@ import uuid
 
 from .common import NATIVE_STATUS
 from .native import idle_thread, project_thread_config, turn_params
+from .usage import number
 
 
 def key(project):
@@ -102,6 +103,28 @@ async def reconcile(controller, project):
     if not item:
         limit = controller.db.setting('prompt_limit/' + project['project_id'])
         if not limit:
+            # Repair pre-fix receipts only with a newer, successful native terminal turn.
+            receipts = controller.db.setting('prompt_receipts/' + project['project_id'], [])
+            receipt = receipts[-1] if receipts else {}
+            turn_id = ((receipt.get('result') or {}).get('turn') or {}).get('id')
+            if project['goal_status'] == 'complete' and turn_id and not receipt.get('completion_checked'):
+                turns = (await controller.native.rpc('thread/turns/list', {
+                    'threadId': project['codex_session_id'], 'limit': 1, 'sortDirection': 'desc'}))['data']
+                turn = turns[0] if turns else {}
+                if (turn.get('id') != turn_id or turn.get('status') not in ('completed', 'failed', 'interrupted')
+                        or not await idle_thread(controller.native, project['codex_session_id'])):
+                    return False
+                goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+                last_event = controller.db.conn.execute(
+                    "SELECT max(created_at) FROM events WHERE project_id=? AND kind='complete'", (project['project_id'],)).fetchone()[0]
+                completed = turn.get('completedAt')
+                completed = completed / 1000 if number(completed) and completed > 1e12 else completed
+                with controller.db.transaction():
+                    receipt.update(completion_checked=True, status=turn['status'], completed_at=completed)
+                    controller.db.set_setting('prompt_receipts/' + project['project_id'], receipts)
+                    if (turn['status'] == 'completed' and goal and goal['status'] == 'complete'
+                            and number(completed) and completed > (last_event or 0)):
+                        controller.db.update(project['project_id'], completion_notified=0)
             return False
         goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
         # A genuine failed user turn does not change an inactive native goal.
@@ -161,7 +184,11 @@ async def reconcile(controller, project):
     with controller.db.transaction():
         receipts = controller.db.setting('prompt_receipts/' + project['project_id'], [])
         controller.db.set_setting('prompt_receipts/' + project['project_id'],
-                                  (receipts + [{'id': item['id'], 'result': item.get('result')}])[-100:])
+                                  (receipts + [{'id': item['id'], 'result': item.get('result'),
+                                    'status': turn['status'], 'completed_at': turn.get('completedAt'),
+                                    'completion_checked': True}])[-100:])
+        if turn['status'] == 'completed' and status == 'complete':
+            controller.db.update(project['project_id'], completion_notified=0)
         controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_active/' + project['project_id'],))
         if (status == 'paused' and goal and not controller.db.setting(key(project), [])
                 and not project['operation'] and not controller.account_holds_goal(project)):

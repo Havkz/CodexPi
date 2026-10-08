@@ -118,6 +118,77 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(c.db.setting('selected'))
 
 
+    async def test_followup_completion_has_its_own_verified_outbox_after_restart(self):
+        from app.prompts import reconcile
+        c = self.controller
+        self.native_status = 'complete'
+        c.source = SimpleNamespace(rows=lambda: {'second': {'status': 'complete'}})
+        c.db.update('second', goal_status='active', completion_notified=1,
+                    last_commit='new-commit', last_ci_status='pending')
+        c.select('second')
+        c.db.event('second', 'complete', {'commit': 'old-commit'})
+        c.db.conn.execute('UPDATE events SET created_at=?', (time.time() - 100,))
+        turn = {'id': 'followup-turn', 'status': 'completed', 'completedAt': time.time() - 10}
+        original_rpc = c.native.rpc
+        async def rpc(method, args, **kwargs):
+            if method == 'thread/turns/list':
+                return {'data': [turn]}
+            return await original_rpc(method, args, **kwargs)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        c.db.set_setting('prompt_active/second', {'id': 'followup-prompt', 'turn_id': turn['id'],
+            'previous_status': 'complete', 'result': {'turn': {'id': turn['id'], 'status': 'inProgress'}}})
+        c.db.set_setting('prompts/second', [{'id': 'more-work'}])
+        await reconcile(c, c.db.get('second'))
+        self.assertEqual(c.db.get('second')['completion_notified'], 0)
+        self.assertIsNone(c.db.setting('prompt_active/second'))
+        c.refresh_git = AsyncMock()
+        command = AsyncMock(return_value={'stdout': '', 'stderr': '', 'exit_code': 0})
+        with patch('app.controller.command', command):
+            await c.poll_goals()
+            command.assert_not_awaited()  # Still queued work: no premature Git/CI delivery.
+            c.db.set_setting('prompts/second', [])
+            await c.poll_goals()
+            self.assertEqual(c.db.get('second')['completion_notified'], 0)  # CI is pending.
+            self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], 1)
+            c.db.set_setting('completion_check/second', {'checked_at': time.time() - 31})
+            c.db.update('second', last_ci_status='passed')
+            c.db.update('first', goal_status='active')
+            c.select('first')  # Verification must never clear or preempt another project.
+            await c.poll_goals()
+        self.assertEqual(c.db.get('second')['completion_notified'], 1)
+        self.assertEqual(c.db.setting('selected'), 'first')
+        self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], 2)
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        await c.poll_goals()
+        self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], 2)
+        for outcome in ('failed', 'interrupted'):
+            turn.update(status=outcome)
+            c.db.set_setting('prompt_active/second', {'id': outcome, 'turn_id': turn['id'],
+                'previous_status': 'complete', 'result': {'turn': {'id': turn['id']}}})
+            await reconcile(c, c.db.get('second'))
+            self.assertEqual(c.db.get('second')['completion_notified'], 1)
+        # Already-reconciled pre-fix receipt: repair only a proven newer successful turn.
+        c.db.set_setting('prompt_receipts/second', [{'id': 'legacy', 'result': {'turn': {'id': turn['id']}}}])
+        await reconcile(c, c.db.get('second'))  # Interrupted work must not manufacture a completion.
+        self.assertEqual(c.db.get('second')['completion_notified'], 1)
+        for stamp in (None, time.time() - 300):
+            c.db.set_setting('prompt_receipts/second', [{'id': 'legacy', 'result': {'turn': {'id': turn['id']}}}])
+            turn.update(status='completed', completedAt=stamp)
+            await reconcile(c, c.db.get('second'))
+            self.assertEqual(c.db.get('second')['completion_notified'], 1)
+        c.db.set_setting('prompt_receipts/second', [{'id': 'legacy', 'result': {'turn': {'id': turn['id']}}}])
+        c.db.conn.execute('UPDATE events SET created_at=?', (time.time() - 31,))
+        turn.update(status='completed', completedAt=(time.time() - 1) * 1000)
+        await reconcile(c, c.db.get('second'))
+        self.assertEqual(c.db.get('second')['completion_notified'], 0)
+        with patch('app.controller.command', command):
+            await c.poll_goals()
+        self.assertEqual(c.db.get('second')['completion_notified'], 1)
+        count = c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0]
+        await c.poll_goals()
+        self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], count)
+
     async def test_completed_goal_pending_prompt_resume_is_queued_then_started_once(self):
         from app.prompts import submit
         c = self.controller
