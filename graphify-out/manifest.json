@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791475799.1423101,
-    "ast_hash": "71d6d3e252bcf212a4dc7eb61ee73e3f",
+    "mtime": 1791491919.1158905,
+    "ast_hash": "16220f457f2859c83fd15e32fe5c874c",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -100,13 +100,13 @@
     "semantic_hash": ""
   },
   "app/web.py": {
-    "mtime": 1791475863.6545494,
-    "ast_hash": "682e054a4e28aaa9e70f4bda18ccbf36",
+    "mtime": 1791491919.116889,
+    "ast_hash": "960b169ac5005e10f1bfb799eb3b10b7",
     "semantic_hash": ""
   },
   "app/web_assets/dashboard.js": {
-    "mtime": 1791475799.1428158,
-    "ast_hash": "54753eb3b8ba0e95329d18bfa4bd2047",
+    "mtime": 1791492750.2647934,
+    "ast_hash": "6716bf0c73b3ad2ef6921fd9aa7175cd",
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
@@ -145,8 +145,8 @@
     "semantic_hash": ""
   },
   "tests/test_web.py": {
-    "mtime": 1791475965.5534441,
-    "ast_hash": "43cd9841f89e9279c7f0c08a570354dd",
+    "mtime": 1791491919.1178856,
+    "ast_hash": "85a6d4c020eb3c6618b1bd6bd697261d",
     "semantic_hash": ""
   },
   "tests/test_worker.py": {
@@ -155,13 +155,13 @@
     "semantic_hash": ""
   },
   "app/web_assets/index.html": {
-    "mtime": 1791475799.1428158,
-    "ast_hash": "c21f584989467ecb08a97f03f7b91540",
+    "mtime": 1791489759.0258765,
+    "ast_hash": "991dadea7dcca8be614d8e36417a1486",
     "semantic_hash": ""
   },
   "app/web_assets/login.html": {
-    "mtime": 1790340939.92566,
-    "ast_hash": "7019c0e7045a267ff964f96e07e57ae3",
+    "mtime": 1791489760.1729705,
+    "ast_hash": "b3706082cc1acd7e436ce2db47f49d84",
     "semantic_hash": ""
   },
   "docs/progress.md": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1791474518.8349566,
-    "ast_hash": "42034fa6e31a2eea6686fa3b3382725f",
+    "mtime": 1791491992.6032887,
+    "ast_hash": "3ca3f6c291df012b0523c430dfae8eb2",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -325,8 +325,8 @@
     "semantic_hash": ""
   },
   "Setup/verify-usage-ui.py": {
-    "mtime": 1791312298.593304,
-    "ast_hash": "f20da3e02008755349e30a420f2158eb",
+    "mtime": 1791493227.8665771,
+    "ast_hash": "6fb73f23b270b60f3514977cded9a7f9",
     "semantic_hash": ""
   },
   "app/usage.py": {
@@ -335,8 +335,8 @@
     "semantic_hash": ""
   },
   "app/web_assets/usage.js": {
-    "mtime": 1791395453.726851,
-    "ast_hash": "b612616f897f0aa8e5c9f12240a31d42",
+    "mtime": 1791489822.140103,
+    "ast_hash": "e8cca6139418d44db3c5b1909e0ebc64",
     "semantic_hash": ""
   },
   "tests/test_usage.py": {
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "app/prompts.py": {
-    "mtime": 1791406328.0482278,
-    "ast_hash": "048e39471cea33d4e8c2c147ab08c68d",
+    "mtime": 1791491919.116889,
+    "ast_hash": "62f7e2c4631676e58dd7bc8fa0725e89",
     "semantic_hash": ""
   },
   "Setup/verify-blocking-ui.py": {
