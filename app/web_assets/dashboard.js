@@ -5,6 +5,10 @@ const $ = id => document.getElementById(id);
 const node = (tag, text = '', cls = '') => {
   const el = document.createElement(tag); el.textContent = text; el.className = cls; return el;
 };
+function icon(path) {
+  const svg = usageSvg('svg', {viewBox: '0 0 24 24', 'aria-hidden': 'true', class: 'icon'});
+  svg.append(usageSvg('path', {d: path})); return svg;
+}
 const date = stamp => stamp ? new Date(stamp * 1000).toLocaleString('en-GB') : 'Not available yet';
 const badge = status => node('span', status || 'unknown', 'badge status-' + (status || 'unknown').replaceAll(' ', '-'));
 const projectStatus = p => p.pending_prompt_count && p.goal_status === 'complete' ? 'queued' : p.goal_status === 'complete' && !p.completion_notified ? 'verifying' : p.goal_status;
@@ -90,17 +94,19 @@ function renderAccounts() {
     if (account.account_id === state.active_account) { choose.classList.add('account-selected'); choose.append(node('span', 'Active', 'account-active')); }
     choose.disabled = blocked || !connected || !invalid && account.account_id === state.active_account;
     if (invalid) choose.title = 'Sign in again to use this account';
-    const remove = button('×', () => {
+    const remove = button('', () => {
       removingAccount = account; $('account-remove-name').textContent = account.name;
       $('account-remove-error').textContent = ''; $('account-menu').open = false;
       $('account-remove-dialog').showModal();
     }, account.account_id + ':remove', 'danger');
+    remove.append(icon('M6 6l12 12 M18 6L6 18')); remove.title = 'Remove saved account';
     remove.setAttribute('aria-label', 'Remove ' + account.name);
     remove.disabled = blocked || !connected || account.account_id === state.active_account;
     if (account.account_id === state.active_account) remove.title = 'Switch accounts before removing this one';
     row.append(choose, remove); return row;
   }));
-  const add = button('＋ Add account', () => accountAct('account-add'), 'account-add');
+  const add = button('Add account', () => accountAct('account-add'), 'account-add');
+  add.prepend(icon('M12 5v14 M5 12h14'));
   add.disabled = blocked || !connected; $('account-options').append(add);
   accountOptionsSignature = signature;
   }
@@ -211,6 +217,7 @@ function renderQueue(queue) {
     grip.disabled = busy || !connected || queue.length < 2; grip.draggable = !grip.disabled;
     const dots = node('span', '', 'grip-dots'); dots.setAttribute('aria-hidden', 'true');
     for (let dot = 0; dot < 6; dot++) dots.append(node('i')); grip.append(dots);
+    grip.onpointerdown = event => { if (event.button === 0 && !grip.disabled) dragging = p.project_id; };
     grip.onkeydown = event => {
       const offset = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
       if (!offset) return;
@@ -282,12 +289,19 @@ function render() {
     else card.append(button('Details', () => showDetail(p.project_id), p.project_id + ':details')); return card;
   }));
   if (!state.projects.length) $('projects').append(node('p', 'No projects yet. Create one with codexpi.', 'empty'));
-  const icons = ['Pi', '>_', 'W', 'git', '#', 'zZ'];
+  const icons = [
+    'M5 3h14v8H5z M5 13h14v8H5z M8 7h.01 M8 17h.01',
+    'M4 5h16v14H4z M8 9l3 3-3 3 M13 15h3',
+    'M3 4h18v13H3z M12 17v4 M8 21h8',
+    'M6 6v12 M6 10h8a4 4 0 0 0 4-4 M3 3h6v6H3z M3 18h6v3H3z M15 3h6v6h-6z',
+    'M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 3V6a2 2 0 0 1 2-2z M7 9h10 M7 13h7',
+    'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M12 7v5l3 2'
+  ];
   $('infra-status').textContent = health.length ? health.length + ' need attention' : 'All systems operational';
   $('infra').replaceChildren(...state.infrastructure.map((item, index) => {
     const card = node('article', '', 'infra-card'), header = node('div', '', 'card-heading');
-    const icon = node('span', icons[index], 'infra-icon'); icon.setAttribute('aria-hidden', 'true');
-    header.append(icon, node('h3', item.name), badge(item.error ? 'error' : item.status)); card.append(header);
+    const mark = node('span', '', 'infra-icon'); mark.append(icon(icons[index]));
+    header.append(mark, node('h3', item.name), badge(item.error ? 'error' : item.status)); card.append(header);
     card.title = item.detail + ' · Checked ' + date(item.checked_at);
     if ('heartbeat_age' in item) card.append(node('p', item.heartbeat_age === null ? 'No heartbeat received' : 'Heartbeat ' + Math.floor(item.heartbeat_age) + 's ago', 'infra-heartbeat'));
     if (item.error) {
@@ -437,4 +451,7 @@ $('account-menu').addEventListener('keydown', event => {
   if (event.key === 'Escape') { event.preventDefault(); $('account-menu').open = false; $('account-menu').querySelector('summary').focus(); }
 });
 document.addEventListener('pointerdown', event => { if (!$('account-menu').contains(event.target)) $('account-menu').open = false; });
+for (const event of ['pointerup', 'pointercancel']) document.addEventListener(event, () => {
+  if (!document.querySelector('#queue .dragging')) dragging = null;
+});
 refresh(); setInterval(() => { if (!dragging && (!busy || pendingAction) && (!document.hidden || pendingAction || pendingAccount || accountPending())) refresh(); }, 2000);

@@ -186,6 +186,7 @@ def main():
             page.route('**/api/action', reorder)
             page.locator('#queue tr[data-id="new-work"] .queue-grip').press('ArrowUp')
             expect(page.locator('#queue tr').first).to_have_attribute('data-id', 'new-work')
+            expect(page.locator('#queue tr[data-id="new-work"] .queue-grip')).to_be_enabled()
             page.locator('#queue tr[data-id="new-work"] .queue-grip').drag_to(page.locator('#queue tr[data-id="running"]'))
             expect(page.locator('#queue tr').first).to_have_attribute('data-id', 'running')
             assert reorders == [['new-work', 'running', 'held'], ['running', 'new-work', 'held']]
