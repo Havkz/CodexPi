@@ -383,12 +383,16 @@ async def request_switch(controller, account_id, *, automatic=False, adding=Fals
     current = controller.db.setting('active_account')
     if not current:
         raise ValueError('The current native account has not been confirmed yet')
-    if any(p['lifecycle'] != 'ready' or p['operation'] and not failed_resume(p) for p in controller.db.all()):
-        raise ValueError('Wait for project lifecycle/resume operations before changing account')
+    selected = controller.db.setting('selected')
+    for project in controller.db.all():
+        operation = json.loads(project['operation'] or '{}')
+        queued = (operation.get('kind') == 'resume' and project['project_id'] != selected
+                  and not operation.get('started_at') and not operation.get('sent_at'))
+        if project['lifecycle'] != 'ready' or operation and not failed_resume(project) and not queued:
+            raise ValueError('Wait for project lifecycle/resume operations before changing account')
     state = {'id': str(uuid.uuid4()), 'phase': 'complete' if current == account_id else 'waiting_turn',
              'old_account': current, 'target_account': account_id, 'requested_at': time.time(),
              'automatic': automatic, 'kind': 'add' if adding else 'switch'}
-    selected = controller.db.setting('selected')
     if selected:
         project = controller.db.get(selected)
         goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')

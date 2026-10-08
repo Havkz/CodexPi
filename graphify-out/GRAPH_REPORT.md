@@ -1,7 +1,7 @@
-# Graph Report - CodexPi  (2026-10-07)
+# Graph Report - CodexPi  (2026-10-08)
 
 ## Corpus Check
-- 88 files · ~115,104 words
+- 88 files · ~115,154 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `effd6a1e`
+- Built from commit: `48fbffb1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

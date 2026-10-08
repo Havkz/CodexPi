@@ -559,6 +559,11 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             c.db.activate_account(ids[0])
             c.select('first')
             c.db.update('first', goal_status='active')
+            queued_resume = {'kind': 'resume', 'source': 'queue', 'id': 'queued-second', 'requested_at': time.time()}
+            c.db.update('second', operation=json.dumps({**queued_resume, 'started_at': time.time()}))
+            with self.assertRaisesRegex(ValueError, 'Wait for project lifecycle/resume'):
+                await request_switch(c, ids[1])
+            c.db.update('second', operation=json.dumps(queued_resume))
             mapping = [(p['project_id'], p['codex_session_id'], p['project_path'], p['queue_position']) for p in c.db.all()]
             result = await request_switch(c, ids[1])
             with self.assertRaisesRegex(ValueError, 'already pending'):
@@ -614,6 +619,7 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual((operation['source'], operation['id']), ('account-switch', result['operation_id']))
             self.assertNotIn('sent_at', operation)  # HTTP/account confirmation isn't goal confirmation.
             self.assertEqual(mapping, [(p['project_id'], p['codex_session_id'], p['project_path'], p['queue_position']) for p in c.db.all()])
+            self.assertEqual(json.loads(c.db.get('second')['operation']), queued_resume)
             # Switching away from a quota-empty account must carry the controller's
             # own continuation pause, not strand the goal or borrow its old reset.
             from app.accounts import finish_switch
