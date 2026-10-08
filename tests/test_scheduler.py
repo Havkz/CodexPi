@@ -118,6 +118,71 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(c.db.setting('selected'))
 
 
+    async def test_completed_goal_pending_prompt_resume_is_queued_then_started_once(self):
+        from app.prompts import submit
+        c = self.controller
+        self.native_status = 'complete'
+        c.select('first')
+        c.db.update('first', goal_status='active')
+        c.db.update('second', goal_status='complete', completion_notified=1)
+        params = {'threadId': 'second', 'clientUserMessageId': 'new-work',
+                  'input': [{'type': 'text', 'text': 'New work after completion'}]}
+        upstream = SimpleNamespace(rpc=AsyncMock())
+        with self.assertRaisesRegex(ValueError, 'Prompt saved'):
+            await submit(c, c.db.get('second'), params, upstream)
+        c.db.reorder(['second', 'first'])
+        c.pause = AsyncMock(wraps=c.pause)
+        result = await c.resume('second')
+        self.assertEqual(result['operation_id'], 'new-work')
+        self.assertEqual(c.db.setting('selected'), 'first')
+        self.assertEqual(c.db.get('second')['goal_status'], 'complete')
+        self.assertIsNone(c.db.get('second')['operation'])
+        self.assertEqual(json.loads(c.db.get('second')['resume_result'])['status'], 'queued')
+        c.pause.assert_not_awaited()
+        upstream.rpc.assert_not_awaited()
+        await c.advance_queue()
+        self.assertFalse(any(call.args[0] == 'turn/start' for call in c.native.rpc.await_args_list))
+        # A manual hold must survive restart and still stop delivery.
+        c.db.set_setting('selected', None)
+        c.db.update('first', goal_status='paused')
+        c.db.set_setting('manual_pause/second', True)
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        await c.advance_queue()
+        self.assertIsNone(c.db.setting('selected'))
+        original_rpc = c.native.rpc
+        async def rpc(method, args, **kwargs):
+            if method == 'turn/start':
+                return {'turn': {'id': 'new-native-turn', 'status': 'inProgress'}}
+            return await original_rpc(method, args, **kwargs)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        result = await c.resume('second')
+        self.assertEqual(result['operation_id'], 'new-work')
+        self.assertEqual(c.db.get('second')['goal_status'], 'active')
+        self.assertEqual(json.loads(c.db.get('second')['resume_result'])['status'], 'active')
+        self.assertEqual(c.db.setting('prompt_active/second')['turn_id'], 'new-native-turn')
+        await c.advance_queue()
+        await c.resume('second')  # Double-click/retry returns the same native delivery receipt.
+        self.assertEqual(sum(call.args[0] == 'turn/start' for call in c.native.rpc.await_args_list), 1)
+        self.assertFalse(any(call.args[0] in ('thread/goal/set', 'thread/goal/resume') for call in c.native.rpc.await_args_list))
+        c.db.set_setting('selected', None)
+        c.db.update('first', goal_status='complete')
+        with self.assertRaisesRegex(ValueError, 'Completed goals'):
+            await c.resume('first')  # No new prompt: completion protection remains.
+        c.select('second')
+        c.db.update('first', completion_notified=1)
+        params = {'threadId': 'first', 'clientUserMessageId': 'promoted-work',
+                  'input': [{'type': 'text', 'text': 'Explicitly promoted work'}]}
+        with self.assertRaisesRegex(ValueError, 'Prompt saved'):
+            await submit(c, c.db.get('first'), params, upstream)
+        promoted = await c.run_now('first')
+        self.assertEqual(promoted['operation_id'], 'promoted-work')
+        self.assertEqual(c.db.setting('selected'), 'first')
+        self.assertEqual(c.db.get('first')['queue_position'], 1)
+        self.assertEqual(c.db.get('first')['goal_status'], 'active')
+        c.pause.assert_awaited_once()
+        self.assertFalse(c.db.setting('manual_pause/second', False))
+
     async def test_prompt_usage_error_survives_goal_poll_restart_and_reset_without_replay(self):
         c = self.controller
         sid = 'first'

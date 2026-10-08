@@ -384,6 +384,33 @@ class Controller:
             project = self.db.get(project_id)
             if project['lifecycle'] != 'ready':
                 raise ValueError('Project lifecycle recovery must finish before resuming')
+            from .prompts import active, dispatch, key
+            current_prompt = active(self, project)
+            if current_prompt:
+                if current_prompt.get('phase') != 'active' or not current_prompt.get('result'):
+                    raise ValueError('Prompt delivery requires inspection; it will not be sent again')
+                return {'ok': True, 'operation_id': current_prompt['id']}
+            queue = self.db.setting(key(project), [])
+            if queue and not project['operation']:
+                if promote and (project['queue_position'] in (None, 1) or self.db.setting('selected') == project_id):
+                    raise ValueError('Run now is only available when promoting another queued project')
+                self.db.enqueue(project_id)
+                project = self.db.get(project_id)
+                selected = self.db.setting('selected')
+                if promote and selected and selected != project_id:
+                    await self.pause(self.db.get(selected), preserve_status=True)
+                    selected = None
+                ident = queue[0]['id']
+                with self.db.transaction():
+                    self.db.set_setting('manual_pause/' + project_id, False)
+                    self.db.update(project_id, resume_result=json.dumps({'id': ident, 'status': 'queued',
+                        'message': 'Saved prompt queued; the current project keeps its execution slot'}))
+                if promote or (not selected or selected == project_id) and project['queue_position'] == 1:
+                    self.db.set_setting('pause_all', False)
+                    self.select(project_id)
+                    # An explicit new user prompt is not a restart of the completed goal.
+                    await dispatch(self, self.db.get(project_id), self.native, allow_limited=True)
+                return {'ok': True, 'operation_id': ident}
             if project['goal_status'] == 'complete':
                 raise ValueError('Completed goals are never automatically restarted')
             operation = json.loads(project['operation'] or '{}')

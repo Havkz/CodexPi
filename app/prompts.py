@@ -59,6 +59,8 @@ async def dispatch(controller, project, native, *, allow_limited=False):
     if selected and selected != project['project_id']:
         return None
     thread = (await native.rpc('thread/read', {'threadId': project['codex_session_id'], 'includeTurns': False}))['thread']
+    if thread.get('id') != project['codex_session_id'] or thread.get('cwd') != project['project_path']:
+        raise ValueError('Native prompt session identity does not match the project mapping')
     if thread['status']['type'] not in ('idle', 'notLoaded', 'systemError'):
         return None
     if thread['status']['type'] == 'systemError':
@@ -83,6 +85,10 @@ async def dispatch(controller, project, native, *, allow_limited=False):
             controller.db.set_setting('prompt_active/' + project['project_id'], item)
             controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_limit/' + project['project_id'],))
             controller.db.update(project['project_id'], goal_status='active', usage_limit=None, last_activity=time.time())
+            receipt = json.loads(project['resume_result'] or '{}')
+            if receipt.get('id') == item['id']:
+                controller.db.update(project['project_id'], resume_result=json.dumps({
+                    'id': item['id'], 'status': 'active', 'message': 'Saved prompt is running in the mapped native session'}))
         return result
     except Exception as exc:
         item['error'] = controller.redactor.clean(str(exc))

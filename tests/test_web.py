@@ -116,6 +116,10 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 db.update('project1', goal_status='stalled', block_reason=json.dumps({
                     'reason': 'Missing choice', 'explanation': 'The next step needs a decision.',
                     'solution': 'Choose A or B: ' + secret, 'details': secret, 'requires_user': True}))
+                db.set_setting('prompts/project1', [{'id': 'pending', 'params': {'input': secret}}])
+                queued_state = await (await client.get('/api/state')).json()
+                self.assertEqual(queued_state['projects'][0]['pending_prompt_count'], 1)
+                self.assertNotIn(secret, json.dumps(queued_state))
                 db.event('project1', 'stalled', {'reason': {'details': secret}})
                 db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,status,result,created_at,updated_at) VALUES(?,?,?,?,?,?,?)',
                     ('job1', 'project1', '{}', 'finished', json.dumps({'stdout': secret,

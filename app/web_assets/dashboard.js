@@ -7,7 +7,7 @@ const node = (tag, text = '', cls = '') => {
 };
 const date = stamp => stamp ? new Date(stamp * 1000).toLocaleString('de-DE') : 'Noch nicht verfügbar';
 const badge = status => node('span', status || 'unknown', 'badge status-' + (status || 'unknown').replaceAll(' ', '-'));
-const projectStatus = p => p.goal_status === 'complete' && !p.completion_notified ? 'verifying' : p.goal_status;
+const projectStatus = p => p.pending_prompt_count && p.goal_status === 'complete' ? 'queued' : p.goal_status === 'complete' && !p.completion_notified ? 'verifying' : p.goal_status;
 function button(text, callback, key, cls = '') {
   const el = node('button', text, cls); el.type = 'button'; el.onclick = callback;
   if (key) el.dataset.key = key;
@@ -135,7 +135,7 @@ function actions(p, compact = false, inDetail = false) {
     const b = button(label, () => act(action, p.project_id), p.project_id + ':' + action, action === 'run-now' ? 'primary' : '');
     const loading = action === 'resume' && (resuming || pendingAction?.project_id === p.project_id || submittingProject === p.project_id);
     if (loading) { b.textContent = 'Resume …'; b.classList.add('loading'); b.setAttribute('aria-busy', 'true'); }
-    b.disabled = busy || !connected || p.lifecycle !== 'ready' || p.goal_status === 'complete' ||
+    b.disabled = busy || !connected || p.lifecycle !== 'ready' || p.goal_status === 'complete' && !p.pending_prompt_count ||
       (['resume', 'run-now'].includes(action) && (accountPending() || state.account_operation?.phase === 'recovery_required')) ||
       (action === 'resume' && (p.goal_status === 'active' || resuming)) ||
       (action === 'pause' && p.goal_status === 'paused' && p.manual_paused && !operation.kind);
@@ -159,6 +159,7 @@ function projectOverview(p, inDetail = false) {
     ['Windows Requirement', p.windows_required ? 'Required' : 'Nicht angefordert'], ['Discord Channel', p.discord_channel_id, true]
   ]));
   const blocker = block(p); if (blocker) body.append(blocker);
+  if (projectStatus(p) === 'queued') body.append(node('p', 'Saved prompt waiting for its execution slot.', 'notice'));
   if (projectStatus(p) === 'verifying') body.append(node('p', p.completion_check?.message || 'Goal beendet. Abschlussprüfung läuft.', 'notice'));
   const controls = actions(p, false, inDetail); controls.classList.add('active-actions'); body.append(controls);
   if (p.resume_result) { const result = JSON.parse(p.resume_result); body.append(node('p', result.message, result.status === 'failed' ? 'error' : 'notice')); }
