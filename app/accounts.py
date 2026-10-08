@@ -331,7 +331,12 @@ async def automatic_change(controller):
         return
     # Fresh current usage can keep the current account. Cached positive usage
     # is never sufficient to start work or avoid a needed account check.
-    usage = await refresh(controller)
+    try:
+        usage = await refresh(controller)
+    except LoginRequired:
+        # A real native limit is already confirmed; an expired current login
+        # must not prevent selecting a different valid saved account.
+        usage = {}
     if fresh_usage(usage, current):
         return  # Unsnooze/confirmation handles the current session, not another switch.
     accounts = controller.db.setting('accounts', [])

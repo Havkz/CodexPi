@@ -276,6 +276,23 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(c.db.conn.execute("SELECT COUNT(*) FROM events WHERE kind='usage limited'").fetchone()[0], 2)
             c.record_goal(c.db.get('first'), {'status': 'usageLimited', 'updatedAt': 11})
             self.assertEqual(c.db.conn.execute("SELECT COUNT(*) FROM events WHERE kind='usage limited'").fetchone()[0], 2)
+            # Expiration of the CURRENT login must not pin a genuinely limited
+            # goal to it when a different saved login is still usable.
+            c.db.activate_account(ids[0])
+            c.db.update('first', goal_status='active', operation=None)
+            c.record_status(c.db.get('first'), 'usage limited')
+            c.db.set_setting('auto_account_change', True)
+            c.db.record_usage({**account(time.time(), daily=20), 'ordinaryUsageAllowed': True}, ids[1])
+            atomic_write(home / 'auth.json', raws[0]); loaded['raw'] = raws[0]
+            async def expired_rpc(method, params, **kwargs):
+                if method == 'account/read':
+                    from app.native import NativeError
+                    raise NativeError('refresh_token_expired')
+                return await rpc(method, params, **kwargs)
+            c.native.rpc.side_effect = expired_rpc
+            await automatic_change(c)
+            self.assertEqual(c.db.setting('account_switch')['target_account'], ids[1])
+            self.assertEqual(next(a for a in c.db.setting('accounts') if a['account_id'] == ids[0])['status'], 'needs_login')
         finally:
             fixture.tearDown()
 
