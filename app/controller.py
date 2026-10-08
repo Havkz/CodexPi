@@ -858,6 +858,23 @@ class Controller:
                         await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Escape')
                         await self.slash(project, '/goal resume')
                 elif not operation.get('sent_at'):
+                    if (time.time() - operation['started_at'] > 10 and not operation.get('tui_reopened_at')
+                            and await self.pane_exists(project) and await idle_thread(self.native, project['codex_session_id'])
+                            and not self.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone()):
+                        pane = await command('tmux', 'display-message', '-p', '-t',
+                            project['tmux_session_name'] + ':0.0', '#{session_attached} #{pane_pid}', check=False)
+                        fields = pane['stdout'].strip().split()
+                        if (not pane['exit_code'] and len(fields) == 2 and fields[0] == '0' and fields[1].isdigit()
+                                and not any(process_in_pane(pid, int(fields[1])) for pid in self.tui_peer_pids.values())):
+                            capture = await command('tmux', 'capture-pane', '-p', '-S', '-2000', '-t',
+                                                    project['tmux_session_name'] + ':0.0')
+                            atomic_write(self.root / 'state/tui-recovery' / (operation['id'] + '.txt'), capture['stdout'])
+                            operation['tui_reopened_at'] = time.time()
+                            self.db.update(project['project_id'], operation=json.dumps(operation))
+                            # Recheck attachment in tmux itself; a new terminal must not lose its draft.
+                            await command('tmux', 'if-shell', '-F', '-t', project['tmux_session_name'] + ':0.0',
+                                '#{==:#{session_attached},0}',
+                                shlex.join(['kill-session', '-t', '=' + project['tmux_session_name']]))
                     await self.attach_ready(project)
                 if time.time() - operation.get('sent_at', operation['started_at']) > 60:
                     detail = ('The mapped pane has no confirmed TUI connection for this session' if not ready else

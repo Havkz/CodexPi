@@ -51,5 +51,6 @@
   "49": "export",
   "50": "test-live-lifecycle.py",
   "51": "tui_proxy",
-  "52": ".rpc"
+  "52": ".rpc",
+  "53": ".make_controller"
 }

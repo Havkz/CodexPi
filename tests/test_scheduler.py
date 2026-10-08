@@ -704,6 +704,49 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
             command.return_value['stdout'] = '124\n'
             self.assertFalse(await c.mapped_tui_ready(c.db.get('first')))
 
+    async def test_resume_repairs_only_detached_idle_unmapped_pane_once(self):
+        c = self.controller
+        c.select('first')
+        c.attach_ready = AsyncMock()
+        c.slash = AsyncMock()
+        await c.resume('first')
+        operation = json.loads(c.db.get('first')['operation'])
+        operation['started_at'] = time.time() - 15
+        c.db.update('first', operation=json.dumps(operation))
+
+        async def command(*args, **kwargs):
+            if 'capture-pane' in args:
+                return {'exit_code': 0, 'stdout': 'Preserve the disconnected pane', 'stderr': ''}
+            return {'exit_code': 0, 'stdout': '0 123\n', 'stderr': ''}
+
+        with patch('app.controller.command', AsyncMock(side_effect=command)) as calls:
+            self.thread_status = 'active'
+            await c.resume_ready()
+            self.assertFalse(any('if-shell' in call.args for call in calls.await_args_list))
+            self.thread_status = 'idle'
+            with patch('app.controller.command', AsyncMock(return_value={'exit_code': 0, 'stdout': '1\n'})):
+                await c.resume_ready()  # An attached terminal is never replaced.
+            self.assertFalse(any('if-shell' in call.args for call in calls.await_args_list))
+            c.tui_peer_pids[7] = 123
+            with patch('app.controller.process_in_pane', return_value=True):
+                await c.resume_ready()  # A connected picker/draft is not a ghost pane.
+            self.assertFalse(any('if-shell' in call.args for call in calls.await_args_list))
+            c.tui_peer_pids.clear()
+            await c.resume_ready()
+            self.assertEqual(sum('if-shell' in call.args for call in calls.await_args_list), 1)
+            recovered = json.loads(c.db.get('first')['operation'])
+            self.assertIn('tui_reopened_at', recovered)
+            self.assertNotIn('sent_at', recovered)
+            archive = c.root / 'state/tui-recovery' / (operation['id'] + '.txt')
+            self.assertEqual(archive.read_text(), 'Preserve the disconnected pane')
+            await c.resume_ready()
+            self.assertEqual(sum('if-shell' in call.args for call in calls.await_args_list), 1)
+            c.tui_connections['first'] = {1: time.monotonic() - 2}
+            await c.resume_ready()
+            await c.resume_ready()
+            c.slash.assert_awaited_once()
+            self.assertEqual(c.slash.await_args.args[1], '/goal resume')
+
     async def test_pending_resume_keeps_selection_until_ack(self):
         controller = self.controller
         controller.select('first')
