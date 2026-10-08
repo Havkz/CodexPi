@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "app/power.py": {
-    "mtime": 1791477132.9790506,
-    "ast_hash": "63fe0d7fa26639800c73dc22fd7994ad",
+    "mtime": 1791478358.0281143,
+    "ast_hash": "566c6c910d6928fb4fd454916a460838",
     "semantic_hash": ""
   },
   "app/windows_power.py": {
@@ -470,13 +470,8 @@
     "semantic_hash": ""
   },
   "tests/test_power.py": {
-    "mtime": 1791477833.5531516,
-    "ast_hash": "5b5e5af718ca2725543e51db166d6f8e",
-    "semantic_hash": ""
-  },
-  "windows-worker/power.json": {
-    "mtime": 1791476994.9313939,
-    "ast_hash": "30a46771ef7ecb728627e71e2eef8b8e",
+    "mtime": 1791478341.1453576,
+    "ast_hash": "f63a779877bb0a0ffa98c24e695f5e06",
     "semantic_hash": ""
   }
 }

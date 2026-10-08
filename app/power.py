@@ -98,7 +98,8 @@ async def tick(controller):
     project = eligible(controller)
     if not project:
         return
-    event = db.conn.execute('SELECT MAX(event_id) FROM events WHERE project_id=?', (project['project_id'],)).fetchone()[0]
+    event = db.conn.execute("SELECT MAX(event_id) FROM events WHERE project_id=? AND kind='stalled'",
+                           (project['project_id'],)).fetchone()[0]
     trigger = [project['project_id'], project['codex_session_id'], event]
     if state.get('trigger') == trigger:
         return

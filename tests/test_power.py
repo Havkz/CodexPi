@@ -105,6 +105,9 @@ class PowerTests(unittest.IsolatedAsyncioTestCase):
                     await power.tick(c)
                 self.assertEqual(c.db.setting('windows_power')['phase'], 'failed')
                 wake.assert_called_once()
+                c.db.event('project', 'critical', {'message': 'Unrelated CI notification'})
+                await power.tick(c)
+                wake.assert_called_once()  # A notification cannot restart a timed-out wake.
                 c.worker, c.worker_seen = SimpleNamespace(closed=False), time.monotonic()
                 c.db.update('project', goal_status='complete', queue_position=None)
                 state.update(phase='owned', boot_at=time.time(), idle_since=time.time() - 601)
