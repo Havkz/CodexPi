@@ -13,6 +13,50 @@ from app.discord_bot import Bot, EMBED_COLORS, status_embed
 
 
 class DiscordTests(unittest.IsolatedAsyncioTestCase):
+    async def test_human_question_persists_hold_and_pings_only_the_owner_once(self):
+        from tests.test_scheduler import SchedulerTests
+        fixture = SchedulerTests()
+        fixture.setUp()
+        self.addCleanup(fixture.tearDown)
+        c = fixture.controller
+        c.db.update('first', discord_channel_id='123', goal_status='active')
+        reason = {'reason': 'Decision missing', 'explanation': 'Both runtimes require a different port.',
+                  'question': 'Should I port runtime A or use runtime B?', 'requires_user': True}
+        atomic_write(c.root / 'first/.codexpi/block.json', json.dumps(reason))
+        c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'stalled'}})
+        await c.poll_goals()
+        await c.poll_goals()
+        event = c.db.conn.execute('SELECT * FROM events').fetchone()
+        self.assertEqual(event['kind'], 'question')
+        self.assertEqual(c.db.get('first')['goal_status'], 'stalled')
+        self.assertFalse(c.can_auto_resume(c.db.get('first')))
+        c.db.conn.close()
+        c.db = Database(c.root / 'test.db')
+        c.record_status(c.db.get('first'), 'stalled', block_reason=json.dumps(reason))
+        self.assertEqual(c.db.conn.execute('SELECT COUNT(*) FROM events').fetchone()[0], 1)
+        self.assertFalse(c.can_auto_resume(c.db.get('first')))
+        history = []
+        async def messages(**kwargs):
+            for old in history:
+                yield old
+        async def send(**kwargs):
+            history.append(SimpleNamespace(author=SimpleNamespace(id=777),
+                content=kwargs.get('content', ''), embeds=[kwargs['embed']]))
+        channel = SimpleNamespace(send=AsyncMock(side_effect=send), history=messages)
+        bot = Bot(c)
+        bot._connection.user = SimpleNamespace(id=777)
+        bot.fetch_channel = AsyncMock(return_value=channel)
+        self.addAsyncCleanup(bot.close)
+        await bot.send_pending()
+        sent = channel.send.call_args.kwargs
+        self.assertEqual(sent['content'], '<@843869402277478430>')
+        self.assertEqual(sent['allowed_mentions'].to_dict(), {'users': [843869402277478430], 'parse': []})
+        self.assertEqual(sent['embed'].title, 'CodexPi — Question')
+        self.assertIn('**Frage**\nShould I port runtime A or use runtime B?', sent['embed'].description)
+        c.db.conn.execute('UPDATE events SET sent_at=NULL')
+        await bot.send_pending()
+        self.assertEqual(channel.send.await_count, 1)
+
     async def test_block_sections_are_ordered_actionable_and_do_not_change_admission(self):
         directory = self.enterContext(tempfile.TemporaryDirectory())
         db = Database(Path(directory) / 'test.db')

@@ -12,7 +12,7 @@ import uuid
 
 import yaml
 
-from .common import NATIVE_STATUS, Redactor, atomic_write, slugify
+from .common import NATIVE_STATUS, Redactor, atomic_write, block_summary, slugify
 from .db import Database
 from .native import GoalSource, Native, idle_thread, process_in_pane, project_thread_config
 
@@ -122,6 +122,12 @@ class Controller:
         changed = (status != project['goal_status'] or new_limit or prompt_limit is not None
                    and self.db.setting('active_account')
                    and self.db.setting('usage_account/' + project['project_id']) != self.db.setting('active_account'))
+        summary = block_summary(project, fields.get('block_reason', project['block_reason']), status)
+        question = status == 'stalled' and summary and summary['requires_user']
+        if question:
+            previous = block_summary(project)
+            changed = changed or not previous or any(summary[key] != previous[key] for key in
+                ('reasons', 'explanation', 'solution', 'requires_user'))
         if status != 'usage limited' or changed:
             fields['usage_limit'] = None
         if status != 'complete':
@@ -145,7 +151,7 @@ class Controller:
                         payload['account_id'] = owner
                         self.db.set_setting('usage_account/' + project['project_id'], owner)
                     payload['failed_prompt'] = prompt_limit is not None
-                self.db.event(project['project_id'], status, payload)
+                self.db.event(project['project_id'], 'question' if question else status, payload)
 
     def clear_block(self, project):
         (Path(project['project_path']) / '.codexpi/block.json').unlink(missing_ok=True)
@@ -535,7 +541,7 @@ class Controller:
                 if not isinstance(value, dict) or not isinstance(value.get('reason'), str):
                     raise ValueError('Invalid block reason file')
                 reason = self.redactor.clean(json.dumps({k: value[k] for k in
-                    ('reason', 'reasons', 'explanation', 'solution', 'details', 'requires_user') if k in value}))
+                    ('reason', 'reasons', 'explanation', 'solution', 'question', 'details', 'requires_user') if k in value}))
             if status == 'complete':
                 if old != 'complete' or not project['completion_notified']:
                     await self.complete(project)

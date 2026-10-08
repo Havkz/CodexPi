@@ -33,12 +33,12 @@ def status_embed(controller, project, event, payload):
     offline = kind == 'stalled' and reason.get('reason') == 'Windows offline'
     titles = {'active': 'Project Status', 'paused': 'Project Paused', 'stalled': 'Project Stalled',
               'usage limited': 'Usage Limited', 'limited by budget': 'Budget Limited',
-              'complete': 'Project Complete', 'critical': 'Infrastructure Alert'}
+              'complete': 'Project Complete', 'critical': 'Infrastructure Alert', 'question': 'Question'}
     title = 'Windows Worker Offline' if offline else titles.get(kind, 'Project Status')
     label = {'active': 'Running', 'paused': 'Paused', 'stalled': 'Attention required',
              'usage limited': 'Waiting for reset', 'limited by budget': 'Budget reached',
-             'complete': 'Finished', 'critical': 'Attention required'}.get(kind, 'Updated')
-    status = kind if kind in titles and kind != 'critical' else project['goal_status']
+             'complete': 'Finished', 'critical': 'Attention required', 'question': 'Waiting for your answer'}.get(kind, 'Updated')
+    status = kind if kind in titles and kind not in ('critical', 'question') else project['goal_status']
     event_project = project
     if kind == 'usage limited' and payload.get('account_id'):
         # An old outbox event may be delivered after the project changed account.
@@ -50,7 +50,9 @@ def status_embed(controller, project, event, payload):
         sections.append('**' + ('Reasons' if len(summary['reasons']) > 1 else 'Reason') + '**\n' +
                         '\n'.join(f'{i}. {plain(text, 140)}' for i, text in enumerate(summary['reasons'], 1)))
         sections.append('**Erklärung**\n' + plain(summary['explanation'], 320))
-        sections.append('**Lösung**\n' + '\n'.join(
+        sections.append(('**Frage**\n' + plain(summary['solution'][0], 1000))
+            if kind == 'question' and len(summary['solution']) == 1 else
+            ('**Fragen**\n' if kind == 'question' else '**Lösung**\n') + '\n'.join(
             f'{i}. {plain(text, 240)}' for i, text in enumerate(summary['solution'], 1)))
         if summary['requires_user']:
             sections[-1] += '\nKein automatisches Resume ohne Nutzerfreigabe.'
@@ -74,7 +76,7 @@ def status_embed(controller, project, event, payload):
                         if s.get('sessionId') == project['codex_session_id']), {}) if not account_id else {}
         reset = (payload.get('usage_limit') or json.loads(event_project.get('usage_limit') or '{}')).get('resetAt') or tracked.get('resetAt')
         lines.append('│ Reset: ' + (f'<t:{int(reset / 1000)}:F> (<t:{int(reset / 1000)}:R>)' if reset else '`unknown`'))
-    if kind not in ('complete', 'stalled', 'usage limited', 'limited by budget'):
+    if kind not in ('complete', 'stalled', 'question', 'usage limited', 'limited by budget'):
         lines.append('│ Session: ' + code(project['codex_session_id']))
     lines.append('│ Repo: ' + code(project['github_repo']))
     sections.append('\n'.join(lines))
@@ -203,8 +205,11 @@ class Bot(discord.Client):
                     found = old
                     break
             if not found and event['sent_at'] is None:
+                mention = {'content': '<@843869402277478430>', 'allowed_mentions': discord.AllowedMentions(
+                    everyone=False, roles=False, users=[discord.Object(id=843869402277478430)], replied_user=False)
+                    } if event['kind'] == 'question' else {}
                 await channel.send(embed=status_embed(self.controller, project, event, payload),
-                                   view=CloseView(self) if event['kind'] == 'complete' else None)
+                                   view=CloseView(self) if event['kind'] == 'complete' else None, **mention)
             elif found and payload.get('usage_limit') and not payload.get('reset_notified'):
                 await found.edit(embed=status_embed(self.controller, project, event, payload))
             if payload.get('usage_limit'):

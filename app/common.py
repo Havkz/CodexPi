@@ -78,7 +78,7 @@ def block_summary(project, reason=None, status=None):
     else:
         reasons = items(raw.get('reasons') or raw.get('reason'), 140) or ['Native Goal blockiert']
         explanation = short(raw.get('explanation'), 320)
-        solution = items(raw.get('solution'), 240)
+        solution = [short(raw['question'], 1000)] if isinstance(raw.get('question'), str) and raw['question'].strip() else items(raw.get('solution'), 240)
         if raw.get('reason') == 'Windows offline':
             explanation = explanation or 'Der benötigte Windows-Worker hat keine frische authentifizierte Verbindung.'
             solution = solution or ['Windows-PC und CodexPi-Worker starten. Nach gültigem Heartbeat wird das berechtigte Queue-Projekt fortgesetzt.']

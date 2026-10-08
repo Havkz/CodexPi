@@ -28,6 +28,11 @@ If a decision, secret, permission or human information is missing, write
 multiple distinct causes), concise `explanation` (what happened and why it blocks),
 and `solution` (a string or list of exact decisions/actions needed from the user).
 Keep full technical evidence/logs separately in `details`; set `requires_user: true`.
+Put the exact user question in a concise `question` string. CodexPi sends this
+human-required blocked state as Discord **Question** and pings the owner once.
+Do not ask only in the terminal or wait for a terminal prompt: this worker runs
+unattended. Record the question, set the native goal to blocked, and stop until
+the user answers in the project session. Never invent an answer or waive the hold.
 Never replace a concrete question with generic "user input required" or invent causes;
 set the native goal to blocked and stop. Never auto-resume a human-required blocker.
 Use standard native states only: active, paused, blocked, usageLimited,
