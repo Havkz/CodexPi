@@ -14,6 +14,7 @@ Setup/upstream/
 Setup/schema/
 Setup/private/
 windows-worker/config.json
+windows-worker/power.json
 windows-worker/*.secret
 config/site.json
 graphify-out/cache/
