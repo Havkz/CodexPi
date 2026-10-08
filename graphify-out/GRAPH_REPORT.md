@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-08)
 
 ## Corpus Check
-- 88 files · ~116,097 words
+- 91 files · ~118,597 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 636 nodes · 1642 edges · 48 communities (33 shown, 15 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 181 edges (avg confidence: 0.7)
+- 658 nodes · 1711 edges · 49 communities (33 shown, 16 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 192 edges (avg confidence: 0.7)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0b314c96`
+- Built from commit: `ceb6ac5b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,6 +21,7 @@
 - deployment.py
 - Native
 - Database
+- DeploymentTests
 - dashboard.js
 - CodexPi installation progress
 - build_audit.py
@@ -61,12 +62,12 @@
 - test-live-lifecycle.py
 
 ## God Nodes (most connected - your core abstractions)
-1. `Database` - 73 edges
-2. `Controller` - 55 edges
+1. `Database` - 77 edges
+2. `Controller` - 59 edges
 3. `SchedulerTests` - 51 edges
 4. `command()` - 42 edges
 5. `atomic_write()` - 39 edges
-6. `tick()` - 29 edges
+6. `tick()` - 28 edges
 7. `Native` - 28 edges
 8. `Redactor` - 27 edges
 9. `finish()` - 21 edges
@@ -77,33 +78,33 @@
   Setup/discord-token.py → app/lifecycle.py
 - `main()` --indirect_call--> `action()`  [INFERRED]
   Setup/verify-lifecycle-fixes.py → app/web.py
-- `DiscordTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_discord.py → app/common.py
-- `LifecycleTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_lifecycle.py → app/common.py
-- `SchedulerTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_scheduler.py → app/common.py
+- `state()` --indirect_call--> `native()`  [INFERRED]
+  app/web.py → Setup/verify-pause-policy.py
+- `WorkerAdmissionTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_worker_server.py → app/common.py
+- `Crash` --uses--> `Controller`  [INFERRED]
+  tests/test_lifecycle.py → app/controller.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (48 total, 15 thin omitted)
+## Communities (49 total, 16 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
 Nodes (6): Changes, Completion gate follow-up, Lifecycle repair evidence, 2026-09-23, Reproduction and exact causes, Verification boundaries and remaining work, Verified live
 
 ### Community 1 - "Controller"
-Cohesion: 0.09
-Nodes (26): notification(), wake_key(), command(), Controller, daily_update(), idle(), Daily official CLI update, only at a proven idle single-runtime boundary., GoalSource (+18 more)
+Cohesion: 0.18
+Nodes (3): notification(), command(), Controller
 
 ### Community 2 - "windows_worker.py"
-Cohesion: 0.14
-Nodes (14): codex_login_url(), Only the native managed OAuth ceremony, never an arbitrary worker/browser URL., execute(), main(), protect_secret(), Outbound-only native Windows executor. This process never starts an AI agent., One owned callback tunnel. No AI, logout, saved tokens or project execution., Windows DPAPI CurrentUser; no machine-wide or plaintext key file. (+6 more)
+Cohesion: 0.10
+Nodes (19): codex_login_url(), Only the native managed OAuth ceremony, never an arbitrary worker/browser URL., boot_time(), desktop_in_use(), observation(), Windows boot identity and desktop ownership, including Session 0 workers., execute(), main() (+11 more)
 
 ### Community 3 - "deployment.py"
-Cohesion: 0.11
-Nodes (40): complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session(), render() (+32 more)
+Cohesion: 0.09
+Nodes (48): slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+40 more)
 
 ### Community 4 - "Native"
 Cohesion: 0.22
@@ -126,12 +127,12 @@ Cohesion: 0.50
 Nodes (4): Installation and autostart, Protocol and jobs, Verification status, Windows worker
 
 ### Community 11 - "Bot"
-Cohesion: 0.08
-Nodes (23): canonical(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., read_env(), Redactor, SignedChannel, slugify() (+15 more)
+Cohesion: 0.06
+Nodes (45): block_summary(), canonical(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., Presentation only: never change native status or resume authorization., read_env(), SignedChannel (+37 more)
 
 ### Community 15 - "codexpi"
-Cohesion: 0.08
-Nodes (29): public_state(), Explicit allowlist: never serialize an auth file, OAuth URL or raw RPC error., block_summary(), Presentation only: never change native status or resume authorization., Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed() (+21 more)
+Cohesion: 0.67
+Nodes (3): main(), native(), Live manual pause/restart/queued-resume test on one dedicated native goal.  Neve
 
 ### Community 23 - "verify-design.py"
 Cohesion: 0.67
@@ -154,7 +155,7 @@ Cohesion: 0.67
 Nodes (3): main(), observe(), Start/observe one real deployment goal; never replace an existing objective.  De
 
 ### Community 34 - "migration.py"
-Cohesion: 0.08
+Cohesion: 0.09
 Nodes (50): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), choose_account(), failed_resume(), finish_switch(), fresh_usage() (+42 more)
 
 ### Community 35 - "Bot"
@@ -167,7 +168,7 @@ Nodes (6): refreshUsage(), renderUsage(), usageDate(), usageElement(), usagePerc
 
 ### Community 38 - "SchedulerTests"
 Cohesion: 0.05
-Nodes (6): Database, Only after confirming the original single-account identity; never guess on switc, tui_proxy(), DeploymentTests, LifecycleTests, SchedulerTests
+Nodes (13): Redactor, Database, Only after confirming the original single-account identity; never guess on switc, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed(), BaseException (+5 more)
 
 ### Community 41 - "Recovery and operator runbook"
 Cohesion: 0.20
@@ -198,32 +199,32 @@ Cohesion: 0.50
 Nodes (3): Durable manual pause and real quota evidence, 2026-09-24, Pause authority, Real usage-limit history
 
 ### Community 49 - "export"
-Cohesion: 0.23
-Nodes (11): digest(), export(), git(), main(), native_state(), Export one explicitly selected Windows project/session without changing it.  The, Keep only this thread's indexed history/metadata, never another thread., regular() (+3 more)
+Cohesion: 0.08
+Nodes (32): daily_update(), idle(), Daily official CLI update, only at a proven idle single-runtime boundary., GoalSource, idle_thread(), Native, process_in_pane(), project_thread_config() (+24 more)
 
 ### Community 50 - "test-live-lifecycle.py"
-Cohesion: 0.08
-Nodes (21): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+13 more)
+Cohesion: 0.09
+Nodes (19): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+11 more)
 
 ## Knowledge Gaps
 - **76 isolated node(s):** `install-base.sh script`, `PATH`, `Alltag`, `Installation und Betrieb`, `Dokumentation` (+71 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `SchedulerTests` to `Controller`, `migration.py`, `deployment.py`, `Bot`, `codexpi`, `test-live-lifecycle.py`?**
-  _High betweenness centrality (0.082) - this node is a cross-community bridge._
-- **Why does `SchedulerTests` connect `SchedulerTests` to `Controller`, `migration.py`, `Bot`, `codexpi`, `test-live-lifecycle.py`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
-- **Why does `Controller` connect `Controller` to `migration.py`, `deployment.py`, `SchedulerTests`, `Bot`, `codexpi`?**
-  _High betweenness centrality (0.048) - this node is a cross-community bridge._
-- **Are the 14 inferred relationships involving `Database` (e.g. with `Controller` and `AccountObservationTests`) actually correct?**
-  _`Database` has 14 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 47 inferred relationships involving `ValueError` (e.g. with `codex_login_url()` and `.__init__()`) actually correct?**
-  _`ValueError` has 47 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 9 inferred relationships involving `Controller` (e.g. with `Redactor` and `Database`) actually correct?**
-  _`Controller` has 9 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `Database` connect `SchedulerTests` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `DeploymentTests`, `Bot`, `export`, `test-live-lifecycle.py`?**
+  _High betweenness centrality (0.088) - this node is a cross-community bridge._
+- **Why does `Controller` connect `Controller` to `windows_worker.py`, `deployment.py`, `SchedulerTests`, `Bot`, `export`?**
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+- **Why does `SchedulerTests` connect `SchedulerTests` to `Controller`, `migration.py`, `Bot`, `export`, `test-live-lifecycle.py`?**
+  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+- **Are the 15 inferred relationships involving `Database` (e.g. with `Controller` and `AccountObservationTests`) actually correct?**
+  _`Database` has 15 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 52 inferred relationships involving `ValueError` (e.g. with `codex_login_url()` and `.__init__()`) actually correct?**
+  _`ValueError` has 52 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 10 inferred relationships involving `Controller` (e.g. with `Redactor` and `Database`) actually correct?**
+  _`Controller` has 10 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 7 inferred relationships involving `SchedulerTests` (e.g. with `AccountObservationTests` and `AccountSwitchTests`) actually correct?**
   _`SchedulerTests` has 7 INFERRED edges - model-reasoned connections that need verification._

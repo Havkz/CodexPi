@@ -59,7 +59,7 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_signed_heartbeats_retry_deferred_wake_once_per_availability(self):
         c = self.c
-        c.config = {'worker_secret': 's' * 32}
+        c.config = {'worker_secret': 's' * 32, 'lan_subnet': '192.168.2.0/24'}
         c.worker, c.worker_key, c.worker_seen = None, None, 0
         c.db.update('first', goal_status='stalled', windows_required=1,
                     block_reason=json.dumps({'reason': 'Windows offline', 'requires_user': False}))
@@ -78,14 +78,19 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
                     await socket.send_json(channel.sign({'type': 'inventory', 'jobs': []}))
                     self.assertIsNone(c.db.setting('windows_last_heartbeat'))
 
-                    async def heartbeat():
+                    async def heartbeat(power=None):
                         delivered.clear()
-                        await socket.send_json(channel.sign({'type': 'alive'}))
+                        await socket.send_json(channel.sign({'type': 'alive', **({'power': power} if power else {})}))
                         await asyncio.wait_for(delivered.wait(), 2)
 
                     await heartbeat()
                     heartbeat_at = c.db.setting('windows_last_heartbeat')
                     self.assertAlmostEqual(heartbeat_at, time.time(), delta=2)
+                    telemetry = {'mac': '74-56-3C-2B-FD-0F', 'address': '192.168.2.200',
+                                 'boot_at': time.time() - 100, 'startup_ready': True,
+                                 'user_active': True, 'boot_worker': False}
+                    await heartbeat(telemetry)
+                    self.assertEqual(c.db.setting('windows_power_observation'), telemetry)
                     self.assertIsNone(c.db.get('first')['operation'])  # Other selected project retains its slot.
                     c.db.set_setting('selected', None)
                     await heartbeat()  # Already online, but the slot has become eligible.

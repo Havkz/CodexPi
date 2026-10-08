@@ -701,6 +701,8 @@ class Controller:
                     await self.poll_goals()
                     from .accounts import tick
                     await tick(self)
+                    from .power import tick as power_tick
+                    await power_tick(self)
                     if time.monotonic() - self.last_backup > 3600:
                         self.db.backup(self.root / 'backups/sqlite')
                         self.last_backup = time.monotonic()

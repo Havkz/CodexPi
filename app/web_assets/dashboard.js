@@ -212,6 +212,9 @@ function render() {
   $('pause-all').disabled = busy || !connected; $('logout').disabled = busy || !connected;
   if (!busy) $('auto-continue').checked = Boolean(state.auto_continue);
   $('auto-continue').disabled = busy || !connected;
+  if (!busy) $('auto-boot-windows').checked = Boolean(state.auto_boot_windows);
+  $('auto-boot-windows').disabled = busy || !connected;
+  $('windows-power-state').textContent = state.windows_power?.message || '';
   const summary = [
     [String(state.projects.filter(p => p.goal_status === 'active').length), 'Active Project', active?.display_name || 'Kein aktives Projekt'],
     [String(queue.filter(p => p.project_id !== state.selected).length), 'Queue Length', 'Wartende Projekte'],
@@ -361,6 +364,7 @@ $('lifecycle-form').onsubmit = async event => {
 $('pause-all').onclick = () => act('pause-all'); $('logout').onclick = () => act('logout');
 $('auto-continue').onchange = event => act('auto-continue', null, {enabled: event.target.checked});
 $('auto-account-change').onchange = event => act('auto-account-change', null, {enabled: event.target.checked});
+$('auto-boot-windows').onchange = event => act('auto-boot-windows', null, {enabled: event.target.checked});
 $('account-retry').onclick = () => accountAct('account-retry');
 $('account-restore').onclick = () => accountAct('account-restore');
 $('account-remove-cancel').onclick = () => $('account-remove-dialog').close();

@@ -60,6 +60,7 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(state['csrf'], csrf)
                 self.assertFalse(state['auto_continue'])
                 self.assertFalse(state['auto_account_change'])
+                self.assertFalse(state['auto_boot_windows'])
                 db.set_setting('accounts', [{'account_id': 'saved', 'name': 'Visible account', 'status': 'ready',
                                              'access_token': 'must-never-be-exposed'}])
                 db.set_setting('account_switch', {'id': 'pending', 'phase': 'logging_in',
@@ -86,6 +87,15 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(result.status, expected)
                     if expected == 200:
                         self.assertEqual((await (await client.get('/api/state')).json())['auto_account_change'], enabled)
+                for enabled, expected in [('true', 400), (True, 400), (False, 200)]:
+                    result = await client.post('/api/action', json={'action': 'auto-boot-windows', 'enabled': enabled},
+                        headers={'X-CSRF-Token': csrf})
+                    self.assertEqual(result.status, expected)
+                db.set_setting('windows_power_observation', {'mac': '74-56-3C-2B-FD-0F',
+                    'address': '192.168.2.200', 'startup_ready': True})
+                self.assertEqual((await client.post('/api/action', json={'action': 'auto-boot-windows', 'enabled': True},
+                    headers={'X-CSRF-Token': csrf})).status, 200)
+                self.assertTrue((await (await client.get('/api/state')).json())['auto_boot_windows'])
                 self.assertNotIn('password_hash', str(state))
                 self.assertEqual(len(state['infrastructure']), 6)
                 self.assertEqual(state['infrastructure'][3]['status'], 'unknown')

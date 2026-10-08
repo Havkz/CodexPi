@@ -38,6 +38,7 @@ async def worker_socket(request):
         controller.worker = socket
         controller.worker_key = channel
         controller.worker_seen = 0  # only a signed alive message establishes online status
+        controller.worker_draining = False
         async def reply(body):
             async with controller.worker_send_lock:
                 await socket.send_json(channel.sign(body))
@@ -62,16 +63,27 @@ async def worker_socket(request):
                             controller.db.conn.execute("UPDATE jobs SET status='pending',updated_at=? WHERE job_id=?",
                                                       (time.time(), row['job_id']))
                 reconciled = True
-            elif body == {'type': 'alive'} and reconciled:
+            elif body.get('type') == 'alive' and set(body) <= {'type', 'power', 'draining'} and reconciled:
+                if type(body.get('draining', False)) is not bool:
+                    raise ValueError('Invalid worker handoff')
+                controller.worker_draining = body.get('draining', False)
                 was_online = controller.windows_online
                 controller.worker_seen = time.monotonic()
                 controller.db.set_setting('windows_last_heartbeat', time.time())
                 if not was_online:
                     controller.db.set_setting('windows_availability', {'id': str(uuid.uuid4()), 'attempted': []})
+                if 'power' in body:
+                    from .power import observe
+                    async with controller.lock:
+                        await observe(controller, body['power'])
                 # The first heartbeat may arrive while another project owns the
                 # slot. Recheck later signed heartbeats without repeating a wake.
                 await unblock_windows(controller)
                 await dispatch_pending(controller)
+            elif body.get('type') == 'power_result' and reconciled:
+                from .power import result
+                async with controller.lock:
+                    result(controller, body)
             elif body.get('type') == 'result':
                 job = controller.db.conn.execute('SELECT * FROM jobs WHERE job_id=?', (body.get('job_id'),)).fetchone()
                 if job is None:
@@ -111,6 +123,9 @@ async def worker_socket(request):
 
 async def dispatch_pending(controller):
     async with controller.lock:
+        if (getattr(controller, 'worker_draining', False)
+                or controller.db.setting('windows_power', {}).get('phase') == 'shutdown_sent'):
+            return
         if controller.db.conn.execute('SELECT 1 FROM jobs WHERE status IN (?,?)', ('sent', 'running')).fetchone():
             return
         while True:
@@ -135,6 +150,8 @@ async def dispatch_pending(controller):
 
 
 async def job_denial(controller, project):
+    if controller.db.setting('windows_power', {}).get('phase') == 'shutdown_sent':
+        return 'Windows shutdown is in progress; wait for the next confirmed worker boot'
     account_hold = controller.account_holds_goal(project)
     switch = controller.db.setting('account_switch', {})
     if controller.account_switch_pending and switch.get('phase') != 'waiting_turn':
@@ -167,7 +184,7 @@ def cancel_pending(controller, project_id, reason):
 
 async def unblock_windows(controller):
     async with controller.lock:
-        if controller.db.setting('pause_all', False):
+        if controller.db.setting('pause_all', False) or getattr(controller, 'worker_draining', False):
             return
         if controller.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone():
             return

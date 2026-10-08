@@ -6,6 +6,7 @@ import ctypes
 from ctypes import wintypes
 import json
 import logging
+import math
 from logging.handlers import RotatingFileHandler
 import os
 from pathlib import Path, PureWindowsPath
@@ -123,7 +124,7 @@ async def execute(argv, cwd, timeout, *, env=None):
 
 
 class Worker:
-    def __init__(self, root, secret, url):
+    def __init__(self, root, secret, url, *, boot_worker=False, boot_at=None):
         self.root, self.secret, self.url = Path(root), secret, url
         self.projects = self.root / 'Projects'
         self.projects.mkdir(parents=True, exist_ok=True)
@@ -137,6 +138,9 @@ class Worker:
             raise RuntimeError('Worker job ledger is corrupt; refusing to execute')
         self.db.execute('CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, payload TEXT NOT NULL, '
                         'status TEXT NOT NULL, result TEXT, updated REAL NOT NULL)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS power (id TEXT PRIMARY KEY, value TEXT NOT NULL)')
+        self.boot_worker, self.boot_at = boot_worker, boot_at
+        self.handoff = False
         # Never repeat an interrupted command: it could already have changed external state.
         interrupted = json.dumps({'stdout': '', 'stderr': 'Worker restarted during execution; outcome unknown. '
             'Inspect side effects before issuing a new job.', 'exit_code': -1, 'artifacts': [], 'outcome_unknown': True})
@@ -146,6 +150,51 @@ class Worker:
         self.login_tunnel = None
         self.login_operation = None
         self.login_opened = None
+
+    async def power_command(self, body):
+        from .windows_power import observation
+        ident = body.get('id')
+        if not isinstance(ident, str) or str(uuid.UUID(ident)) != ident:
+            raise ValueError('Invalid Windows power operation')
+        current = await asyncio.to_thread(observation, self.root, self.boot_at, self.boot_worker)
+        row = self.db.execute('SELECT value FROM power WHERE id=?', (ident,)).fetchone()
+        state = json.loads(row['value']) if row else {}
+        accepted = False
+        if body['type'] == 'power_claim':
+            requested, previous = body.get('requested_at'), body.get('previous_boot')
+            if any(type(v) not in (int, float) or not math.isfinite(v) for v in (requested, previous)):
+                raise ValueError('Invalid Windows boot identity')
+            accepted = bool(current and current['startup_ready'] and current['boot_worker']
+                and not current['user_active'] and requested <= current['boot_at'] <= time.time()
+                and current['boot_at'] != previous and time.time() - 600 <= requested <= time.time()
+                and not self.handoff)
+            if state:
+                accepted = (accepted and state.get('phase') == 'owned' and state.get('requested_at') == requested
+                            and state.get('previous_boot') == previous)
+            else:
+                state = {'phase': 'owned' if accepted else 'released', 'requested_at': requested,
+                         'previous_boot': previous, 'boot_at': self.boot_at}
+                self.db.execute('INSERT INTO power VALUES (?,?)', (ident, json.dumps(state)))
+                self.db.execute('DELETE FROM power WHERE id NOT IN (SELECT id FROM power ORDER BY rowid DESC LIMIT 50)')
+            command = 'claim'
+        elif body['type'] == 'power_shutdown':
+            expires = body.get('expires_at')
+            accepted = bool(type(expires) in (int, float) and math.isfinite(expires)
+                and time.time() < expires <= time.time() + 30 and current and current['boot_worker']
+                and not current['user_active'] and not self.handoff and state.get('phase') == 'owned'
+                and state['boot_at'] == body.get('boot_at') == self.boot_at
+                and not (self.execution and not self.execution.done()) and self.login_tunnel is None
+                and not self.db.execute("SELECT 1 FROM jobs WHERE status IN ('running','finished')").fetchone())
+            command = 'shutdown'
+            if accepted:
+                state['phase'] = 'shutdown_sent'
+                self.db.execute('UPDATE power SET value=? WHERE id=?', (json.dumps(state), ident))
+                # No /f: never force-close another application's unsaved work.
+                result = await execute(['shutdown.exe', '/s', '/t', '0'], self.root, 10)
+                accepted = result['exit_code'] == 0
+        else:
+            raise ValueError('Unknown Windows power command')
+        return {'type': 'power_result', 'id': ident, 'command': command, 'accepted': accepted, 'boot_at': self.boot_at}
 
     async def close_login_tunnel(self):
         if self.login_tunnel and self.login_tunnel.returncode is None:
@@ -159,6 +208,8 @@ class Worker:
 
     async def open_login(self, body):
         """One owned callback tunnel. No AI, logout, saved tokens or project execution."""
+        if self.boot_worker:
+            raise ValueError('Browser login requires the interactive Windows worker')
         operation = body.get('operation_id')
         if not isinstance(operation, str) or str(uuid.UUID(operation)) != operation:
             raise ValueError('Invalid account login operation')
@@ -300,7 +351,19 @@ class Worker:
                     while True:
                         if self.login_tunnel and time.time() >= getattr(self, 'login_expires', 0):
                             await self.close_login_tunnel()
-                        await send({'type': 'alive'})
+                        from .windows_power import observation, desktop_in_use
+                        try:
+                            power = await asyncio.to_thread(observation, self.root, self.boot_at, self.boot_worker)
+                        except (ValueError, KeyError, OSError):
+                            logging.warning('Windows power telemetry unavailable; automatic shutdown is disabled')
+                            power = None
+                        if self.boot_worker and await asyncio.to_thread(desktop_in_use):
+                            self.handoff = True
+                        await send({'type': 'alive', **({'power': power} if power else {}),
+                                    **({'draining': True} if self.handoff else {})})
+                        if (self.handoff and not (self.execution and not self.execution.done())
+                                and not self.db.execute("SELECT 1 FROM jobs WHERE status IN ('running','finished')").fetchone()):
+                            return  # The existing interactive login task takes over after releasing the lock.
                         await asyncio.sleep(20)
 
                 async def results():
@@ -329,6 +392,8 @@ class Worker:
                         elif body.get('type') == 'account_login_close':
                             if body.get('operation_id') == self.login_operation:
                                 await self.close_login_tunnel()
+                        elif body.get('type') in ('power_claim', 'power_shutdown'):
+                            await send(await self.power_command(body))
                         elif body.get('type') == 'ack':
                             self.db.execute("UPDATE jobs SET status='delivered',updated=? WHERE id=? AND status='finished'",
                                             (time.time(), body['job_id']))
@@ -344,6 +409,8 @@ class Worker:
                                 else:
                                     await send({'type': 'started', 'job_id': body['job_id']})
                                 continue
+                            if self.handoff:
+                                raise ValueError('Boot worker is draining for interactive handoff; reconnect before dispatch')
                             if self.execution and not self.execution.done():
                                 raise ValueError('Controller tried to run concurrent Windows jobs')
                             self.db.execute('INSERT INTO jobs VALUES (?,?,?,?,?)',
@@ -370,6 +437,8 @@ class Worker:
             started = time.monotonic()
             try:
                 await self.connect()
+                if self.handoff:
+                    return
             except (OSError, ValueError, KeyError, asyncio.TimeoutError) as exc:
                 logging.warning('Worker connection ended: %s', self.clean(str(exc)))
             except Exception as exc:
@@ -381,7 +450,12 @@ class Worker:
 
 
 def main():
+    import argparse
     import msvcrt
+    from .windows_power import boot_time
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--boot', action='store_true')
+    args = parser.parse_args()
     state = ROOT / 'windows-worker/state'
     state.mkdir(parents=True, exist_ok=True)
     lock = (state / 'worker.lock').open('a+b')
@@ -393,7 +467,12 @@ def main():
     logs.mkdir(parents=True, exist_ok=True)
     handler = RotatingFileHandler(logs / 'worker.log', maxBytes=2 * 1024 * 1024, backupCount=5)
     logging.basicConfig(level=logging.INFO, handlers=[handler], format='%(asctime)s %(levelname)s %(message)s')
-    worker = Worker(ROOT, secret, config['url'])
+    try:
+        boot_at = boot_time()
+    except (OSError, ValueError, subprocess.SubprocessError):
+        logging.warning('Windows boot identity unavailable; automatic shutdown is disabled')
+        boot_at = None
+    worker = Worker(ROOT, secret, config['url'], boot_worker=args.boot, boot_at=boot_at)
     asyncio.run(worker.run())
 
 

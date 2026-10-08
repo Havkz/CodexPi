@@ -170,6 +170,8 @@ async def state(request):
         'infrastructure': infrastructure, 'server_time': now}
     from .accounts import public_state
     payload.update(public_state(controller))
+    from .power import public_state as power_state
+    payload.update(power_state(controller))
     return safe_json(controller, payload, csrf=session(request)['csrf'])
 
 
@@ -279,11 +281,24 @@ async def action(request):
                 if project['lifecycle'] == 'ready' and project['codex_session_id'] and project['goal_status'] != 'complete':
                     await controller.pause(project, manual=True,
                         preserve_status=project['goal_status'] not in ('active', 'usage limited'))
-    elif action_name in ('auto-continue', 'auto-account-change'):
+    elif action_name in ('auto-continue', 'auto-account-change', 'auto-boot-windows'):
         if type(body.get('enabled')) is not bool:
             raise ValueError('Automatic policy requires a boolean enabled value')
         async with controller.lock:
-            controller.db.set_setting('auto_continue' if action_name == 'auto-continue' else 'auto_account_change', body['enabled'])
+            if action_name == 'auto-boot-windows':
+                from .power import target
+                telemetry = controller.db.setting('windows_power_observation', {})
+                if body['enabled']:
+                    target(telemetry, controller.config['lan_subnet'])
+                    if not telemetry.get('startup_ready'):
+                        raise ValueError('Install the Windows pre-login boot worker before enabling Auto Boot Windows')
+                state = controller.db.setting('windows_power', {})
+                if body['enabled'] and not controller.db.setting('auto_boot_windows', False):
+                    controller.db.set_setting('windows_power', {})
+                elif not body['enabled'] and state.get('phase') not in ('shutdown_sent', None):
+                    state.update(phase='released', message='Automatic power operation cancelled; Windows will not be shut down.')
+                    controller.db.set_setting('windows_power', state)
+            controller.db.set_setting(action_name.replace('-', '_'), body['enabled'])
     elif action_name == 'reorder':
         async with controller.lock:
             controller.db.reorder(body['ids'])
