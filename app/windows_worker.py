@@ -152,7 +152,7 @@ class Worker:
         self.login_opened = None
 
     async def power_command(self, body):
-        from .windows_power import observation
+        from .windows_power import observation, network_wake_since
         ident = body.get('id')
         if not isinstance(ident, str) or str(uuid.UUID(ident)) != ident:
             raise ValueError('Invalid Windows power operation')
@@ -165,9 +165,11 @@ class Worker:
             if any(type(v) not in (int, float) or not math.isfinite(v) for v in (requested, previous)):
                 raise ValueError('Invalid Windows boot identity')
             accepted = bool(current and current['startup_ready'] and current['boot_worker']
-                and not current['user_active'] and requested <= current['boot_at'] <= time.time()
-                and current['boot_at'] != previous and time.time() - 600 <= requested <= time.time()
+                and not current['user_active'] and previous <= current['boot_at'] <= time.time()
+                and time.time() - 600 <= requested <= time.time()
                 and not self.handoff)
+            if accepted:
+                accepted = await asyncio.to_thread(network_wake_since, self.root, requested)
             if state:
                 accepted = (accepted and state.get('phase') == 'owned' and state.get('requested_at') == requested
                             and state.get('previous_boot') == previous)
@@ -357,7 +359,7 @@ class Worker:
                         except (ValueError, KeyError, OSError):
                             logging.warning('Windows power telemetry unavailable; automatic shutdown is disabled')
                             power = None
-                        if self.boot_worker and await asyncio.to_thread(desktop_in_use):
+                        if self.boot_worker and await asyncio.to_thread(desktop_in_use, self.boot_at):
                             self.handoff = True
                         await send({'type': 'alive', **({'power': power} if power else {}),
                                     **({'draining': True} if self.handoff else {})})

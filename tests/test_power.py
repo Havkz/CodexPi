@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timezone
 from contextlib import closing
 import json
 from pathlib import Path
@@ -123,15 +124,32 @@ class PowerTests(unittest.IsolatedAsyncioTestCase):
         with tempfile.TemporaryDirectory() as directory, closing((worker := Worker(directory, 'secret', 'unused',
                 boot_worker=True, boot_at=time.time() - 1)).db):
             observation = self.observation(boot_at=worker.boot_at)
+            from app.windows_power import network_wake_since
+            (worker.root / 'windows-worker/power.json').write_text(json.dumps({'mac': observation['mac']}))
+            event = {'source': 'Ethernet adapter', 'adapter': 'Ethernet adapter',
+                     'time': datetime.now(timezone.utc).isoformat()}
+            with patch('app.windows_power.subprocess.run', return_value=SimpleNamespace(stdout=json.dumps(event))) as query:
+                self.assertTrue(network_wake_since(worker.root, time.time() - 2))
+                event['source'] = 'USB controller'
+                query.return_value.stdout = json.dumps(event)
+                self.assertFalse(network_wake_since(worker.root, time.time() - 2))
+                event['source'], event['time'] = 'Ethernet adapter', '2020-01-01T00:00:00Z'
+                query.return_value.stdout = json.dumps(event)
+                self.assertFalse(network_wake_since(worker.root, time.time() - 2))
             with patch('app.windows_power.observation', return_value=observation), \
+                    patch('app.windows_power.network_wake_since', return_value=True) as network_wake, \
                     patch('app.windows_worker.execute', AsyncMock(return_value={'exit_code': 0})) as execute:
                 claim = {'type': 'power_claim', 'id': str(uuid.uuid4()), 'requested_at': time.time() - 2,
                          'previous_boot': worker.boot_at}
+                network_wake.return_value = False
                 self.assertFalse((await worker.power_command(claim))['accepted'])
                 claim.update(id=str(uuid.uuid4()), previous_boot=1)
                 observation['user_active'] = True
                 self.assertFalse((await worker.power_command(claim))['accepted'])
                 claim['id'], observation['user_active'] = str(uuid.uuid4()), False
+                network_wake.return_value = False
+                self.assertFalse((await worker.power_command(claim))['accepted'])
+                claim['id'], network_wake.return_value = str(uuid.uuid4()), True
                 self.assertTrue((await worker.power_command(claim))['accepted'])
                 shutdown = {'type': 'power_shutdown', 'id': claim['id'], 'boot_at': worker.boot_at,
                             'expires_at': time.time() + 25}

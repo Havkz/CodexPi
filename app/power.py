@@ -150,10 +150,11 @@ def result(controller, body):
             or type(body.get('accepted')) is not bool or body.get('command') not in ('claim', 'shutdown')):
         raise ValueError('Invalid Windows power acknowledgement')
     if state.get('phase') == 'claiming' and body.get('command') == 'claim':
-        if body['accepted'] and type(body.get('boot_at')) in (int, float) and state['requested_at'] <= body['boot_at'] <= time.time():
+        if (body['accepted'] and type(body.get('boot_at')) in (int, float) and math.isfinite(body['boot_at'])
+                and state['previous_boot'] <= body['boot_at'] <= time.time()):
             state.update(phase='owned', boot_at=body['boot_at'], message='CodexPi boot confirmed; Windows stays on until related work is idle.')
         else:
-            state.update(phase='released', message='No exclusive CodexPi boot ownership; Windows will remain on.')
+            state.update(phase='released', message='No confirmed CodexPi network-wake ownership (or user activity); Windows will remain on.')
         controller.db.set_setting('windows_power', state)
     elif state.get('phase') == 'shutdown_sent' and body.get('command') == 'shutdown' and not body['accepted']:
         state.update(phase='released', message='The worker refused shutdown because ownership or idle checks no longer hold. Windows remains on.')
