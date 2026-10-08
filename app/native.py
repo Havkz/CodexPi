@@ -193,7 +193,7 @@ async def tui_proxy(request):
     client = web.WebSocketResponse(max_msg_size=32 * 1024 * 1024)
     await client.prepare(request)
     request.app['sockets'].add(client)
-    tasks, resumed, subscriptions = set(), set(), {}
+    tasks, resumed, subscriptions, goal_ready = set(), set(), {}, set()
     initialization = None
     connection_id = id(client)
     reconnect_task = None
@@ -256,7 +256,8 @@ async def tui_proxy(request):
                         if project['lifecycle'] != 'ready' or project['codex_session_id'] != params['threadId']:
                             continue
                         await candidate.rpc('thread/resume', params, timeout=20)
-                        controller.tui_connections.setdefault(project_id, {})[connection_id] = time.monotonic()
+                        controller.tui_connections.setdefault(project_id, {})[connection_id] = (
+                            time.monotonic() if project_id in goal_ready else None)
                     old = upstream
                     candidate.disconnected = disconnected
                     upstream = candidate
@@ -314,6 +315,7 @@ async def tui_proxy(request):
                 project = controller.db.by_session(params.get('threadId'))
                 if project:
                     resumed.discard(project['project_id'])
+                    goal_ready.discard(project['project_id'])
                     subscriptions.pop(project['project_id'], None)
                     controller.tui_connections.get(project['project_id'], {}).pop(connection_id, None)
             elif method == 'config/batchWrite':
@@ -388,9 +390,14 @@ async def tui_proxy(request):
                     if method == 'thread/resume':
                         resumed.add(project['project_id'])
                         subscriptions[project['project_id']] = params
-                        controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = time.monotonic()
+                        # Startup still loads history before fetching/displaying the goal dialog.
+                        goal_ready.discard(project['project_id'])
+                        controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = None
                         logging.getLogger('tui').info('TUI %s (peer PID %s) resumed mapped session %s',
                                                      connection_id, peer_pid, project['codex_session_id'])
+                    if method == 'thread/goal/get' and project['project_id'] in resumed and project['project_id'] not in goal_ready:
+                        goal_ready.add(project['project_id'])
+                        controller.tui_connections.setdefault(project['project_id'], {})[connection_id] = time.monotonic()
                     if method == 'thread/goal/set':
                         current = controller.db.get(project['project_id'])
                         operation = json.loads(current['operation'] or '{}')

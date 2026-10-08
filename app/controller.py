@@ -132,6 +132,8 @@ class Controller:
             fields['usage_limit'] = None
         if status != 'complete':
             fields['completion_notified'] = 0
+        if status == 'active' and changed and (not operation or operation.get('kind') == 'resume' and operation.get('error')):
+            fields.update(operation=None, resume_result=None)  # A later native resume supersedes a terminal failed attempt.
         if status in ('stalled', 'usage limited', 'limited by budget') and changed and operation.get('kind') == 'resume':
             fields['operation'] = None
             fields['resume_result'] = json.dumps({'id': operation.get('id'), 'status': status,
@@ -278,7 +280,7 @@ class Controller:
         if pane['exit_code'] or not pane['stdout'].strip().isdigit():
             return False
         pane_pid = int(pane['stdout'].strip())
-        return any(time.monotonic() - since >= 1 and
+        return any(since is not None and time.monotonic() - since >= 1 and
                    process_in_pane(self.tui_peer_pids.get(connection_id), pane_pid)
                    for connection_id, since in connections.items())
 
@@ -413,7 +415,7 @@ class Controller:
                 self.select(project_id)
             else:
                 self.db.set_setting('selected', project_id)
-            # Readiness is supplied by the native TUI's successful resume RPC, not a screen guess.
+            # Wait for the mapped TUI's post-history goal read, not just its resume RPC.
             self.db.update(project_id, operation=json.dumps(operation), resume_result=None)
             return {'ok': True, 'operation_id': operation['id']}
 
@@ -885,6 +887,8 @@ class Controller:
                 if time.time() - operation.get('sent_at', operation['started_at']) > 60:
                     detail = ('The mapped pane has no confirmed TUI connection for this session' if not ready else
                               '/goal resume was submitted once, but the native goal still reports ' + goal['status'])
+                    if goal and goal['status'] == 'blocked' and (summary := block_summary(project)):
+                        detail += '; last recorded blocker: ' + '; '.join(summary['reasons'][:2])
                     raise RuntimeError('Resume timed out: ' + detail + '; inspect the project TUI before retrying')
             except Exception as exc:
                 operation['error'] = self.redactor.clean(str(exc))

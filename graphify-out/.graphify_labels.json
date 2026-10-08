@@ -5,7 +5,6 @@
   "3": "deployment.py",
   "4": "Native",
   "5": "Database",
-  "6": "web.py",
   "7": "dashboard.js",
   "8": "CodexPi installation progress",
   "9": "build_audit.py",
@@ -20,7 +19,6 @@
   "18": "goal-hook.py",
   "19": "install-entrypoint.ps1",
   "20": "install-worker.ps1",
-  "21": "main.py",
   "22": "test-live-queue.py",
   "23": "verify-design.py",
   "24": "Design verification — 2026-09-20",
@@ -36,7 +34,6 @@
   "34": "migration.py",
   "35": "Bot",
   "36": "usage.js",
-  "37": "db.py",
   "38": "SchedulerTests",
   "39": "verify-usage-ui.py",
   "40": "build-favicon.py",
@@ -49,6 +46,5 @@
   "47": "Durable manual pause and real quota evidence, 2026-09-24",
   "48": "verify-account-ui.py",
   "49": "export",
-  "50": "test-live-lifecycle.py",
-  "51": "tui_proxy"
+  "50": "test-live-lifecycle.py"
 }

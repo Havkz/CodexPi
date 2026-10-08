@@ -725,6 +725,7 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
                             return await socket.receive_json()
                         await rpc('initialize', {'clientInfo': {'name': 'test', 'version': '1'}})
                         await rpc('thread/resume', {'threadId': 'first'})
+                        await rpc('thread/goal/get', {'threadId': 'first'})
                         before = old.rpc.await_count
                         c.db.set_setting('account_switch', {'phase': 'reloading'})
                         await callback[0]()
@@ -737,6 +738,7 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
                         self.assertEqual([call.args[0] for call in new.rpc.await_args_list],
                                          ['initialize', 'thread/resume', 'thread/read'])
                         self.assertTrue(c.tui_connections['first'])
+                        self.assertTrue(all(since is not None for since in c.tui_connections['first'].values()))
         finally:
             fixture.tearDown()
 
