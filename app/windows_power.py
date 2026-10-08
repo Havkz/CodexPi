@@ -36,7 +36,7 @@ def network_wake_since(root, requested):
         return False  # Firmware-only S5 wakes may not expose a source; never guess ownership.
 
 
-def desktop_in_use(since=0):
+def desktop_in_use(since=None):
     if os.name != 'nt':
         return True
     # Session 0's GetLastInputInfo cannot detect a desktop or RDP user.
@@ -73,6 +73,8 @@ def desktop_in_use(since=0):
                     return True  # Even a locked/disconnected logged-in desktop belongs to its user.
             finally:
                 api.WTSFreeMemory(buffer)
+            if since is None:
+                continue
             buffer, length = ctypes.c_void_p(), ctypes.c_uint32()
             if not api.WTSQuerySessionInformationW(None, session.id, 24, ctypes.byref(buffer), ctypes.byref(length)):
                 return True

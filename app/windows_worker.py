@@ -359,7 +359,7 @@ class Worker:
                         except (ValueError, KeyError, OSError):
                             logging.warning('Windows power telemetry unavailable; automatic shutdown is disabled')
                             power = None
-                        if self.boot_worker and await asyncio.to_thread(desktop_in_use, self.boot_at):
+                        if self.boot_worker and await asyncio.to_thread(desktop_in_use):
                             self.handoff = True
                         await send({'type': 'alive', **({'power': power} if power else {}),
                                     **({'draining': True} if self.handoff else {})})

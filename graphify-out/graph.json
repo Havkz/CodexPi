@@ -4353,7 +4353,7 @@
       "label": "observation()",
       "file_type": "code",
       "source_file": "app/windows_power.py",
-      "source_location": "L92",
+      "source_location": "L94",
       "_origin": "ast",
       "id": "app_windows_power_observation",
       "community": 2,
@@ -23182,7 +23182,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/windows_power.py",
-      "source_location": "L92",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_windows_power",
@@ -23277,7 +23277,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/windows_power.py",
-      "source_location": "L98",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_windows_power_observation",
@@ -27228,5 +27228,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "fb3150f7aea5f9cdf70350256d5debebb5f80b3f"
+  "built_at_commit": "fe98674fe8ab78b9971ce34ccf0bbdc96b66def9"
 }
