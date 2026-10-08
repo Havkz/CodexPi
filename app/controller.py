@@ -132,7 +132,8 @@ class Controller:
             fields['usage_limit'] = None
         if status != 'complete':
             fields['completion_notified'] = 0
-        if status == 'active' and changed and (not operation or operation.get('kind') == 'resume' and operation.get('error')):
+        if (status == 'active' and (changed or json.loads(project['resume_result'] or '{}').get('status') == 'failed')
+                and (not operation or operation.get('kind') == 'resume' and operation.get('error'))):
             fields.update(operation=None, resume_result=None)  # A later native resume supersedes a terminal failed attempt.
         if status in ('stalled', 'usage limited', 'limited by budget') and changed and operation.get('kind') == 'resume':
             fields['operation'] = None

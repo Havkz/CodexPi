@@ -375,6 +375,9 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
             c.record_goal(c.db.get('first'), {'status': 'active'})  # User subsequently resumes in --all.
             self.assertIsNone(c.db.get('first')['operation'])
             self.assertIsNone(c.db.get('first')['resume_result'])
+            c.db.update('first', resume_result=json.dumps(failure))  # Persisted pre-fix failed receipt on an active goal.
+            c.record_goal(c.db.get('first'), {'status': 'active'})
+            self.assertIsNone(c.db.get('first')['resume_result'])
         # A successful thread/read for the wrong session is not acknowledgement.
         await c.resume('first')
         c.native.rpc = AsyncMock(side_effect=[{'goal': None}, {'thread': {'id': 'other', 'cwd': str(self.root / 'first')}}])
