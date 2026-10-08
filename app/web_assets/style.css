@@ -54,17 +54,30 @@ main { max-width: 1520px; margin: auto; padding: 36px 40px 20px; }
 .heading-controls .muted { font-size: 12px; margin: 0; }
 .notice { color: var(--orange); padding: 14px 0; overflow-wrap: anywhere; }
 .notice:empty { padding: 0; }
-.account-control { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
+.dashboard-loading main { visibility: hidden; }
+.dashboard-loading #top-status::before { content: ''; width: 14px; height: 14px; border: 2px solid var(--accent); border-right-color: transparent; border-radius: 50%; animation: resume-spin .8s linear infinite; }
+.dashboard-ready .page-heading, .dashboard-ready .account-control, .dashboard-ready main > section { animation: dashboard-in .45s cubic-bezier(.2, .7, .3, 1) both; }
+.dashboard-ready main > section:nth-of-type(1) { animation-delay: .04s; }
+.dashboard-ready main > section:nth-of-type(2) { animation-delay: .08s; }
+.dashboard-ready main > section:nth-of-type(n+3) { animation-delay: .12s; }
+@keyframes dashboard-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.account-control { position: relative; z-index: 5; display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
 .account-control > p { font-size: 12px; }
-.account-menu { position: relative; min-width: 280px; max-width: 100%; }
+.account-menu { position: relative; z-index: 5; min-width: 280px; max-width: 100%; }
 .account-menu > summary { display: flex; align-items: center; gap: 16px; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-size: 12px; }
-.account-menu > summary::after { content: '⌄'; margin-left: auto; color: var(--accent); }
+.account-menu > summary::after { content: '⌄'; margin-left: auto; color: var(--accent); transition: transform .18s ease; }
+.account-menu[open] > summary::after { transform: rotate(180deg); }
 .account-menu strong { overflow-wrap: anywhere; }
-.account-options { position: absolute; z-index: 3; width: max(100%, 340px); max-width: calc(100vw - 48px); max-height: 360px; overflow: auto; padding: 6px; margin-top: 6px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); box-shadow: 0 16px 40px rgb(0 0 0 / .35); }
-.account-option { display: flex; align-items: center; gap: 6px; }
-.account-option > button:first-child { flex: 1; text-align: left; overflow-wrap: anywhere; background: transparent; border-color: transparent; }
-.account-option > button:last-child { min-width: 34px; }
-.account-options > button { width: 100%; text-align: left; margin-top: 6px; border-color: transparent; }
+.account-options { position: absolute; left: 0; z-index: 3; width: max(100%, 380px); max-width: calc(100vw - 40px); max-height: min(360px, 60dvh); overflow: auto; padding: 10px; margin-top: 10px; border: 1px solid #54597470; border-radius: 14px; background: linear-gradient(145deg, #222431f2, #15161cf2); backdrop-filter: blur(20px); box-shadow: inset 0 1px rgb(255 255 255 / .05), 0 18px 50px rgb(0 0 0 / .45); transform-origin: top left; }
+.account-menu[open] .account-options { animation: account-menu-in .18s ease-out; }
+@keyframes account-menu-in { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: none; } }
+.account-option { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+.account-option > button:first-child { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: 1; min-width: 0; padding: 11px 12px; text-align: left; background: transparent; border-color: transparent; box-shadow: none; }
+.account-label { overflow-wrap: anywhere; }
+.account-option > button.account-selected { opacity: 1; color: var(--secondary); background: rgb(120 129 255 / .045); }
+.account-active { flex-shrink: 0; padding: 2px 6px; border: 1px solid rgb(53 219 177 / .18); border-radius: 5px; color: var(--green); background: rgb(53 219 177 / .06); font-size: 10px; font-weight: 500; }
+.account-option > button:last-child { flex-shrink: 0; width: 34px; min-height: 34px; padding: 4px; background: transparent; border-color: transparent; box-shadow: none; }
+.account-options > button { width: 100%; text-align: left; margin-top: 8px; padding: 11px 12px; border-color: transparent; border-top-color: #484d6340; border-radius: 0 0 7px 7px; background: transparent; box-shadow: none; }
 .account-warning { color: var(--orange); }
 main > section { margin-top: 32px; }
 .section-heading { margin-bottom: 18px; }
@@ -112,9 +125,13 @@ tbody tr { transition: background .18s ease; }
 tbody tr:hover { background: rgb(120 129 255 / .045); }
 .queue-name { display: block; background: none; border: 0; padding: 0; text-align: left; font-size: 13px; min-height: 30px; max-width: 280px; overflow-wrap: anywhere; }
 .queue-repo { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
-.queue-position { display: flex; align-items: center; gap: 5px; }
-.queue-position span { font: 12px ui-monospace, monospace; color: var(--secondary); min-width: 20px; }
-.queue-position button { padding: 6px; min-width: 30px; background: transparent; }
+.queue-position { display: flex; align-items: center; gap: 10px; }
+.queue-position > span { font: 12px ui-monospace, monospace; color: var(--secondary); min-width: 20px; }
+.queue-grip { display: grid; place-items: center; padding: 8px; min-width: 34px; background: transparent; border-color: transparent; box-shadow: none; color: var(--muted); cursor: grab; }
+.queue-grip:active:not(:disabled), .dragging .queue-grip { cursor: grabbing; }
+.queue-grip:hover:not(:disabled) { color: var(--accent); }
+.grip-dots { display: grid; grid-template-columns: repeat(2, 3px); gap: 3px; pointer-events: none; }
+.grip-dots i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
 .table-scroll .queue-actions { flex-wrap: nowrap; }
 .queue-actions button { white-space: nowrap; }
 .dragging { opacity: .4; }
@@ -147,7 +164,12 @@ tbody tr:hover { background: rgb(120 129 255 / .045); }
 .usage-total { display: flex; align-items: baseline; gap: 12px; margin-top: 20px; }
 .usage-total strong { font-size: clamp(38px, 4vw, 52px); font-weight: 600; letter-spacing: -.045em; color: var(--usage-accent); font-variant-numeric: tabular-nums; text-shadow: 0 0 25px color-mix(in srgb, var(--usage-accent) 15%, transparent); }
 .usage-total span { font-size: 12px; }
-.usage-chart { height: 190px; margin-top: 10px; }
+.usage-chart { position: relative; height: 190px; margin-top: 10px; border-radius: 12px; background: linear-gradient(180deg, color-mix(in srgb, var(--usage-accent) 3%, transparent), transparent); }
+.usage-cursor { position: absolute; top: 7%; bottom: 6%; width: 1px; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--usage-accent) 65%, transparent), transparent); pointer-events: none; }
+.usage-hover-point { position: absolute; width: 9px; height: 9px; border-radius: 50%; background: var(--usage-accent); border: 2px solid var(--surface); box-shadow: 0 0 0 5px color-mix(in srgb, var(--usage-accent) 12%, transparent), 0 0 15px color-mix(in srgb, var(--usage-accent) 35%, transparent); transform: translate(-50%, -50%); pointer-events: none; }
+.usage-tooltip { position: absolute; z-index: 1; top: 12px; width: max-content; max-width: calc(100% - 16px); padding: 10px 14px; border: 1px solid color-mix(in srgb, var(--usage-accent) 25%, #ffffff10); border-radius: 10px; background: rgb(27 29 40 / .82); backdrop-filter: blur(16px); box-shadow: inset 0 1px rgb(255 255 255 / .06), 0 8px 28px rgb(0 0 0 / .3); pointer-events: none; }
+.usage-tooltip time { display: block; color: var(--secondary); font-size: 11px; }
+.usage-tooltip strong { display: block; margin-top: 3px; color: var(--usage-accent); font-size: 16px; font-variant-numeric: tabular-nums; }
 .usage-empty { position: absolute; top: 62%; left: 0; right: 0; text-align: center; color: var(--muted); font-size: 14px; }
 .usage-chart svg { width: 100%; height: 100%; overflow: visible; }
 .usage-grid { stroke: #343743; stroke-opacity: .55; stroke-width: 1; vector-effect: non-scaling-stroke; }
@@ -156,6 +178,7 @@ tbody tr:hover { background: rgb(120 129 255 / .045); }
 .usage-line { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--usage-accent) 25%, transparent)); }
 .usage-gap { stroke-width: 1.5; stroke-dasharray: 4 5; opacity: .6; }
 .usage-area { fill: url(#usage-fill); }
+#usage-chart-card { background: linear-gradient(145deg, color-mix(in srgb, var(--usage-accent) 5%, #1b1d26), #15161cdd 65%) padding-box, linear-gradient(135deg, color-mix(in srgb, var(--usage-accent) 30%, transparent), #30334066 45%, #62698240) border-box; backdrop-filter: blur(12px); box-shadow: inset 0 1px rgb(255 255 255 / .045), 0 18px 42px -28px rgb(0 0 0 / .6); }
 .usage-point { fill: var(--usage-accent); stroke: var(--surface); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .usage-times { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; margin-top: 8px; font-variant-numeric: tabular-nums; }
 .usage-note { margin-top: 12px; font-size: 13px; overflow-wrap: anywhere; }

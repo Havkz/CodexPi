@@ -36,22 +36,15 @@
   "34": "migration.py",
   "35": "Bot",
   "36": "usage.js",
-  "37": "Bot",
-  "38": "SchedulerTests",
-  "39": "verify-usage-ui.py",
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
   "42": "Architecture and data ownership",
   "43": "CodexPi",
   "44": "DeploymentTests",
   "45": "Selected Windows session migration",
-  "46": "SchedulerTests",
   "47": "Durable manual pause and real quota evidence, 2026-09-24",
   "48": "verify-account-ui.py",
   "49": "export",
   "50": "test-live-lifecycle.py",
-  "51": "state",
-  "52": "Native",
-  "53": "verify-backup-restore.py",
-  "54": ".make_controller"
+  "51": "state"
 }

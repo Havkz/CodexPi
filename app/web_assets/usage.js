@@ -1,7 +1,7 @@
 'use strict';
 // Only measured samples; dashed bridges mark unobserved intervals, not a predicted refill.
 let usageView = 'weekly', usageData, usageLoading = false, usageRetryAt = 0;
-let usageAccount = null, usageChartSignature, usageChartContext;
+let usageAccount = null, usageChartSignature, usageChartContext, usageHoverIndex = null;
 const usageElement = id => document.getElementById('usage-' + id);
 const usagePercent = value => Number.isFinite(value) ? value.toLocaleString('en-GB', {maximumFractionDigits: 1}) + '%' : '—';
 const usageDate = stamp => new Date(stamp * 1000).toLocaleString('en-GB', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
@@ -35,7 +35,7 @@ function renderUsage() {
   const samples = history[usageView] || [];
   const signature = JSON.stringify([usageAccount, usageView, samples]);
   if (signature === usageChartSignature) return; // Unchanged polling must not restart the chart.
-  usageChartSignature = signature;
+  usageChartSignature = signature; hideUsageTooltip();
   const context = JSON.stringify([usageAccount, usageView]), animatePoints = context === usageChartContext;
   usageChartContext = context;
   const span = usageView === 'weekly' ? 7 * 86400 : 86400;
@@ -69,8 +69,14 @@ function renderUsage() {
     }
     const first = points[0], last = points.at(-1);
     const coordinate = point => x(point.observed_at).toFixed(2) + ',' + y(point.remaining).toFixed(2);
-    // Rounded straight connections cannot overshoot 0–100% or hide a refill.
-    const path = points.map((point, index) => (index ? 'L' : 'M') + coordinate(point)).join(' ');
+    // Bounded curves soften consumption; upward refills keep their explicit jump.
+    const path = points.map((point, index) => {
+      if (!index) return 'M' + coordinate(point);
+      const previous = points[index - 1];
+      if (point.remaining > previous.remaining) return 'L' + coordinate(point);
+      const middle = ((x(previous.observed_at) + x(point.observed_at)) / 2).toFixed(2);
+      return 'C' + middle + ',' + y(previous.remaining).toFixed(2) + ' ' + middle + ',' + y(point.remaining).toFixed(2) + ' ' + coordinate(point);
+    }).join(' ');
     group.querySelector('.usage-line').setAttribute('d', points.length > 1 ? path : '');
     group.querySelector('.usage-area').setAttribute('d', points.length > 1 ? path + ' L' + x(last.observed_at).toFixed(2) + ',178 L' + x(first.observed_at).toFixed(2) + ',178 Z' : '');
     const gap = group.querySelector('.usage-gap');
@@ -85,11 +91,51 @@ function renderUsage() {
     previous = last;
   }
   for (const group of [...plot.children]) if (!kept.has(group.dataset.segment)) group.remove();
-  chart.setAttribute('aria-label', usageElement('chart-title').textContent + ': remaining usage, 0 to 100 percent. ' + samples.length + ' measured samples. Dashed lines mark unobserved intervals.');
+  chart.setAttribute('aria-label', usageElement('chart-title').textContent + ': remaining usage, 0 to 100 percent. ' + samples.length + ' measured samples. Dashed lines mark unobserved intervals. Use left/right arrow keys to inspect measurements.');
   usageElement('empty').hidden = samples.length > 0;
   usageElement('from').textContent = samples.length ? usageDate(start) : '';
   usageElement('to').textContent = samples.length ? usageDate(end) : '';
 }
+function hideUsageTooltip() {
+  usageHoverIndex = null;
+  for (const id of ['tooltip', 'cursor', 'hover-point']) usageElement(id).hidden = true;
+}
+function showUsageTooltip(index) {
+  const samples = usageData?.history[usageView] || [], sample = samples[index];
+  if (!sample) return hideUsageTooltip();
+  usageHoverIndex = index;
+  const end = samples.at(-1).observed_at, span = usageView === 'weekly' ? 7 * 86400 : 86400;
+  const start = Math.max(end - span, Math.min(samples[0].observed_at, end - 1800));
+  const position = (12 + (sample.observed_at - start) / (end - start) * 976) / 10;
+  const chart = usageElement('chart'), tooltip = usageElement('tooltip');
+  for (const id of ['tooltip', 'cursor', 'hover-point']) usageElement(id).hidden = false;
+  usageElement('tooltip-time').textContent = new Date(sample.observed_at * 1000).toLocaleString('en-GB');
+  usageElement('tooltip-time').dateTime = new Date(sample.observed_at * 1000).toISOString();
+  usageElement('tooltip-value').textContent = usagePercent(sample.remaining) + ' remaining';
+  usageElement('cursor').style.left = position + '%';
+  usageElement('hover-point').style.left = position + '%';
+  usageElement('hover-point').style.top = (178 - sample.remaining * 1.64) / 1.9 + '%';
+  tooltip.style.left = Math.max(8, Math.min(chart.clientWidth - tooltip.offsetWidth - 8, chart.clientWidth * position / 100 - tooltip.offsetWidth / 2)) + 'px';
+}
+const usageChart = usageElement('chart');
+usageChart.onpointermove = event => {
+  const samples = usageData?.history[usageView] || [];
+  if (!samples.length) return;
+  const bounds = usageChart.getBoundingClientRect(), end = samples.at(-1).observed_at;
+  const span = usageView === 'weekly' ? 7 * 86400 : 86400;
+  const start = Math.max(end - span, Math.min(samples[0].observed_at, end - 1800));
+  const time = start + ((event.clientX - bounds.left) / bounds.width * 1000 - 12) / 976 * (end - start);
+  const index = samples.reduce((best, sample, index) => Math.abs(sample.observed_at - time) < Math.abs(samples[best].observed_at - time) ? index : best, 0);
+  showUsageTooltip(index);
+};
+usageChart.onpointerleave = usageChart.onblur = hideUsageTooltip;
+usageChart.onkeydown = event => {
+  if (event.key === 'Escape') return hideUsageTooltip();
+  const count = usageData?.history[usageView]?.length || 0;
+  const offset = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0;
+  if (!offset || !count) return;
+  event.preventDefault(); showUsageTooltip(Math.max(0, Math.min(count - 1, (usageHoverIndex ?? count - 1) + offset)));
+};
 async function refreshUsage(checked, accountId = null) {
   if (usageAccount !== accountId) {
     usageAccount = accountId; usageRetryAt = 0;

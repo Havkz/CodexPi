@@ -1,6 +1,6 @@
 'use strict';
 let state, dragging, refreshing = false, busy = false, connected = false, detailId = null, lifecycleIntent, pendingAction, submittingProject;
-let accountSubmitting = false, pendingAccount, removingAccount;
+let accountSubmitting = false, pendingAccount, removingAccount, accountOptionsSignature;
 const $ = id => document.getElementById(id);
 const node = (tag, text = '', cls = '') => {
   const el = document.createElement(tag); el.textContent = text; el.className = cls; return el;
@@ -81,24 +81,29 @@ function renderAccounts() {
   summary.setAttribute('aria-disabled', String(blocked || !connected));
   summary.classList.toggle('loading', pending); summary.setAttribute('aria-busy', String(pending));
   if (blocked) $('account-menu').open = false;
+  const signature = JSON.stringify([state.accounts, state.active_account, blocked, connected]);
+  if (signature !== accountOptionsSignature) {
   $('account-options').replaceChildren(...(state.accounts || []).map(account => {
     const row = node('div', '', 'account-option'), invalid = account.status !== 'ready';
-    const choose = button((invalid ? '⚠ ' : '') + account.name + (account.account_id === state.active_account ? ' · active' : ''),
-      () => accountAct(invalid ? 'account-add' : 'account-switch', {account_id: account.account_id}), null, invalid ? 'account-warning' : '');
+    const choose = button('', () => accountAct(invalid ? 'account-add' : 'account-switch', {account_id: account.account_id}), account.account_id + ':select', invalid ? 'account-warning' : '');
+    choose.append(node('span', (invalid ? '⚠ ' : '') + account.name, 'account-label'));
+    if (account.account_id === state.active_account) { choose.classList.add('account-selected'); choose.append(node('span', 'Active', 'account-active')); }
     choose.disabled = blocked || !connected || !invalid && account.account_id === state.active_account;
     if (invalid) choose.title = 'Sign in again to use this account';
     const remove = button('×', () => {
       removingAccount = account; $('account-remove-name').textContent = account.name;
       $('account-remove-error').textContent = ''; $('account-menu').open = false;
       $('account-remove-dialog').showModal();
-    }, null, 'danger');
+    }, account.account_id + ':remove', 'danger');
     remove.setAttribute('aria-label', 'Remove ' + account.name);
     remove.disabled = blocked || !connected || account.account_id === state.active_account;
     if (account.account_id === state.active_account) remove.title = 'Switch accounts before removing this one';
     row.append(choose, remove); return row;
   }));
-  const add = button('＋ Add account', () => accountAct('account-add'));
+  const add = button('＋ Add account', () => accountAct('account-add'), 'account-add');
   add.disabled = blocked || !connected; $('account-options').append(add);
+  accountOptionsSignature = signature;
+  }
   const labels = {waiting_turn: 'Waiting for the current turn…',
     checkpointing: 'Saving current login…', installing: 'Switching account…',
     reloading: 'Reconnecting Codex…', starting_login: 'Opening browser sign-in…',
@@ -198,22 +203,33 @@ function projectOverview(p, inDetail = false) {
 function renderQueue(queue) {
   $('queue-count').textContent = queue.length + ' projects'; $('queue-empty').hidden = queue.length > 0;
   const rows = queue.map((p, index) => {
-    const row = node('tr'); row.dataset.id = p.project_id; row.draggable = connected && !busy;
+    const row = node('tr'); row.dataset.id = p.project_id;
     const position = node('td'), controls = node('div', '', 'queue-position'); controls.append(node('span', String(p.queue_position).padStart(2, '0')));
-    for (const [text, offset] of [['↑', -1], ['↓', 1]]) {
-      const b = button(text, () => {
+    const grip = node('button', '', 'queue-grip'); grip.type = 'button'; grip.dataset.key = p.project_id + ':reorder';
+    grip.setAttribute('aria-label', 'Reorder ' + p.display_name); grip.setAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown');
+    grip.title = 'Drag to reorder · or focus and use the up/down arrow keys';
+    grip.disabled = busy || !connected || queue.length < 2; grip.draggable = !grip.disabled;
+    const dots = node('span', '', 'grip-dots'); dots.setAttribute('aria-hidden', 'true');
+    for (let dot = 0; dot < 6; dot++) dots.append(node('i')); grip.append(dots);
+    grip.onkeydown = event => {
+      const offset = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
+      if (!offset) return;
+      event.preventDefault();
+      if (!grip.disabled && index + offset >= 0 && index + offset < queue.length) {
         const ids = queue.map(item => item.project_id); [ids[index], ids[index + offset]] = [ids[index + offset], ids[index]];
         act('reorder', null, {ids});
-      }, p.project_id + ':move' + offset);
-      b.setAttribute('aria-label', p.display_name + (offset < 0 ? ' move up' : ' move down'));
-      b.disabled = busy || !connected || index + offset < 0 || index + offset >= queue.length; controls.append(b);
-    }
+      }
+    };
+    controls.append(grip);
     position.append(controls);
     const name = node('td'); name.append(button(p.display_name, () => showDetail(p.project_id), p.project_id + ':name', 'queue-name'), node('span', p.github_repo || 'Repository unavailable', 'queue-repo mono'));
     const status = node('td'); status.append(badge(projectStatus(p)));
     const actionCell = node('td'); actionCell.append(actions(p, true, true));
     row.append(position, name, status, node('td', date(p.last_activity), 'muted'), node('td', p.windows_required ? 'Required' : '—'), actionCell);
-    row.ondragstart = event => { dragging = p.project_id; event.dataTransfer.setData('text/plain', dragging); event.dataTransfer.effectAllowed = 'move'; row.classList.add('dragging'); };
+    row.ondragstart = event => {
+      if (grip.disabled || event.target !== grip) { event.preventDefault(); return; }
+      dragging = p.project_id; event.dataTransfer.setData('text/plain', dragging); event.dataTransfer.effectAllowed = 'move'; row.classList.add('dragging');
+    };
     row.ondragend = () => { dragging = null; row.classList.remove('dragging'); document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target')); };
     row.ondragover = event => { if (dragging) { event.preventDefault(); row.classList.add('drop-target'); } };
     row.ondragleave = () => row.classList.remove('drop-target');
@@ -301,7 +317,7 @@ async function refresh() {
   if (refreshing || dragging) return;
   refreshing = true;
   try {
-    const response = await fetch('/api/state');
+    const response = await fetch('/api/state', {signal: AbortSignal.timeout(10000)});
     if (response.status === 401) { location.reload(); return; }
     if (!response.ok) throw new Error('Dashboard unavailable');
     state = await response.json(); connected = true;
@@ -331,7 +347,10 @@ async function refresh() {
     connected = false; $('freshness').textContent = 'Disconnected · cached data';
     if (pendingAction && Date.now() > pendingAction.deadline) { pendingAction = null; busy = false; }
     $('notice').textContent = err.message; render();
-  } finally { refreshing = false; }
+  } finally {
+    refreshing = false;
+    document.body.classList.remove('dashboard-loading'); document.body.classList.add('dashboard-ready');
+  }
 }
 async function showDetail(id) {
   detailId = id; $('detail-title').textContent = state.projects.find(p => p.project_id === id)?.display_name || 'Project';
@@ -414,4 +433,8 @@ $('account-remove-form').onsubmit = async event => {
 };
 $('close-detail').onclick = () => $('project-dialog').close();
 $('project-dialog').addEventListener('close', () => { detailId = null; });
+$('account-menu').addEventListener('keydown', event => {
+  if (event.key === 'Escape') { event.preventDefault(); $('account-menu').open = false; $('account-menu').querySelector('summary').focus(); }
+});
+document.addEventListener('pointerdown', event => { if (!$('account-menu').contains(event.target)) $('account-menu').open = false; });
 refresh(); setInterval(() => { if (!dragging && (!busy || pendingAction) && (!document.hidden || pendingAction || pendingAccount || accountPending())) refresh(); }, 2000);

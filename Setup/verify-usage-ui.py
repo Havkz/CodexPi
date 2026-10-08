@@ -37,7 +37,8 @@ def main():
             'windows_required': False, 'codex_session_id': pid, 'project_path': '/fixture/' + pid}
     state = {'csrf': 'fixture-only', 'selected': 'running', 'pause_all': False,
         'auto_continue': True, 'auto_account_change': False, 'auto_boot_windows': True,
-        'accounts': [{'account_id': 'first', 'name': 'First account', 'status': 'ready'}],
+        'accounts': [{'account_id': 'first', 'name': 'First account', 'status': 'ready'},
+                     {'account_id': 'second', 'name': 'another-account-with-a-long-email@example.com', 'status': 'ready'}],
         'active_account': 'first', 'account_usage': {'checked_at': now},
         'projects': [project('running', 'active', 1), project('new-work', 'complete', 2, 1),
                      project('held', 'paused', 3), project('finished', 'complete', None)],
@@ -110,9 +111,24 @@ def main():
         page.locator('#usage-daily').click()
         expect(page.locator('#usage-daily')).to_have_attribute('aria-pressed', 'true')
         expect(page.locator('#usage-chart-title')).to_contain_text('Daily')
+        page.locator('#usage-chart').hover(position={'x': 18, 'y': 40})
+        expect(page.locator('#usage-tooltip')).to_be_visible()
+        assert page.evaluate('usageData.history[usageView].some(sample => new Date(sample.observed_at * 1000).toISOString() === document.querySelector("#usage-tooltip-time").dateTime)')
+        page.locator('#usage-section').screenshot(path=str(ROOT / 'state/usage-tooltip.png'))
+        page.locator('#usage-chart').press('Escape')
         if not live:
             assert page.locator('.usage-line').count() == 2
             assert page.locator('.usage-gap[d^="M"]').count() == 1
+            assert 'C' in page.locator('.usage-line').first.get_attribute('d')
+            chart = page.locator('#usage-chart')
+            chart.hover(position={'x': 18, 'y': 40})
+            expect(page.locator('#usage-tooltip-value')).to_have_text('100% remaining')
+            expect(page.locator('#usage-tooltip-time')).to_have_attribute('datetime',
+                page.evaluate('new Date(usageData.history.daily[0].observed_at * 1000).toISOString()'))
+            chart.press('ArrowRight')
+            expect(page.locator('#usage-tooltip-value')).to_have_text('30% remaining')
+            chart.press('Escape')
+            expect(page.locator('#usage-tooltip')).to_be_hidden()
             expect(page.locator('#usage-daily-reset')).to_contain_text('awaiting confirmation')
             expect(page.locator('#usage-daily-bar')).to_have_attribute('value', '0')
             # Reset time alone never refills usage. Only a new real measurement changes it.
@@ -134,6 +150,7 @@ def main():
             assert page.locator('.usage-point').evaluate_all('(els) => els.every(el => el.getAnimations().length === 0)')
             page.emulate_media(reduced_motion='no-preference')
             # An old account response must never repaint the next account's history.
+            state['active_account'] = 'second'
             page.evaluate('refreshUsage(-4, "second")')
             expect(page.locator('#usage-weekly-value')).to_have_text('—')
             expect(page.locator('#usage-empty')).to_be_visible()
@@ -154,6 +171,25 @@ def main():
             expect(queued.get_by_role('button', name='Run now', exact=True)).to_be_enabled()
             assert queued.get_by_role('button', name='Details', exact=True).count() == 0
             assert page.locator('#queue tr[data-id="running"]').get_by_role('button', name='Resume', exact=True).count() == 0
+            assert page.locator('.queue-grip').count() == 3
+            assert page.locator('.queue-grip').first.locator('.grip-dots i').count() == 6
+            # Reorder goes through the same API; no run-now, resume or second AI session.
+            reorders = []
+            def reorder(route):
+                body = route.request.post_data_json
+                assert body['action'] == 'reorder', body
+                reorders.append(body['ids'])
+                for position, pid in enumerate(body['ids'], 1):
+                    next(p for p in state['projects'] if p['project_id'] == pid)['queue_position'] = position
+                state['projects'].sort(key=lambda p: p['queue_position'] or 999)
+                route.fulfill(json={'ok': True})
+            page.route('**/api/action', reorder)
+            page.locator('#queue tr[data-id="new-work"] .queue-grip').press('ArrowUp')
+            expect(page.locator('#queue tr').first).to_have_attribute('data-id', 'new-work')
+            page.locator('#queue tr[data-id="new-work"] .queue-grip').drag_to(page.locator('#queue tr[data-id="running"]'))
+            expect(page.locator('#queue tr').first).to_have_attribute('data-id', 'running')
+            assert reorders == [['new-work', 'running', 'held'], ['running', 'new-work', 'held']]
+            page.unroute('**/api/action', reorder)
             finished = page.locator('#projects article').filter(has=page.get_by_role('heading', name='finished', exact=True))
             assert finished.get_by_role('button', name='Resume', exact=True).count() == 0
             data['windows'] = {}
@@ -177,15 +213,41 @@ def main():
         expect(checkbox).not_to_be_checked()
         page.locator('#lifecycle-cancel').click()
         page.locator('#usage-weekly').click()
+        page.wait_for_function('() => document.querySelector("#usage-section").getAnimations().every(animation => animation.playState === "finished")')
+        page.evaluate('window.savedEntryAnimation = document.querySelector("#usage-section").getAnimations()[0]; render()')
+        assert page.evaluate('savedEntryAnimation === document.querySelector("#usage-section").getAnimations()[0]')
+        menu = page.locator('#account-menu')
+        menu.locator('summary').click()
+        expect(page.locator('#account-options')).to_be_visible()
+        page.evaluate('window.savedAccountOption = document.querySelector(".account-option button"); render()')
+        assert page.evaluate('savedAccountOption === document.querySelector(".account-option button")')
+        assert page.locator('#account-options').evaluate('(el) => { const box = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height - 15)); }')
+        page.wait_for_function('() => document.querySelector("#account-options").getAnimations().every(animation => animation.playState === "finished")')
+        page.screenshot(path=str(ROOT / 'state/account-menu-desktop.png'))
+        menu.press('Escape')
+        assert menu.get_attribute('open') is None
         prefix = 'dashboard-preview' if args.preview else 'dashboard-live' if live else 'dashboard-fixture'
         page.screenshot(path=str(ROOT / 'state' / (prefix + '-desktop.png')), full_page=True)
         for width in (390, 320):
             page.set_viewport_size({'width': width, 'height': 1000})
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
             expect(page.locator('#usage-weekly')).to_be_visible()
+            menu.locator('summary').click()
+            bounds = page.locator('#account-options').bounding_box()
+            assert bounds['x'] >= 0 and bounds['x'] + bounds['width'] <= width
+            assert page.locator('#account-options').evaluate('(el) => el.scrollWidth <= el.clientWidth')
+            assert page.locator('#account-options').evaluate('(el) => { const box = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height - 15)); }')
+            page.screenshot(path=str(ROOT / 'state' / ('account-menu-' + prefix + '-' + str(width) + '.png')))
+            menu.press('Escape')
             page.screenshot(path=str(ROOT / 'state' / (prefix + '-mobile-' + str(width) + '.png')), full_page=True)
         page.reload()
+        expect(page.locator('body')).to_have_class('dashboard-ready')
         expect(page.locator('#usage-weekly')).to_have_attribute('aria-pressed', 'true')
+        if not live:
+            page.route('http://codexpi.test/api/state', lambda route: route.fulfill(status=503, json={'error': 'Fixture offline'}))
+            page.reload()
+            expect(page.locator('#notice')).to_have_text('Dashboard unavailable')
+            expect(page.locator('body')).to_have_class('dashboard-ready')
         assert not errors, errors
         assert not violations, violations
         assert not mutations, mutations

@@ -6,14 +6,14 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16 32x32 48x48">
   <link rel="stylesheet" href="/static/style.css"><script src="/static/usage.js" defer></script><script src="/static/dashboard.js" defer></script>
 </head>
-<body>
+<body class="dashboard-loading">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar"><a class="brand" href="/" aria-label="CodexPi home"><span class="brand-mark" aria-hidden="true">C<span>›</span></span>CodexPi</a><div id="top-status" class="top-status" aria-label="System health"></div><button id="logout">Sign out</button></header>
   <main id="main">
     <div class="page-heading"><h1>Control room<span class="accent">.</span></h1><div class="heading-controls"><span id="freshness" class="muted" role="status">Connecting…</span><button id="pause-all">Pause all</button></div></div>
     <p id="notice" class="notice" role="status" aria-live="polite"></p>
     <div class="account-control">
-      <details id="account-menu" class="account-menu"><summary><span class="muted">Codex account</span><strong id="account-current">Confirming…</strong></summary><div id="account-options" class="account-options"></div></details>
+      <details id="account-menu" class="account-menu"><summary><span class="muted">Codex account</span><strong id="account-current">Confirming…</strong></summary><div id="account-options" class="account-options" role="group" aria-label="Saved accounts"></div></details>
       <p id="account-status" class="muted" role="status" aria-live="polite"></p>
       <div id="account-recovery" class="actions" hidden><button id="account-retry" type="button">Check again</button><button id="account-restore" type="button">Restore previous account</button></div>
     </div>
@@ -22,7 +22,7 @@
       <div id="usage-chart-card" class="panel usage-weekly">
         <div class="usage-heading"><h3 id="usage-chart-title">Weekly</h3><div class="usage-switch" role="group" aria-label="Usage period"><button id="usage-weekly" type="button" aria-pressed="true">Weekly</button><button id="usage-daily" type="button" aria-pressed="false">Daily / 5h</button></div></div>
         <div class="usage-total"><strong id="usage-chart-value">—</strong><span class="muted">remaining</span></div>
-        <div id="usage-chart" class="usage-chart" role="img" aria-label="Loading usage history"></div>
+        <div id="usage-chart" class="usage-chart" role="img" tabindex="0" aria-label="Loading usage history" aria-describedby="usage-tooltip"><div id="usage-cursor" class="usage-cursor" hidden></div><span id="usage-hover-point" class="usage-hover-point" hidden></span><div id="usage-tooltip" class="usage-tooltip" role="tooltip" hidden><time id="usage-tooltip-time"></time><strong id="usage-tooltip-value"></strong></div></div>
         <div class="usage-times muted"><time id="usage-from"></time><time id="usage-to"></time></div>
         <p id="usage-empty" class="usage-empty" hidden>Waiting for usage data</p>
       </div>
