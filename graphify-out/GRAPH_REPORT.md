@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-08)
 
 ## Corpus Check
-- 92 files · ~118,919 words
+- 92 files · ~119,043 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 659 nodes · 1716 edges · 55 communities (36 shown, 19 thin omitted)
+- 659 nodes · 1719 edges · 53 communities (34 shown, 19 thin omitted)
 - Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 193 edges (avg confidence: 0.7)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fe98674f`
+- Built from commit: `925cda56`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -63,8 +63,6 @@
 - export
 - test-live-lifecycle.py
 - state
-- test-live-lifecycle.py
-- verify-backup-restore.py
 - .make_controller
 
 ## God Nodes (most connected - your core abstractions)
@@ -94,15 +92,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (55 total, 19 thin omitted)
+## Communities (53 total, 19 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
 Nodes (6): Changes, Completion gate follow-up, Lifecycle repair evidence, 2026-09-23, Reproduction and exact causes, Verification boundaries and remaining work, Verified live
 
 ### Community 1 - "Controller"
-Cohesion: 0.10
-Nodes (17): Native, tui_proxy(), digest(), export(), git(), main(), native_state(), Export one explicitly selected Windows project/session without changing it.  The (+9 more)
+Cohesion: 0.08
+Nodes (31): daily_update(), idle(), Daily official CLI update, only at a proven idle single-runtime boundary., GoalSource, idle_thread(), Native, process_in_pane(), Native Codex RPC and the scheduler's local TUI admission gate. (+23 more)
 
 ### Community 2 - "windows_worker.py"
 Cohesion: 0.10
@@ -110,7 +108,7 @@ Nodes (20): codex_login_url(), Only the native managed OAuth ceremony, never an 
 
 ### Community 3 - "deployment.py"
 Cohesion: 0.09
-Nodes (46): atomic_write(), slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks. (+38 more)
+Nodes (49): slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+41 more)
 
 ### Community 4 - "Native"
 Cohesion: 0.22
@@ -162,7 +160,7 @@ Nodes (3): main(), observe(), Start/observe one real deployment goal; never repl
 
 ### Community 34 - "migration.py"
 Cohesion: 0.09
-Nodes (49): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), choose_account(), failed_resume(), finish_switch(), fresh_usage() (+41 more)
+Nodes (50): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), choose_account(), failed_resume(), finish_switch(), fresh_usage() (+42 more)
 
 ### Community 35 - "Bot"
 Cohesion: 0.33
@@ -205,24 +203,16 @@ Cohesion: 0.50
 Nodes (3): Durable manual pause and real quota evidence, 2026-09-24, Pause authority, Real usage-limit history
 
 ### Community 49 - "export"
-Cohesion: 0.08
-Nodes (25): notification(), command(), Controller, daily_update(), idle(), Daily official CLI update, only at a proven idle single-runtime boundary., GoalSource, idle_thread() (+17 more)
+Cohesion: 0.15
+Nodes (3): notification(), command(), Controller
 
 ### Community 50 - "test-live-lifecycle.py"
-Cohesion: 0.22
-Nodes (3): RuntimeError, Probe the installed native protocol without requesting any model work., rpc()
+Cohesion: 0.09
+Nodes (19): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+11 more)
 
 ### Community 51 - "state"
-Cohesion: 0.22
-Nodes (6): Exercise the two explicitly named E2E projects through the authenticated dashboa, state(), main(), Live recovery; explicit --crash or --worker-restart injects a fault.  Never kill, main(), Resume only the existing queue E2E goal; never create or replace an objective.
-
-### Community 52 - "test-live-lifecycle.py"
-Cohesion: 0.67
-Nodes (5): main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted()
-
-### Community 53 - "verify-backup-restore.py"
-Cohesion: 0.53
-Nodes (5): identities(), main(), Isolated infrastructure-DB restore drill on Pi; never starts or restores live se, readonly(), services()
+Cohesion: 0.43
+Nodes (4): main(), Create a lossless, line-addressed audit from the user's specification.  Every no, reconcile(), AuditTests
 
 ## Knowledge Gaps
 - **76 isolated node(s):** `install-base.sh script`, `PATH`, `Alltag`, `Installation und Betrieb`, `Dokumentation` (+71 more)
@@ -232,7 +222,7 @@ Nodes (5): identities(), main(), Isolated infrastructure-DB restore drill on Pi;
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `SchedulerTests` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `DeploymentTests`, `Bot`, `SchedulerTests`, `export`, `test-live-lifecycle.py`, `verify-backup-restore.py`, `.make_controller`, `export`?**
+- **Why does `Database` connect `SchedulerTests` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `DeploymentTests`, `Bot`, `SchedulerTests`, `export`, `test-live-lifecycle.py`, `export`, `.make_controller`?**
   _High betweenness centrality (0.088) - this node is a cross-community bridge._
 - **Why does `Controller` connect `export` to `Controller`, `windows_worker.py`, `deployment.py`, `SchedulerTests`, `Bot`, `SchedulerTests`, `export`, `.make_controller`?**
   _High betweenness centrality (0.054) - this node is a cross-community bridge._

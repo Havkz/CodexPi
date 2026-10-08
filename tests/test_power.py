@@ -2,8 +2,11 @@ import asyncio
 from datetime import datetime, timezone
 from contextlib import closing
 import json
+import errno
+import logging
 from pathlib import Path
 import tempfile
+import sys
 import time
 from types import SimpleNamespace
 import unittest
@@ -162,6 +165,16 @@ class PowerTests(unittest.IsolatedAsyncioTestCase):
                 self.assertTrue((await worker.power_command(shutdown))['accepted'])
                 self.assertFalse((await worker.power_command(shutdown))['accepted'])
                 execute.assert_awaited_once_with(['shutdown.exe', '/s', '/t', '0'], worker.root, 10)
+            from app.windows_worker import main
+            with patch.dict(sys.modules, {'msvcrt': SimpleNamespace(LK_NBLCK=1,
+                    locking=lambda *_: (_ for _ in ()).throw(PermissionError(errno.EACCES, 'locked')))}), \
+                    patch.object(sys, 'argv', ['worker', '--boot']), \
+                    patch('app.windows_worker.ROOT', worker.root), \
+                    patch('app.windows_worker.RotatingFileHandler', return_value=logging.NullHandler()), \
+                    patch('app.windows_power.desktop_in_use', return_value=True), \
+                    patch('app.windows_worker.protect_secret') as decrypt:
+                main()
+                decrypt.assert_not_called()  # A racing boot task cannot start a second executor.
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ import asyncio
 import base64
 import contextlib
 import ctypes
+import errno
 from ctypes import wintypes
 import json
 import logging
@@ -458,17 +459,28 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--boot', action='store_true')
     args = parser.parse_args()
-    state = ROOT / 'windows-worker/state'
-    state.mkdir(parents=True, exist_ok=True)
-    lock = (state / 'worker.lock').open('a+b')
-    lock.seek(0)
-    msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
-    config = json.loads((ROOT / 'windows-worker/config.json').read_text())
-    secret = protect_secret(base64.b64decode(config['secret_dpapi']), decrypt=True).decode()
     logs = ROOT / 'windows-worker/logs'
     logs.mkdir(parents=True, exist_ok=True)
     handler = RotatingFileHandler(logs / 'worker.log', maxBytes=2 * 1024 * 1024, backupCount=5)
     logging.basicConfig(level=logging.INFO, handlers=[handler], format='%(asctime)s %(levelname)s %(message)s')
+    logging.info('Worker starting in %s context', 'boot' if args.boot else 'interactive')
+    state = ROOT / 'windows-worker/state'
+    state.mkdir(parents=True, exist_ok=True)
+    lock = (state / 'worker.lock').open('a+b')
+    lock.seek(0)
+    try:
+        msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+    except OSError as exc:
+        from .windows_power import desktop_in_use
+        if args.boot and exc.errno == errno.EACCES and desktop_in_use():
+            lock.close()
+            logging.info('Boot worker skipped: a worker already owns the ledger and a desktop user is logged in')
+            return
+        raise
+    logging.info('Worker ledger lock acquired')
+    config = json.loads((ROOT / 'windows-worker/config.json').read_text())
+    secret = protect_secret(base64.b64decode(config['secret_dpapi']), decrypt=True).decode()
+    logging.info('Worker credential loaded')
     try:
         boot_at = boot_time()
     except (OSError, ValueError, subprocess.SubprocessError):
@@ -479,4 +491,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as exc:
+        logging.error('Worker initialization failed (%s, Windows error %s)', type(exc).__name__, getattr(exc, 'winerror', None))
+        raise
