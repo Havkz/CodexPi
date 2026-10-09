@@ -101,8 +101,14 @@ async def tick(controller):
     event = db.conn.execute("SELECT MAX(event_id) FROM events WHERE project_id=? AND kind='stalled'",
                            (project['project_id'],)).fetchone()[0]
     trigger = [project['project_id'], project['codex_session_id'], event]
-    if state.get('trigger') == trigger:
-        return
+    request_wake(controller, trigger)
+
+
+def request_wake(controller, trigger):
+    db, now = controller.db, time.time()
+    state = db.setting('windows_power', {})
+    if state.get('phase') in ('waking', 'claiming') or state.get('trigger') == trigger:
+        return state
     telemetry = db.setting('windows_power_observation', {})
     state = {'id': str(uuid.uuid4()), 'trigger': trigger, 'requested_at': now, 'phase': 'waking',
              'previous_boot': telemetry.get('boot_at'), 'message': 'Wake-on-LAN sent; waiting for the authenticated Windows boot worker.'}
@@ -115,6 +121,7 @@ async def tick(controller):
     except (OSError, ValueError) as exc:
         state.update(phase='failed', message=str(exc))
         db.set_setting('windows_power', state)
+    return state
 
 
 async def observe(controller, observation):

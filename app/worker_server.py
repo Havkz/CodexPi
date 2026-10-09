@@ -149,8 +149,9 @@ async def dispatch_pending(controller):
             return
 
 
-async def job_denial(controller, project):
-    if controller.db.setting('windows_power', {}).get('phase') == 'shutdown_sent':
+async def job_denial(controller, project, *, waking=False):
+    if (controller.db.setting('windows_power', {}).get('phase') == 'shutdown_sent'
+            and not (waking and not controller.windows_online)):
         return 'Windows shutdown is in progress; wait for the next confirmed worker boot'
     account_hold = controller.account_holds_goal(project)
     switch = controller.db.setting('account_switch', {})
@@ -234,6 +235,30 @@ async def submit_job(controller, body):
         # the existing job; the next signed heartbeat retries dispatch safely.
         logging.getLogger('worker').warning('Job accepted; dispatch deferred: %s', controller.redactor.clean(str(exc)))
     return result
+
+
+async def request_windows(controller, body):
+    async with controller.lock:
+        project = controller.db.get(body['project_id'])
+        denial = await job_denial(controller, project, waking=True)
+        if denial:
+            raise ValueError(denial)
+        if controller.windows_online:
+            return {'online': True}
+        if not controller.db.setting('auto_boot_windows', False):
+            raise ValueError('Auto Boot Windows is disabled; start Windows or enable it in the dashboard')
+        thread = (await controller.native.rpc('thread/read', {'threadId': project['codex_session_id'],
+                                                             'includeTurns': False}))['thread']
+        turns = (await controller.native.rpc('thread/turns/list', {'threadId': project['codex_session_id'],
+            'limit': 1, 'sortDirection': 'desc'}))['data']
+        if (thread['id'] != project['codex_session_id'] or thread['cwd'] != project['project_path']
+                or thread['status']['type'] != 'active' or not turns or turns[0]['status'] != 'inProgress'):
+            raise ValueError('Only the confirmed executing native session may wake Windows')
+        from .power import request_wake
+        state = request_wake(controller, [project['project_id'], project['codex_session_id'], turns[0]['id']])
+        if state.get('phase') == 'failed':
+            raise ValueError(state['message'])
+        return {'online': False, 'operation_id': state['id'], 'message': state['message']}
 
 
 async def _submit_job(controller, body):

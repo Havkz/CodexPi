@@ -19,7 +19,7 @@ from app.native import tui_proxy
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):
     async def test_native_transport_preserves_history_larger_than_thirty_two_megabytes(self):
         from aiohttp import ClientSession
-        from app.native import Native
+        from app.native import Native, NativeError
         size = 33 * 1024 * 1024
         async def server(request):
             socket = web.WebSocketResponse()
@@ -48,6 +48,13 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 self.assertFalse(native.reader.done())
             finally:
                 await native.close()
+        async with ClientSession() as failed_client:
+            with patch('app.native.UnixConnector', return_value=None), \
+                    patch('app.native.ClientSession', return_value=failed_client), \
+                    patch.object(failed_client, 'ws_connect', AsyncMock(side_effect=ConnectionError('Socket unavailable'))):
+                with self.assertRaisesRegex(NativeError, 'Native connection failed: Socket unavailable'):
+                    await Native('unused').connect()
+            self.assertTrue(failed_client.closed)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

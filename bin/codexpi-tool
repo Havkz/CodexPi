@@ -5,16 +5,41 @@ import json
 from pathlib import Path
 import shlex
 import sys
+import time
 
-from aiohttp import ClientSession, UnixConnector
+from aiohttp import ClientSession, ClientTimeout, UnixConnector
 
 ROOT = Path('/home/raspberry/CodexPi')
+
+
+async def windows_ready(client, project_id):
+    async with client.post('http://localhost/windows-wake', json={'project_id': project_id}, timeout=ClientTimeout(total=15)) as response:
+        result = await response.json()
+        if response.status != 200:
+            raise SystemExit(result.get('error', 'Windows wake failed'))
+    if result['online']:
+        return
+    print(result['message'], flush=True)
+    deadline = time.monotonic() + 610
+    while time.monotonic() < deadline:
+        async with client.get('http://localhost/windows-status', timeout=ClientTimeout(total=15)) as response:
+            status = await response.json()
+        if status['online']:
+            return
+        if not status.get('auto_boot_windows'):
+            raise SystemExit('Auto Boot Windows was disabled; no job was submitted')
+        power = status.get('windows_power', {})
+        if power.get('phase') in ('failed', 'released', 'shutdown_sent'):
+            raise SystemExit(power.get('message', 'Windows wake cancelled; no job was submitted'))
+        await asyncio.sleep(2)
+    raise SystemExit('Windows boot timed out; no confirmed worker and no job submitted. Do not blindly retry.')
 
 
 async def main():
     parser = argparse.ArgumentParser(description='Local infrastructure tool for the single Codex worker')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('windows-status')
+    sub.add_parser('windows-wake', help='Wake Windows and wait for its signed worker heartbeat, without stalling the goal')
     job = sub.add_parser('windows-job')
     job.add_argument('--commit', required=True)
     job.add_argument('--reason', required=True)
@@ -37,7 +62,13 @@ async def main():
             if directory == directory.parent:
                 raise SystemExit('Run the tool from a managed CodexPi project')
             directory = directory.parent
-        argv = args.argv[1:] if args.argv[:1] == ['--'] else args.argv
+        raw_argv = getattr(args, 'argv', [])
+        argv = raw_argv[1:] if raw_argv[:1] == ['--'] else raw_argv
+        project_id = (directory / '.codexpi/project-id').read_text()
+        if args.command == 'windows-wake':
+            await windows_ready(client, project_id)
+            print('Windows worker online and ready')
+            return
         if args.command == 'deploy-pi':
             body = {'project_id': (directory / '.codexpi/project-id').read_text(),
                     'goal_requires_24x7': args.goal_requires_24x7, 'reason': args.reason,
@@ -48,7 +79,11 @@ async def main():
                     raise SystemExit(result.get('error', 'Deployment request failed'))
                 print(json.dumps(result))
                 return
-        body = {'project_id': (directory / '.codexpi/project-id').read_text(),
+        async with client.get('http://localhost/windows-status') as response:
+            status = await response.json()
+        if not status['online'] and status.get('auto_boot_windows'):
+            await windows_ready(client, project_id)
+        body = {'project_id': project_id,
                 'commit': args.commit, 'reason': args.reason, 'timeout': args.timeout,
                 'artifacts': args.artifact, 'argv': argv}
         async with client.post('http://localhost/jobs', json=body) as response:
@@ -66,4 +101,5 @@ async def main():
             await asyncio.sleep(2)
 
 
-asyncio.run(main())
+if __name__ == '__main__':
+    asyncio.run(main())

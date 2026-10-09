@@ -1,4 +1,6 @@
 import asyncio
+from importlib.machinery import SourceFileLoader
+from importlib.util import module_from_spec, spec_from_loader
 from datetime import datetime, timezone
 from contextlib import closing
 import json
@@ -10,7 +12,7 @@ import sys
 import time
 from types import SimpleNamespace
 import unittest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 import uuid
 
 from app.controller import Controller
@@ -20,6 +22,35 @@ from app.windows_worker import Worker
 
 
 class PowerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_native_tool_waits_for_boot_once_and_stops_on_failure_or_timeout(self):
+        loader = SourceFileLoader('codexpi_tool', str(Path(__file__).parents[1] / 'bin/codexpi-tool'))
+        tool = module_from_spec(spec_from_loader(loader.name, loader))
+        loader.exec_module(tool)
+        def response(body):
+            context = AsyncMock()
+            context.__aenter__.return_value = SimpleNamespace(status=200, json=AsyncMock(return_value=body))
+            return context
+        offline = {'online': False, 'auto_boot_windows': True, 'windows_power': {'phase': 'waking'}}
+        client = SimpleNamespace(post=Mock(return_value=response({'online': False, 'message': 'Waiting'})),
+                                 get=Mock(side_effect=[response(offline), response({'online': True})]))
+        with patch.object(tool.asyncio, 'sleep', AsyncMock()):
+            await tool.windows_ready(client, 'project')
+        client.post.assert_called_once()
+        self.assertEqual(client.post.call_args.kwargs['json'], {'project_id': 'project'})
+        self.assertEqual(client.get.call_count, 2)
+        for status, message in (({**offline, 'auto_boot_windows': False}, 'disabled'),
+                                ({**offline, 'windows_power': {'phase': 'failed', 'message': 'Wake timed out'}}, 'timed out')):
+            client.post.reset_mock()
+            client.get.side_effect = None
+            client.get.return_value = response(status)
+            with self.assertRaisesRegex(SystemExit, message):
+                await tool.windows_ready(client, 'project')
+            client.post.assert_called_once()  # Never retry a possibly delivered wake.
+        client.post.reset_mock()
+        with patch.object(tool.time, 'monotonic', side_effect=[0, 611]), self.assertRaisesRegex(SystemExit, 'timed out'):
+            await tool.windows_ready(client, 'project')
+        client.post.assert_called_once()
+
     def controller(self, directory):
         c = Controller.__new__(Controller)
         c.db = Database(Path(directory) / 'state.db')

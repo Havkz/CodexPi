@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "Setup/install-worker.ps1": {
-    "mtime": 1791476011.8997698,
-    "ast_hash": "fe1b5422621f237983e086471b665315",
+    "mtime": 1791562231.6229043,
+    "ast_hash": "e9437c1bad3f5905cf8cda1a810e05ac",
     "semantic_hash": ""
   },
   "Setup/probe-native.py": {
@@ -90,13 +90,13 @@
     "semantic_hash": ""
   },
   "app/main.py": {
-    "mtime": 1791299015.2855687,
-    "ast_hash": "93385d504b4a2d5b42e474730791c979",
+    "mtime": 1791562057.031688,
+    "ast_hash": "1547d14bb0877d16283223901de1cf48",
     "semantic_hash": ""
   },
   "app/native.py": {
-    "mtime": 1791561444.8502812,
-    "ast_hash": "764e36b6b8455539afe48427d8413d2f",
+    "mtime": 1791562882.8335545,
+    "ast_hash": "08b56113a9e1dd5887e40923fae135cb",
     "semantic_hash": ""
   },
   "app/web.py": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "app/worker_server.py": {
-    "mtime": 1791559280.0993843,
-    "ast_hash": "6f9a245e15a1d69b77855240599cff04",
+    "mtime": 1791562120.6978424,
+    "ast_hash": "2baf7b1932548a4f21e68c4cb0523144",
     "semantic_hash": ""
   },
   "bin/codexpi": {
@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "bin/codexpi-tool": {
-    "mtime": 1790256053.8245635,
-    "ast_hash": "e1d25aa0077f0b48575a4008fad75b61",
+    "mtime": 1791562231.6213903,
+    "ast_hash": "c24710bc890dbb05e1af42d9356c5b2c",
     "semantic_hash": ""
   },
   "config/goal-hooks.json": {
@@ -175,13 +175,13 @@
     "semantic_hash": ""
   },
   "templates/AGENTS.md": {
-    "mtime": 1791559280.0993843,
-    "ast_hash": "e8a51672ec4cb88aed3a7347eeabc5f8",
+    "mtime": 1791562120.6993678,
+    "ast_hash": "52508d9353a4d18351d2fa7b604ba7fb",
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1791561502.4841952,
-    "ast_hash": "cbde766042de130f2403efc5865fc2f9",
+    "mtime": 1791562912.7455666,
+    "ast_hash": "025dcf51ce61c956347065232df94d75",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "tests/test_worker_server.py": {
-    "mtime": 1791559247.1614208,
-    "ast_hash": "5dd0a385d9b5efb082c20ed4726d137f",
+    "mtime": 1791562232.9038482,
+    "ast_hash": "be35fc0caaac8288865cbf5d6f86e00d",
     "semantic_hash": ""
   },
   "docs/optimization.md": {
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "app/power.py": {
-    "mtime": 1791478358.0281143,
-    "ast_hash": "566c6c910d6928fb4fd454916a460838",
+    "mtime": 1791562120.6962423,
+    "ast_hash": "9c5ae834be3c85d03f1a4245154ae488",
     "semantic_hash": ""
   },
   "app/windows_power.py": {
@@ -470,8 +470,13 @@
     "semantic_hash": ""
   },
   "tests/test_power.py": {
-    "mtime": 1791478341.1453576,
-    "ast_hash": "f63a779877bb0a0ffa98c24e695f5e06",
+    "mtime": 1791562882.8346288,
+    "ast_hash": "4543275cf73c17a8d6fc8546ed953e38",
+    "semantic_hash": ""
+  },
+  "Setup/repair-wol.ps1": {
+    "mtime": 1791562231.6213903,
+    "ast_hash": "32d9936562f6955c6bd7fe54467fcea3",
     "semantic_hash": ""
   }
 }

@@ -14,8 +14,16 @@ where meaningful; do not create a pointless platform matrix for a platform-speci
 
 Use /home/raspberry/CodexPi/bin/codexpi-tool for infrastructure operations.
 Check `codexpi-tool windows-status` before native Windows tests. When Windows is
-required and offline, call the tool to record the exact blocker; it sets the
-native blocked state (shown as stalled). Stop. Do not repeat an impossible test.
+required and offline, first run `codexpi-tool windows-wake`. With Auto Boot Windows
+enabled it sends one journaled WoL request and waits up to ten minutes for the
+authenticated worker, without blocking the goal or sending a Stalled notification.
+`windows-job` also performs this boot/wait automatically when Auto Boot is enabled.
+After a successful wake, execute the Windows work in this same session. Do not
+stall just because boot is in progress. Only if boot fails, times out, or Auto Boot
+is disabled, record the exact blocker and set the native goal to blocked. Stop;
+do not blindly repeat a timed-out boot or an ambiguously delivered Windows job.
+CodexPi shuts down only a proven automation-owned boot, after related work is
+idle; do not run shutdown yourself or shut down an already user-started PC.
 One genuinely relevant fix attempt is allowed when the cause may be something else.
 Windows being offline does not stop ordinary Linux work.
 

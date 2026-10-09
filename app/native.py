@@ -113,8 +113,10 @@ class Native:
                 await self.ws.send_json({'method': 'initialized', 'params': {}})
             self.connected_at = time.monotonic()
             return self
-        except BaseException:
+        except BaseException as exc:
             await self.close()
+            if isinstance(exc, Exception) and not isinstance(exc, NativeError):
+                raise NativeError('Native connection failed: ' + str(exc)) from None
             raise
 
     async def read(self):

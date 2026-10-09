@@ -201,6 +201,48 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
         c.db.set_setting('prompt_active/first', None)
         self.assertIsNotNone(await job_denial(c, c.db.get('first')))
 
+    async def test_native_windows_wake_precedes_stall_and_is_journaled_once_per_turn(self):
+        from app.worker_server import request_windows
+        from app import power
+        c = self.c
+        c.config = {'lan_subnet': '192.168.2.0/24'}
+        c.worker_seen = 0
+        c.db.set_setting('auto_boot_windows', True)
+        c.db.set_setting('windows_power_observation', {'mac': '74-56-3C-2B-FD-0F', 'address': '192.168.2.200',
+            'boot_at': time.time() - 1000, 'startup_ready': True})
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/goal/get':
+                return {'goal': {'status': 'active'}}
+            if method == 'thread/read':
+                return {'thread': {'id': 'first', 'cwd': str(c.root / 'first'), 'status': {'type': 'active'}}}
+            if method == 'thread/turns/list':
+                return {'data': [{'id': 'native-turn', 'status': 'inProgress'}]}
+            raise AssertionError(method)
+        c.native.rpc.side_effect = rpc
+        with patch('app.power.wake') as wake:
+            first = await request_windows(c, {'project_id': 'first'})
+            repeat = await request_windows(c, {'project_id': 'first'})
+            self.assertEqual(first['operation_id'], repeat['operation_id'])
+            c.db.conn.close()
+            c.db = Database(c.root / 'test.db')
+            self.addCleanup(c.db.conn.close)
+            self.assertEqual((await request_windows(c, {'project_id': 'first'}))['operation_id'], first['operation_id'])
+            await power.tick(c)
+            wake.assert_called_once()
+            self.assertEqual(c.db.get('first')['goal_status'], 'active')
+            self.assertEqual(c.db.conn.execute('SELECT count(*) FROM events').fetchone()[0], 0)
+            with self.assertRaisesRegex(ValueError, 'selected, executing'):
+                await request_windows(c, {'project_id': 'second'})
+            stamp = c.db.setting('windows_power')['requested_at']
+            with patch('app.power.time.time', return_value=stamp + 601):
+                await power.tick(c)
+                with self.assertRaisesRegex(ValueError, 'timed out'):
+                    await request_windows(c, {'project_id': 'first'})
+            wake.assert_called_once()
+            c.worker_seen = time.monotonic()
+            self.assertEqual(await request_windows(c, {'project_id': 'first'}), {'online': True})
+            wake.assert_called_once()
+
     async def test_dispatch_rechecks_queue_and_does_not_head_of_line_block(self):
         c = self.c
         self.pending('old-paused', 'second')

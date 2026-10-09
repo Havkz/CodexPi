@@ -66,6 +66,7 @@ if ($AutoBoot) {
         $credential = $null
     }
     Enable-NetAdapterPowerManagement -Name $adapter.Name -WakeOnMagicPacket -NoRestart | Out-Null
+    & (Join-Path $taskRoot 'Setup\repair-wol.ps1')
     $powerConfig = @{mac=$adapter.MacAddress; address=$address.IPAddress; startup_ready=$true} | ConvertTo-Json
     Set-Content -LiteralPath (Join-Path $workerDirectory 'power.json') -Value $powerConfig -Encoding UTF8
     Get-ScheduledTask -TaskName 'CodexPi Windows Boot Worker' | Select-Object TaskName, State
