@@ -19,11 +19,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         if: matrix.platform == 'windows'
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install -r requirements.txt
+          version: '0.10.7'
+          activate-environment: true
+          no-project: true
+          enable-cache: false
+      - run: uv pip install -r requirements.txt
         if: matrix.platform == 'windows'
       - run: python -m unittest discover -s tests
         if: matrix.platform == 'windows'

@@ -16,6 +16,22 @@ BASE = 'https://releases.ubuntu.com/noble/'
 
 
 def run(*args, **kwargs):
+    if str(args[0]).lower() == 'wsl.exe' and not kwargs.get('capture_output'):
+        kwargs['capture_output'] = True
+        text = kwargs.pop('text', False)
+        if text and isinstance(kwargs.get('input'), str):
+            kwargs['input'] = kwargs['input'].encode()
+        result = subprocess.run(args, **kwargs)
+        output = result.stdout + result.stderr
+        decoded = output.decode('utf-16-le' if output.count(b'\x00') > len(output) // 5 else 'utf-8',
+                                errors='replace').replace('\x00', '')
+        if decoded.strip():
+            print(decoded, flush=True)
+        if result.returncode:
+            suffix = (' Finish the pending Windows restart before retrying Linux CI.'
+                      if 'HCS_E_SERVICE_NOT_AVAILABLE' in decoded else '')
+            raise RuntimeError('Linux CI could not run under the Actions service: ' + decoded[-1800:] + suffix)
+        return result
     result = subprocess.run(args, **kwargs)
     if result.returncode:
         raise RuntimeError('Linux CI command failed: ' + str(args[0]))

@@ -23,12 +23,13 @@ class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
             c.db.set_setting('auto_boot_windows', True)
             self.assertTrue(actions.busy(c))  # Missing/stale observation cannot mean idle.
             queued = True
+            job_status = 'queued'
             async def api(*args, **kwargs):
                 endpoint = args[-1]
                 if endpoint.endswith('/runners'):
                     data = {'runners': [{'id': 21, 'os': 'Windows', 'labels': [{'name': 'codexpi'}]}]}
                 elif '/jobs?' in endpoint:
-                    data = [{'jobs': [{'id': 11, 'name': 'tests', 'status': 'queued', 'runner_id': None,
+                    data = [{'jobs': [{'id': 11, 'name': 'tests', 'status': job_status, 'runner_id': None,
                                        'labels': ['self-hosted', 'Windows', 'codexpi']}]}]
                 else:
                     data = [{'workflow_runs': [{'id': 10}]}] if queued and 'status=queued' in endpoint else [{'workflow_runs': []}]
@@ -63,6 +64,19 @@ class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
                     await actions.poll(c)
                     self.assertFalse(actions.busy(c))
                     self.assertNotIn('github_actions', c.health_errors)
+                    queued = True
+                    c.db.set_setting('github_actions', {'checked_at': 0,
+                        'first_seen': {'Havkz/CodexPi/11': time.time() - 901}})
+                    await actions.poll(c)
+                    self.assertIn('15 minutes', c.db.setting('github_actions')['error'])
+                    self.assertTrue(actions.busy(c))
+                    job_status = 'in_progress'
+                    state = c.db.setting('github_actions')
+                    state['checked_at'] = 0
+                    c.db.set_setting('github_actions', state)
+                    await actions.poll(c)
+                    self.assertNotIn('error', c.db.setting('github_actions'))
+                    self.assertTrue(actions.busy(c))  # Confirmed running CI still owns priority.
             finally:
                 c.db.conn.close()
 

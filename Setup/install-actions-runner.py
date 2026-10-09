@@ -43,6 +43,7 @@ def configure_hooks(names):
         values = {
             'ACTIONS_RUNNER_HOOK_JOB_STARTED': str(ROOT / 'Setup/actions-job-start.ps1'),
             'ACTIONS_RUNNER_HOOK_JOB_COMPLETED': str(ROOT / 'Setup/actions-job-finish.ps1'),
+            'PSExecutionPolicyPreference': 'RemoteSigned',
             'PATH': str(Path(sys.executable).parent) + ';C:\\Program Files\\PowerShell\\7;'
                     'C:\\Program Files\\Git\\bin;' + os.environ['PATH'],
         }
