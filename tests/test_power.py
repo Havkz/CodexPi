@@ -121,6 +121,48 @@ class PowerTests(unittest.IsolatedAsyncioTestCase):
                 await power.tick(c)
                 send.assert_awaited_once()
 
+    async def test_ci_owned_boot_checks_native_work_not_just_last_windows_job(self):
+        with tempfile.TemporaryDirectory() as directory, closing((c := self.controller(directory)).db.conn):
+            c.db.set_setting('auto_boot_windows', True)
+            c.worker, c.worker_seen = SimpleNamespace(closed=False), time.monotonic()
+            c.db.update('project', goal_status='paused', windows_required=0, block_reason=None)
+            state = {'id': 'boot', 'trigger': ['github-actions', 'Havkz/CodexPi', 123],
+                     'phase': 'owned', 'requested_at': time.time() - 1000,
+                     'boot_at': time.time() - 900, 'idle_since': time.time() - 601}
+            c.db.set_setting('windows_power', state)
+            c.native.rpc.return_value['thread']['status']['type'] = 'active'
+            with patch('app.worker_server.send', AsyncMock()) as send:
+                await power.tick(c)
+                send.assert_not_awaited()
+                self.assertNotIn('idle_since', c.db.setting('windows_power'))
+                # A finished job for another project must not hide current native work.
+                c.db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,
+                    codex_session_id,tmux_session_name,lifecycle,created_at,updated_at)
+                    VALUES (?,?,?,?,?,?,?,?,?)''',
+                    ('other', 'other', 'other', directory + '/other', 'other-session', 'other-pane', 'ready', 1, 1))
+                c.db.conn.execute('INSERT INTO jobs(job_id,project_id,payload,status,created_at,updated_at) VALUES(?,?,?,?,?,?)',
+                    ('old', 'other', '{}', 'finished', time.time(), time.time()))
+                c.native.rpc.side_effect = lambda method, params: {'thread': {
+                    'id': params['threadId'], 'cwd': directory if params['threadId'] == 'session' else directory + '/other',
+                    'status': {'type': 'active' if params['threadId'] == 'session' else 'idle'}}}
+                c.db.set_setting('selected', None)  # Never infer native idle from the DB selection/status.
+                c.db.set_setting('windows_power', state)
+                await power.tick(c)
+                send.assert_not_awaited()
+                self.assertNotIn('idle_since', c.db.setting('windows_power'))
+                c.native.rpc.side_effect = lambda method, params: {'thread': {
+                    'id': params['threadId'], 'cwd': directory if params['threadId'] == 'session' else directory + '/other',
+                    'status': {'type': 'idle'}}}
+                await power.tick(c)
+                send.assert_not_awaited()
+                idle = c.db.setting('windows_power')
+                idle['idle_since'] -= 601
+                c.db.set_setting('windows_power', idle)
+                await power.tick(c)
+                await power.tick(c)
+                send.assert_awaited_once()
+                self.assertEqual(send.await_args.args[1]['type'], 'power_shutdown')
+
     async def test_timeout_holds_shutdown_once_and_invalid_targets(self):
         with tempfile.TemporaryDirectory() as directory, closing((c := self.controller(directory)).db.conn):
             c.db.set_setting('auto_boot_windows', True)

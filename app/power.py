@@ -72,10 +72,10 @@ async def tick(controller):
             state.pop('idle_since', None)
             db.set_setting('windows_power', state)
             return
-        latest = db.conn.execute('SELECT project_id,updated_at FROM jobs ORDER BY updated_at DESC LIMIT 1').fetchone()
-        ident = latest['project_id'] if latest and latest['updated_at'] >= state['requested_at'] else state['trigger'][0]
-        project = next((p for p in db.all() if p['project_id'] == ident), None)
-        if project:
+        # CI boots have no project trigger; any mapped native work must hold shutdown.
+        for project in db.all():
+            if not project['codex_session_id']:
+                continue
             thread = (await controller.native.rpc('thread/read', {'threadId': project['codex_session_id'], 'includeTurns': False}))['thread']
             if (thread['id'] != project['codex_session_id'] or thread['cwd'] != project['project_path']
                     or thread['status']['type'] == 'active'):

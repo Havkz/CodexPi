@@ -131,8 +131,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "configure.py"
     },
     {
@@ -142,8 +142,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "setup_configure_preserve",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "preserve()"
     },
     {
@@ -153,8 +153,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_configure_rationale_1",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "run on pi after copying reviewed sources; preserve and back up user config."
     },
     {
@@ -230,8 +230,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_export_migration",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "export-migration.py"
     },
     {
@@ -241,8 +241,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "setup_export_migration_git",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "git()"
     },
     {
@@ -252,8 +252,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "setup_export_migration_regular",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "regular()"
     },
     {
@@ -263,8 +263,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "setup_export_migration_digest",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "digest()"
     },
     {
@@ -274,8 +274,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "setup_export_migration_native_state",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "native_state()"
     },
     {
@@ -285,8 +285,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "setup_export_migration_export",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "export()"
     },
     {
@@ -296,8 +296,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "setup_export_migration_main",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "main()"
     },
     {
@@ -307,8 +307,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_export_migration_rationale_1",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "export one explicitly selected windows project/session without changing it.  the"
     },
     {
@@ -318,8 +318,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "setup_export_migration_rationale_47",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "keep only this thread's indexed history/metadata, never another thread."
     },
     {
@@ -484,8 +484,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_measure_idle",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": "measure-idle.py"
     },
     {
@@ -495,8 +495,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "setup_measure_idle_sample",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": "sample()"
     },
     {
@@ -506,8 +506,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_measure_idle_rationale_1",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": "read-only pi resource sample; refuse to label an active-goal run as idle."
     },
     {
@@ -627,8 +627,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "site-config.py"
     },
     {
@@ -638,8 +638,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config_rationale_1",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "generate only a password hash from the user-owned specification."
     },
     {
@@ -748,8 +748,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "trust-hooks.py"
     },
     {
@@ -759,8 +759,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "setup_trust_hooks_main",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "main()"
     },
     {
@@ -770,8 +770,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks_rationale_1",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "trust only the reviewed goal/ponytail and optional token optimizer definitions."
     },
     {
@@ -814,8 +814,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_backup_restore",
-      "community": 50,
-      "community_name": "test-live-lifecycle.py",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "verify-backup-restore.py"
     },
     {
@@ -825,8 +825,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_readonly",
-      "community": 50,
-      "community_name": "test-live-lifecycle.py",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "readonly()"
     },
     {
@@ -836,8 +836,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_identities",
-      "community": 50,
-      "community_name": "test-live-lifecycle.py",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "identities()"
     },
     {
@@ -847,8 +847,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_services",
-      "community": 50,
-      "community_name": "test-live-lifecycle.py",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "services()"
     },
     {
@@ -858,8 +858,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_main",
-      "community": 50,
-      "community_name": "test-live-lifecycle.py",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "main()"
     },
     {
@@ -869,8 +869,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_rationale_1",
-      "community": 50,
-      "community_name": "test-live-lifecycle.py",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "isolated infrastructure-db restore drill on pi; never starts or restores live se"
     },
     {
@@ -1199,8 +1199,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_optimization",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "verify-optimization.py"
     },
     {
@@ -1210,8 +1210,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "setup_verify_optimization_main",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "main()"
     },
     {
@@ -1221,8 +1221,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_optimization_rationale_1",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "pi hook inventory and isolated ponytail checks; no model turn or live config wri"
     },
     {
@@ -1309,8 +1309,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "verify-secrets.py"
     },
     {
@@ -1320,8 +1320,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_secrets_rationale_1",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "fail closed if a tracked file contains a configured secret; never print its valu"
     },
     {
@@ -1331,8 +1331,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "verify-tui-scrolling.py"
     },
     {
@@ -1342,8 +1342,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_tmux",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "tmux()"
     },
     {
@@ -1353,8 +1353,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_main",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "main()"
     },
     {
@@ -1364,8 +1364,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_rationale_1",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "read-only live check on the pi: real --all picker, wheel, pager and unsent draft"
     },
     {
@@ -1408,8 +1408,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_usage_ui",
-      "community": 38,
-      "community_name": "send",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": "verify-usage-ui.py"
     },
     {
@@ -1419,8 +1419,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "setup_verify_usage_ui_main",
-      "community": 38,
-      "community_name": "send",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": "main()"
     },
     {
@@ -1430,8 +1430,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_usage_ui_rationale_1",
-      "community": 38,
-      "community_name": "send",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": "isolated edge regression; --live only reads the pi and opens/cancels dialogs."
     },
     {
@@ -1518,8 +1518,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "valueerror",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "valueerror"
     },
     {
@@ -1540,8 +1540,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "app_accounts_choose_account",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "choose_account()"
     },
     {
@@ -1573,8 +1573,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "app_accounts_accountvault_init",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".__init__()"
     },
     {
@@ -1672,8 +1672,8 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "app_accounts_wake_key",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "wake_key()"
     },
     {
@@ -1683,8 +1683,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "app_accounts_fresh_usage",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "fresh_usage()"
     },
     {
@@ -1804,8 +1804,8 @@
       "source_location": "L456",
       "_origin": "ast",
       "id": "app_accounts_notification",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "notification()"
     },
     {
@@ -1837,8 +1837,8 @@
       "source_location": "L508",
       "_origin": "ast",
       "id": "app_accounts_reload_native",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "reload_native()"
     },
     {
@@ -1870,8 +1870,8 @@
       "source_location": "L717",
       "_origin": "ast",
       "id": "app_accounts_resume_account_wait",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "resume_account_wait()"
     },
     {
@@ -1903,8 +1903,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_accounts_rationale_29",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "choose a quota check or reset wait, never authorize a goal from cached usage."
     },
     {
@@ -1991,8 +1991,8 @@
       "source_location": "L509",
       "_origin": "ast",
       "id": "app_accounts_rationale_509",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "one journaled restart, then bounded observations; never replay a model request."
     },
     {
@@ -2024,8 +2024,8 @@
       "source_location": "L718",
       "_origin": "ast",
       "id": "app_accounts_rationale_718",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "use the existing reset poll and mapped resume, not another scheduler/daemon."
     },
     {
@@ -2178,8 +2178,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_common",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "common.py"
     },
     {
@@ -2200,8 +2200,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "app_common_block_summary",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "block_summary()"
     },
     {
@@ -2233,8 +2233,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "app_common_read_env",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "read_env()"
     },
     {
@@ -2244,8 +2244,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "app_common_password_hash",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "password_hash()"
     },
     {
@@ -2255,8 +2255,8 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "app_common_password_valid",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "password_valid()"
     },
     {
@@ -2321,8 +2321,8 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "app_common_redactor",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": "redactor"
     },
     {
@@ -2332,8 +2332,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "app_common_redactor_init",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": ".__init__()"
     },
     {
@@ -2343,8 +2343,8 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "app_common_redactor_clean",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": ".clean()"
     },
     {
@@ -2365,8 +2365,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "app_common_rationale_40",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "presentation only: never change native status or resume authorization."
     },
     {
@@ -2387,8 +2387,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_controller",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "controller.py"
     },
     {
@@ -2420,8 +2420,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "app_controller_controller_init",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": ".__init__()"
     },
     {
@@ -2431,8 +2431,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "app_controller_controller_account_switch_pending",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": ".account_switch_pending()"
     },
     {
@@ -2453,8 +2453,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "app_controller_controller_windows_online",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".windows_online()"
     },
     {
@@ -2816,8 +2816,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_db",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "db.py"
     },
     {
@@ -2893,8 +2893,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "app_db_database_update",
-      "community": 38,
-      "community_name": "send",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".update()"
     },
     {
@@ -2926,8 +2926,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "app_db_database_reorder",
-      "community": 38,
-      "community_name": "send",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".reorder()"
     },
     {
@@ -2937,8 +2937,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "app_db_database_record_usage",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".record_usage()"
     },
     {
@@ -3003,8 +3003,8 @@
       "source_location": "L231",
       "_origin": "ast",
       "id": "app_db_database_compact_queue",
-      "community": 38,
-      "community_name": "send",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".compact_queue()"
     },
     {
@@ -3201,8 +3201,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_discord_bot",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "discord_bot.py"
     },
     {
@@ -3212,8 +3212,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_discord_bot_status_embed",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "status_embed()"
     },
     {
@@ -3223,8 +3223,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "app_discord_bot_closeview",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "closeview"
     },
     {
@@ -3234,8 +3234,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "app_discord_bot_closeview_init",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".__init__()"
     },
     {
@@ -3267,8 +3267,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "app_discord_bot_bot",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "bot"
     },
     {
@@ -3278,8 +3278,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_discord_bot_bot_init",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".__init__()"
     },
     {
@@ -3289,8 +3289,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "app_discord_bot_bot_setup_hook",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".setup_hook()"
     },
     {
@@ -3300,8 +3300,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_discord_bot_bot_on_ready",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".on_ready()"
     },
     {
@@ -3333,8 +3333,8 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "app_discord_bot_bot_send_pending",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".send_pending()"
     },
     {
@@ -3344,8 +3344,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_discord_bot_rationale_16",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "one compact text hierarchy: vertical indentation, not a grid of fields."
     },
     {
@@ -3498,8 +3498,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_main",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "main.py"
     },
     {
@@ -3509,8 +3509,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_main_main",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "main()"
     },
     {
@@ -3520,8 +3520,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_maintenance",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "maintenance.py"
     },
     {
@@ -3531,8 +3531,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_maintenance_idle",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "idle()"
     },
     {
@@ -3542,8 +3542,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "app_maintenance_daily_update",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "daily_update()"
     },
     {
@@ -3553,8 +3553,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_maintenance_rationale_1",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "daily official cli update, only at a proven idle single-runtime boundary."
     },
     {
@@ -3564,8 +3564,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_migration",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "migration.py"
     },
     {
@@ -3575,8 +3575,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_migration_digest",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "digest()"
     },
     {
@@ -3586,8 +3586,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_migration_inspect_archive",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "inspect_archive()"
     },
     {
@@ -3597,8 +3597,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "app_migration_extract_project",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "extract_project()"
     },
     {
@@ -3608,8 +3608,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "app_migration_verify_project_files",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "verify_project_files()"
     },
     {
@@ -3619,8 +3619,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "app_migration_restore_native",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "restore_native()"
     },
     {
@@ -3630,8 +3630,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "app_migration_request",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "request()"
     },
     {
@@ -3641,8 +3641,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "app_migration_finish",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "finish()"
     },
     {
@@ -3652,8 +3652,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_migration_rationale_1",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "explicit, journaled import of one private windows project/native session.  no mo"
     },
     {
@@ -3663,8 +3663,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "app_migration_rationale_111",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "insert only absent selected-thread rows. never replace a live db/file."
     },
     {
@@ -3674,8 +3674,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "native.py"
     },
     {
@@ -3685,8 +3685,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "app_native_nativeerror",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": "nativeerror"
     },
     {
@@ -3718,8 +3718,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "app_native_project_thread_config",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "project_thread_config()"
     },
     {
@@ -3729,8 +3729,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "app_native_turn_params",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "turn_params()"
     },
     {
@@ -3740,8 +3740,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "app_native_idle_thread",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "idle_thread()"
     },
     {
@@ -3751,8 +3751,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "app_native_validate_model_selection",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "validate_model_selection()"
     },
     {
@@ -3762,8 +3762,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "app_native_native",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "native"
     },
     {
@@ -3773,8 +3773,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "app_native_native_init",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": ".__init__()"
     },
     {
@@ -3784,8 +3784,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "app_native_native_connect",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": ".connect()"
     },
     {
@@ -3795,8 +3795,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "app_native_native_read",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": ".read()"
     },
     {
@@ -3817,8 +3817,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "app_native_native_close",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": ".close()"
     },
     {
@@ -3828,8 +3828,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "app_native_goalsource",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": "goalsource"
     },
     {
@@ -3839,8 +3839,8 @@
       "source_location": "L174",
       "_origin": "ast",
       "id": "app_native_goalsource_init",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": ".__init__()"
     },
     {
@@ -3850,8 +3850,8 @@
       "source_location": "L184",
       "_origin": "ast",
       "id": "app_native_goalsource_rows",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": ".rows()"
     },
     {
@@ -3872,8 +3872,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_native_rationale_1",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "native codex rpc and the scheduler's local tui admission gate."
     },
     {
@@ -3894,8 +3894,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "app_native_rationale_54",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "read-only proof; never interrupt a turn merely to schedule a reset wake."
     },
     {
@@ -3905,8 +3905,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "app_native_rationale_173",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": "reuse upstream parsing and event comparison; never retain objective text."
     },
     {
@@ -3949,8 +3949,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_power_public_state",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "public_state()"
     },
     {
@@ -4026,8 +4026,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_prompts",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "prompts.py"
     },
     {
@@ -4037,8 +4037,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_prompts_key",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "key()"
     },
     {
@@ -4048,8 +4048,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_prompts_active",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "active()"
     },
     {
@@ -4059,8 +4059,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "app_prompts_submit",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "submit()"
     },
     {
@@ -4070,8 +4070,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "app_prompts_dispatch",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "dispatch()"
     },
     {
@@ -4081,8 +4081,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "app_prompts_reconcile",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "reconcile()"
     },
     {
@@ -4092,8 +4092,8 @@
       "source_location": "L204",
       "_origin": "ast",
       "id": "app_prompts_cancel_active",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "cancel_active()"
     },
     {
@@ -4103,8 +4103,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_prompts_rationale_1",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "durable user prompts. native queue/add auto-runs on resume, so do not use it."
     },
     {
@@ -4114,8 +4114,8 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "app_prompts_rationale_205",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "only after the shared wait_idle proof. never automatically replay an uncertain s"
     },
     {
@@ -4125,8 +4125,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_usage",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "usage.py"
     },
     {
@@ -4136,8 +4136,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "app_usage_number",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "number()"
     },
     {
@@ -4147,8 +4147,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "app_usage_windows",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "windows()"
     },
     {
@@ -4158,8 +4158,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_usage_rationale_1",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "read-only account telemetry; never decides whether a goal may execute."
     },
     {
@@ -5170,8 +5170,8 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "app_worker_server_cancel_pending",
-      "community": 21,
-      "community_name": "worker_server.py",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "cancel_pending()"
     },
     {
@@ -5291,8 +5291,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "tests_test_accounts_accounttests",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": "accounttests"
     },
     {
@@ -5302,8 +5302,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_accounts_accounttests_test_account_choice_respects_both_windows_real_observations_and_bounded_probes",
-      "community": 49,
-      "community_name": "export",
+      "community": 55,
+      "community_name": "GoalSource",
       "norm_label": ".test_account_choice_respects_both_windows_real_observations_and_bounded_probes()"
     },
     {
@@ -5324,8 +5324,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "tests_test_accounts_accounttests_test_usage_is_account_scoped_persistent_and_removal_keeps_other_accounts",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_usage_is_account_scoped_persistent_and_removal_keeps_other_accounts()"
     },
     {
@@ -5335,8 +5335,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "tests_test_accounts_accountobservationtests",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": "accountobservationtests"
     },
     {
@@ -5390,8 +5390,8 @@
       "source_location": "L427",
       "_origin": "ast",
       "id": "tests_test_accounts_accountswitchtests_test_account_reset_wait_and_notifications_never_borrow_another_accounts_state",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_account_reset_wait_and_notifications_never_borrow_another_accounts_state()"
     },
     {
@@ -5555,8 +5555,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_core",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "test_core.py"
     },
     {
@@ -5566,8 +5566,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_core_coretests",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "coretests"
     },
     {
@@ -5577,8 +5577,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_auth_and_replay",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_auth_and_replay()"
     },
     {
@@ -5588,8 +5588,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_db_constraints_rollback_and_backup()"
     },
     {
@@ -5599,8 +5599,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_project_names",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_project_names()"
     },
     {
@@ -5621,8 +5621,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "deploymenttests"
     },
     {
@@ -5632,8 +5632,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_fixture",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".fixture()"
     },
     {
@@ -5643,8 +5643,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_request_admission_and_ownership",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".test_request_admission_and_ownership()"
     },
     {
@@ -5654,8 +5654,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_completion_moves_once_renames_and_deletes_owned_service",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".test_completion_moves_once_renames_and_deletes_owned_service()"
     },
     {
@@ -5665,8 +5665,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_deployment_recovers_after_each_effect_without_parallel_goal",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".test_deployment_recovers_after_each_effect_without_parallel_goal()"
     },
     {
@@ -5676,8 +5676,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_failed_health_keeps_repairable_session_and_never_completes",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".test_failed_health_keeps_repairable_session_and_never_completes()"
     },
     {
@@ -5687,8 +5687,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_pending_ci_does_not_move_or_start_service",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".test_pending_ci_does_not_move_or_start_service()"
     },
     {
@@ -5698,8 +5698,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_unit_arguments_are_not_shell_or_systemd_expansions",
-      "community": 52,
-      "community_name": "DeploymentTests",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": ".test_unit_arguments_are_not_shell_or_systemd_expansions()"
     },
     {
@@ -5709,8 +5709,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_discord",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "test_discord.py"
     },
     {
@@ -5720,8 +5720,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "discordtests"
     },
     {
@@ -5731,8 +5731,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_legacy_ci_alerts_are_not_sent_but_real_infrastructure_alerts_are",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".test_legacy_ci_alerts_are_not_sent_but_real_infrastructure_alerts_are()"
     },
     {
@@ -5742,8 +5742,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_human_question_persists_hold_and_pings_only_the_owner_once",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".test_human_question_persists_hold_and_pings_only_the_owner_once()"
     },
     {
@@ -5753,8 +5753,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_block_sections_are_ordered_actionable_and_do_not_change_admission",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".test_block_sections_are_ordered_actionable_and_do_not_change_admission()"
     },
     {
@@ -5764,8 +5764,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_last_signed_windows_heartbeat_survives_disconnect_and_restart",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".test_last_signed_windows_heartbeat_survives_disconnect_and_restart()"
     },
     {
@@ -5775,8 +5775,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_embeds_and_crash_deduplication",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".test_embeds_and_crash_deduplication()"
     },
     {
@@ -5786,8 +5786,8 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_usage_notification_once_and_late_reset_edits_same_message",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": ".test_usage_notification_once_and_late_reset_edits_same_message()"
     },
     {
@@ -5797,8 +5797,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lifecycle",
-      "community": 49,
-      "community_name": "export",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": "test_lifecycle.py"
     },
     {
@@ -5808,8 +5808,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_lifecycle_crash",
-      "community": 49,
-      "community_name": "export",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": "crash"
     },
     {
@@ -5819,8 +5819,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseexception",
-      "community": 49,
-      "community_name": "export",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": "baseexception"
     },
     {
@@ -5896,8 +5896,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_migration",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "test_migration.py"
     },
     {
@@ -5907,8 +5907,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "tests_test_migration_migrationtests",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": "migrationtests"
     },
     {
@@ -5918,8 +5918,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_migration_migrationtests_test_private_export_preserves_dirty_git_session_and_goal",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 37,
+      "community_name": "migration.py",
       "norm_label": ".test_private_export_preserves_dirty_git_session_and_goal()"
     },
     {
@@ -5989,10 +5989,21 @@
       "norm_label": ".test_wake_once_recovery_signed_ownership_job_batch_and_user_takeover()"
     },
     {
-      "label": ".test_timeout_holds_shutdown_once_and_invalid_targets()",
+      "label": ".test_ci_owned_boot_checks_native_work_not_just_last_windows_job()",
       "file_type": "code",
       "source_file": "tests/test_power.py",
       "source_location": "L124",
+      "_origin": "ast",
+      "id": "tests_test_power_powertests_test_ci_owned_boot_checks_native_work_not_just_last_windows_job",
+      "community": 2,
+      "community_name": "windows_worker.py",
+      "norm_label": ".test_ci_owned_boot_checks_native_work_not_just_last_windows_job()"
+    },
+    {
+      "label": ".test_timeout_holds_shutdown_once_and_invalid_targets()",
+      "file_type": "code",
+      "source_file": "tests/test_power.py",
+      "source_location": "L166",
       "_origin": "ast",
       "id": "tests_test_power_powertests_test_timeout_holds_shutdown_once_and_invalid_targets",
       "community": 2,
@@ -6003,7 +6014,7 @@
       "label": ".test_worker_never_shuts_down_existing_boot_user_session_or_unfinished_jobs()",
       "file_type": "code",
       "source_file": "tests/test_power.py",
-      "source_location": "L160",
+      "source_location": "L202",
       "_origin": "ast",
       "id": "tests_test_power_powertests_test_worker_never_shuts_down_existing_boot_user_session_or_unfinished_jobs",
       "community": 2,
@@ -6017,8 +6028,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_scheduler",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "test_scheduler.py"
     },
     {
@@ -6039,8 +6050,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_native_transport_preserves_history_larger_than_thirty_two_megabytes",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 52,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_native_transport_preserves_history_larger_than_thirty_two_megabytes()"
     },
     {
@@ -6050,8 +6061,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_setup",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": ".setup()"
     },
     {
@@ -6468,8 +6479,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_usage",
-      "community": 49,
-      "community_name": "export",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "test_usage.py"
     },
     {
@@ -6490,8 +6501,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_usage_usagetests",
-      "community": 53,
-      "community_name": "UsageTests",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "usagetests"
     },
     {
@@ -6501,8 +6512,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_usage_usagetests_test_windows_are_remaining_not_used_and_unknown_never_means_full",
-      "community": 53,
-      "community_name": "UsageTests",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_windows_are_remaining_not_used_and_unknown_never_means_full()"
     },
     {
@@ -6512,8 +6523,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tests_test_usage_usagetests_test_migration_sampling_restart_backup_retention_and_truthful_reduction",
-      "community": 53,
-      "community_name": "UsageTests",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".test_migration_sampling_restart_backup_retention_and_truthful_reduction()"
     },
     {
@@ -6523,8 +6534,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_web",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": "test_web.py"
     },
     {
@@ -6534,8 +6545,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_web_webtests",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": "webtests"
     },
     {
@@ -6545,8 +6556,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_web_webtests_test_auth_csrf_expiry_and_parallel_rate_limit",
-      "community": 39,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": ".test_auth_csrf_expiry_and_parallel_rate_limit()"
     },
     {
@@ -6677,8 +6688,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_setup",
-      "community": 21,
-      "community_name": "worker_server.py",
+      "community": 53,
+      "community_name": "UsageTests",
       "norm_label": ".setup()"
     },
     {
@@ -26129,7 +26140,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_power.py",
-      "source_location": "L164",
+      "source_location": "L206",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power",
@@ -26142,7 +26153,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_power.py",
-      "source_location": "L169",
+      "source_location": "L211",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power_powertests_test_worker_never_shuts_down_existing_boot_user_session_or_unfinished_jobs",
@@ -26767,7 +26778,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_power.py",
-      "source_location": "L161",
+      "source_location": "L203",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power_powertests_test_worker_never_shuts_down_existing_boot_user_session_or_unfinished_jobs",
@@ -27004,7 +27015,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_power.py",
-      "source_location": "L202",
+      "source_location": "L244",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power",
@@ -27017,7 +27028,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_power.py",
-      "source_location": "L210",
+      "source_location": "L252",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power_powertests_test_worker_never_shuts_down_existing_boot_user_session_or_unfinished_jobs",
@@ -28553,6 +28564,17 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_power.py",
+      "source_location": "L124",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_power_powertests",
+      "target": "tests_test_power_powertests_test_ci_owned_boot_checks_native_work_not_just_last_windows_job",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_power.py",
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
@@ -28564,7 +28586,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_power.py",
-      "source_location": "L124",
+      "source_location": "L166",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power_powertests",
@@ -28586,7 +28608,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_power.py",
-      "source_location": "L160",
+      "source_location": "L202",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power_powertests",
@@ -28613,6 +28635,18 @@
       "source_location": "L125",
       "weight": 1.0,
       "_origin": "ast",
+      "source": "tests_test_power_powertests_test_ci_owned_boot_checks_native_work_not_just_last_windows_job",
+      "target": "tests_test_power_powertests_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_power.py",
+      "source_location": "L167",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "tests_test_power_powertests_test_timeout_holds_shutdown_once_and_invalid_targets",
       "target": "tests_test_power_powertests_controller",
       "confidence_score": 1.0
@@ -28634,7 +28668,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_power.py",
-      "source_location": "L154",
+      "source_location": "L196",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power_powertests_test_timeout_holds_shutdown_once_and_invalid_targets",
@@ -28658,7 +28692,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_power.py",
-      "source_location": "L163",
+      "source_location": "L205",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_power_powertests_test_worker_never_shuts_down_existing_boot_user_session_or_unfinished_jobs",
@@ -30608,5 +30642,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "138f3a5117a6565780b7e82d7ecf5fcafd3bb5b0"
+  "built_at_commit": "8da7998d4f1eb022b06ed726cfe7ca004e82b6c3"
 }

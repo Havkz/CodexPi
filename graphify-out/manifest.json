@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "app/power.py": {
-    "mtime": 1791572185.681574,
-    "ast_hash": "f0d6233587cfefc2758139a1e810e813",
+    "mtime": 1791583084.1303315,
+    "ast_hash": "be3c5fd8a6cf42b4b7ed42fb2338a052",
     "semantic_hash": ""
   },
   "app/windows_power.py": {
@@ -470,8 +470,8 @@
     "semantic_hash": ""
   },
   "tests/test_power.py": {
-    "mtime": 1791562882.8346288,
-    "ast_hash": "4543275cf73c17a8d6fc8546ed953e38",
+    "mtime": 1791583063.2011776,
+    "ast_hash": "d61b037471e25d74032406babb705385",
     "semantic_hash": ""
   },
   "Setup/repair-wol.ps1": {
