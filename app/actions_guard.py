@@ -42,7 +42,11 @@ def check(commit):
 
 
 def install(path):
-    path = Path(path)
+    path = Path(path).resolve()
+    repository = subprocess.run(['git', 'rev-parse', '--show-toplevel'], cwd=path,
+                                capture_output=True, text=True)
+    if repository.returncode or Path(repository.stdout.strip()).resolve() != path:
+        raise ValueError('Actions push admission requires the actual repository root')
     custom = subprocess.run(['git', 'config', '--get', 'core.hooksPath'], cwd=path,
                             capture_output=True, text=True)
     if custom.stdout.strip():

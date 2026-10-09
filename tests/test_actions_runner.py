@@ -9,7 +9,7 @@ from types import SimpleNamespace
 from unittest.mock import patch, AsyncMock
 
 from app import actions, power
-from app.actions_guard import validate
+from app.actions_guard import validate, install as install_guard
 from app.windows_ci import ExecutionSlot
 from app.windows_worker import Worker
 from tests import test_power
@@ -139,6 +139,10 @@ spec.loader.exec_module(installer)
 
 class RunnerInstallationTests(unittest.TestCase):
     def test_push_guard_rejects_hosted_dynamic_and_external_reusable_jobs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, 'repository root'):
+                install_guard(directory)
+            self.assertFalse((Path(directory) / '.git').exists())
         validate({'jobs': {'test': {'runs-on': ['self-hosted', 'Windows', 'X64', 'codexpi']}}}, set())
         local = '.github/workflows/checks.yml'
         validate({'jobs': {'test': {'uses': './' + local}}}, {local})

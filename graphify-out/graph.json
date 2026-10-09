@@ -230,8 +230,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_export_migration",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "export-migration.py"
     },
     {
@@ -241,8 +241,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "setup_export_migration_git",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "git()"
     },
     {
@@ -252,8 +252,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "setup_export_migration_regular",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "regular()"
     },
     {
@@ -263,8 +263,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "setup_export_migration_digest",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "digest()"
     },
     {
@@ -274,8 +274,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "setup_export_migration_native_state",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "native_state()"
     },
     {
@@ -285,8 +285,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "setup_export_migration_export",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "export()"
     },
     {
@@ -296,8 +296,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "setup_export_migration_main",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "main()"
     },
     {
@@ -307,8 +307,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_export_migration_rationale_1",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "export one explicitly selected windows project/session without changing it.  the"
     },
     {
@@ -318,8 +318,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "setup_export_migration_rationale_47",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 3,
+      "community_name": "deployment.py",
       "norm_label": "keep only this thread's indexed history/metadata, never another thread."
     },
     {
@@ -1331,8 +1331,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "verify-tui-scrolling.py"
     },
     {
@@ -1342,8 +1342,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_tmux",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "tmux()"
     },
     {
@@ -1353,8 +1353,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_main",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "main()"
     },
     {
@@ -1364,8 +1364,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_rationale_1",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "read-only live check on the pi: real --all picker, wheel, pager and unsent draft"
     },
     {
@@ -2156,8 +2156,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "app_actions_guard_install",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 2,
+      "community_name": "windows_worker.py",
       "norm_label": "install()"
     },
     {
@@ -2530,8 +2530,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "app_controller_controller_create",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".create()"
     },
     {
@@ -2541,8 +2541,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "app_controller_controller_finish_creation",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".finish_creation()"
     },
     {
@@ -5486,7 +5486,7 @@
       "label": ".test_linux_distribution_cannot_be_registered_under_an_interactive_account()",
       "file_type": "code",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L152",
+      "source_location": "L156",
       "_origin": "ast",
       "id": "tests_test_actions_runner_runnerinstallationtests_test_linux_distribution_cannot_be_registered_under_an_interactive_account",
       "community": 2,
@@ -5497,7 +5497,7 @@
       "label": ".test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse()",
       "file_type": "code",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L163",
+      "source_location": "L167",
       "_origin": "ast",
       "id": "tests_test_actions_runner_runnerinstallationtests_test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse",
       "community": 2,
@@ -5508,7 +5508,7 @@
       "label": ".test_registration_is_explicit_private_and_codexpi_owned()",
       "file_type": "code",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L186",
+      "source_location": "L190",
       "_origin": "ast",
       "id": "tests_test_actions_runner_runnerinstallationtests_test_registration_is_explicit_private_and_codexpi_owned",
       "community": 2,
@@ -10861,7 +10861,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/actions_guard.py",
-      "source_location": "L53",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_actions_guard_install",
@@ -14078,7 +14078,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/actions_guard.py",
-      "source_location": "L64",
+      "source_location": "L68",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_actions_guard",
@@ -14138,7 +14138,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L142",
+      "source_location": "L146",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests_test_push_guard_rejects_hosted_dynamic_and_external_reusable_jobs",
@@ -14149,7 +14149,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/actions_guard.py",
-      "source_location": "L65",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_actions_guard_install",
@@ -14179,6 +14179,18 @@
       "_origin": "ast",
       "source": "app_controller_controller_finish_creation",
       "target": "app_actions_guard_install"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_actions_runner.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_actions_runner",
+      "target": "app_actions_guard_install",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -25955,7 +25967,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L166",
+      "source_location": "L170",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests_test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse",
@@ -27968,7 +27980,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L152",
+      "source_location": "L156",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests",
@@ -27979,7 +27991,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L163",
+      "source_location": "L167",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests",
@@ -28001,7 +28013,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L186",
+      "source_location": "L190",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests",
@@ -30596,5 +30608,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "68f3f27a6c6fd6f79b644b36981e208d7a68a367"
+  "built_at_commit": "f69a00dba9ea818397d2def0af47ae3b13b07547"
 }

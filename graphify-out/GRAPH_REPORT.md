@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-09)
 
 ## Corpus Check
-- 100 files · ~128,104 words
+- 100 files · ~128,142 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 727 nodes · 1940 edges · 55 communities (34 shown, 21 thin omitted)
+- 727 nodes · 1941 edges · 54 communities (33 shown, 21 thin omitted)
 - Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 233 edges (avg confidence: 0.7)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `68f3f27a`
+- Built from commit: `f69a00db`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -47,7 +47,6 @@
 - migration.py
 - Bot
 - usage.js
-- Bot
 - send
 - Bot
 - build-favicon.py
@@ -92,7 +91,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (55 total, 21 thin omitted)
+## Communities (54 total, 21 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
@@ -100,11 +99,11 @@ Nodes (6): Changes, Completion gate follow-up, Lifecycle repair evidence, 2026-0
 
 ### Community 2 - "windows_worker.py"
 Cohesion: 0.06
-Nodes (31): check(), Reject paid-runner workflows before a managed Git push can trigger them., validate(), codex_login_url(), Only the native managed OAuth ceremony, never an arbitrary worker/browser URL., ExecutionSlot, identity(), main() (+23 more)
+Nodes (32): check(), install(), Reject paid-runner workflows before a managed Git push can trigger them., validate(), codex_login_url(), Only the native managed OAuth ceremony, never an arbitrary worker/browser URL., ExecutionSlot, identity() (+24 more)
 
 ### Community 3 - "deployment.py"
-Cohesion: 0.11
-Nodes (41): install(), slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks. (+33 more)
+Cohesion: 0.09
+Nodes (48): slugify(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+40 more)
 
 ### Community 4 - "Native"
 Cohesion: 0.22
@@ -151,8 +150,8 @@ Cohesion: 0.67
 Nodes (3): main(), observe(), Start/observe one real deployment goal; never replace an existing objective.  De
 
 ### Community 34 - "migration.py"
-Cohesion: 0.10
-Nodes (41): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), failed_resume(), finish_switch(), holds_goal(), LoginRequired (+33 more)
+Cohesion: 0.09
+Nodes (44): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), failed_resume(), finish_switch(), holds_goal(), LoginRequired (+36 more)
 
 ### Community 35 - "Bot"
 Cohesion: 0.33
@@ -161,10 +160,6 @@ Nodes (5): Data and boundaries, Existing-logo favicon, Presentation, Usage / Lim
 ### Community 36 - "usage.js"
 Cohesion: 0.44
 Nodes (9): hideUsageTooltip(), refreshUsage(), renderUsage(), showUsageTooltip(), usageChart, usageDate(), usageElement(), usagePercent() (+1 more)
-
-### Community 37 - "Bot"
-Cohesion: 0.23
-Nodes (11): digest(), export(), git(), main(), native_state(), Export one explicitly selected Windows project/session without changing it.  The, Keep only this thread's indexed history/metadata, never another thread., regular() (+3 more)
 
 ### Community 39 - "Bot"
 Cohesion: 0.06
