@@ -14,7 +14,7 @@ import yaml
 
 from .common import NATIVE_STATUS, Redactor, atomic_write, block_summary, slugify
 from .db import Database
-from .native import GoalSource, Native, idle_thread, process_in_pane, project_thread_config
+from .native import GoalSource, Native, NativeError, idle_thread, process_in_pane, project_thread_config
 
 
 async def command(*args, cwd=None, timeout=90, check=True):
@@ -751,10 +751,20 @@ class Controller:
                     self.health_errors.pop('github', None)
                     self.last_git_poll = time.monotonic()
                 self.health_errors.pop('scheduler', None)
+                if (self.db.setting('native_bridge_error') and self.native.connected_at
+                        and time.monotonic() - self.native.connected_at >= 10
+                        and not self.native.ws.closed and not self.native.reader.done()):
+                    await self.native.rpc('thread/loaded/list', {}, timeout=15)
+                    self.db.set_setting('native_bridge_error', None)
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
                 self.health_errors['scheduler'] = self.redactor.clean(str(exc))
+                if isinstance(exc, NativeError):
+                    error = self.db.setting('native_bridge_error') or {}
+                    if error.get('message') != self.health_errors['scheduler']:
+                        self.db.set_setting('native_bridge_error', {'message': self.health_errors['scheduler'],
+                                                                   'failed_at': time.time()})
                 logging.getLogger('scheduler').error('%s', self.redactor.clean(str(exc)))
             # Unrelated Git, TUI, or Unsnooze failures must not starve the outbox.
             try:

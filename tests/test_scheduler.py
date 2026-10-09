@@ -17,6 +17,38 @@ from app.native import tui_proxy
 
 
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_native_transport_preserves_history_larger_than_thirty_two_megabytes(self):
+        from aiohttp import ClientSession
+        from app.native import Native
+        size = 33 * 1024 * 1024
+        async def server(request):
+            socket = web.WebSocketResponse()
+            await socket.prepare(request)
+            async for packet in socket:
+                body = json.loads(packet.data)
+                if body.get('method') == 'initialize':
+                    await socket.send_json({'id': body['id'], 'result': {}})
+                elif body.get('method') == 'thread/resume':
+                    await socket.send_json({'id': body['id'], 'result': {
+                        'thread': {'id': 'original-session', 'turns': [{'text': 'x' * size}]}}})
+            return socket
+        app = web.Application()
+        app.router.add_get('/', server)
+        async with TestServer(app) as host, ClientSession() as client:
+            connect = client.ws_connect
+            with patch('app.native.UnixConnector', return_value=None), \
+                    patch('app.native.ClientSession', return_value=client), \
+                    patch.object(client, 'ws_connect', side_effect=lambda url, **kwargs: connect(host.make_url('/'), **kwargs)):
+                native = await Native('unused').connect()
+            try:
+                result = await native.rpc('thread/resume', {'threadId': 'original-session'})
+                self.assertEqual(result['thread']['id'], 'original-session')
+                self.assertEqual(len(result['thread']['turns'][0]['text']), size)
+                self.assertFalse(native.ws.closed)
+                self.assertFalse(native.reader.done())
+            finally:
+                await native.close()
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)

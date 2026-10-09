@@ -13,6 +13,8 @@ from aiohttp import ClientSession, UnixConnector, WSMsgType, web
 
 from .common import NATIVE_STATUS
 
+MAX_NATIVE_MESSAGE = 128 * 1024 * 1024
+
 
 class NativeError(RuntimeError):
     pass
@@ -98,16 +100,18 @@ class Native:
         self.ws = None
         self.reader = None
         self.closing = False
+        self.connected_at = None
 
     async def connect(self, initialize=True):
         self.client = ClientSession(connector=UnixConnector(path=self.socket))
         try:
-            self.ws = await self.client.ws_connect('http://localhost/', max_msg_size=32 * 1024 * 1024)
+            self.ws = await self.client.ws_connect('http://localhost/', max_msg_size=MAX_NATIVE_MESSAGE)
             self.reader = asyncio.create_task(self.read())
             if initialize:
                 await self.rpc('initialize', {'clientInfo': {'name': 'codexpi', 'version': '0.1'},
                                              'capabilities': {'experimentalApi': True}})
                 await self.ws.send_json({'method': 'initialized', 'params': {}})
+            self.connected_at = time.monotonic()
             return self
         except BaseException:
             await self.close()
@@ -128,7 +132,7 @@ class Native:
         finally:
             for future in self.pending.values():
                 if not future.done():
-                    future.set_exception(NativeError('Native Codex connection closed'))
+                    future.set_exception(NativeError('Native Codex connection closed (code ' + str(self.ws.close_code) + ')'))
             self.pending.clear()
             if self.disconnected and not self.closing:
                 await self.disconnected()
@@ -143,6 +147,8 @@ class Native:
         try:
             await self.ws.send_json({'id': request_id, 'method': method, 'params': params})
             value = await asyncio.wait_for(future, timeout)
+        except (NativeError, ConnectionError, TimeoutError) as exc:
+            raise NativeError(method + ': ' + (str(exc) or 'Native request timed out; delivery is not confirmed')) from None
         finally:
             self.pending.pop(request_id, None)
         if 'error' in value:
@@ -255,7 +261,7 @@ async def tui_proxy(request):
                             continue
                         if project['lifecycle'] != 'ready' or project['codex_session_id'] != params['threadId']:
                             continue
-                        await candidate.rpc('thread/resume', params, timeout=20)
+                        await candidate.rpc('thread/resume', {**params, 'excludeTurns': True}, timeout=20)
                         controller.tui_connections.setdefault(project_id, {})[connection_id] = (
                             time.monotonic() if project_id in goal_ready else None)
                     old = upstream

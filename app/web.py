@@ -9,6 +9,7 @@ import time
 from aiohttp import web
 
 from .common import block_summary, password_valid
+from .native import NativeError
 from .usage import windows
 
 
@@ -29,6 +30,8 @@ async def security(request, handler):
         response = web.Response(status=exc.status, headers=exc.headers, body=exc.body)
     except (ValueError, KeyError) as exc:
         response = web.json_response({'error': request.app['controller'].redactor.clean(str(exc))}, status=400)
+    except NativeError as exc:
+        response = web.json_response({'error': request.app['controller'].redactor.clean(str(exc))}, status=503)
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     # no-referrer makes Chromium send Origin:null for native form POSTs.
@@ -133,7 +136,8 @@ async def state(request):
     controller = request.app['controller']
     now = time.time()
     native = getattr(controller, 'native', None)
-    native_online = bool(native and native.ws and not native.ws.closed)
+    bridge_error = controller.db.setting('native_bridge_error') or {}
+    native_online = bool(native and native.ws and not native.ws.closed and not bridge_error)
     seen = getattr(controller, 'worker_seen', 0)
     heartbeat = controller.db.setting('windows_last_heartbeat')
     worker_age = max(0, time.monotonic() - seen) if seen else max(0, now - heartbeat) if heartbeat else None
@@ -144,7 +148,7 @@ async def state(request):
         {'name': 'Raspberry Pi', 'status': 'online', 'checked_at': now,
          'detail': 'CodexPi controller · LAN only', 'error': errors.get('scheduler')},
         {'name': 'Native Codex Bridge', 'status': 'online' if native_online else 'offline',
-         'checked_at': now, 'detail': 'Local native session connection'},
+         'checked_at': now, 'detail': 'Local native session connection', 'error': bridge_error.get('message')},
         {'name': 'Windows Worker', 'status': 'online' if controller.windows_online else 'offline',
          'checked_at': now, 'heartbeat_age': worker_age, 'heartbeat_at': heartbeat,
          'detail': 'Authenticated outbound connection'},

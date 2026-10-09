@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-09)
 
 ## Corpus Check
-- 91 files · ~121,941 words
+- 91 files · ~122,252 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 667 nodes · 1761 edges · 56 communities (38 shown, 18 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 197 edges (avg confidence: 0.7)
+- 668 nodes · 1774 edges · 51 communities (35 shown, 16 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 200 edges (avg confidence: 0.7)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5183ec50`
+- Built from commit: `c66ea7bf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -32,7 +32,6 @@
 - __init__.py
 - codexpi
 - AGENTS.md
-- export
 - test-live-queue.py
 - verify-design.py
 - Design verification — 2026-09-20
@@ -57,25 +56,20 @@
 - CodexPi
 - DeploymentTests
 - Selected Windows session migration
-- test_core.py
 - Durable manual pause and real quota evidence, 2026-09-24
 - verify-account-ui.py
 - export
 - test-live-lifecycle.py
-- state
 - Native
-- .make_controller
-- DeploymentTests
-- .update
 
 ## God Nodes (most connected - your core abstractions)
 1. `Database` - 80 edges
-2. `Controller` - 59 edges
-3. `SchedulerTests` - 54 edges
+2. `Controller` - 60 edges
+3. `SchedulerTests` - 56 edges
 4. `command()` - 42 edges
 5. `atomic_write()` - 39 edges
-6. `tick()` - 28 edges
-7. `Native` - 28 edges
+6. `Native` - 31 edges
+7. `tick()` - 28 edges
 8. `Redactor` - 27 edges
 9. `finish()` - 21 edges
 10. `AccountVault` - 20 edges
@@ -85,17 +79,17 @@
   Setup/discord-token.py → app/lifecycle.py
 - `main()` --indirect_call--> `action()`  [INFERRED]
   Setup/verify-lifecycle-fixes.py → app/web.py
-- `state()` --indirect_call--> `native()`  [INFERRED]
-  app/web.py → Setup/verify-pause-policy.py
-- `WorkerAdmissionTests` --uses--> `SignedChannel`  [INFERRED]
+- `SchedulerTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_scheduler.py → app/common.py
+- `WebTests` --uses--> `Redactor`  [INFERRED]
+  tests/test_web.py → app/common.py
+- `WorkerAdmissionTests` --uses--> `Redactor`  [INFERRED]
   tests/test_worker_server.py → app/common.py
-- `DiscordTests` --uses--> `Redactor`  [INFERRED]
-  tests/test_discord.py → app/common.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (56 total, 18 thin omitted)
+## Communities (51 total, 16 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
@@ -106,8 +100,8 @@ Cohesion: 0.10
 Nodes (20): codex_login_url(), Only the native managed OAuth ceremony, never an arbitrary worker/browser URL., boot_time(), desktop_in_use(), network_wake_since(), observation(), Windows boot identity and desktop ownership, including Session 0 workers., execute() (+12 more)
 
 ### Community 3 - "deployment.py"
-Cohesion: 0.09
-Nodes (47): complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session(), render() (+39 more)
+Cohesion: 0.10
+Nodes (44): atomic_write(), complete(), finish(), key(), quote(), Explicit 24/7 Pi delivery, completed through the existing lifecycle journal., Called under the controller lock, after final Git/CI checks., relocate_session() (+36 more)
 
 ### Community 4 - "Native"
 Cohesion: 0.22
@@ -118,8 +112,8 @@ Cohesion: 0.33
 Nodes (5): Delete, Interrupted operation recovery, Project lifecycle, Rename, Verified on 2026-09-20
 
 ### Community 6 - "DeploymentTests"
-Cohesion: 0.19
-Nodes (6): read_env(), Redactor, main(), Run on Pi after copying reviewed sources; preserve and back up user config., Fail closed if a tracked file contains a configured secret; never print its valu, WebTests
+Cohesion: 0.36
+Nodes (8): digest(), export(), git(), main(), native_state(), Export one explicitly selected Windows project/session without changing it.  The, Keep only this thread's indexed history/metadata, never another thread., regular()
 
 ### Community 7 - "dashboard.js"
 Cohesion: 0.30
@@ -134,12 +128,12 @@ Cohesion: 0.50
 Nodes (4): Installation and autostart, Protocol and jobs, Verification status, Windows worker
 
 ### Community 11 - "Bot"
-Cohesion: 0.21
-Nodes (8): result(), cancel_pending(), dispatch_pending(), job_denial(), submit_job(), unblock_windows(), worker_socket(), WorkerAdmissionTests
+Cohesion: 0.08
+Nodes (27): canonical(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., read_env(), SignedChannel, slugify(), main() (+19 more)
 
 ### Community 15 - "codexpi"
-Cohesion: 0.19
-Nodes (19): public_state(), Explicit allowlist: never serialize an auth file, OAuth URL or raw RPC error., public_state(), action(), authorize(), favicon(), index(), login() (+11 more)
+Cohesion: 0.16
+Nodes (20): public_state(), action(), authorize(), favicon(), index(), login(), make_app(), project_detail() (+12 more)
 
 ### Community 23 - "verify-design.py"
 Cohesion: 0.67
@@ -162,8 +156,8 @@ Cohesion: 0.67
 Nodes (3): main(), observe(), Start/observe one real deployment goal; never replace an existing objective.  De
 
 ### Community 34 - "migration.py"
-Cohesion: 0.10
-Nodes (46): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), choose_account(), failed_resume(), finish_switch(), fresh_usage() (+38 more)
+Cohesion: 0.09
+Nodes (48): AccountVault, auth_identity(), automatic_change(), bind_legacy_limits(), choose_account(), failed_resume(), finish_switch(), fresh_usage() (+40 more)
 
 ### Community 35 - "Bot"
 Cohesion: 0.33
@@ -174,16 +168,12 @@ Cohesion: 0.44
 Nodes (9): hideUsageTooltip(), refreshUsage(), renderUsage(), showUsageTooltip(), usageChart, usageDate(), usageElement(), usagePercent() (+1 more)
 
 ### Community 37 - "Bot"
-Cohesion: 0.18
-Nodes (7): block_summary(), Presentation only: never change native status or resume authorization., Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields., status_embed(), DiscordTests
-
-### Community 38 - "send"
-Cohesion: 0.46
-Nodes (7): eligible(), observe(), One journaled WoL boot; power commands use the existing signed worker channel., target(), tick(), wake(), send()
+Cohesion: 0.07
+Nodes (16): block_summary(), Presentation only: never change native status or resume authorization., Redactor, Database, Only after confirming the original single-account identity; never guess on switc, Bot, CloseView, One compact text hierarchy: vertical indentation, not a grid of fields. (+8 more)
 
 ### Community 39 - "verify-pause-policy.py"
 Cohesion: 0.67
-Nodes (3): main(), native(), Live manual pause/restart/queued-resume test on one dedicated native goal.  Neve
+Nodes (3): main(), Read-only live check on the Pi: real --all picker, wheel, pager and unsent draft, tmux()
 
 ### Community 41 - "Recovery and operator runbook"
 Cohesion: 0.20
@@ -205,10 +195,6 @@ Nodes (5): Conclusion and safe next evidence, Existing non-CodexPi services, Obs
 Cohesion: 0.33
 Nodes (5): Current evidence and unfinished verification, Fidelity and compatibility, Reusable mechanism, Scope and source, Selected Windows session migration
 
-### Community 46 - "test_core.py"
-Cohesion: 0.20
-Nodes (8): canonical(), password_hash(), password_valid(), Per-connection random challenge + directional MAC + monotonic sequence., SignedChannel, slugify(), Generate only a password hash from the user-owned specification., CoreTests
-
 ### Community 47 - "Durable manual pause and real quota evidence, 2026-09-24"
 Cohesion: 0.50
 Nodes (3): Durable manual pause and real quota evidence, 2026-09-24, Pause authority, Real usage-limit history
@@ -221,37 +207,29 @@ Nodes (28): notification(), One journaled restart, then bounded observations; ne
 Cohesion: 0.09
 Nodes (19): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+11 more)
 
-### Community 51 - "state"
-Cohesion: 0.43
-Nodes (4): main(), Create a lossless, line-addressed audit from the user's specification.  Every no, reconcile(), AuditTests
-
 ### Community 52 - "Native"
-Cohesion: 0.19
-Nodes (8): Native, main(), Trust only the reviewed goal/Ponytail and optional Token Optimizer definitions., main(), Pi hook inventory and isolated Ponytail checks; no model turn or live config wri, main(), Read-only live check on the Pi: real --all picker, wheel, pager and unsent draft, tmux()
-
-### Community 53 - ".make_controller"
-Cohesion: 0.33
-Nodes (3): BaseException, Crash, LifecycleTests
+Cohesion: 0.24
+Nodes (5): Native, main(), Trust only the reviewed goal/Ponytail and optional Token Optimizer definitions., main(), Pi hook inventory and isolated Ponytail checks; no model turn or live config wri
 
 ## Knowledge Gaps
 - **77 isolated node(s):** `install-base.sh script`, `PATH`, `usageChart`, `Alltag`, `Installation und Betrieb` (+72 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `export` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `DeploymentTests`, `Bot`, `test_core.py`, `export`, `test-live-lifecycle.py`, `.make_controller`, `DeploymentTests`, `.update`?**
-  _High betweenness centrality (0.093) - this node is a cross-community bridge._
-- **Why does `Controller` connect `export` to `Controller`, `windows_worker.py`, `deployment.py`, `Bot`, `DeploymentTests`, `Bot`, `Native`, `export`, `.make_controller`?**
+- **Why does `Database` connect `Bot` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `send`, `Bot`, `export`, `test-live-lifecycle.py`, `export`?**
+  _High betweenness centrality (0.091) - this node is a cross-community bridge._
+- **Why does `Controller` connect `export` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `Bot`, `Native`?**
+  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `SchedulerTests` connect `Controller` to `migration.py`, `Bot`, `send`, `Bot`, `export`, `test-live-lifecycle.py`, `Native`, `export`?**
   _High betweenness centrality (0.053) - this node is a cross-community bridge._
-- **Why does `SchedulerTests` connect `Controller` to `migration.py`, `Bot`, `DeploymentTests`, `Bot`, `export`, `test-live-lifecycle.py`, `export`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
 - **Are the 15 inferred relationships involving `Database` (e.g. with `Controller` and `AccountObservationTests`) actually correct?**
   _`Database` has 15 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 53 inferred relationships involving `ValueError` (e.g. with `codex_login_url()` and `.__init__()`) actually correct?**
   _`ValueError` has 53 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 10 inferred relationships involving `Controller` (e.g. with `Redactor` and `Database`) actually correct?**
-  _`Controller` has 10 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 7 inferred relationships involving `SchedulerTests` (e.g. with `AccountObservationTests` and `AccountSwitchTests`) actually correct?**
-  _`SchedulerTests` has 7 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 11 inferred relationships involving `Controller` (e.g. with `Redactor` and `Database`) actually correct?**
+  _`Controller` has 11 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 8 inferred relationships involving `SchedulerTests` (e.g. with `AccountObservationTests` and `AccountSwitchTests`) actually correct?**
+  _`SchedulerTests` has 8 INFERRED edges - model-reasoned connections that need verification._

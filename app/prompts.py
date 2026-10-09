@@ -71,6 +71,7 @@ async def dispatch(controller, project, native, *, allow_limited=False):
             return None
     # No paused/blocked goal is resumed implicitly by sending an ordinary prompt.
     await native.rpc('thread/resume', {'threadId': project['codex_session_id'], 'cwd': project['project_path'],
+        'excludeTurns': True,
         'runtimeWorkspaceRoots': [project['project_path']], 'approvalPolicy': 'never', 'sandbox': 'workspace-write',
         'config': project_thread_config(project['project_path'])})
     item = {**queue[0], 'previous_status': project['goal_status'], 'phase': 'submitting'}

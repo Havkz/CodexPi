@@ -114,7 +114,7 @@ async def relocate_session(controller, project):
     if not project['codex_session_id']:
         return
     session, path = project['codex_session_id'], project['project_path']
-    await controller.native.rpc('thread/resume', {'threadId': session, 'cwd': path,
+    await controller.native.rpc('thread/resume', {'threadId': session, 'cwd': path, 'excludeTurns': True,
         'runtimeWorkspaceRoots': [path], 'excludeTurns': True, 'config': project_thread_config(path)})
     await controller.native.rpc('thread/settings/update', {'threadId': session, 'cwd': path,
         'sandboxPolicy': {'type': 'workspaceWrite', 'writableRoots': [str(Path(path) / '.git')],

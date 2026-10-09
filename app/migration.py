@@ -280,7 +280,7 @@ async def finish(controller, project):
         operation['rollout'] = str(rollout)
         save(controller, project, operation, 'native-data')
     if operation['phase'] == 'native-data':
-        result = await controller.native.rpc('thread/resume', {'threadId': manifest['session_id'],
+        result = await controller.native.rpc('thread/resume', {'threadId': manifest['session_id'], 'excludeTurns': True,
             'path': operation['rollout'], 'cwd': str(path), 'runtimeWorkspaceRoots': [str(path)],
             'excludeTurns': True, 'approvalPolicy': 'never', 'sandbox': 'workspace-write',
             'config': project_thread_config(path)})

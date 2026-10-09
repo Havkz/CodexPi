@@ -12,6 +12,7 @@ from aiohttp.test_utils import TestClient, TestServer
 
 from app.common import Redactor, password_hash
 from app.db import Database
+from app.native import NativeError
 from app.web import make_app
 from unittest.mock import AsyncMock, patch
 
@@ -113,6 +114,28 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,
                     tmux_session_name,created_at,updated_at) VALUES(?,?,?,?,?,?,?)''',
                     ('project1', '<script>unsafe</script>', 'test', temp, 'codexpi-test', 1, 1))
+                controller.resume = AsyncMock(side_effect=NativeError('Native connection closed: ' + secret))
+                body = {'action': 'resume', 'project_id': 'project1'}
+                self.assertEqual((await client.post('/api/action', json=body)).status, 403)
+                controller.resume.assert_not_awaited()
+                unavailable = await client.post('/api/action', json=body, headers={'X-CSRF-Token': csrf})
+                self.assertEqual(unavailable.status, 503)
+                self.assertEqual((await unavailable.json())['error'], 'Native connection closed: [REDACTED]')
+                self.assertEqual(unavailable.headers['Cache-Control'], 'no-store')
+                controller.resume.assert_awaited_once()
+                db.set_setting('native_bridge_error', {'message': 'thread/resume: connection closed', 'failed_at': 1})
+                controller.native = SimpleNamespace(ws=SimpleNamespace(closed=False))
+                latched = await (await client.get('/api/state')).json()
+                bridge = latched['infrastructure'][1]
+                self.assertEqual(bridge['status'], 'offline')  # A new socket alone does not clear an error.
+                self.assertEqual(bridge['error'], 'thread/resume: connection closed')
+                reopened = Database(db.path)
+                try:
+                    self.assertEqual(reopened.setting('native_bridge_error')['message'], bridge['error'])
+                finally:
+                    reopened.conn.close()
+                db.set_setting('native_bridge_error', None)
+                self.assertEqual((await (await client.get('/api/state')).json())['infrastructure'][1]['status'], 'online')
                 db.update('project1', goal_status='stalled', block_reason=json.dumps({
                     'reason': 'Missing choice', 'explanation': 'The next step needs a decision.',
                     'solution': 'Choose A or B: ' + secret, 'details': secret, 'requires_user': True}))
