@@ -65,8 +65,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit",
-      "community": 38,
-      "community_name": "send",
+      "community": 54,
+      "community_name": "build_audit.py",
       "norm_label": "build_audit.py"
     },
     {
@@ -76,8 +76,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_build_audit_reconcile",
-      "community": 38,
-      "community_name": "send",
+      "community": 54,
+      "community_name": "build_audit.py",
       "norm_label": "reconcile()"
     },
     {
@@ -87,8 +87,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "setup_build_audit_main",
-      "community": 38,
-      "community_name": "send",
+      "community": 54,
+      "community_name": "build_audit.py",
       "norm_label": "main()"
     },
     {
@@ -98,8 +98,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_build_audit_rationale_1",
-      "community": 38,
-      "community_name": "send",
+      "community": 54,
+      "community_name": "build_audit.py",
       "norm_label": "create a lossless, line-addressed audit from the user's specification.  every no"
     },
     {
@@ -359,7 +359,7 @@
       "label": "gh()",
       "file_type": "code",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L61",
+      "source_location": "L66",
       "_origin": "ast",
       "id": "setup_install_actions_runner_gh",
       "community": 50,
@@ -370,7 +370,7 @@
       "label": "validate_repository()",
       "file_type": "code",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L68",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "setup_install_actions_runner_validate_repository",
       "community": 50,
@@ -381,7 +381,7 @@
       "label": "install()",
       "file_type": "code",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L77",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "setup_install_actions_runner_install",
       "community": 50,
@@ -392,7 +392,7 @@
       "label": "main()",
       "file_type": "code",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L133",
+      "source_location": "L138",
       "_origin": "ast",
       "id": "setup_install_actions_runner_main",
       "community": 50,
@@ -555,6 +555,72 @@
       "norm_label": "repair-wol.ps1"
     },
     {
+      "label": "run-linux-ci.py",
+      "file_type": "code",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_run_linux_ci",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
+      "norm_label": "run-linux-ci.py"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "setup_run_linux_ci_run",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
+      "norm_label": "run()"
+    },
+    {
+      "label": "linux_path()",
+      "file_type": "code",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "setup_run_linux_ci_linux_path",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
+      "norm_label": "linux_path()"
+    },
+    {
+      "label": "prepare()",
+      "file_type": "code",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "setup_run_linux_ci_prepare",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
+      "norm_label": "prepare()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "setup_run_linux_ci_main",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
+      "norm_label": "main()"
+    },
+    {
+      "label": "Run preserved Linux CI inside a service-owned WSL distribution on this PC.",
+      "file_type": "rationale",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_run_linux_ci_rationale_1",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
+      "norm_label": "run preserved linux ci inside a service-owned wsl distribution on this pc."
+    },
+    {
       "label": "site-config.py",
       "file_type": "code",
       "source_file": "Setup/site-config.py",
@@ -682,8 +748,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "trust-hooks.py"
     },
     {
@@ -693,8 +759,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "setup_trust_hooks_main",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "main()"
     },
     {
@@ -704,8 +770,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks_rationale_1",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "trust only the reviewed goal/ponytail and optional token optimizer definitions."
     },
     {
@@ -748,8 +814,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_backup_restore",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "verify-backup-restore.py"
     },
     {
@@ -759,8 +825,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_readonly",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "readonly()"
     },
     {
@@ -770,8 +836,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_identities",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "identities()"
     },
     {
@@ -781,8 +847,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_services",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "services()"
     },
     {
@@ -792,8 +858,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_main",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "main()"
     },
     {
@@ -803,8 +869,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_rationale_1",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "isolated infrastructure-db restore drill on pi; never starts or restores live se"
     },
     {
@@ -1034,8 +1100,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_lifecycle_fixes",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 56,
+      "community_name": "verify-lifecycle-fixes.py",
       "norm_label": "verify-lifecycle-fixes.py"
     },
     {
@@ -1045,8 +1111,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "setup_verify_lifecycle_fixes_main",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 56,
+      "community_name": "verify-lifecycle-fixes.py",
       "norm_label": "main()"
     },
     {
@@ -1056,8 +1122,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_lifecycle_fixes_rationale_1",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 56,
+      "community_name": "verify-lifecycle-fixes.py",
       "norm_label": "live verification of the user's empty mapped session; no invented goal.  isolate"
     },
     {
@@ -1133,8 +1199,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_optimization",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "verify-optimization.py"
     },
     {
@@ -1144,8 +1210,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "setup_verify_optimization_main",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "main()"
     },
     {
@@ -1155,8 +1221,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_optimization_rationale_1",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "pi hook inventory and isolated ponytail checks; no model turn or live config wri"
     },
     {
@@ -1166,8 +1232,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_pause_policy",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 55,
+      "community_name": "verify-pause-policy.py",
       "norm_label": "verify-pause-policy.py"
     },
     {
@@ -1177,8 +1243,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_verify_pause_policy_native",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 55,
+      "community_name": "verify-pause-policy.py",
       "norm_label": "native()"
     },
     {
@@ -1188,8 +1254,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "setup_verify_pause_policy_main",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 55,
+      "community_name": "verify-pause-policy.py",
       "norm_label": "main()"
     },
     {
@@ -1199,8 +1265,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_pause_policy_rationale_1",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 55,
+      "community_name": "verify-pause-policy.py",
       "norm_label": "live manual pause/restart/queued-resume test on one dedicated native goal.  neve"
     },
     {
@@ -1265,8 +1331,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "verify-tui-scrolling.py"
     },
     {
@@ -1276,8 +1342,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_tmux",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "tmux()"
     },
     {
@@ -1287,8 +1353,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_main",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "main()"
     },
     {
@@ -1298,8 +1364,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_rationale_1",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "read-only live check on the pi: real --all picker, wheel, pager and unsent draft"
     },
     {
@@ -1727,8 +1793,8 @@
       "source_location": "L428",
       "_origin": "ast",
       "id": "app_accounts_public_state",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "public_state()"
     },
     {
@@ -1771,8 +1837,8 @@
       "source_location": "L508",
       "_origin": "ast",
       "id": "app_accounts_reload_native",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "reload_native()"
     },
     {
@@ -1914,8 +1980,8 @@
       "source_location": "L429",
       "_origin": "ast",
       "id": "app_accounts_rationale_429",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "explicit allowlist: never serialize an auth file, oauth url or raw rpc error."
     },
     {
@@ -1925,8 +1991,8 @@
       "source_location": "L509",
       "_origin": "ast",
       "id": "app_accounts_rationale_509",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "one journaled restart, then bounded observations; never replay a model request."
     },
     {
@@ -1969,8 +2035,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_actions",
-      "community": 2,
-      "community_name": "windows_worker.py",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "actions.py"
     },
     {
@@ -1980,8 +2046,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "app_actions_busy",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "busy()"
     },
     {
@@ -2002,8 +2068,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_actions_rationale_1",
-      "community": 2,
-      "community_name": "windows_worker.py",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "observe real local github jobs before admitting lower-priority windows work."
     },
     {
@@ -2035,8 +2101,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "app_common_block_summary",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "block_summary()"
     },
     {
@@ -2156,8 +2222,8 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "app_common_redactor",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "redactor"
     },
     {
@@ -2167,8 +2233,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "app_common_redactor_init",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".__init__()"
     },
     {
@@ -2200,8 +2266,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "app_common_rationale_40",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "presentation only: never change native status or resume authorization."
     },
     {
@@ -2288,8 +2354,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "app_controller_controller_windows_online",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".windows_online()"
     },
     {
@@ -2772,8 +2838,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "app_db_database_record_usage",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": ".record_usage()"
     },
     {
@@ -3036,8 +3102,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_discord_bot",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "discord_bot.py"
     },
     {
@@ -3047,8 +3113,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_discord_bot_status_embed",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "status_embed()"
     },
     {
@@ -3058,8 +3124,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "app_discord_bot_closeview",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "closeview"
     },
     {
@@ -3069,8 +3135,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "app_discord_bot_closeview_init",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".__init__()"
     },
     {
@@ -3102,8 +3168,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "app_discord_bot_bot",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "bot"
     },
     {
@@ -3113,8 +3179,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_discord_bot_bot_init",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".__init__()"
     },
     {
@@ -3124,8 +3190,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "app_discord_bot_bot_setup_hook",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".setup_hook()"
     },
     {
@@ -3135,8 +3201,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "app_discord_bot_bot_on_ready",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".on_ready()"
     },
     {
@@ -3168,8 +3234,8 @@
       "source_location": "L182",
       "_origin": "ast",
       "id": "app_discord_bot_bot_send_pending",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".send_pending()"
     },
     {
@@ -3179,8 +3245,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_discord_bot_rationale_16",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "one compact text hierarchy: vertical indentation, not a grid of fields."
     },
     {
@@ -3333,8 +3399,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_main",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "main.py"
     },
     {
@@ -3344,8 +3410,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_main_main",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "main()"
     },
     {
@@ -3597,8 +3663,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "app_native_native",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "native"
     },
     {
@@ -3608,8 +3674,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "app_native_native_init",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".__init__()"
     },
     {
@@ -3751,8 +3817,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_power",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "power.py"
     },
     {
@@ -3762,8 +3828,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_power_target",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "target()"
     },
     {
@@ -3773,8 +3839,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "app_power_wake",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "wake()"
     },
     {
@@ -3784,8 +3850,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "app_power_public_state",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "public_state()"
     },
     {
@@ -3795,8 +3861,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "app_power_eligible",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "eligible()"
     },
     {
@@ -3806,8 +3872,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "app_power_tick",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "tick()"
     },
     {
@@ -3817,8 +3883,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "app_power_request_wake",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "request_wake()"
     },
     {
@@ -3828,8 +3894,8 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "app_power_observe",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "observe()"
     },
     {
@@ -3839,8 +3905,8 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "app_power_result",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "result()"
     },
     {
@@ -3850,8 +3916,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_power_rationale_1",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "one journaled wol boot; power commands use the existing signed worker channel."
     },
     {
@@ -4004,8 +4070,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_web",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "web.py"
     },
     {
@@ -4015,8 +4081,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_web_session",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "session()"
     },
     {
@@ -4026,8 +4092,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "middleware",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "middleware"
     },
     {
@@ -4037,8 +4103,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "app_web_security",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "security()"
     },
     {
@@ -4048,8 +4114,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "app_web_authorize",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "authorize()"
     },
     {
@@ -4059,8 +4125,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "app_web_index",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "index()"
     },
     {
@@ -4070,8 +4136,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "app_web_favicon",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "favicon()"
     },
     {
@@ -4081,8 +4147,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "app_web_login",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "login()"
     },
     {
@@ -4092,8 +4158,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "app_web_verify_login",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "verify_login()"
     },
     {
@@ -4103,63 +4169,63 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "app_web_state",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "state()"
     },
     {
       "label": "safe_json()",
       "file_type": "code",
       "source_file": "app/web.py",
-      "source_location": "L183",
+      "source_location": "L190",
       "_origin": "ast",
       "id": "app_web_safe_json",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "safe_json()"
     },
     {
       "label": "usage()",
       "file_type": "code",
       "source_file": "app/web.py",
-      "source_location": "L201",
+      "source_location": "L208",
       "_origin": "ast",
       "id": "app_web_usage",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "usage()"
     },
     {
       "label": "project_detail()",
       "file_type": "code",
       "source_file": "app/web.py",
-      "source_location": "L211",
+      "source_location": "L218",
       "_origin": "ast",
       "id": "app_web_project_detail",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "project_detail()"
     },
     {
       "label": "action()",
       "file_type": "code",
       "source_file": "app/web.py",
-      "source_location": "L244",
+      "source_location": "L251",
       "_origin": "ast",
       "id": "app_web_action",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "action()"
     },
     {
       "label": "make_app()",
       "file_type": "code",
       "source_file": "app/web.py",
-      "source_location": "L321",
+      "source_location": "L328",
       "_origin": "ast",
       "id": "app_web_make_app",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 38,
+      "community_name": "send",
       "norm_label": "make_app()"
     },
     {
@@ -4906,8 +4972,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_worker_server",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "worker_server.py"
     },
     {
@@ -4917,8 +4983,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_worker_server_send",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 53,
+      "community_name": "power.py",
       "norm_label": "send()"
     },
     {
@@ -4928,8 +4994,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_worker_server_worker_socket",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "worker_socket()"
     },
     {
@@ -4939,8 +5005,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "app_worker_server_dispatch_pending",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "dispatch_pending()"
     },
     {
@@ -4950,8 +5016,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "app_worker_server_job_denial",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "job_denial()"
     },
     {
@@ -4972,8 +5038,8 @@
       "source_location": "L200",
       "_origin": "ast",
       "id": "app_worker_server_unblock_windows",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "unblock_windows()"
     },
     {
@@ -4983,8 +5049,8 @@
       "source_location": "L230",
       "_origin": "ast",
       "id": "app_worker_server_submit_job",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "submit_job()"
     },
     {
@@ -4994,8 +5060,8 @@
       "source_location": "L242",
       "_origin": "ast",
       "id": "app_worker_server_request_windows",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "request_windows()"
     },
     {
@@ -5093,8 +5159,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "tests_test_accounts_accounttests_test_account_choice_respects_both_windows_real_observations_and_bounded_probes",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".test_account_choice_respects_both_windows_real_observations_and_bounded_probes()"
     },
     {
@@ -5236,8 +5302,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_test_actions_runner_actionscoordinationtests_test_real_job_wakes_once_takes_priority_and_unknown_state_prevents_shutdown",
-      "community": 2,
-      "community_name": "windows_worker.py",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": ".test_real_job_wakes_once_takes_priority_and_unknown_state_prevents_shutdown()"
     },
     {
@@ -5252,10 +5318,21 @@
       "norm_label": "runnerinstallationtests"
     },
     {
-      "label": ".test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse()",
+      "label": ".test_linux_distribution_cannot_be_registered_under_an_interactive_account()",
       "file_type": "code",
       "source_file": "tests/test_actions_runner.py",
       "source_location": "L77",
+      "_origin": "ast",
+      "id": "tests_test_actions_runner_runnerinstallationtests_test_linux_distribution_cannot_be_registered_under_an_interactive_account",
+      "community": 2,
+      "community_name": "windows_worker.py",
+      "norm_label": ".test_linux_distribution_cannot_be_registered_under_an_interactive_account()"
+    },
+    {
+      "label": ".test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse()",
+      "file_type": "code",
+      "source_file": "tests/test_actions_runner.py",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "tests_test_actions_runner_runnerinstallationtests_test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse",
       "community": 2,
@@ -5266,7 +5343,7 @@
       "label": ".test_registration_is_explicit_private_and_codexpi_owned()",
       "file_type": "code",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L100",
+      "source_location": "L111",
       "_origin": "ast",
       "id": "tests_test_actions_runner_runnerinstallationtests_test_registration_is_explicit_private_and_codexpi_owned",
       "community": 2,
@@ -5280,8 +5357,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_audit",
-      "community": 38,
-      "community_name": "send",
+      "community": 54,
+      "community_name": "build_audit.py",
       "norm_label": "test_audit.py"
     },
     {
@@ -5291,8 +5368,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "tests_test_audit_audittests",
-      "community": 38,
-      "community_name": "send",
+      "community": 54,
+      "community_name": "build_audit.py",
       "norm_label": "audittests"
     },
     {
@@ -5302,8 +5379,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_test_audit_audittests_test_append_preserves_evidence_and_rejects_edits",
-      "community": 38,
-      "community_name": "send",
+      "community": 54,
+      "community_name": "build_audit.py",
       "norm_label": ".test_append_preserves_evidence_and_rejects_edits()"
     },
     {
@@ -5368,7 +5445,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_deployment",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": "test_deployment.py"
     },
@@ -5379,7 +5456,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": "deploymenttests"
     },
@@ -5390,7 +5467,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_fixture",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": ".fixture()"
     },
@@ -5401,7 +5478,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_request_admission_and_ownership",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": ".test_request_admission_and_ownership()"
     },
@@ -5412,7 +5489,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_completion_moves_once_renames_and_deletes_owned_service",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": ".test_completion_moves_once_renames_and_deletes_owned_service()"
     },
@@ -5423,7 +5500,7 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_deployment_recovers_after_each_effect_without_parallel_goal",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": ".test_deployment_recovers_after_each_effect_without_parallel_goal()"
     },
@@ -5434,7 +5511,7 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_failed_health_keeps_repairable_session_and_never_completes",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": ".test_failed_health_keeps_repairable_session_and_never_completes()"
     },
@@ -5445,7 +5522,7 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_pending_ci_does_not_move_or_start_service",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": ".test_pending_ci_does_not_move_or_start_service()"
     },
@@ -5456,7 +5533,7 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_unit_arguments_are_not_shell_or_systemd_expansions",
-      "community": 6,
+      "community": 52,
       "community_name": "DeploymentTests",
       "norm_label": ".test_unit_arguments_are_not_shell_or_systemd_expansions()"
     },
@@ -5467,8 +5544,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_discord",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "test_discord.py"
     },
     {
@@ -5478,8 +5555,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "discordtests"
     },
     {
@@ -5489,8 +5566,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_legacy_ci_alerts_are_not_sent_but_real_infrastructure_alerts_are",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_legacy_ci_alerts_are_not_sent_but_real_infrastructure_alerts_are()"
     },
     {
@@ -5500,8 +5577,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_human_question_persists_hold_and_pings_only_the_owner_once",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_human_question_persists_hold_and_pings_only_the_owner_once()"
     },
     {
@@ -5511,8 +5588,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_block_sections_are_ordered_actionable_and_do_not_change_admission",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_block_sections_are_ordered_actionable_and_do_not_change_admission()"
     },
     {
@@ -5522,8 +5599,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_last_signed_windows_heartbeat_survives_disconnect_and_restart",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_last_signed_windows_heartbeat_survives_disconnect_and_restart()"
     },
     {
@@ -5533,8 +5610,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_embeds_and_crash_deduplication",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_embeds_and_crash_deduplication()"
     },
     {
@@ -5544,8 +5621,8 @@
       "source_location": "L203",
       "_origin": "ast",
       "id": "tests_test_discord_discordtests_test_usage_notification_once_and_late_reset_edits_same_message",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_usage_notification_once_and_late_reset_edits_same_message()"
     },
     {
@@ -5555,8 +5632,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lifecycle",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": "test_lifecycle.py"
     },
     {
@@ -5566,8 +5643,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_lifecycle_crash",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": "crash"
     },
     {
@@ -5577,8 +5654,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseexception",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": "baseexception"
     },
     {
@@ -5588,8 +5665,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": "lifecycletests"
     },
     {
@@ -5599,8 +5676,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_make_controller",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": ".make_controller()"
     },
     {
@@ -5610,8 +5687,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_rename_and_delete_recover_after_every_effect",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": ".test_rename_and_delete_recover_after_every_effect()"
     },
     {
@@ -5621,8 +5698,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_confirmation_ownership_and_pending_jobs_fail_closed",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": ".test_confirmation_ownership_and_pending_jobs_fail_closed()"
     },
     {
@@ -5632,8 +5709,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_optional_repository_delete_is_explicit_owned_and_crash_recoverable",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": ".test_optional_repository_delete_is_explicit_owned_and_crash_recoverable()"
     },
     {
@@ -5643,8 +5720,8 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_delete_supersedes_resume_for_paused_and_limited_projects",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 51,
+      "community_name": "Redactor",
       "norm_label": ".test_delete_supersedes_resume_for_paused_and_limited_projects()"
     },
     {
@@ -5940,8 +6017,8 @@
       "source_location": "L561",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_resume_confirmation_timeout_crash_and_identity",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_resume_confirmation_timeout_crash_and_identity()"
     },
     {
@@ -5962,8 +6039,8 @@
       "source_location": "L629",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_limit_reset_persists_but_account_limit_does_not_invent_goal",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_limit_reset_persists_but_account_limit_does_not_invent_goal()"
     },
     {
@@ -6028,8 +6105,8 @@
       "source_location": "L758",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_native_completion_releases_stale_active_slot_while_ci_is_verified",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_native_completion_releases_stale_active_slot_while_ci_is_verified()"
     },
     {
@@ -6072,8 +6149,8 @@
       "source_location": "L858",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_manual_pause_survives_restart_and_cancels_stale_resume",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_manual_pause_survives_restart_and_cancels_stale_resume()"
     },
     {
@@ -6083,8 +6160,8 @@
       "source_location": "L884",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_windows_reconnect_respects_manual_pause_and_journals_one_resume",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_windows_reconnect_respects_manual_pause_and_journals_one_resume()"
     },
     {
@@ -6182,8 +6259,8 @@
       "source_location": "L1220",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_native_reset_wakes_without_unsnooze_record_once_per_reset",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 6,
+      "community_name": "DeploymentTests",
       "norm_label": ".test_native_reset_wakes_without_unsnooze_record_once_per_reset()"
     },
     {
@@ -6413,8 +6490,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_worker_server",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "test_worker_server.py"
     },
     {
@@ -6424,8 +6501,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": "workeradmissiontests"
     },
     {
@@ -6435,8 +6512,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_setup",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".setup()"
     },
     {
@@ -6446,8 +6523,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_pending",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".pending()"
     },
     {
@@ -6457,8 +6534,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_signed_heartbeat_required_and_expires_at_sixty_seconds",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_signed_heartbeat_required_and_expires_at_sixty_seconds()"
     },
     {
@@ -6479,8 +6556,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_unselected_offline_request_cannot_overwrite_pause_or_user_block",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_unselected_offline_request_cannot_overwrite_pause_or_user_block()"
     },
     {
@@ -6490,8 +6567,8 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_submission_checks_holds_queue_lifecycle_and_actual_native_goal",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_submission_checks_holds_queue_lifecycle_and_actual_native_goal()"
     },
     {
@@ -6501,8 +6578,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_offline_valid_request_blocks_only_after_validation",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_offline_valid_request_blocks_only_after_validation()"
     },
     {
@@ -6512,8 +6589,8 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_executing_user_prompt_can_use_windows_without_an_active_goal",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_executing_user_prompt_can_use_windows_without_an_active_goal()"
     },
     {
@@ -6523,8 +6600,8 @@
       "source_location": "L204",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_native_windows_wake_precedes_stall_and_is_journaled_once_per_turn",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_native_windows_wake_precedes_stall_and_is_journaled_once_per_turn()"
     },
     {
@@ -6534,8 +6611,8 @@
       "source_location": "L258",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_dispatch_rechecks_queue_and_does_not_head_of_line_block",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_dispatch_rechecks_queue_and_does_not_head_of_line_block()"
     },
     {
@@ -6545,8 +6622,8 @@
       "source_location": "L271",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_native_transition_and_unavailable_probe_after_durable_acceptance",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_native_transition_and_unavailable_probe_after_durable_acceptance()"
     },
     {
@@ -6556,8 +6633,8 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_test_admission_and_dispatch_serialize_with_pause_and_keep_ambiguous_delivery",
-      "community": 37,
-      "community_name": "Bot",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_admission_and_dispatch_serialize_with_pause_and_keep_ambiguous_delivery()"
     },
     {
@@ -8331,7 +8408,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L61",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner",
@@ -8342,7 +8419,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L77",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner",
@@ -8353,7 +8430,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L133",
+      "source_location": "L138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner",
@@ -8364,7 +8441,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L68",
+      "source_location": "L73",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner",
@@ -8388,7 +8465,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L36",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_configure_hooks",
@@ -8399,7 +8476,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L33",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_configure_hooks",
@@ -8412,7 +8489,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L54",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_configure_hooks",
@@ -8423,7 +8500,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L142",
+      "source_location": "L147",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_main",
@@ -8436,7 +8513,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L64",
+      "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_gh",
@@ -8447,7 +8524,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L78",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_install",
@@ -8459,7 +8536,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L139",
+      "source_location": "L144",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_main",
@@ -8471,7 +8548,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L78",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_install",
@@ -8484,7 +8561,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L74",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_validate_repository",
@@ -8496,7 +8573,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L88",
+      "source_location": "L93",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_install",
@@ -8508,7 +8585,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L85",
+      "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_install",
@@ -8519,7 +8596,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L141",
+      "source_location": "L146",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_main",
@@ -8532,7 +8609,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/install-actions-runner.py",
-      "source_location": "L138",
+      "source_location": "L143",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_install_actions_runner_main",
@@ -8662,6 +8739,157 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_probe_native_rpc",
+      "target": "runtimeerror"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci",
+      "target": "setup_run_linux_ci_linux_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci",
+      "target": "setup_run_linux_ci_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci",
+      "target": "setup_run_linux_ci_prepare",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci",
+      "target": "setup_run_linux_ci_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_rationale_1",
+      "target": "setup_run_linux_ci",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_linux_path",
+      "target": "setup_run_linux_ci_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L122",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_main",
+      "target": "setup_run_linux_ci_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_prepare",
+      "target": "setup_run_linux_ci_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_run",
+      "target": "runtimeerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L84",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_main",
+      "target": "setup_run_linux_ci_linux_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_main",
+      "target": "setup_run_linux_ci_prepare",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_prepare",
+      "target": "runtimeerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Setup/run-linux-ci.py",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_run_linux_ci_main",
       "target": "runtimeerror"
     },
     {
@@ -10924,7 +11152,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/web.py",
-      "source_location": "L248",
+      "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_action",
@@ -12536,7 +12764,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L254",
+      "source_location": "L261",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -12548,7 +12776,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L257",
+      "source_location": "L264",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_action",
@@ -12607,7 +12835,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L176",
+      "source_location": "L183",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -12619,7 +12847,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L177",
+      "source_location": "L184",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_state",
@@ -12703,7 +12931,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L254",
+      "source_location": "L261",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -12715,7 +12943,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L260",
+      "source_location": "L267",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_action",
@@ -12775,7 +13003,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L254",
+      "source_location": "L261",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -12787,7 +13015,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L261",
+      "source_location": "L268",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_action",
@@ -13284,7 +13512,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/actions.py",
-      "source_location": "L27",
+      "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_actions_poll",
@@ -13297,7 +13525,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/actions.py",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_actions_poll",
@@ -13812,7 +14040,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L215",
+      "source_location": "L222",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_project_detail",
@@ -13824,7 +14052,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L164",
+      "source_location": "L171",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_state",
@@ -14949,7 +15177,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/web.py",
-      "source_location": "L193",
+      "source_location": "L200",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_safe_json",
@@ -15642,7 +15870,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L212",
+      "source_location": "L219",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -15654,7 +15882,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L224",
+      "source_location": "L231",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_project_detail",
@@ -20480,7 +20708,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L263",
+      "source_location": "L270",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -20492,7 +20720,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L265",
+      "source_location": "L272",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_action",
@@ -22588,7 +22816,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L294",
+      "source_location": "L301",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -22600,7 +22828,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L297",
+      "source_location": "L304",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_action",
@@ -22624,7 +22852,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L178",
+      "source_location": "L185",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -22636,7 +22864,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L179",
+      "source_location": "L186",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_state",
@@ -23225,7 +23453,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L205",
+      "source_location": "L212",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_usage",
@@ -23260,7 +23488,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L244",
+      "source_location": "L251",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -23315,7 +23543,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L321",
+      "source_location": "L328",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -23326,7 +23554,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L211",
+      "source_location": "L218",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -23337,7 +23565,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L183",
+      "source_location": "L190",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -23381,7 +23609,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L201",
+      "source_location": "L208",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web",
@@ -23440,7 +23668,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L180",
+      "source_location": "L187",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_state",
@@ -23464,7 +23692,7 @@
       "context": "collection",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L322",
+      "source_location": "L329",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -23488,7 +23716,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L326",
+      "source_location": "L333",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -23500,7 +23728,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L326",
+      "source_location": "L333",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -23524,7 +23752,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L326",
+      "source_location": "L333",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -23536,7 +23764,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L327",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -23548,7 +23776,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L180",
+      "source_location": "L187",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_state",
@@ -23560,7 +23788,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L257",
+      "source_location": "L264",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_action",
@@ -23572,7 +23800,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L240",
+      "source_location": "L247",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_project_detail",
@@ -23584,7 +23812,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web.py",
-      "source_location": "L205",
+      "source_location": "L212",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_usage",
@@ -23596,7 +23824,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L327",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -23608,7 +23836,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L328",
+      "source_location": "L335",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -23620,7 +23848,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "app/web.py",
-      "source_location": "L327",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_make_app",
@@ -25114,7 +25342,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L80",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests_test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse",
@@ -26946,6 +27174,17 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests",
+      "target": "tests_test_actions_runner_runnerinstallationtests_test_linux_distribution_cannot_be_registered_under_an_interactive_account",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_actions_runner.py",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_actions_runner_runnerinstallationtests",
       "target": "tests_test_actions_runner_runnerinstallationtests_test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse",
       "confidence_score": 1.0
     },
@@ -26953,7 +27192,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_actions_runner.py",
-      "source_location": "L100",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_actions_runner_runnerinstallationtests",
@@ -29548,5 +29787,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "605249fb1a21a8ab40fefe6ea6f27604eb1ce719"
+  "built_at_commit": "271e5af6f8ebd1d07e683942a19d89e9ccc1269e"
 }

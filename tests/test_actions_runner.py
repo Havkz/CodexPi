@@ -74,6 +74,17 @@ spec.loader.exec_module(installer)
 
 
 class RunnerInstallationTests(unittest.TestCase):
+    def test_linux_distribution_cannot_be_registered_under_an_interactive_account(self):
+        spec = importlib.util.spec_from_file_location('linux_ci',
+            Path(__file__).resolve().parents[1] / 'Setup/run-linux-ci.py')
+        linux = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(linux)
+        with patch.object(linux.os, 'name', 'nt'), patch.object(linux, 'run', return_value=SimpleNamespace(
+                stdout='"USER\\User","S-1-5-21-1000"')) as command:
+            with self.assertRaisesRegex(RuntimeError, 'service account'):
+                linux.prepare()
+            command.assert_called_once()  # No import, download, reboot or user-distro mutation.
+
     def test_one_execution_slot_ci_priority_crash_recovery_and_pid_reuse(self):
         identities = {10: 100, 20: 200, 30: 300}
         with tempfile.TemporaryDirectory() as directory, patch('app.windows_ci.identity', side_effect=lambda pid: identities.get(pid)):

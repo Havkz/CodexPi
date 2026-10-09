@@ -27,6 +27,11 @@ def configure_hooks(names):
     manifest = directory / 'repositories.json'
     previous = json.loads(manifest.read_text()) if manifest.exists() else []
     manifest.write_text(json.dumps(sorted(set(previous + names))), encoding='utf-8')
+    linux = ROOT / 'actions-linux'
+    linux.mkdir(parents=True, exist_ok=True)
+    subprocess.run(['icacls', str(linux), '/inheritance:r', '/grant:r',
+                    '*S-1-5-18:(OI)(CI)F', '*S-1-5-32-544:(OI)(CI)F',
+                    '*S-1-5-20:(OI)(CI)M'], check=True, capture_output=True)
     for name in names:
         destination = ROOT / 'actions-runner' / name.split('/')[1].lower()
         config = json.loads((destination / '.runner').read_text(encoding='utf-8-sig'))

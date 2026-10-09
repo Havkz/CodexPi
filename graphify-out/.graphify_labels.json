@@ -20,6 +20,7 @@
   "18": "goal-hook.py",
   "19": "install-entrypoint.ps1",
   "20": "install-worker.ps1",
+  "21": "worker_server.py",
   "22": "test-live-queue.py",
   "23": "verify-design.py",
   "24": "Design verification — 2026-09-20",
@@ -37,6 +38,7 @@
   "36": "usage.js",
   "37": "Bot",
   "38": "send",
+  "39": "Bot",
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
   "42": "Architecture and data ownership",
@@ -47,5 +49,11 @@
   "47": "Durable manual pause and real quota evidence, 2026-09-24",
   "48": "verify-account-ui.py",
   "49": "export",
-  "50": "test-live-lifecycle.py"
+  "50": "test-live-lifecycle.py",
+  "51": "Redactor",
+  "52": "DeploymentTests",
+  "53": "power.py",
+  "54": "build_audit.py",
+  "55": "verify-pause-policy.py",
+  "56": "verify-lifecycle-fixes.py"
 }

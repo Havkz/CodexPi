@@ -22,6 +22,8 @@ async def poll(controller):
     repos.update(p['github_repo'] for p in controller.db.all()
                  if p['github_repo'] and p['lifecycle'] == 'ready')
     jobs = []
+    previous = controller.db.setting('github_actions', {})
+    first_seen = previous.get('first_seen', {})
     try:
         for repo in sorted(repos):
             runners = json.loads((await command('gh', 'api', 'repos/' + repo + '/actions/runners',
@@ -48,14 +50,21 @@ async def poll(controller):
                                 raise RuntimeError('GitHub job is assigned to an unexpected runner in ' + repo)
                             observation = {'repo': repo, 'run_id': run['id'], 'job_id': job['id'],
                                            'status': job['status'], 'runner_id': job.get('runner_id')}
+                            key = repo + '/' + str(job['id'])
+                            first_seen.setdefault(key, now)
+                            if job['status'] == 'queued' and now - first_seen[key] > 900:
+                                raise TimeoutError('Local GitHub job was not picked up within 15 minutes: ' +
+                                                   repo + ' / ' + job['name'])
                             if not any(j['job_id'] == job['id'] and j['repo'] == repo for j in jobs):
                                 jobs.append(observation)
         # Publish only a complete observation: a partial API failure is never "idle".
-        controller.db.set_setting('github_actions', {'checked_at': time.time(), 'jobs': jobs})
+        keys = {j['repo'] + '/' + str(j['job_id']) for j in jobs}
+        controller.db.set_setting('github_actions', {'checked_at': time.time(), 'jobs': jobs,
+            'first_seen': {key: first_seen[key] for key in keys}})
         controller.health_errors.pop('github_actions', None)
     except Exception as exc:
         error = controller.redactor.clean(str(exc))
         state = controller.db.setting('github_actions', {})
-        state.update(error=error, checked_at=time.time())
+        state.update(error=error, checked_at=time.time(), first_seen=first_seen)
         controller.db.set_setting('github_actions', state)
         controller.health_errors['github_actions'] = error

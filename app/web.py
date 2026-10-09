@@ -161,6 +161,13 @@ async def state(request):
          'checked_at': now - (time.monotonic() - unsnooze_poll) if unsnooze_poll else None,
          'detail': 'Selective wake · queue position 1', 'error': errors.get('unsnooze')},
     ]
+    if controller.db.setting('self_hosted_actions', False):
+        actions = controller.db.setting('github_actions', {})
+        infrastructure.append({'name': 'GitHub Actions',
+            'status': 'error' if actions.get('error') else 'busy' if actions.get('jobs') else
+                      'online' if actions.get('checked_at') else 'unknown',
+            'checked_at': actions.get('checked_at'), 'error': actions.get('error'),
+            'detail': 'Local Windows runners · CI priority'})
     projects = [{**p, 'block_summary': block_summary(p),
                  'pending_prompt_count': len(controller.db.setting('prompts/' + p['project_id'], [])),
                  'completion_check': controller.db.setting('completion_check/' + p['project_id']),
