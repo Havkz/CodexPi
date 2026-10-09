@@ -145,15 +145,18 @@ tbody tr:hover { background: rgb(120 129 255 / .045); }
 .project-card h3 { overflow-wrap: anywhere; }
 .project-card .actions { margin-top: auto; }
 .infra-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
-.infra-card .card-heading { display: flex; align-items: center; gap: 12px; }
-.infra-card { padding: 20px; }
+.infra-card .card-heading { display: flex; align-items: center; gap: 16px; }
+.infra-card { display: flex; flex-direction: column; justify-content: center; min-height: 104px; padding: 20px; }
+.infra-identity { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.infra-label { min-width: 0; }
 .infra-diagnostics { margin-top: 12px; }
 .infra-diagnostics summary { cursor: pointer; color: var(--orange); font-size: 13px; }
-.infra-heartbeat { margin-left: 46px; }
-.infra-icon { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 9px; color: var(--accent); background: var(--surface-raised); font: 12px ui-monospace, monospace; }
-.infra-card .badge { margin-left: auto; }
-.infra-card h3 { font-size: 15px; }
+.infra-icon { display: inline-flex; flex: 0 0 42px; width: 42px; height: 42px; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 11px; color: var(--accent); background: var(--surface-raised); }
+.infra-icon img { display: block; width: 26px; height: 26px; object-fit: contain; }
+.infra-card .badge { flex-shrink: 0; margin-left: auto; }
+.infra-card h3 { margin: 0; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
 .infra-card p { color: var(--secondary); font-size: 12px; margin-top: 6px; overflow-wrap: anywhere; }
+.infra-card .infra-heartbeat { margin: 4px 0 0; }
 .infra-card .error { color: var(--pink); }
 .empty { padding: 20px 0; color: var(--secondary); }
 .table-panel .empty { padding: 24px; }

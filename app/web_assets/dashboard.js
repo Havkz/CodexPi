@@ -299,21 +299,28 @@ function render() {
     else card.append(button('Details', () => showDetail(p.project_id), p.project_id + ':details')); return card;
   }));
   if (!state.projects.length) $('projects').append(node('p', 'No projects yet. Create one with codexpi.', 'empty'));
-  const icons = [
-    'M5 3h14v8H5z M5 13h14v8H5z M8 7h.01 M8 17h.01',
-    'M4 5h16v14H4z M8 9l3 3-3 3 M13 15h3',
-    'M3 4h18v13H3z M12 17v4 M8 21h8',
-    'M6 6v12 M6 10h8a4 4 0 0 0 4-4 M3 3h6v6H3z M3 18h6v3H3z M15 3h6v6h-6z',
-    'M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 3V6a2 2 0 0 1 2-2z M7 9h10 M7 13h7',
-    'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18 M12 7v5l3 2'
-  ];
+  const logos = {
+    'Raspberry Pi': 'raspberry-pi.png',
+    'Native Codex Bridge': 'codex.png',
+    'Windows Worker': 'windows.svg',
+    'GitHub': 'github.svg',
+    'Discord': 'discord.svg',
+    'Unsnooze': 'unsnooze.svg',
+    'GitHub Actions': 'github-actions.svg'
+  };
   $('infra-status').textContent = health.length ? health.length + ' need attention' : 'All systems operational';
-  $('infra').replaceChildren(...state.infrastructure.map((item, index) => {
+  $('infra').replaceChildren(...state.infrastructure.map(item => {
     const card = node('article', '', 'infra-card'), header = node('div', '', 'card-heading');
-    const mark = node('span', '', 'infra-icon'); mark.append(icon(icons[index]));
-    header.append(mark, node('h3', item.name), badge(item.error ? 'error' : item.status)); card.append(header);
+    const identity = node('div', '', 'infra-identity'), label = node('div', '', 'infra-label');
+    const mark = node('span', '', 'infra-icon');
+    if (Object.hasOwn(logos, item.name)) {
+      const image = node('img'); image.src = '/static/brands/' + logos[item.name];
+      image.alt = ''; image.width = 26; image.height = 26; image.setAttribute('aria-hidden', 'true'); mark.append(image);
+    } else mark.append(icon('M4 4h16v16H4z M8 12h8 M12 8v8'));
+    label.append(node('h3', item.name));
+    if ('heartbeat_age' in item) label.append(node('p', item.heartbeat_age === null ? 'No heartbeat received' : 'Heartbeat ' + Math.floor(item.heartbeat_age) + 's ago', 'infra-heartbeat'));
+    identity.append(mark, label); header.append(identity, badge(item.error ? 'error' : item.status)); card.append(header);
     card.title = item.detail + ' · Checked ' + date(item.checked_at);
-    if ('heartbeat_age' in item) card.append(node('p', item.heartbeat_age === null ? 'No heartbeat received' : 'Heartbeat ' + Math.floor(item.heartbeat_age) + 's ago', 'infra-heartbeat'));
     if (item.error) {
       const details = node('details', '', 'infra-diagnostics'); details.dataset.service = item.name;
       details.append(node('summary', 'View error'), node('p', item.error, 'error')); card.append(details);

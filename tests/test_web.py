@@ -44,6 +44,14 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(struct.unpack('>II', ico[offset+16:offset+24]), (size, size))
                     self.assertLessEqual(offset + length, len(ico))
                 self.assertEqual(response.headers['Referrer-Policy'], 'same-origin')
+                for brand in ('raspberry-pi.png', 'codex.png', 'windows.svg', 'github.svg',
+                              'discord.svg', 'unsnooze.svg', 'github-actions.svg'):
+                    asset = await client.get('/static/brands/' + brand)
+                    self.assertEqual(asset.status, 200, brand)
+                    self.assertEqual(await asset.read(), (root / 'app/web_assets/brands' / brand).read_bytes())
+                    self.assertEqual(asset.content_type, 'image/png' if brand.endswith('.png') else 'image/svg+xml')
+                    self.assertEqual(asset.headers['Cache-Control'], 'no-store')
+                    self.assertIn("default-src 'self'", asset.headers['Content-Security-Policy'])
                 cookie = response.cookies['codexpi_login']
                 self.assertTrue(cookie['httponly'])
                 self.assertEqual(cookie['samesite'], 'Strict')

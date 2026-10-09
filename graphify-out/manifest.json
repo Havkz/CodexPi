@@ -105,8 +105,8 @@
     "semantic_hash": ""
   },
   "app/web_assets/dashboard.js": {
-    "mtime": 1791564303.71198,
-    "ast_hash": "40418139c85ccd42900a95b77d77d1da",
+    "mtime": 1791582161.2241032,
+    "ast_hash": "80748c178570dd791900063729dbc657",
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
@@ -145,8 +145,8 @@
     "semantic_hash": ""
   },
   "tests/test_web.py": {
-    "mtime": 1791561502.4857883,
-    "ast_hash": "3039280d293fe0f9c7cee0ebbdd27967",
+    "mtime": 1791582161.2271316,
+    "ast_hash": "a90570859591cf6993fbdf6899cc86b8",
     "semantic_hash": ""
   },
   "tests/test_worker.py": {
@@ -517,6 +517,41 @@
   "app/actions_guard.py": {
     "mtime": 1791580267.152002,
     "ast_hash": "9f0b1a1da7201b6a74fd1beeba95b3b2",
+    "semantic_hash": ""
+  },
+  "app/web_assets/brands/codex.png": {
+    "mtime": 1791581748.8024476,
+    "ast_hash": "3516fcd720fe67ce4c7cd37852903d06",
+    "semantic_hash": ""
+  },
+  "app/web_assets/brands/discord.svg": {
+    "mtime": 1791581733.245405,
+    "ast_hash": "5eb33055a09349cd22d07f946a06fd1a",
+    "semantic_hash": ""
+  },
+  "app/web_assets/brands/github-actions.svg": {
+    "mtime": 1791581738.0275996,
+    "ast_hash": "d8a9891b37f6c7b4d8db8f9ea0256453",
+    "semantic_hash": ""
+  },
+  "app/web_assets/brands/github.svg": {
+    "mtime": 1791581740.274894,
+    "ast_hash": "b3a1ebda784b85659c662abc0062b0b6",
+    "semantic_hash": ""
+  },
+  "app/web_assets/brands/raspberry-pi.png": {
+    "mtime": 1791581744.980656,
+    "ast_hash": "31ffac0d201fd19d5f191917ca95d83a",
+    "semantic_hash": ""
+  },
+  "app/web_assets/brands/unsnooze.svg": {
+    "mtime": 1791581734.6137946,
+    "ast_hash": "9a07856f37cacd0553adc9178e14e3c6",
+    "semantic_hash": ""
+  },
+  "app/web_assets/brands/windows.svg": {
+    "mtime": 1791581741.6278276,
+    "ast_hash": "8fd90ddce62e4a48561a71090298b040",
     "semantic_hash": ""
   }
 }
