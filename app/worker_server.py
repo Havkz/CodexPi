@@ -123,7 +123,9 @@ async def worker_socket(request):
 
 async def dispatch_pending(controller):
     async with controller.lock:
+        from .actions import busy as actions_busy
         if (getattr(controller, 'worker_draining', False)
+                or actions_busy(controller)
                 or controller.db.setting('windows_power', {}).get('phase') == 'shutdown_sent'):
             return
         if controller.db.conn.execute('SELECT 1 FROM jobs WHERE status IN (?,?)', ('sent', 'running')).fetchone():

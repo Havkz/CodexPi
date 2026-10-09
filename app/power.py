@@ -47,6 +47,7 @@ def eligible(controller):
 
 async def tick(controller):
     from .worker_server import send
+    from .actions import busy as actions_busy
     db, now = controller.db, time.time()
     state = db.setting('windows_power', {})
     if not db.setting('auto_boot_windows', False):
@@ -60,13 +61,14 @@ async def tick(controller):
         if controller.windows_online and now > state['shutdown_at'] + 60:
             state.update(phase='failed', message='Windows is still online after the shutdown request; no automatic retry.')
             db.set_setting('windows_power', state)
-        if controller.windows_online or not eligible(controller):
+        if controller.windows_online or not (eligible(controller) or actions_busy(controller)):
             return
         # A new Windows requirement may wake it again, without claiming the last shutdown succeeded.
     if state.get('phase') == 'owned':
         if not controller.windows_online:
             return  # Loss of heartbeat is neither power-off proof nor a shutdown permission.
-        if db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('pending','sent','running')").fetchone() or eligible(controller):
+        if (db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('pending','sent','running')").fetchone()
+                or eligible(controller) or actions_busy(controller)):
             state.pop('idle_since', None)
             db.set_setting('windows_power', state)
             return
@@ -94,6 +96,12 @@ async def tick(controller):
             db.set_setting('windows_power', state)
         return
     if controller.windows_online:
+        return
+    actions = db.setting('github_actions', {})
+    if (db.setting('self_hosted_actions', False) and not actions.get('error')
+            and now - actions.get('checked_at', 0) <= 90 and actions.get('jobs')):
+        job = actions['jobs'][0]
+        request_wake(controller, ['github-actions', job['repo'], job['job_id']])
         return
     project = eligible(controller)
     if not project:

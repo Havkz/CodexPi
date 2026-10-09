@@ -719,6 +719,8 @@ class Controller:
     async def scheduler(self):
         while True:
             try:
+                from .actions import poll as actions_poll
+                await actions_poll(self)
                 async with self.lock:
                     if self.native.ws is None or self.native.ws.closed:
                         await self.native.close()

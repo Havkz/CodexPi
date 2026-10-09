@@ -182,9 +182,19 @@ class Worker:
             command = 'claim'
         elif body['type'] == 'power_shutdown':
             expires = body.get('expires_at')
+            ci_busy = False
+            if os.name == 'nt' and (self.root / 'actions-coordination/repositories.json').exists():
+                from .windows_ci import ExecutionSlot
+                slot = ExecutionSlot(self.root)
+                try:
+                    ci_busy = slot.ci_busy()
+                except (OSError, sqlite3.Error):
+                    ci_busy = True  # Unknown CI ownership can never authorize shutdown.
+                finally:
+                    slot.db.close()
             accepted = bool(type(expires) in (int, float) and math.isfinite(expires)
                 and time.time() < expires <= time.time() + 30 and current and current['boot_worker']
-                and not current['user_active'] and not self.handoff and state.get('phase') == 'owned'
+                and not current['user_active'] and not self.handoff and not ci_busy and state.get('phase') == 'owned'
                 and state['boot_at'] == body.get('boot_at') == self.boot_at
                 and not (self.execution and not self.execution.done()) and self.login_tunnel is None
                 and not self.db.execute("SELECT 1 FROM jobs WHERE status IN ('running','finished')").fetchone())
@@ -261,6 +271,27 @@ class Worker:
                       '[REDACTED]', text)
 
     async def run_job(self, job):
+        if os.name != 'nt' or not (self.root / 'actions-coordination/repositories.json').exists():
+            return await self._run_job(job)
+        from .windows_ci import ExecutionSlot, identity
+        slot = ExecutionSlot(self.root)
+        pid, born = os.getpid(), identity(os.getpid())
+        try:
+            deadline = time.monotonic() + 900
+            while not slot.claim(pid, born, 'worker'):
+                if time.monotonic() >= deadline:
+                    raise TimeoutError('Windows work waited 15 minutes behind GitHub Actions')
+                await asyncio.sleep(1)
+            await self._run_job(job)
+        except Exception as exc:
+            result = {'stdout': '', 'stderr': self.clean(str(exc)), 'exit_code': -1, 'artifacts': []}
+            self.db.execute("UPDATE jobs SET status='finished',result=?,updated=? WHERE id=?",
+                            (json.dumps(result), time.time(), job['job_id']))
+        finally:
+            slot.release(pid, born)
+            slot.db.close()
+
+    async def _run_job(self, job):
         path = self.projects / job['slug']
         checkout_status = ''
         try:

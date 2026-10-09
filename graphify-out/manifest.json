@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791563803.755036,
-    "ast_hash": "35d0836973a436f50f2aa528d2a730e5",
+    "mtime": 1791571864.6047716,
+    "ast_hash": "8ff734490d314768081b9a4091a0d4dd",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -110,13 +110,13 @@
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
-    "mtime": 1791477833.5516286,
-    "ast_hash": "ff01b2120ed651c64ab850a8d5d303df",
+    "mtime": 1791572016.6746123,
+    "ast_hash": "a5892b9a633160612b5031e3839351e8",
     "semantic_hash": ""
   },
   "app/worker_server.py": {
-    "mtime": 1791562120.6978424,
-    "ast_hash": "2baf7b1932548a4f21e68c4cb0523144",
+    "mtime": 1791571864.6408565,
+    "ast_hash": "7101ddb553d74bfdf6174a156a433d22",
     "semantic_hash": ""
   },
   "bin/codexpi": {
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "app/power.py": {
-    "mtime": 1791563479.7424023,
-    "ast_hash": "fd96c9a136abf92cca55b5ac16c60688",
+    "mtime": 1791572185.681574,
+    "ast_hash": "f0d6233587cfefc2758139a1e810e813",
     "semantic_hash": ""
   },
   "app/windows_power.py": {
@@ -477,6 +477,36 @@
   "Setup/repair-wol.ps1": {
     "mtime": 1791562231.6213903,
     "ast_hash": "32d9936562f6955c6bd7fe54467fcea3",
+    "semantic_hash": ""
+  },
+  "Setup/actions-job-finish.ps1": {
+    "mtime": 1791571965.7550874,
+    "ast_hash": "2de8d3b7885b9ed484c039a789eee2dd",
+    "semantic_hash": ""
+  },
+  "Setup/actions-job-start.ps1": {
+    "mtime": 1791571965.7515328,
+    "ast_hash": "305f6cb08a681483d94579a79cc8aad1",
+    "semantic_hash": ""
+  },
+  "Setup/install-actions-runner.py": {
+    "mtime": 1791572185.6802685,
+    "ast_hash": "25248fb1403bdc2e8b04a0d81dae46ba",
+    "semantic_hash": ""
+  },
+  "app/actions.py": {
+    "mtime": 1791572185.6802685,
+    "ast_hash": "bd53fcb16493fbb16483199342c71d91",
+    "semantic_hash": ""
+  },
+  "app/windows_ci.py": {
+    "mtime": 1791571965.7505367,
+    "ast_hash": "58c6ac45bca15e60074599c2a70d6749",
+    "semantic_hash": ""
+  },
+  "tests/test_actions_runner.py": {
+    "mtime": 1791572220.946147,
+    "ast_hash": "0f1bf7f92569320b2238f631795d82d1",
     "semantic_hash": ""
   }
 }
