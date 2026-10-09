@@ -15,6 +15,7 @@ import random
 import re
 import sqlite3
 import subprocess
+import sys
 import time
 import uuid
 import webbrowser
@@ -83,6 +84,16 @@ def validate_job(job):
         raise ValueError('Invalid artifacts')
     for artifact in job['artifacts']:
         relative_path(artifact)
+
+
+def validate_actions_setup(body):
+    if (set(body) != {'type', 'id', 'repo', 'project_id'} or body['type'] != 'actions_setup'
+            or not isinstance(body['repo'], str)
+            or not re.fullmatch(r'Havkz/[A-Za-z0-9_.-]+', body['repo'])):
+        raise ValueError('Invalid Actions runner setup')
+    for key in ('id', 'project_id'):
+        if not isinstance(body[key], str) or str(uuid.UUID(body[key])) != body[key]:
+            raise ValueError('Invalid Actions setup identity')
 
 
 async def execute(argv, cwd, timeout, *, env=None):
@@ -270,6 +281,37 @@ class Worker:
         return re.sub(r'(?i)(?:gh[pousr]_[a-z0-9_]{20,}|github_pat_[a-z0-9_]{20,}|sk-[a-z0-9_-]{20,})',
                       '[REDACTED]', text)
 
+    def result_message(self, row):
+        payload = json.loads(row['payload'])
+        body = {'type': 'result', 'job_id': row['id'], 'result': json.loads(row['result'])}
+        if payload['type'] == 'actions_setup':
+            body.update(type='actions_setup_result', repo=payload['repo'])
+        return body
+
+    async def setup_actions(self, body):
+        try:
+            result = await execute([sys.executable, str(self.root / 'Setup/install-actions-runner.py'),
+                '--activate', '--project-id', body['project_id'], body['repo']], self.root, 600)
+        except Exception as exc:
+            result = {'stdout': '', 'stderr': str(exc), 'exit_code': -1, 'artifacts': []}
+        self.db.execute("UPDATE jobs SET status='finished',result=?,updated=? WHERE id=?",
+                        (self.clean(json.dumps(result)), time.time(), body['id']))
+
+    def accept_actions_setup(self, body):
+        validate_actions_setup(body)
+        existing = self.db.execute('SELECT * FROM jobs WHERE id=?', (body['id'],)).fetchone()
+        payload = json.dumps(body, sort_keys=True)
+        if existing:
+            if existing['payload'] != payload:
+                raise ValueError('Actions setup ID was reused for a different repository')
+            return self.result_message(existing) if existing['result'] else None
+        if self.handoff or self.execution and not self.execution.done():
+            raise ValueError('Windows worker is busy or draining; reconnect before Actions setup')
+        self.db.execute('INSERT INTO jobs VALUES (?,?,?,?,?)',
+                        (body['id'], payload, 'running', None, time.time()))
+        self.execution = asyncio.create_task(self.setup_actions(body))
+        return None
+
     async def run_job(self, job):
         if os.name != 'nt' or not (self.root / 'actions-coordination/repositories.json').exists():
             return await self._run_job(job)
@@ -378,8 +420,13 @@ class Worker:
                 accepted = channel.verify(await asyncio.wait_for(socket.receive_json(), 10))
                 if accepted != {'type': 'accepted'}:
                     raise ValueError('Controller handshake rejected')
-                await send({'type': 'inventory', 'jobs': [dict(row) for row in self.db.execute(
-                    "SELECT id AS job_id,status FROM jobs WHERE status!='delivered'")]})
+                inventory = {'type': 'inventory', 'jobs': [], 'actions_setups': []}
+                for row in self.db.execute("SELECT * FROM jobs WHERE status!='delivered'"):
+                    if json.loads(row['payload'])['type'] == 'actions_setup':
+                        inventory['actions_setups'].append(row['id'])
+                    else:
+                        inventory['jobs'].append({'job_id': row['id'], 'status': row['status']})
+                await send(inventory)
 
                 async def heartbeat():
                     while True:
@@ -405,7 +452,7 @@ class Worker:
                     while True:
                         for row in self.db.execute("SELECT * FROM jobs WHERE status='finished'"):
                             if row['id'] not in sent:
-                                await send({'type': 'result', 'job_id': row['id'], 'result': json.loads(row['result'])})
+                                await send(self.result_message(row))
                                 sent.add(row['id'])
                         await asyncio.sleep(1)
 
@@ -431,6 +478,10 @@ class Worker:
                         elif body.get('type') == 'ack':
                             self.db.execute("UPDATE jobs SET status='delivered',updated=? WHERE id=? AND status='finished'",
                                             (time.time(), body['job_id']))
+                        elif body.get('type') == 'actions_setup':
+                            result = self.accept_actions_setup(body)
+                            if result:
+                                await send(result)
                         elif body.get('type') == 'job':
                             validate_job(body)
                             existing = self.db.execute('SELECT * FROM jobs WHERE id=?', (body['job_id'],)).fetchone()

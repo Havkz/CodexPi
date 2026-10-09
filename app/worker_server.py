@@ -63,6 +63,8 @@ async def worker_socket(request):
                             controller.db.conn.execute("UPDATE jobs SET status='pending',updated_at=? WHERE job_id=?",
                                                       (time.time(), row['job_id']))
                 reconciled = True
+                from .actions import setup_inventory
+                setup_inventory(controller, body.get('actions_setups', []))
             elif body.get('type') == 'alive' and set(body) <= {'type', 'power', 'draining'} and reconciled:
                 if type(body.get('draining', False)) is not bool:
                     raise ValueError('Invalid worker handoff')
@@ -84,6 +86,10 @@ async def worker_socket(request):
                 from .power import result
                 async with controller.lock:
                     result(controller, body)
+            elif body.get('type') == 'actions_setup_result' and reconciled:
+                from .actions import setup_result
+                setup_result(controller, body)
+                await reply({'type': 'ack', 'job_id': body['job_id']})
             elif body.get('type') == 'result':
                 job = controller.db.conn.execute('SELECT * FROM jobs WHERE job_id=?', (body.get('job_id'),)).fetchone()
                 if job is None:

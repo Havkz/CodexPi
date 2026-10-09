@@ -26,7 +26,9 @@ def configure_hooks(names):
                    check=True, capture_output=True)
     manifest = directory / 'repositories.json'
     previous = json.loads(manifest.read_text()) if manifest.exists() else []
-    manifest.write_text(json.dumps(sorted(set(previous + names))), encoding='utf-8')
+    candidate = directory / ('repositories-' + str(os.getpid()) + '.tmp')
+    candidate.write_text(json.dumps(sorted(set(previous + names))), encoding='utf-8')
+    os.replace(candidate, manifest)
     linux = ROOT / 'actions-linux'
     linux.mkdir(parents=True, exist_ok=True)
     subprocess.run(['icacls', str(linux), '/inheritance:r', '/grant:r',
@@ -80,8 +82,11 @@ def validate_repository(name, data):
         raise ValueError('Runner registration requires an explicitly selected private CodexPi repository')
 
 
-def install(name, release, *, label='codexpi-setup'):
-    validate_repository(name, gh('repos/' + name))
+def install(name, release, *, label='codexpi-setup', project_id=None):
+    repository = gh('repos/' + name)
+    validate_repository(name, repository)
+    if project_id and repository.get('description') != 'Managed by CodexPi project ' + project_id:
+        raise ValueError('GitHub repository does not match the requested CodexPi project identity')
     destination = ROOT / 'actions-runner' / name.split('/')[1].lower()
     destination.mkdir(parents=True, exist_ok=True)
     runner_config = destination / '.runner'
@@ -139,13 +144,26 @@ def install(name, release, *, label='codexpi-setup'):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('repositories', nargs='+')
+    parser.add_argument('--activate', action='store_true')
+    parser.add_argument('--project-id')
     args = parser.parse_args()
+    if args.project_id and (len(args.repositories) != 1 or not re.fullmatch('[0-9a-f-]{36}', args.project_id)):
+        raise ValueError('Automatic registration requires exactly one immutable project identity')
     if os.name != 'nt' or not ctypes.windll.shell32.IsUserAnAdmin():
         raise RuntimeError('Official Windows runner service installation requires an Administrator terminal')
     release = gh('repos/actions/runner/releases/latest')
     for name in args.repositories:
-        install(name, release)
+        install(name, release, project_id=args.project_id)
     configure_hooks(args.repositories)
+    if args.activate:
+        for name in args.repositories:
+            config = json.loads((ROOT / 'actions-runner' / name.split('/')[1].lower() / '.runner').read_text(encoding='utf-8-sig'))
+            result = subprocess.run(['gh', 'api', '--method', 'PUT',
+                'repos/' + name + '/actions/runners/' + str(config['agentId']) + '/labels', '--input', '-'],
+                input=json.dumps({'labels': ['codexpi', 'codexpi-setup']}), text=True, capture_output=True, timeout=60)
+            if result.returncode:
+                raise RuntimeError('Runner activation failed: ' + result.stderr)
+            print(name + ': local CI label activated')
 
 
 if __name__ == '__main__':

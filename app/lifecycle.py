@@ -72,6 +72,9 @@ async def begin(controller, ident, kind, *, name=None, confirmation=None, defer=
         raise ValueError('delete_github must be an explicit boolean for Delete only')
     async with controller.lock:
         project = controller.db.get(ident)
+        registration = controller.db.setting('actions_registration/' + ident, {})
+        if registration.get('phase') == 'sent':
+            raise ValueError('Wait for the in-flight Windows runner setup before changing project lifecycle')
         pending = json.loads(project['operation'] or '{}')
         if project['lifecycle'] != 'ready' or (pending and not (kind == 'delete' and pending.get('kind') == 'resume')):
             raise ValueError('Project already has a pending operation; wait for recovery')

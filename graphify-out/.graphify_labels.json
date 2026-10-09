@@ -52,8 +52,5 @@
   "50": "test-live-lifecycle.py",
   "51": "Redactor",
   "52": "DeploymentTests",
-  "53": "power.py",
-  "54": "build_audit.py",
-  "55": "verify-pause-policy.py",
-  "56": "verify-lifecycle-fixes.py"
+  "54": "build_audit.py"
 }

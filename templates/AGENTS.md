@@ -9,8 +9,14 @@ Windows worker, private GitHub repositories, tmux or native goal handling.
 GitHub is the source of truth. This project has its own PRIVATE GitHub repository.
 Commit meaningful milestones and push stable intermediate results frequently.
 Important work must never exist only on the Pi. Use local Linux tests and suitable
-GitHub Actions workflows. For cross-platform products use Linux/Windows/macOS
-where meaningful; do not create a pointless platform matrix for a platform-specific goal.
+GitHub Actions workflows. All jobs must use `runs-on: [self-hosted, Windows, X64, codexpi]`;
+GitHub-hosted runners and paid fallbacks are forbidden. CodexPi registers the project's
+official pre-login Windows runner automatically and gives CI priority over Windows jobs.
+For pull-request jobs require `github.event.pull_request.head.repo.full_name == github.repository`
+before checking out or executing code; do not run untrusted forks on the personal PC.
+Run genuine Linux checks in the runner service's WSL distribution `CodexPi-CI`, not
+as Windows commands with a Linux label. Preserve relevant platform checks; never claim
+an unavailable OS passed and do not create pointless platform matrices.
 
 Use /home/raspberry/CodexPi/bin/codexpi-tool for infrastructure operations.
 Check `codexpi-tool windows-status` before native Windows tests. When Windows is

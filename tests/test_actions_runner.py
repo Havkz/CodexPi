@@ -4,15 +4,64 @@ import unittest
 import tempfile
 import json
 import time
+import uuid
 from types import SimpleNamespace
 from unittest.mock import patch, AsyncMock
 
 from app import actions, power
 from app.windows_ci import ExecutionSlot
+from app.windows_worker import Worker
 from tests import test_power
 
 
 class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_setup_is_journaled_idempotent_and_only_github_confirms_ready(self):
+        with tempfile.TemporaryDirectory() as directory:
+            c = test_power.PowerTests().controller(directory)
+            ident = str(uuid.uuid4())
+            c.db.conn.execute("UPDATE projects SET project_id=?,github_repo=?", (ident, 'Havkz/New-Project'))
+            c.worker = SimpleNamespace(closed=False)
+            c.worker_seen = time.monotonic()
+            c.redactor = SimpleNamespace(clean=str)
+            project = c.db.get(ident)
+            worker = Worker(directory, 'private-secret', 'https://unused')
+            try:
+                with patch('app.worker_server.send', AsyncMock()) as send:
+                    with self.assertRaisesRegex(RuntimeError, 'confirmation'):
+                        await actions.register(c, project)
+                    body = send.call_args.args[1]
+                    with self.assertRaisesRegex(RuntimeError, 'confirmation'):
+                        await actions.register(c, project)
+                    send.assert_called_once()
+                result = {'stdout': '', 'stderr': '', 'exit_code': 0, 'artifacts': []}
+                with patch('app.windows_worker.execute', AsyncMock(return_value=result)) as execute:
+                    self.assertIsNone(worker.accept_actions_setup(body))
+                    self.assertIsNone(worker.accept_actions_setup(body))
+                    await worker.execution
+                    execute.assert_awaited_once()
+                    self.assertEqual(execute.call_args.args[0][-3:], ['--project-id', ident, 'Havkz/New-Project'])
+                    reply = worker.accept_actions_setup(body)
+                    self.assertEqual(reply['type'], 'actions_setup_result')
+                    actions.setup_result(c, reply)
+                    self.assertEqual(c.db.setting('actions_registration/' + ident)['phase'], 'registered')
+                    actions.setup_result(c, reply)  # Duplicate delivery does not change its result.
+                    with self.assertRaises(ValueError):
+                        worker.accept_actions_setup({**body, 'repo': 'Havkz/Other'})
+                    with self.assertRaises(ValueError):
+                        worker.accept_actions_setup({**body, 'id': str(uuid.uuid4()), 'argv': ['shutdown']})
+                    with self.assertRaises(ValueError):
+                        worker.accept_actions_setup({**body, 'id': str(uuid.uuid4()), 'repo': 'Other/Project'})
+                state = c.db.setting('actions_registration/' + ident)
+                state['phase'] = 'sent'
+                c.db.set_setting('actions_registration/' + ident, state)
+                actions.setup_inventory(c, [body['id']])
+                self.assertEqual(c.db.setting('actions_registration/' + ident)['phase'], 'sent')
+                actions.setup_inventory(c, [])
+                self.assertEqual(c.db.setting('actions_registration/' + ident)['phase'], 'pending')
+            finally:
+                worker.db.close()
+                c.db.conn.close()
+
     async def test_real_job_wakes_once_takes_priority_and_unknown_state_prevents_shutdown(self):
         with tempfile.TemporaryDirectory() as directory:
             c = test_power.PowerTests().controller(directory)
