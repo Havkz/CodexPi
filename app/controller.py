@@ -494,7 +494,8 @@ class Controller:
             from .prompts import active, reconcile
             if active(self, project):
                 if not selected or selected == project['project_id']:
-                    self.select(project['project_id'])
+                    self.db.enqueue(project['project_id'])
+                    self.db.set_setting('selected', project['project_id'])
                     await reconcile(self, project)
                 else:
                     await self.pause(project, release=False, manual=True)
@@ -780,6 +781,23 @@ class Controller:
         if self.db.setting('pause_all', False) or self.account_switch_pending:
             return
         selected = self.db.setting('selected')
+        from .prompts import active, dispatch, key
+        head = next((p for p in self.db.all() if p['queue_position'] == 1), None)
+        if selected and head and selected != head['project_id'] and self.can_auto_resume(head):
+            pending = json.loads(head['operation'] or '{}')
+            if (head['goal_status'] not in ('usage limited', 'limited by budget')
+                    and (not pending and self.db.setting(key(head), [])
+                         or pending.get('kind') == 'resume' and not pending.get('error'))):
+                current = self.db.get(selected)
+                current_operation = json.loads(current['operation'] or '{}')
+                prompt = active(self, current)
+                if (current['lifecycle'] != 'ready' or current_operation and current_operation.get('kind') != 'resume'
+                        or prompt and prompt.get('phase') != 'active'
+                        or self.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone()):
+                    return
+                # Reordering is durable intent; quiesce the old session before admitting the new head.
+                await self.pause(current, preserve_status=True)
+                selected = None
         if selected:
             project = self.db.get(selected)
             operation = json.loads(project['operation'] or '{}')
@@ -805,7 +823,6 @@ class Controller:
                 self.db.set_setting('selected', None)
                 self.db.set_setting('advance_queue', 'blocked')
         advance = self.db.setting('advance_queue', False)
-        from .prompts import dispatch, key
         # Explicitly queued prompts/resumes need no auto-continue opt-in. A selected
         # active/limited/blocked project still retains its slot above.
         for candidate in self.db.all():

@@ -101,6 +101,9 @@ async def tick(controller):
     event = db.conn.execute("SELECT MAX(event_id) FROM events WHERE project_id=? AND kind='stalled'",
                            (project['project_id'],)).fetchone()[0]
     trigger = [project['project_id'], project['codex_session_id'], event]
+    # A stall after a failed boot is not a new, explicit native wake request.
+    if state.get('phase') == 'failed' and state.get('trigger', [])[:2] == trigger[:2]:
+        return
     request_wake(controller, trigger)
 
 

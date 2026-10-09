@@ -210,13 +210,14 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
         c.db.set_setting('auto_boot_windows', True)
         c.db.set_setting('windows_power_observation', {'mac': '74-56-3C-2B-FD-0F', 'address': '192.168.2.200',
             'boot_at': time.time() - 1000, 'startup_ready': True})
+        native_turn = 'native-turn'
         async def rpc(method, params, **kwargs):
             if method == 'thread/goal/get':
                 return {'goal': {'status': 'active'}}
             if method == 'thread/read':
                 return {'thread': {'id': 'first', 'cwd': str(c.root / 'first'), 'status': {'type': 'active'}}}
             if method == 'thread/turns/list':
-                return {'data': [{'id': 'native-turn', 'status': 'inProgress'}]}
+                return {'data': [{'id': native_turn, 'status': 'inProgress'}]}
             raise AssertionError(method)
         c.native.rpc.side_effect = rpc
         with patch('app.power.wake') as wake:
@@ -239,9 +240,20 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
                 with self.assertRaisesRegex(ValueError, 'timed out'):
                     await request_windows(c, {'project_id': 'first'})
             wake.assert_called_once()
+            c.db.update('first', goal_status='stalled', windows_required=1,
+                        block_reason=json.dumps({'reason': 'Windows offline', 'requires_user': False}))
+            c.db.event('first', 'stalled', {'reason': 'Windows offline'})
+            await power.tick(c)
+            await power.tick(c)
+            wake.assert_called_once()  # The following stall is not a second wake request.
+            c.db.update('first', goal_status='active', windows_required=0, block_reason=None)
+            native_turn = 'new-native-turn'
+            fresh = await request_windows(c, {'project_id': 'first'})
+            self.assertNotEqual(fresh['operation_id'], first['operation_id'])
+            self.assertEqual(wake.call_count, 2)  # A genuine later native request can wake Windows.
             c.worker_seen = time.monotonic()
             self.assertEqual(await request_windows(c, {'project_id': 'first'}), {'online': True})
-            wake.assert_called_once()
+            self.assertEqual(wake.call_count, 2)
 
     async def test_dispatch_rechecks_queue_and_does_not_head_of_line_block(self):
         c = self.c

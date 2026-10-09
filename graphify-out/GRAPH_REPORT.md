@@ -1,16 +1,16 @@
 # Graph Report - CodexPi  (2026-10-09)
 
 ## Corpus Check
-- 92 files · ~123,185 words
+- 92 files · ~123,558 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 674 nodes · 1796 edges · 52 communities (33 shown, 19 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 202 edges (avg confidence: 0.7)
+- 675 nodes · 1800 edges · 53 communities (34 shown, 19 thin omitted)
+- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 203 edges (avg confidence: 0.7)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6b223e0d`
+- Built from commit: `6bcdac92`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -62,12 +62,13 @@
 - verify-account-ui.py
 - export
 - test-live-lifecycle.py
+- verify-tui-scrolling.py
 - Native
 
 ## God Nodes (most connected - your core abstractions)
-1. `Database` - 81 edges
+1. `Database` - 82 edges
 2. `Controller` - 60 edges
-3. `SchedulerTests` - 57 edges
+3. `SchedulerTests` - 58 edges
 4. `command()` - 42 edges
 5. `atomic_write()` - 39 edges
 6. `Native` - 31 edges
@@ -91,7 +92,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (52 total, 19 thin omitted)
+## Communities (53 total, 19 thin omitted)
 
 ### Community 0 - "common.py"
 Cohesion: 0.29
@@ -205,9 +206,13 @@ Nodes (26): notification(), command(), Controller, daily_update(), idle(), Daily
 Cohesion: 0.09
 Nodes (19): RuntimeError, Probe the installed native protocol without requesting any model work., rpc(), main(), open_project(), Create, rename and delete ONLY a dedicated lifecycle E2E project via real UI.  P, remote(), verify_deleted() (+11 more)
 
+### Community 51 - "verify-tui-scrolling.py"
+Cohesion: 0.67
+Nodes (3): main(), Read-only live check on the Pi: real --all picker, wheel, pager and unsent draft, tmux()
+
 ### Community 52 - "Native"
-Cohesion: 0.18
-Nodes (8): Native, main(), Trust only the reviewed goal/Ponytail and optional Token Optimizer definitions., main(), Pi hook inventory and isolated Ponytail checks; no model turn or live config wri, main(), Read-only live check on the Pi: real --all picker, wheel, pager and unsent draft, tmux()
+Cohesion: 0.16
+Nodes (6): Native, tui_proxy(), main(), Trust only the reviewed goal/Ponytail and optional Token Optimizer definitions., main(), Pi hook inventory and isolated Ponytail checks; no model turn or live config wri
 
 ## Knowledge Gaps
 - **77 isolated node(s):** `install-base.sh script`, `PATH`, `usageChart`, `Alltag`, `Installation und Betrieb` (+72 more)
@@ -217,11 +222,11 @@ Nodes (8): Native, main(), Trust only the reviewed goal/Ponytail and optional To
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `DeploymentTests` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `verify-pause-policy.py`, `Bot`, `codexpi`, `export`, `test-live-lifecycle.py`, `export`?**
-  _High betweenness centrality (0.092) - this node is a cross-community bridge._
-- **Why does `Controller` connect `export` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `DeploymentTests`, `Bot`, `codexpi`, `Native`?**
-  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `Database` connect `DeploymentTests` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `verify-pause-policy.py`, `Bot`, `codexpi`, `export`, `test-live-lifecycle.py`, `Native`, `export`?**
+  _High betweenness centrality (0.093) - this node is a cross-community bridge._
 - **Why does `SchedulerTests` connect `Controller` to `migration.py`, `Bot`, `DeploymentTests`, `export`, `test-live-lifecycle.py`, `Native`?**
+  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+- **Why does `Controller` connect `export` to `Controller`, `migration.py`, `deployment.py`, `windows_worker.py`, `Bot`, `DeploymentTests`, `Bot`, `codexpi`, `Native`?**
   _High betweenness centrality (0.054) - this node is a cross-community bridge._
 - **Are the 15 inferred relationships involving `Database` (e.g. with `Controller` and `AccountObservationTests`) actually correct?**
   _`Database` has 15 INFERRED edges - model-reasoned connections that need verification._

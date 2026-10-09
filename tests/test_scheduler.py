@@ -240,7 +240,6 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         upstream = SimpleNamespace(rpc=AsyncMock())
         with self.assertRaisesRegex(ValueError, 'Prompt saved'):
             await submit(c, c.db.get('second'), params, upstream)
-        c.db.reorder(['second', 'first'])
         c.pause = AsyncMock(wraps=c.pause)
         result = await c.resume('second')
         self.assertEqual(result['operation_id'], 'new-work')
@@ -266,6 +265,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 return {'turn': {'id': 'new-native-turn', 'status': 'inProgress'}}
             return await original_rpc(method, args, **kwargs)
         c.native.rpc = AsyncMock(side_effect=rpc)
+        c.db.reorder(['second', 'first'])  # Reprioritize only after the old slot is released in this Resume test.
         result = await c.resume('second')
         self.assertEqual(result['operation_id'], 'new-work')
         self.assertEqual(c.db.get('second')['goal_status'], 'active')
@@ -292,6 +292,52 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(c.db.get('first')['goal_status'], 'active')
         c.pause.assert_awaited_once()
         self.assertFalse(c.db.setting('manual_pause/second', False))
+
+    async def test_reordered_prompt_head_survives_recovery_and_stops_old_execution_before_start(self):
+        from app.prompts import active
+        c = self.controller
+        c.select('first')
+        c.db.update('first', goal_status='active')
+        c.db.update('second', goal_status='complete', completion_notified=1)
+        c.db.set_setting('manual_pause_policy_initialized', True)
+        c.db.set_setting('prompt_active/first', {'id': 'old', 'phase': 'active', 'turn_id': 'old-turn'})
+        c.db.set_setting('prompts/second', [{'id': 'new-work', 'params': {'threadId': 'second',
+            'clientUserMessageId': 'new-work', 'input': [{'type': 'text', 'text': 'Saved work'}]}}])
+        c.db.reorder(['second', 'first'])
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        c.source = SimpleNamespace(rows=lambda: {})
+        with patch('app.prompts.reconcile', AsyncMock(return_value=True)):
+            await c.recover()
+        self.assertEqual([p['project_id'] for p in c.db.all()], ['second', 'first'])
+        for held in ('manual', 'question', 'limit', 'windows-job'):
+            c.db.set_setting('manual_pause/second', held == 'manual')
+            c.db.update('second', goal_status='usage limited' if held == 'limit' else 'complete',
+                        block_reason=json.dumps({'requires_user': True}) if held == 'question' else None)
+            if held == 'windows-job':
+                c.db.conn.execute("INSERT INTO jobs(job_id,project_id,payload,status,created_at,updated_at) VALUES('job','first','{}','running',1,1)")
+            await c.advance_queue()
+            c.wait_idle.assert_not_awaited()
+            self.assertEqual(c.db.setting('selected'), 'first')
+        c.db.conn.execute("UPDATE jobs SET status='finished'")
+        c.db.update('second', goal_status='complete', block_reason=None)
+        c.db.set_setting('manual_pause/second', False)
+        original_rpc = c.native.rpc
+        async def rpc(method, args, **kwargs):
+            if method == 'turn/start':
+                c.wait_idle.assert_awaited_once()
+                self.assertIsNone(active(c, c.db.get('first')))
+                self.assertEqual(c.db.get('first')['goal_status'], 'paused')
+                return {'turn': {'id': 'new-turn', 'status': 'inProgress'}}
+            return await original_rpc(method, args, **kwargs)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        await c.advance_queue()
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'second')
+        self.assertEqual(c.db.get('second')['queue_position'], 1)
+        self.assertEqual(c.db.get('second')['goal_status'], 'active')
+        self.assertEqual(len([call for call in c.native.rpc.await_args_list if call.args[0] == 'turn/start']), 1)
+        self.assertEqual(c.db.setting('prompts/second'), [])
 
     async def test_prompt_usage_error_survives_goal_poll_restart_and_reset_without_replay(self):
         c = self.controller

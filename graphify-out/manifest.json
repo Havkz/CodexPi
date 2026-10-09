@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791561502.483194,
-    "ast_hash": "7e012b8966ce303fe60000cb4086d922",
+    "mtime": 1791563803.755036,
+    "ast_hash": "35d0836973a436f50f2aa528d2a730e5",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -180,8 +180,8 @@
     "semantic_hash": ""
   },
   "tests/test_scheduler.py": {
-    "mtime": 1791562912.7455666,
-    "ast_hash": "025dcf51ce61c956347065232df94d75",
+    "mtime": 1791563838.5034251,
+    "ast_hash": "60d7290bf64e3e8eb8a7c7d06dc45822",
     "semantic_hash": ""
   },
   "Setup/test-live-queue.py": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "tests/test_worker_server.py": {
-    "mtime": 1791562232.9038482,
-    "ast_hash": "be35fc0caaac8288865cbf5d6f86e00d",
+    "mtime": 1791563509.8046174,
+    "ast_hash": "5888c969339c1a7f915c80829d57cd84",
     "semantic_hash": ""
   },
   "docs/optimization.md": {
@@ -460,8 +460,8 @@
     "semantic_hash": ""
   },
   "app/power.py": {
-    "mtime": 1791562120.6962423,
-    "ast_hash": "9c5ae834be3c85d03f1a4245154ae488",
+    "mtime": 1791563479.7424023,
+    "ast_hash": "fd96c9a136abf92cca55b5ac16c60688",
     "semantic_hash": ""
   },
   "app/windows_power.py": {
