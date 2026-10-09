@@ -9,6 +9,7 @@ from types import SimpleNamespace
 from unittest.mock import patch, AsyncMock
 
 from app import actions, power
+from app.actions_guard import validate
 from app.windows_ci import ExecutionSlot
 from app.windows_worker import Worker
 from tests import test_power
@@ -137,6 +138,17 @@ spec.loader.exec_module(installer)
 
 
 class RunnerInstallationTests(unittest.TestCase):
+    def test_push_guard_rejects_hosted_dynamic_and_external_reusable_jobs(self):
+        validate({'jobs': {'test': {'runs-on': ['self-hosted', 'Windows', 'X64', 'codexpi']}}}, set())
+        local = '.github/workflows/checks.yml'
+        validate({'jobs': {'test': {'uses': './' + local}}}, {local})
+        for job in ({'runs-on': 'ubuntu-latest'}, {'runs-on': '${{ matrix.runner }}'},
+                    {'runs-on': ['self-hosted', 'Windows']},
+                    {'uses': 'other/repository/.github/workflows/tests.yml@main'},
+                    {'uses': './' + local}):
+            with self.subTest(job=job), self.assertRaises(ValueError):
+                validate({'jobs': {'test': job}}, set())
+
     def test_linux_distribution_cannot_be_registered_under_an_interactive_account(self):
         spec = importlib.util.spec_from_file_location('linux_ci',
             Path(__file__).resolve().parents[1] / 'Setup/run-linux-ci.py')

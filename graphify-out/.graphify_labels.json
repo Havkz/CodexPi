@@ -52,5 +52,6 @@
   "50": "test-live-lifecycle.py",
   "51": "Redactor",
   "52": "DeploymentTests",
+  "53": "UsageTests",
   "54": "build_audit.py"
 }

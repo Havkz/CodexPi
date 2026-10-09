@@ -241,6 +241,9 @@ class Controller:
             origin = await command('git', 'remote', 'get-url', 'origin', cwd=path)
             if origin['stdout'].strip() != 'https://github.com/' + repo + '.git':
                 raise RuntimeError('Existing Git origin does not match CodexPi project')
+        if self.db.setting('self_hosted_actions', False):
+            from .actions_guard import install
+            install(path)
         await command('git', 'push', '-u', 'origin', 'main', cwd=path, timeout=180)
         channel = await self.bot.ensure_channel(project)
         self.db.update(project['project_id'], discord_channel_id=str(channel.id))
