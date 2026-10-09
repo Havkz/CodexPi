@@ -189,7 +189,20 @@ def main():
             expect(page.locator('#queue tr[data-id="new-work"] .queue-grip')).to_be_enabled()
             page.locator('#queue tr[data-id="new-work"] .queue-grip').drag_to(page.locator('#queue tr[data-id="running"]'))
             expect(page.locator('#queue tr').first).to_have_attribute('data-id', 'running')
-            assert reorders == [['new-work', 'running', 'held'], ['running', 'new-work', 'held']]
+            # Start on the status cell, not the handle. Real mouse drag must reach the same queue API.
+            page.locator('#queue tr[data-id="new-work"] td').nth(2).drag_to(page.locator('#queue tr[data-id="running"] td').nth(2))
+            expect(page.locator('#queue tr').first).to_have_attribute('data-id', 'new-work')
+            page.locator('#queue tr[data-id="new-work"] .queue-grip').press('ArrowDown')
+            expect(page.locator('#queue tr').first).to_have_attribute('data-id', 'running')
+            assert reorders == [['new-work', 'running', 'held'], ['running', 'new-work', 'held']] * 2
+            state['projects'][1].update(goal_status='paused', manual_paused=False, pending_prompt_count=0)
+            page.evaluate('refresh()')
+            expect(page.locator('#queue tr[data-id="new-work"] .badge')).to_have_text('queued')
+            expect(page.locator('#queue tr[data-id="held"] .badge')).to_have_text('paused')
+            page.locator('#queue tr[data-id="new-work"] .queue-name').click()
+            expect(page.locator('#project-dialog')).to_be_visible()
+            page.locator('#close-detail').click()
+            assert len(reorders) == 4  # Clicking a name opens details; it never reorders.
             page.unroute('**/api/action', reorder)
             finished = page.locator('#projects article').filter(has=page.get_by_role('heading', name='finished', exact=True))
             assert finished.get_by_role('button', name='Resume', exact=True).count() == 0

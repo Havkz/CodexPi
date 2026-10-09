@@ -125,6 +125,8 @@ td { padding: 18px 20px; font-size: 13px; vertical-align: middle; }
 tbody tr + tr { border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent); }
 tbody tr { transition: background .18s ease; }
 tbody tr:hover { background: rgb(120 129 255 / .045); }
+.queue-row[draggable="true"] { cursor: grab; }
+.queue-row.dragging { cursor: grabbing; }
 .queue-name { display: block; background: none; border: 0; padding: 0; text-align: left; font-size: 13px; min-height: 30px; max-width: 280px; overflow-wrap: anywhere; }
 .queue-repo { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
 .queue-position { display: flex; align-items: center; gap: 10px; }

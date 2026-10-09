@@ -11,7 +11,11 @@ function icon(path) {
 }
 const date = stamp => stamp ? new Date(stamp * 1000).toLocaleString('en-GB') : 'Not available yet';
 const badge = status => node('span', status || 'unknown', 'badge status-' + (status || 'unknown').replaceAll(' ', '-'));
-const projectStatus = p => p.pending_prompt_count && p.goal_status === 'complete' ? 'queued' : p.goal_status === 'complete' && !p.completion_notified ? 'verifying' : p.goal_status;
+const projectStatus = p => {
+  if (p.pending_prompt_count && p.goal_status === 'complete') return 'queued';
+  if (p.queue_position > 1 && p.goal_status === 'paused' && !p.manual_paused) return 'queued';
+  return p.goal_status === 'complete' && !p.completion_notified ? 'verifying' : p.goal_status;
+};
 function button(text, callback, key, cls = '') {
   const el = node('button', text, cls); el.type = 'button'; el.onclick = callback;
   if (key) el.dataset.key = key;
@@ -207,17 +211,23 @@ function projectOverview(p, inDetail = false) {
   return body;
 }
 function renderQueue(queue) {
+  if (dragging) return; // Keep the actual drag source alive during a polling response.
   $('queue-count').textContent = queue.length + ' projects'; $('queue-empty').hidden = queue.length > 0;
   const rows = queue.map((p, index) => {
-    const row = node('tr'); row.dataset.id = p.project_id;
+    const row = node('tr', '', 'queue-row'); row.dataset.id = p.project_id;
     const position = node('td'), controls = node('div', '', 'queue-position'); controls.append(node('span', String(p.queue_position).padStart(2, '0')));
     const grip = node('button', '', 'queue-grip'); grip.type = 'button'; grip.dataset.key = p.project_id + ':reorder';
     grip.setAttribute('aria-label', 'Reorder ' + p.display_name); grip.setAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown');
     grip.title = 'Drag to reorder · or focus and use the up/down arrow keys';
     grip.disabled = busy || !connected || queue.length < 2; grip.draggable = !grip.disabled;
+    row.draggable = !grip.disabled;
     const dots = node('span', '', 'grip-dots'); dots.setAttribute('aria-hidden', 'true');
     for (let dot = 0; dot < 6; dot++) dots.append(node('i')); grip.append(dots);
-    grip.onpointerdown = event => { if (event.button === 0 && !grip.disabled) dragging = p.project_id; };
+    row.onpointerdown = event => {
+      const control = event.target.closest('button, a, input, select, textarea, summary, [contenteditable]');
+      row.draggable = !grip.disabled && event.button === 0 && (!control || control === grip);
+      dragging = row.draggable ? p.project_id : null;
+    };
     grip.onkeydown = event => {
       const offset = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
       if (!offset) return;
@@ -234,7 +244,7 @@ function renderQueue(queue) {
     const actionCell = node('td'); actionCell.append(actions(p, true, true));
     row.append(position, name, status, node('td', date(p.last_activity), 'muted'), node('td', p.windows_required ? 'Required' : '—'), actionCell);
     row.ondragstart = event => {
-      if (grip.disabled || event.target !== grip) { event.preventDefault(); return; }
+      if (grip.disabled || !row.draggable) { event.preventDefault(); return; }
       dragging = p.project_id; event.dataTransfer.setData('text/plain', dragging); event.dataTransfer.effectAllowed = 'move'; row.classList.add('dragging');
     };
     row.ondragend = () => { dragging = null; row.classList.remove('dragging'); document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target')); };
