@@ -181,9 +181,10 @@ class Bot(discord.Client):
 
     async def send_pending(self):
         pending = self.controller.db.conn.execute(
-            """SELECT * FROM events WHERE sent_at IS NULL OR (kind='usage limited'
+            """SELECT * FROM events WHERE (sent_at IS NULL OR (kind='usage limited'
                AND json_extract(payload,'$.usage_limit.resetAt') IS NOT NULL
-               AND json_extract(payload,'$.reset_notified') IS NULL)
+               AND json_extract(payload,'$.reset_notified') IS NULL))
+               AND NOT (kind='critical' AND COALESCE(json_extract(payload,'$.message'),'')='GitHub Actions failed')
                ORDER BY event_id LIMIT 10""").fetchall()
         for event in pending:
             project = self.controller.db.get(event['project_id'])

@@ -13,6 +13,31 @@ from app.discord_bot import Bot, EMBED_COLORS, status_embed
 
 
 class DiscordTests(unittest.IsolatedAsyncioTestCase):
+    async def test_legacy_ci_alerts_are_not_sent_but_real_infrastructure_alerts_are(self):
+        from tests.test_scheduler import SchedulerTests
+        fixture = SchedulerTests()
+        fixture.setUp()
+        self.addCleanup(fixture.tearDown)
+        c = fixture.controller
+        c.db.update('first', discord_channel_id='123')
+        c.db.event('first', 'critical', {'message': 'GitHub Actions failed', 'commit': 'a' * 40})
+        c.db.event('first', 'critical', {'message': 'Unselected native goal was paused'})
+        channel = SimpleNamespace(send=AsyncMock())
+        async def messages(**kwargs):
+            if False:
+                yield
+        channel.history = messages
+        bot = Bot(c)
+        bot._connection.user = SimpleNamespace(id=777)
+        bot.fetch_channel = AsyncMock(return_value=channel)
+        self.addAsyncCleanup(bot.close)
+        await bot.send_pending()
+        await bot.send_pending()
+        bot.fetch_channel.assert_awaited_once()
+        channel.send.assert_awaited_once()
+        self.assertIn('Unselected native goal was paused', channel.send.await_args.kwargs['embed'].description)
+        self.assertEqual(c.db.conn.execute('SELECT COUNT(*) FROM events').fetchone()[0], 2)
+
     async def test_human_question_persists_hold_and_pings_only_the_owner_once(self):
         from tests.test_scheduler import SchedulerTests
         fixture = SchedulerTests()

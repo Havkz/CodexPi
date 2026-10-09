@@ -50,5 +50,9 @@
   "48": "verify-account-ui.py",
   "49": "export",
   "50": "test-live-lifecycle.py",
-  "51": "state"
+  "51": "state",
+  "52": "Native",
+  "53": ".make_controller",
+  "54": "DeploymentTests",
+  "55": ".update"
 }

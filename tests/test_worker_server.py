@@ -160,6 +160,47 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(json.loads(p['block_reason'])['requires_user'])
         c.native.rpc.assert_any_await('thread/goal/set', {'threadId': 'first', 'status': 'blocked'})
 
+    async def test_executing_user_prompt_can_use_windows_without_an_active_goal(self):
+        c = self.c
+        thread = {'id': 'first', 'cwd': str(c.root / 'first'), 'status': {'type': 'active'}}
+        turn = {'id': 'user-turn', 'status': 'inProgress'}
+        goal = None
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/goal/get':
+                return {'goal': goal}
+            if method == 'thread/read':
+                return {'thread': thread}
+            if method == 'thread/turns/list':
+                return {'data': [turn]}
+            raise AssertionError(method)
+        c.native.rpc.side_effect = rpc
+        c.db.set_setting('prompt_active/first', {'phase': 'active', 'turn_id': turn['id'], 'id': 'prompt'})
+        c.db.conn.close()
+        c.db = Database(c.root / 'test.db')
+        self.addCleanup(c.db.conn.close)
+        from app.worker_server import job_denial
+        for status in (None, 'complete', 'paused', 'blocked'):
+            goal = {'status': status} if status else None
+            with self.subTest(status=status):
+                self.assertIsNone(await job_denial(c, c.db.get('first')))
+        result = await submit_job(c, self.body)
+        self.assertEqual(c.worker.send_json.await_args.args[0]['job_id'], result['job_id'])
+        for field, value in [('id', 'other-turn'), ('status', 'completed')]:
+            before = turn[field]
+            turn[field] = value
+            self.assertIsNotNone(await job_denial(c, c.db.get('first')))
+            turn[field] = before
+        thread['cwd'] = str(c.root / 'second')
+        self.assertIsNotNone(await job_denial(c, c.db.get('first')))
+        thread['cwd'] = str(c.root / 'first')
+        goal = {'status': 'usageLimited'}
+        self.assertIsNotNone(await job_denial(c, c.db.get('first')))
+        goal = None
+        c.db.set_setting('prompt_active/first', {'phase': 'submitting', 'turn_id': turn['id']})
+        self.assertIsNotNone(await job_denial(c, c.db.get('first')))
+        c.db.set_setting('prompt_active/first', None)
+        self.assertIsNotNone(await job_denial(c, c.db.get('first')))
+
     async def test_dispatch_rechecks_queue_and_does_not_head_of_line_block(self):
         c = self.c
         self.pending('old-paused', 'second')

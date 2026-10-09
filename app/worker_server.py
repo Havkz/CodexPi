@@ -162,10 +162,22 @@ async def job_denial(controller, project):
         return 'Only the selected, executing project may request Windows jobs'
     goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
     if not goal or goal['status'] != 'active':
+        from .prompts import active
+        prompt = active(controller, project)
+        if (prompt and prompt.get('phase') == 'active' and prompt.get('turn_id')
+                and (not goal or goal['status'] not in ('usageLimited', 'budgetLimited'))):
+            thread = (await controller.native.rpc('thread/read', {'threadId': project['codex_session_id'],
+                                                                 'includeTurns': False}))['thread']
+            turns = (await controller.native.rpc('thread/turns/list', {'threadId': project['codex_session_id'],
+                'limit': 1, 'sortDirection': 'desc'}))['data']
+            if (thread['id'] == project['codex_session_id'] and thread['cwd'] == project['project_path']
+                    and thread['status']['type'] == 'active' and turns
+                    and turns[0]['id'] == prompt['turn_id'] and turns[0]['status'] == 'inProgress'):
+                return None
         # An account switch pauses only FUTURE goal continuation, never the
         # current turn. Allow its Windows tools to finish, not idle/new work.
         if not (account_hold and switch.get('phase') == 'waiting_turn' and goal and goal['status'] == 'paused'):
-            return 'An active native goal is required for Windows jobs'
+            return 'An active native goal or confirmed executing user prompt is required for Windows jobs'
         thread = (await controller.native.rpc('thread/read', {'threadId': project['codex_session_id'],
                                                              'includeTurns': False}))['thread']
         if (thread['id'] != project['codex_session_id'] or thread['cwd'] != project['project_path']

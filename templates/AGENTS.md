@@ -22,6 +22,8 @@ Windows being offline does not stop ordinary Linux work.
 To run a Windows job, push a commit first, then:
 `codexpi-tool windows-job --commit FULL_SHA --reason "exact reason" -- COMMAND ARG ...`
 The worker fetches that exact commit. Windows is an execution worker, never a second AI.
+Windows jobs and artifact delivery also work during a normal user prompt in the
+selected executing session. Do not create a new /goal merely to transfer a file.
 
 If a decision, secret, permission or human information is missing, write
 `.codexpi/block.json` with a short `reason`, optional `reasons` (short strings for

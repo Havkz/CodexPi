@@ -649,6 +649,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                 with patch('app.controller.command', command):
                     await c.refresh_git(c.db.get('first'))
                 self.assertEqual(c.db.get('first')['last_ci_status'], expected)
+                self.assertEqual(c.db.conn.execute("SELECT COUNT(*) FROM events WHERE kind='critical'").fetchone()[0], 0)
 
     async def test_failed_final_ci_stalls_once_instead_of_advancing_or_spamming(self):
         c = self.controller

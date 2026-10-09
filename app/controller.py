@@ -714,8 +714,6 @@ class Controller:
             if current['lifecycle'] != 'ready':
                 return
             self.db.update(project['project_id'], last_commit=commit, last_ci_status=state)
-            if state == 'failure' and (current['last_ci_status'] != 'failure' or current['last_commit'] != commit):
-                self.db.event(project['project_id'], 'critical', {'message': 'GitHub Actions failed', 'commit': commit})
 
     async def scheduler(self):
         while True:
