@@ -75,6 +75,8 @@ class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
             queued = True
             job_status = 'queued'
             async def api(*args, **kwargs):
+                self.assertIn('--header', args)
+                self.assertIn('Cache-Control: no-cache', args)
                 endpoint = args[-1]
                 if endpoint.endswith('/runners'):
                     data = {'runners': [{'id': 21, 'os': 'Windows', 'labels': [{'name': 'codexpi'}]}]}

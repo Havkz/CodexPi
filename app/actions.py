@@ -95,7 +95,8 @@ async def poll(controller):
     first_seen = previous.get('first_seen', {})
     try:
         for repo in sorted(repos):
-            runners = json.loads((await command('gh', 'api', 'repos/' + repo + '/actions/runners',
+            runners = json.loads((await command('gh', 'api', '--header', 'Cache-Control: no-cache',
+                                               'repos/' + repo + '/actions/runners',
                                                timeout=20))['stdout'])['runners']
             local = {r['id'] for r in runners if r['os'] == 'Windows'
                      and any(label['name'] == 'codexpi' for label in r['labels'])}
@@ -110,11 +111,11 @@ async def poll(controller):
                     registration.update(phase='ready', confirmed_at=now)
                     controller.db.set_setting('actions_registration/' + project['project_id'], registration)
             for status in ('queued', 'in_progress', 'waiting', 'requested', 'pending'):
-                pages = json.loads((await command('gh', 'api', '--paginate', '--slurp',
+                pages = json.loads((await command('gh', 'api', '--header', 'Cache-Control: no-cache', '--paginate', '--slurp',
                     'repos/' + repo + '/actions/runs?status=' + status + '&per_page=100', timeout=20))['stdout'])
                 for page in pages:
                     for run in page['workflow_runs']:
-                        job_pages = json.loads((await command('gh', 'api', '--paginate', '--slurp',
+                        job_pages = json.loads((await command('gh', 'api', '--header', 'Cache-Control: no-cache', '--paginate', '--slurp',
                             'repos/' + repo + '/actions/runs/' + str(run['id']) + '/jobs?per_page=100',
                             timeout=20))['stdout'])
                         if not any(p['jobs'] for p in job_pages):
