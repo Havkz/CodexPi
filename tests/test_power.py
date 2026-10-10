@@ -22,6 +22,33 @@ from app.windows_worker import Worker
 
 
 class PowerTests(unittest.IsolatedAsyncioTestCase):
+    def test_boot_handoff_releases_ledger_before_starting_login_task(self):
+        from app.windows_worker import main
+        with tempfile.TemporaryDirectory() as directory:
+            lock = Mock()
+            worker = SimpleNamespace(db=Mock(), run=AsyncMock(), handoff=True)
+            released = []
+            lock.close.side_effect = lambda: released.append('lock')
+            worker.db.close.side_effect = lambda: released.append('database')
+            def start_task(*args, **kwargs):
+                self.assertEqual(released, ['database', 'lock'])
+                self.assertEqual(args[0][-3:], ['/Run', '/TN', 'CodexPi Windows Worker'])
+                return SimpleNamespace(returncode=0)
+            with patch.dict(sys.modules, {'msvcrt': SimpleNamespace(LK_NBLCK=1, locking=Mock())}), \
+                    patch.dict('os.environ', {'SystemRoot': 'C:\\Windows'}), \
+                    patch.object(sys, 'argv', ['worker', '--boot']), \
+                    patch('app.windows_worker.ROOT', Path(directory)), \
+                    patch('app.windows_worker.RotatingFileHandler', return_value=logging.NullHandler()), \
+                    patch.object(Path, 'open', return_value=lock), \
+                    patch.object(Path, 'read_text', return_value=json.dumps({'secret_dpapi': 'AA==', 'url': 'unused'})), \
+                    patch('app.windows_worker.protect_secret', return_value=b'secret'), \
+                    patch('app.windows_power.boot_time', return_value=1), \
+                    patch('app.windows_worker.Worker', return_value=worker), \
+                    patch('app.windows_worker.subprocess.run', side_effect=start_task) as run:
+                main()
+                worker.run.assert_awaited_once()
+                run.assert_called_once()
+
     async def test_native_tool_waits_for_boot_once_and_stops_on_failure_or_timeout(self):
         loader = SourceFileLoader('codexpi_tool', str(Path(__file__).parents[1] / 'bin/codexpi-tool'))
         tool = module_from_spec(spec_from_loader(loader.name, loader))

@@ -7,7 +7,7 @@ import tempfile
 import time
 import unittest
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 from app.accounts import AccountVault, auth_identity, choose_account, observe_account, refresh, request_switch, switching, tick
 from app.common import atomic_write
@@ -188,7 +188,8 @@ class AccountObservationTests(unittest.IsolatedAsyncioTestCase):
             from app.native import NativeError
             atomic_write(home / 'auth.json', first)
             db = Database(root / 'test.db')
-            c = SimpleNamespace(db=db, account_vault=vault, native=rpc('test-access-first'), health_errors={})
+            c = SimpleNamespace(db=db, account_vault=vault, native=rpc('test-access-first'), health_errors={},
+                                persist_usage_resets=Mock())
             try:
                 await refresh(c)
                 c.native.rpc = AsyncMock(side_effect=NativeError('Network timeout while refreshing token'))
@@ -248,6 +249,10 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             await automatic_change(c)
             self.assertEqual(c.db.setting('account_switch')['target_account'], ids[1])
             self.assertEqual(c.db.setting('account_selection')['attempted'], ids)
+            limited_event = json.loads(c.db.conn.execute("SELECT payload FROM events WHERE kind='usage limited' "
+                "ORDER BY event_id DESC LIMIT 1").fetchone()[0])
+            self.assertEqual(limited_event['usage_limit']['resetAt'], (now + 60) * 1000)
+            self.assertEqual(limited_event['usage_limit']['account_id'], ids[0])
             c.db.set_setting('account_switch', {'phase': 'complete'})
             c.db.activate_account(ids[1])
             loaded['raw'] = raws[1]

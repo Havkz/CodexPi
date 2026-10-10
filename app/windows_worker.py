@@ -569,7 +569,22 @@ def main():
         logging.warning('Windows boot identity unavailable; automatic shutdown is disabled')
         boot_at = None
     worker = Worker(ROOT, secret, config['url'], boot_worker=args.boot, boot_at=boot_at)
-    asyncio.run(worker.run())
+    try:
+        asyncio.run(worker.run())
+    finally:
+        try:
+            worker.db.close()
+        finally:
+            lock.close()
+    if args.boot and worker.handoff:
+        # The logon task may already have lost the race for the boot worker's lock.
+        result = subprocess.run([str(Path(os.environ['SystemRoot']) / 'System32/schtasks.exe'),
+                                 '/Run', '/TN', 'CodexPi Windows Worker'],
+                                capture_output=True, timeout=10,
+                                **({'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {}))
+        if result.returncode:
+            raise RuntimeError('Windows worker handoff could not start the existing login task')
+        logging.info('Boot worker released the ledger and requested the login task')
 
 
 if __name__ == '__main__':

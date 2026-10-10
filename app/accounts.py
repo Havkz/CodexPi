@@ -281,6 +281,7 @@ async def refresh(controller):
     remember(controller, metadata, usage)
     if not expected:
         controller.db.activate_account(metadata['account_id'])
+    controller.persist_usage_resets()  # Checkpoint the old account's reset before a switch can hide it.
     controller.health_errors.pop('account_usage', None)
     return usage
 

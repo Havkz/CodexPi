@@ -155,6 +155,8 @@ class Controller:
                         self.db.set_setting('usage_account/' + project['project_id'], owner)
                     payload['failed_prompt'] = prompt_limit is not None
                 self.db.event(project['project_id'], 'question' if question else status, payload)
+                if status == 'usage limited':
+                    self.persist_usage_resets()
 
     def clear_block(self, project):
         (Path(project['project_path']) / '.codexpi/block.json').unlink(missing_ok=True)
@@ -1083,9 +1085,14 @@ class Controller:
 
     def persist_usage_resets(self):
         account = self.db.setting('account_usage', {})
+        account_id = self.db.setting('active_account')
         limits = account.get('rateLimits') or {}
         resets = [w['resetsAt'] * 1000 for w in (limits.get('primary'), limits.get('secondary'))
                   if w and w.get('usedPercent', 0) >= 100 and w.get('resetsAt')]
+        if account_id and (account.get('account_id') != account_id or
+                not isinstance(account.get('checked_at'), (int, float)) or
+                not 0 <= time.time() - account['checked_at'] <= 90):
+            resets = []  # A stale/different login's snapshot cannot supply this event's reset.
         for project in self.db.all():
             if project['lifecycle'] != 'ready' or project['goal_status'] != 'usage limited':
                 continue
@@ -1102,7 +1109,7 @@ class Controller:
             if metadata:
                 if account_id:
                     metadata['account_id'] = account_id
-                with self.db.transaction():
+                with contextlib.nullcontext() if self.db.conn.in_transaction else self.db.transaction():
                     self.db.update(project['project_id'], usage_limit=json.dumps(metadata))
                     if account_id:
                         self.db.set_setting('usage_limits/' + account_id + '/' + project['project_id'], metadata)

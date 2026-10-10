@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791579917.5274415,
-    "ast_hash": "112925ae7371736fa8a20dafbe151e13",
+    "mtime": 1791662557.8971286,
+    "ast_hash": "1765edd4663e71af80ebded5bbacd87c",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
-    "mtime": 1791559158.2554288,
-    "ast_hash": "66169ccfcfa0864036201f0a5669ac62",
+    "mtime": 1791662557.8987768,
+    "ast_hash": "40e8dc4007e49620af683afb42191249",
     "semantic_hash": ""
   },
   "app/main.py": {
@@ -110,8 +110,8 @@
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
-    "mtime": 1791579213.4213047,
-    "ast_hash": "8ef97767517d1bc48e1243742e362f2c",
+    "mtime": 1791662406.8318753,
+    "ast_hash": "f576644cfdf1f21ff73804bb5001921b",
     "semantic_hash": ""
   },
   "app/worker_server.py": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "tests/test_discord.py": {
-    "mtime": 1791559139.448621,
-    "ast_hash": "b7de7ea668d80f9ec20be7bcaa8f4d1f",
+    "mtime": 1791662557.8987768,
+    "ast_hash": "fe578d8bc715e31c23c2b9705a3aa4e5",
     "semantic_hash": ""
   },
   "docs/design-verification.md": {
@@ -445,13 +445,13 @@
     "semantic_hash": ""
   },
   "app/accounts.py": {
-    "mtime": 1791439369.3926828,
-    "ast_hash": "0aafda2db8d2a323421b504cfaedb140",
+    "mtime": 1791662557.8940527,
+    "ast_hash": "429277b69fcb3cd31d963a0443002812",
     "semantic_hash": ""
   },
   "tests/test_accounts.py": {
-    "mtime": 1791473781.6109917,
-    "ast_hash": "9903f6ec9bbaa094efe9d85dbeb147cc",
+    "mtime": 1791662617.075394,
+    "ast_hash": "f0639d09d1d8d5f5ed4df383e7a7cf5c",
     "semantic_hash": ""
   },
   "Setup/verify-account-ui.py": {
@@ -470,8 +470,8 @@
     "semantic_hash": ""
   },
   "tests/test_power.py": {
-    "mtime": 1791583063.2011776,
-    "ast_hash": "d61b037471e25d74032406babb705385",
+    "mtime": 1791662649.980926,
+    "ast_hash": "1a7fe7f617c30ddae047860e1c6f29c0",
     "semantic_hash": ""
   },
   "Setup/repair-wol.ps1": {
