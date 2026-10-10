@@ -274,10 +274,13 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             # A new native limit after the mapped B-resume is a B event, even if
             # polling did not observe the brief active transition.
             c.db.set_setting('account_switch', {'phase': 'complete'})
+            c.unsnooze = {'sessions': [{'sessionId': 'first', 'status': 'stopped',
+                                       'resetAt': (now + 3600) * 1000, 'resetSource': 'native'}]}
             c.db.update('first', operation=json.dumps({'kind': 'resume', 'id': 'b-resume', 'account_id': ids[1],
                                                      'sent_at': now, 'before_updated_at': 10}))
             c.record_goal(c.db.get('first'), {'status': 'usageLimited', 'updatedAt': 11})
             self.assertEqual(c.db.setting('usage_account/first'), ids[1])
+            self.assertEqual(json.loads(c.db.get('first')['usage_limit'])['resetAt'], (now + 120) * 1000)
             self.assertEqual(c.db.conn.execute("SELECT COUNT(*) FROM events WHERE kind='usage limited'").fetchone()[0], 2)
             c.record_goal(c.db.get('first'), {'status': 'usageLimited', 'updatedAt': 11})
             self.assertEqual(c.db.conn.execute("SELECT COUNT(*) FROM events WHERE kind='usage limited'").fetchone()[0], 2)

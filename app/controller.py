@@ -1100,7 +1100,8 @@ class Controller:
                 continue
             tracked = next((s for s in self.unsnooze.get('sessions', []) if
                 s.get('sessionId') == project['codex_session_id'] and s.get('status') == 'stopped'
-                and s.get('resetSource') != 'fallback' and s.get('resetAt')), None)
+                and s.get('resetSource') != 'fallback' and s.get('resetAt')), None) if not account_id else None
+            # Unsnooze has no account identity; its legacy reset cannot cross a managed login change.
             candidates = ([{'resetAt': tracked['resetAt'], 'resetSource': 'unsnooze'}] if tracked else [])
             if resets:
                 candidates.append({'resetAt': max(resets), 'resetSource': 'native-account'})

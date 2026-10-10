@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791663386.008952,
-    "ast_hash": "1bd789243f27a062a2369f2b7f39cfe3",
+    "mtime": 1791665099.6307397,
+    "ast_hash": "d09ef17ef64e2f2511c874b4ecb222b3",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -450,8 +450,8 @@
     "semantic_hash": ""
   },
   "tests/test_accounts.py": {
-    "mtime": 1791662617.075394,
-    "ast_hash": "f0639d09d1d8d5f5ed4df383e7a7cf5c",
+    "mtime": 1791665073.3472338,
+    "ast_hash": "622b0c889d62332eee7e4539131dbe98",
     "semantic_hash": ""
   },
   "Setup/verify-account-ui.py": {
