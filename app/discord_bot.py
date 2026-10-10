@@ -192,6 +192,10 @@ class Bot(discord.Client):
             if not project['discord_channel_id']:
                 continue
             channel = await self.fetch_channel(int(project['discord_channel_id']))
+            event = self.controller.db.conn.execute('SELECT * FROM events WHERE event_id=?',
+                                                   (event['event_id'],)).fetchone()
+            if not event:
+                continue
             payload = json.loads(event['payload'])
             if 'embed_color' not in payload:
                 payload['embed_color'] = secrets.choice(EMBED_COLORS)
@@ -214,9 +218,15 @@ class Bot(discord.Client):
                                    view=CloseView(self) if event['kind'] == 'complete' else None, **mention)
             elif found and payload.get('usage_limit') and not payload.get('reset_notified'):
                 await found.edit(embed=status_embed(self.controller, project, event, payload))
-            if payload.get('usage_limit'):
-                payload['reset_notified'] = True
+            current = self.controller.db.conn.execute('SELECT payload FROM events WHERE event_id=?',
+                                                      (event['event_id'],)).fetchone()
+            if not current:
+                continue  # A deleted project's event cannot be acknowledged or recreated.
+            acknowledged = json.loads(current['payload'])
+            if ((found or event['sent_at'] is None) and payload.get('usage_limit')
+                    and acknowledged.get('usage_limit') == payload['usage_limit']):
+                acknowledged['reset_notified'] = True
             self.controller.db.conn.execute('UPDATE events SET sent_at=? WHERE event_id=?',
                                            (time.time(), event['event_id']))
             self.controller.db.conn.execute('UPDATE events SET payload=? WHERE event_id=?',
-                                           (json.dumps(payload), event['event_id']))
+                                           (json.dumps(acknowledged), event['event_id']))

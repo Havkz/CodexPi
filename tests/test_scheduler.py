@@ -17,6 +17,27 @@ from app.native import tui_proxy
 
 
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_discord_wait_does_not_hold_the_worker_controller_lock(self):
+        c = self.controller
+        c.native.ws = SimpleNamespace(closed=False)
+        c.native.connected_at = time.monotonic()
+        c.last_backup = c.last_git_poll = time.monotonic()
+        for name in ('poll_goals', 'advance_queue', 'resume_ready', 'selective_wake', 'release_idle_tuis'):
+            setattr(c, name, AsyncMock())
+        async def slow_notification():
+            self.assertFalse(c.lock.locked())
+            async with c.lock:
+                c.worker_seen = time.monotonic()  # A real receive callback can still process its heartbeat.
+        c.bot = SimpleNamespace(is_ready=lambda: True, send_pending=AsyncMock(side_effect=slow_notification))
+        with patch('app.actions.poll', AsyncMock()), patch('app.lifecycle.recover', AsyncMock()), \
+                patch('app.accounts.tick', AsyncMock()), patch('app.power.tick', AsyncMock()), \
+                patch('app.maintenance.daily_update', AsyncMock()), \
+                patch('app.controller.asyncio.sleep', AsyncMock(side_effect=asyncio.CancelledError)):
+            with self.assertRaises(asyncio.CancelledError):
+                await c.scheduler()
+        c.bot.send_pending.assert_awaited_once()
+        self.assertNotIn('discord', c.health_errors)
+
     async def test_native_transport_preserves_history_larger_than_thirty_two_megabytes(self):
         from aiohttp import ClientSession
         from app.native import Native, NativeError

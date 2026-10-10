@@ -777,8 +777,7 @@ class Controller:
             # Unrelated Git, TUI, or Unsnooze failures must not starve the outbox.
             try:
                 if self.bot and self.bot.is_ready():
-                    async with self.lock:
-                        await self.bot.send_pending()
+                    await self.bot.send_pending()  # Network waits must not starve signed worker heartbeats.
                 self.health_errors.pop('discord', None)
             except Exception as exc:
                 self.health_errors['discord'] = self.redactor.clean(str(exc))

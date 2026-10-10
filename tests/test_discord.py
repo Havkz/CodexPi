@@ -219,20 +219,23 @@ class DiscordTests(unittest.IsolatedAsyncioTestCase):
             async def send(**kwargs):
                 history.append(SimpleNamespace(author=SimpleNamespace(id=777), content='',
                     embeds=[kwargs['embed']], edit=AsyncMock()))
+                # A real quota refresh can finish while Discord is accepting the first message.
+                event = db.conn.execute('SELECT payload FROM events').fetchone()
+                payload = json.loads(event[0]) | {'usage_limit': {'resetAt': 1800000000000}}
+                db.conn.execute('UPDATE events SET payload=?', (json.dumps(payload),))
             channel = SimpleNamespace(send=AsyncMock(side_effect=send), history=messages)
             bot.fetch_channel = AsyncMock(return_value=channel)
             db.event('p', 'usage limited', {})
             await bot.send_pending()
-            await bot.send_pending()
+            payload = json.loads(db.conn.execute('SELECT payload FROM events').fetchone()[0])
+            self.assertEqual(payload['usage_limit']['resetAt'], 1800000000000)
+            self.assertFalse(payload.get('reset_notified'))
             self.assertEqual(channel.send.await_count, 1)
             self.assertNotIn('unknown', history[0].embeds[0].description)
             self.assertIn('Not provided by Codex yet', history[0].embeds[0].description)
             self.assertNotIn('<t:', history[0].embeds[0].description)
             self.assertIn('Unsnooze', history[0].embeds[0].description)
             db.set_setting('prompt_limit/p', {'turn_id': 'failed-user-turn'})
-            event = db.conn.execute('SELECT payload FROM events').fetchone()
-            payload = json.loads(event[0]) | {'usage_limit': {'resetAt': 1800000000000}}
-            db.conn.execute('UPDATE events SET payload=?', (json.dumps(payload),))
             await bot.send_pending()
             await bot.send_pending()
             self.assertEqual(channel.send.await_count, 1)

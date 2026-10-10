@@ -37,7 +37,6 @@
   "35": "Bot",
   "36": "usage.js",
   "37": "migration.py",
-  "38": "send",
   "39": "Bot",
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
@@ -49,9 +48,5 @@
   "47": "Durable manual pause and real quota evidence, 2026-09-24",
   "48": "verify-account-ui.py",
   "49": "export",
-  "50": "test-live-lifecycle.py",
-  "51": "Redactor",
-  "52": "DeploymentTests",
-  "53": "UsageTests",
-  "54": "build_audit.py"
+  "50": "test-live-lifecycle.py"
 }
