@@ -13,12 +13,7 @@ ASSETS = ROOT / 'app/web_assets'
 BASE = 'http://192.168.2.105:8787'
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--live', action='store_true')
-    parser.add_argument('--preview', action='store_true', help='Preview local assets against the real Pi, without installing them')
-    args = parser.parse_args()
-    live = args.live or args.preview
+def fixture():
     now = time.time()
     data = {'account_id': 'first', 'windows': {
         'daily': {'remaining': 0, 'duration': 300, 'reset_at': now - 1},
@@ -46,6 +41,17 @@ def main():
                             'detail': 'Connected', 'checked_at': now},
                            {'name': 'Windows', 'status': 'online', 'error': None, 'detail': 'Signed worker',
                             'checked_at': now, 'heartbeat_age': 4}]}
+    return state, data
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--live', action='store_true')
+    parser.add_argument('--preview', action='store_true', help='Preview local assets against the real Pi, without installing them')
+    args = parser.parse_args()
+    live = args.live or args.preview
+    state, data = fixture()
+    now = data['checked_at']
     errors, violations, mutations = [], [], []
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(channel='msedge', headless=True)

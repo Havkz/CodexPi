@@ -35,6 +35,21 @@ jobs:
         if: matrix.platform == 'windows'
       - run: python -m unittest discover -s tests
         if: matrix.platform == 'windows'
+      - name: Install Chromium layout checks
+        if: matrix.platform == 'windows' && matrix.python == '3.13'
+        run: |
+          uv pip install -r requirements-ui.txt
+          python -m playwright install chromium
+      - name: Mobile dashboard layouts
+        if: matrix.platform == 'windows' && matrix.python == '3.13'
+        run: python Setup/verify-mobile-ui.py
+      - name: Dashboard screenshots
+        if: always() && matrix.platform == 'windows' && matrix.python == '3.13'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-layouts
+          path: state/mobile-ui/
+          if-no-files-found: ignore
       - name: Linux tests on this PC (service-owned WSL)
         if: matrix.platform == 'linux'
         run: python C:/CodexPi/Setup/run-linux-ci.py --project codexpi --python '${{ matrix.python }}'

@@ -105,8 +105,8 @@
     "semantic_hash": ""
   },
   "app/web_assets/dashboard.js": {
-    "mtime": 1791582161.2241032,
-    "ast_hash": "80748c178570dd791900063729dbc657",
+    "mtime": 1791741140.963948,
+    "ast_hash": "6796207eea0273584f7b6aa8eda417ab",
     "semantic_hash": ""
   },
   "app/windows_worker.py": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1791737039.7647326,
-    "ast_hash": "60881fe3289592022a130db8d48f8574",
+    "mtime": 1791741419.7828028,
+    "ast_hash": "23d5ab6dca823b3de9f76379ec618c89",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   "app/web_assets/index.html": {
-    "mtime": 1791494614.9916742,
-    "ast_hash": "40f44c31bc22ec67a5caeb9a9ed7ec6e",
+    "mtime": 1791741140.966224,
+    "ast_hash": "b2988ad97312daf968a8a4388de4bc6e",
     "semantic_hash": ""
   },
   "app/web_assets/login.html": {
@@ -320,8 +320,8 @@
     "semantic_hash": ""
   },
   "Setup/verify-usage-ui.py": {
-    "mtime": 1791564303.71198,
-    "ast_hash": "4e842b6733aaf06a696dceed0f5a41c7",
+    "mtime": 1791740887.052668,
+    "ast_hash": "2fcdcecdb4bc01df0de9952a75dd2412",
     "semantic_hash": ""
   },
   "app/usage.py": {
@@ -550,8 +550,18 @@
     "semantic_hash": ""
   },
   ".github/workflows/codexpi-ci.yml": {
-    "mtime": 1791735134.5594835,
-    "ast_hash": "9901605ecae34693eb0af9f703154dd9",
+    "mtime": 1791741267.292123,
+    "ast_hash": "1c902f593b8f499ebb8769b8f1540d63",
+    "semantic_hash": ""
+  },
+  "Setup/verify-mobile-ui.py": {
+    "mtime": 1791741140.966224,
+    "ast_hash": "a9ece96e8f5a223ef43b50e65d0b791e",
+    "semantic_hash": ""
+  },
+  "requirements-ui.txt": {
+    "mtime": 1791740887.0511644,
+    "ast_hash": "484599912f6f4ceee2408ea4180c4f14",
     "semantic_hash": ""
   }
 }

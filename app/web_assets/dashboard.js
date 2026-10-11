@@ -243,6 +243,7 @@ function renderQueue(queue) {
     const status = node('td'); status.append(badge(projectStatus(p)));
     const actionCell = node('td'); actionCell.append(actions(p, true, true));
     row.append(position, name, status, node('td', date(p.last_activity), 'muted'), node('td', p.windows_required ? 'Required' : '—'), actionCell);
+    ['Priority', 'Project', 'Status', 'Last activity', 'Windows', 'Actions'].forEach((label, i) => { row.children[i].dataset.label = label; });
     row.ondragstart = event => {
       if (grip.disabled || !row.draggable) { event.preventDefault(); return; }
       dragging = p.project_id; event.dataTransfer.setData('text/plain', dragging); event.dataTransfer.effectAllowed = 'move'; row.classList.add('dragging');

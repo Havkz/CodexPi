@@ -241,6 +241,22 @@ input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var
   .page-heading { align-items: start; flex-direction: column; }
   .heading-controls { width: 100%; justify-content: space-between; }
   .detail-grid { grid-template-columns: 1fr; }
+  .table-scroll { overflow-x: visible; }
+  .table-scroll table { min-width: 0; }
+  .table-scroll thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .table-scroll tbody { display: block; }
+  .queue-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 18px 16px; }
+  .queue-row td { padding: 0; min-width: 0; }
+  .queue-row td:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .queue-row td:nth-child(3) { grid-column: 2; grid-row: 1; align-self: center; justify-self: end; }
+  .queue-row td:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+  .queue-row td:nth-child(4) { grid-column: 1; grid-row: 3; }
+  .queue-row td:nth-child(5) { grid-column: 2; grid-row: 3; }
+  .queue-row td:nth-child(6) { grid-column: 1 / -1; grid-row: 4; }
+  .queue-row td:nth-child(4)::before, .queue-row td:nth-child(5)::before { content: attr(data-label); display: block; color: var(--secondary); font-size: 11px; margin-bottom: 4px; }
+  .queue-name { max-width: 100%; }
+  .table-scroll .queue-actions { flex-wrap: wrap; }
+  .queue-actions button { flex: 1 1 auto; min-height: 44px; }
 }
 @media (max-width: 520px) {
   :root { --space: 20px; --gap: 16px; }

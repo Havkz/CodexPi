@@ -36,8 +36,6 @@
   "34": "migration.py",
   "35": "Bot",
   "36": "usage.js",
-  "37": "migration.py",
-  "38": "Native",
   "39": "Bot",
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
@@ -51,9 +49,5 @@
   "49": "export",
   "50": "test-live-lifecycle.py",
   "51": "build_audit.py",
-  "52": ".make_controller",
-  "53": "common.py",
-  "54": "Bot",
-  "55": "verify-backup-restore.py",
-  "56": "verify-usage-ui.py"
+  "54": "Bot"
 }

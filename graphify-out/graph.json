@@ -627,8 +627,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "site-config.py"
     },
     {
@@ -638,8 +638,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_site_config_rationale_1",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "generate only a password hash from the user-owned specification."
     },
     {
@@ -748,8 +748,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "trust-hooks.py"
     },
     {
@@ -759,8 +759,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "setup_trust_hooks_main",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "main()"
     },
     {
@@ -770,8 +770,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_trust_hooks_rationale_1",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "trust only the reviewed goal/ponytail and optional token optimizer definitions."
     },
     {
@@ -814,8 +814,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_backup_restore",
-      "community": 55,
-      "community_name": "verify-backup-restore.py",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "verify-backup-restore.py"
     },
     {
@@ -825,8 +825,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_readonly",
-      "community": 55,
-      "community_name": "verify-backup-restore.py",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "readonly()"
     },
     {
@@ -836,8 +836,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_identities",
-      "community": 55,
-      "community_name": "verify-backup-restore.py",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "identities()"
     },
     {
@@ -847,8 +847,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_services",
-      "community": 55,
-      "community_name": "verify-backup-restore.py",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "services()"
     },
     {
@@ -858,8 +858,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_main",
-      "community": 55,
-      "community_name": "verify-backup-restore.py",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "main()"
     },
     {
@@ -869,8 +869,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_backup_restore_rationale_1",
-      "community": 55,
-      "community_name": "verify-backup-restore.py",
+      "community": 50,
+      "community_name": "test-live-lifecycle.py",
       "norm_label": "isolated infrastructure-db restore drill on pi; never starts or restores live se"
     },
     {
@@ -1160,6 +1160,39 @@
       "norm_label": "resume only the existing queue e2e goal; never create or replace an objective."
     },
     {
+      "label": "verify-mobile-ui.py",
+      "file_type": "code",
+      "source_file": "Setup/verify-mobile-ui.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_mobile_ui",
+      "community": 6,
+      "community_name": "DeploymentTests",
+      "norm_label": "verify-mobile-ui.py"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "Setup/verify-mobile-ui.py",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "setup_verify_mobile_ui_main",
+      "community": 6,
+      "community_name": "DeploymentTests",
+      "norm_label": "main()"
+    },
+    {
+      "label": "Serve the real dashboard locally with isolated fixtures; inspect Chromium layout",
+      "file_type": "rationale",
+      "source_file": "Setup/verify-mobile-ui.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "setup_verify_mobile_ui_rationale_1",
+      "community": 6,
+      "community_name": "DeploymentTests",
+      "norm_label": "serve the real dashboard locally with isolated fixtures; inspect chromium layout"
+    },
+    {
       "label": "verify-native-resume.py",
       "file_type": "code",
       "source_file": "Setup/verify-native-resume.py",
@@ -1199,8 +1232,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_optimization",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "verify-optimization.py"
     },
     {
@@ -1210,8 +1243,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "setup_verify_optimization_main",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "main()"
     },
     {
@@ -1221,8 +1254,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_optimization_rationale_1",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "pi hook inventory and isolated ponytail checks; no model turn or live config wri"
     },
     {
@@ -1331,8 +1364,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "verify-tui-scrolling.py"
     },
     {
@@ -1342,8 +1375,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_tmux",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "tmux()"
     },
     {
@@ -1353,8 +1386,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_main",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "main()"
     },
     {
@@ -1364,8 +1397,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_tui_scrolling_rationale_1",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "read-only live check on the pi: real --all picker, wheel, pager and unsent draft"
     },
     {
@@ -1408,19 +1441,30 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_usage_ui",
-      "community": 56,
-      "community_name": "verify-usage-ui.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "verify-usage-ui.py"
+    },
+    {
+      "label": "fixture()",
+      "file_type": "code",
+      "source_file": "Setup/verify-usage-ui.py",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "setup_verify_usage_ui_fixture",
+      "community": 54,
+      "community_name": "Bot",
+      "norm_label": "fixture()"
     },
     {
       "label": "main()",
       "file_type": "code",
       "source_file": "Setup/verify-usage-ui.py",
-      "source_location": "L16",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "setup_verify_usage_ui_main",
-      "community": 56,
-      "community_name": "verify-usage-ui.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "main()"
     },
     {
@@ -1430,8 +1474,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "setup_verify_usage_ui_rationale_1",
-      "community": 56,
-      "community_name": "verify-usage-ui.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "isolated edge regression; --live only reads the pi and opens/cancels dialogs."
     },
     {
@@ -1507,8 +1551,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_accounts_loginrequired",
-      "community": 38,
-      "community_name": "Native",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "loginrequired"
     },
     {
@@ -1892,8 +1936,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_accounts_rationale_18",
-      "community": 38,
-      "community_name": "Native",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "explicit native auth rejection, never a timeout or identity mismatch."
     },
     {
@@ -2200,8 +2244,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_common",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "common.py"
     },
     {
@@ -2266,8 +2310,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "app_common_password_hash",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "password_hash()"
     },
     {
@@ -2277,8 +2321,8 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "app_common_password_valid",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "password_valid()"
     },
     {
@@ -2343,8 +2387,8 @@
       "source_location": "L205",
       "_origin": "ast",
       "id": "app_common_redactor",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "redactor"
     },
     {
@@ -2354,8 +2398,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "app_common_redactor_init",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".__init__()"
     },
     {
@@ -2365,7 +2409,7 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "app_common_redactor_clean",
-      "community": 39,
+      "community": 54,
       "community_name": "Bot",
       "norm_label": ".clean()"
     },
@@ -2442,8 +2486,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "app_controller_controller_init",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".__init__()"
     },
     {
@@ -2453,8 +2497,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "app_controller_controller_account_switch_pending",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".account_switch_pending()"
     },
     {
@@ -2475,8 +2519,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "app_controller_controller_windows_online",
-      "community": 49,
-      "community_name": "export",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".windows_online()"
     },
     {
@@ -2552,8 +2596,8 @@
       "source_location": "L177",
       "_origin": "ast",
       "id": "app_controller_controller_create",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".create()"
     },
     {
@@ -2563,8 +2607,8 @@
       "source_location": "L215",
       "_origin": "ast",
       "id": "app_controller_controller_finish_creation",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".finish_creation()"
     },
     {
@@ -2838,8 +2882,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_db",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 34,
+      "community_name": "migration.py",
       "norm_label": "db.py"
     },
     {
@@ -2849,8 +2893,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "app_db_database",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "database"
     },
     {
@@ -2860,8 +2904,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "app_db_database_init",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".__init__()"
     },
     {
@@ -2871,8 +2915,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "app_db_database_transaction",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".transaction()"
     },
     {
@@ -2882,8 +2926,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "app_db_database_all",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".all()"
     },
     {
@@ -2893,8 +2937,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "app_db_database_get",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".get()"
     },
     {
@@ -2904,8 +2948,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "app_db_database_by_session",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".by_session()"
     },
     {
@@ -2915,8 +2959,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "app_db_database_update",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".update()"
     },
     {
@@ -2926,8 +2970,8 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "app_db_database_setting",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".setting()"
     },
     {
@@ -2937,8 +2981,8 @@
       "source_location": "L131",
       "_origin": "ast",
       "id": "app_db_database_set_setting",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".set_setting()"
     },
     {
@@ -2948,8 +2992,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "app_db_database_reorder",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".reorder()"
     },
     {
@@ -2959,8 +3003,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "app_db_database_record_usage",
-      "community": 34,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".record_usage()"
     },
     {
@@ -2970,8 +3014,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "app_db_database_activate_account",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".activate_account()"
     },
     {
@@ -2981,8 +3025,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "app_db_database_bind_legacy_usage",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".bind_legacy_usage()"
     },
     {
@@ -2992,8 +3036,8 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "app_db_database_delete_account_usage",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".delete_account_usage()"
     },
     {
@@ -3003,8 +3047,8 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "app_db_database_usage_history",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".usage_history()"
     },
     {
@@ -3014,8 +3058,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "app_db_database_event",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".event()"
     },
     {
@@ -3025,8 +3069,8 @@
       "source_location": "L231",
       "_origin": "ast",
       "id": "app_db_database_compact_queue",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".compact_queue()"
     },
     {
@@ -3036,8 +3080,8 @@
       "source_location": "L235",
       "_origin": "ast",
       "id": "app_db_database_enqueue",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".enqueue()"
     },
     {
@@ -3058,8 +3102,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "app_db_rationale_181",
-      "community": 6,
-      "community_name": "DeploymentTests",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "only after confirming the original single-account identity; never guess on switc"
     },
     {
@@ -3652,8 +3696,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "app_migration_request",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "request()"
     },
     {
@@ -3784,8 +3828,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "app_native_native",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": "native"
     },
     {
@@ -3795,8 +3839,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "app_native_native_init",
-      "community": 38,
-      "community_name": "Native",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".__init__()"
     },
     {
@@ -3806,8 +3850,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "app_native_native_connect",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".connect()"
     },
     {
@@ -3817,8 +3861,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "app_native_native_read",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".read()"
     },
     {
@@ -3839,8 +3883,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "app_native_native_close",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".close()"
     },
     {
@@ -3883,8 +3927,8 @@
       "source_location": "L199",
       "_origin": "ast",
       "id": "app_native_tui_proxy",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": "tui_proxy()"
     },
     {
@@ -4551,7 +4595,7 @@
       "label": "render()",
       "file_type": "code",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L264",
+      "source_location": "L265",
       "_origin": "ast",
       "id": "app_web_assets_dashboard_render",
       "community": 7,
@@ -4562,7 +4606,7 @@
       "label": "refresh()",
       "file_type": "code",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L347",
+      "source_location": "L348",
       "_origin": "ast",
       "id": "app_web_assets_dashboard_refresh",
       "community": 7,
@@ -4573,7 +4617,7 @@
       "label": "showDetail()",
       "file_type": "code",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L386",
+      "source_location": "L387",
       "_origin": "ast",
       "id": "app_web_assets_dashboard_showdetail",
       "community": 7,
@@ -4584,7 +4628,7 @@
       "label": "showLifecycle()",
       "file_type": "code",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L420",
+      "source_location": "L421",
       "_origin": "ast",
       "id": "app_web_assets_dashboard_showlifecycle",
       "community": 7,
@@ -5434,8 +5478,8 @@
       "source_location": "L701",
       "_origin": "ast",
       "id": "tests_test_accounts_accountswitchtests_test_account_reload_keeps_frontend_connection_and_replays_only_subscriptions",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_account_reload_keeps_frontend_connection_and_replays_only_subscriptions()"
     },
     {
@@ -5599,8 +5643,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_core",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "test_core.py"
     },
     {
@@ -5610,8 +5654,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_core_coretests",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "coretests"
     },
     {
@@ -5621,8 +5665,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_auth_and_replay",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_auth_and_replay()"
     },
     {
@@ -5632,8 +5676,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_db_constraints_rollback_and_backup",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_db_constraints_rollback_and_backup()"
     },
     {
@@ -5643,8 +5687,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "tests_test_core_coretests_test_project_names",
-      "community": 3,
-      "community_name": "deployment.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": ".test_project_names()"
     },
     {
@@ -5665,8 +5709,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "deploymenttests"
     },
     {
@@ -5676,8 +5720,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_fixture",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".fixture()"
     },
     {
@@ -5687,8 +5731,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_request_admission_and_ownership",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_request_admission_and_ownership()"
     },
     {
@@ -5698,8 +5742,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_completion_moves_once_renames_and_deletes_owned_service",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_completion_moves_once_renames_and_deletes_owned_service()"
     },
     {
@@ -5709,8 +5753,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_deployment_recovers_after_each_effect_without_parallel_goal",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_deployment_recovers_after_each_effect_without_parallel_goal()"
     },
     {
@@ -5720,8 +5764,8 @@
       "source_location": "L133",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_failed_health_keeps_repairable_session_and_never_completes",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_failed_health_keeps_repairable_session_and_never_completes()"
     },
     {
@@ -5731,8 +5775,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_pending_ci_does_not_move_or_start_service",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_pending_ci_does_not_move_or_start_service()"
     },
     {
@@ -5742,8 +5786,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "tests_test_deployment_deploymenttests_test_unit_arguments_are_not_shell_or_systemd_expansions",
-      "community": 37,
-      "community_name": "migration.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_unit_arguments_are_not_shell_or_systemd_expansions()"
     },
     {
@@ -5841,8 +5885,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_lifecycle",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "test_lifecycle.py"
     },
     {
@@ -5852,8 +5896,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "tests_test_lifecycle_crash",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "crash"
     },
     {
@@ -5863,8 +5907,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "baseexception",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "baseexception"
     },
     {
@@ -5874,8 +5918,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests",
-      "community": 52,
-      "community_name": ".make_controller",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "lifecycletests"
     },
     {
@@ -5885,8 +5929,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_make_controller",
-      "community": 52,
-      "community_name": ".make_controller",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".make_controller()"
     },
     {
@@ -5896,8 +5940,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_rename_and_delete_recover_after_every_effect",
-      "community": 52,
-      "community_name": ".make_controller",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_rename_and_delete_recover_after_every_effect()"
     },
     {
@@ -5907,8 +5951,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_confirmation_ownership_and_pending_jobs_fail_closed",
-      "community": 52,
-      "community_name": ".make_controller",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_confirmation_ownership_and_pending_jobs_fail_closed()"
     },
     {
@@ -5918,8 +5962,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_optional_repository_delete_is_explicit_owned_and_crash_recoverable",
-      "community": 52,
-      "community_name": ".make_controller",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_optional_repository_delete_is_explicit_owned_and_crash_recoverable()"
     },
     {
@@ -5929,8 +5973,8 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "tests_test_lifecycle_lifecycletests_test_delete_supersedes_resume_for_paused_and_limited_projects",
-      "community": 52,
-      "community_name": ".make_controller",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_delete_supersedes_resume_for_paused_and_limited_projects()"
     },
     {
@@ -6127,8 +6171,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_native_transport_preserves_history_larger_than_thirty_two_megabytes",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_native_transport_preserves_history_larger_than_thirty_two_megabytes()"
     },
     {
@@ -6138,8 +6182,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_setup",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".setup()"
     },
     {
@@ -6182,8 +6226,8 @@
       "source_location": "L268",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_completed_prompt_waits_for_explicit_resume_after_restart",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 49,
+      "community_name": "export",
       "norm_label": ".test_completed_prompt_waits_for_explicit_resume_after_restart()"
     },
     {
@@ -6347,8 +6391,8 @@
       "source_location": "L776",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_ci_checks_exact_commit_all_workflows_and_latest_attempt",
-      "community": 49,
-      "community_name": "export",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_ci_checks_exact_commit_all_workflows_and_latest_attempt()"
     },
     {
@@ -6380,8 +6424,8 @@
       "source_location": "L870",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_ci_does_not_wait_for_pr_only_workflow_on_plain_push",
-      "community": 49,
-      "community_name": "export",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_ci_does_not_wait_for_pr_only_workflow_on_plain_push()"
     },
     {
@@ -6446,8 +6490,8 @@
       "source_location": "L991",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_resume_waits_for_its_own_pane_not_an_older_browser_connection",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_resume_waits_for_its_own_pane_not_an_older_browser_connection()"
     },
     {
@@ -6457,8 +6501,8 @@
       "source_location": "L1033",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_resume_repairs_only_detached_idle_unmapped_pane_once",
-      "community": 49,
-      "community_name": "export",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_resume_repairs_only_detached_idle_unmapped_pane_once()"
     },
     {
@@ -6479,8 +6523,8 @@
       "source_location": "L1101",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_gate_pauses_second_goal_before_native_execution",
-      "community": 38,
-      "community_name": "Native",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_gate_pauses_second_goal_before_native_execution()"
     },
     {
@@ -6490,8 +6534,8 @@
       "source_location": "L1174",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_release_only_detached_idle_persisted_goals",
-      "community": 49,
-      "community_name": "export",
+      "community": 1,
+      "community_name": "Controller",
       "norm_label": ".test_release_only_detached_idle_persisted_goals()"
     },
     {
@@ -6501,8 +6545,8 @@
       "source_location": "L1203",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt",
-      "community": 49,
-      "community_name": "export",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_unsnooze_wake_is_journaled_gated_and_never_an_argv_prompt()"
     },
     {
@@ -6534,8 +6578,8 @@
       "source_location": "L1336",
       "_origin": "ast",
       "id": "tests_test_scheduler_schedulertests_test_usage_reset_reconciles_reordered_head_without_preempting_or_losing_wake",
-      "community": 1,
-      "community_name": "Controller",
+      "community": 21,
+      "community_name": "worker_server.py",
       "norm_label": ".test_usage_reset_reconciles_reordered_head_without_preempting_or_losing_wake()"
     },
     {
@@ -6622,8 +6666,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_web",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 39,
+      "community_name": "Bot",
       "norm_label": "test_web.py"
     },
     {
@@ -6633,8 +6677,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_web_webtests",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": "webtests"
     },
     {
@@ -6644,8 +6688,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_web_webtests_test_auth_csrf_expiry_and_parallel_rate_limit",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".test_auth_csrf_expiry_and_parallel_rate_limit()"
     },
     {
@@ -6776,8 +6820,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_worker_server_workeradmissiontests_setup",
-      "community": 53,
-      "community_name": "common.py",
+      "community": 54,
+      "community_name": "Bot",
       "norm_label": ".setup()"
     },
     {
@@ -9904,6 +9948,28 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-mobile-ui.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_mobile_ui",
+      "target": "setup_verify_mobile_ui_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-mobile-ui.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_mobile_ui_rationale_1",
+      "target": "setup_verify_mobile_ui",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Setup/verify-native-resume.py",
       "source_location": "L23",
       "weight": 1.0,
@@ -10242,6 +10308,17 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_verify_usage_ui",
+      "target": "setup_verify_usage_ui_fixture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-usage-ui.py",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_usage_ui",
       "target": "setup_verify_usage_ui_main",
       "confidence_score": 1.0
     },
@@ -10257,12 +10334,24 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Setup/verify-usage-ui.py",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "setup_verify_usage_ui_main",
+      "target": "setup_verify_usage_ui_fixture",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "indirect_call",
       "context": "argument",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Setup/verify-usage-ui.py",
-      "source_location": "L186",
+      "source_location": "L192",
       "weight": 1.0,
       "_origin": "ast",
       "source": "setup_verify_usage_ui_main",
@@ -24903,7 +24992,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L347",
+      "source_location": "L348",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard",
@@ -24914,7 +25003,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L264",
+      "source_location": "L265",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard",
@@ -24958,7 +25047,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L386",
+      "source_location": "L387",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard",
@@ -24969,7 +25058,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L420",
+      "source_location": "L421",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard",
@@ -25065,7 +25154,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L286",
+      "source_location": "L287",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25101,7 +25190,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L388",
+      "source_location": "L389",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_showdetail",
@@ -25113,7 +25202,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L319",
+      "source_location": "L320",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25149,7 +25238,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L323",
+      "source_location": "L324",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25185,7 +25274,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L414",
+      "source_location": "L415",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_showdetail",
@@ -25209,7 +25298,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L296",
+      "source_location": "L297",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25245,7 +25334,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L292",
+      "source_location": "L293",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25293,7 +25382,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L299",
+      "source_location": "L300",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25341,7 +25430,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L402",
+      "source_location": "L403",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_showdetail",
@@ -25365,7 +25454,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L397",
+      "source_location": "L398",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_showdetail",
@@ -25389,7 +25478,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L297",
+      "source_location": "L298",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25401,7 +25490,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L398",
+      "source_location": "L399",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_showdetail",
@@ -25461,7 +25550,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L272",
+      "source_location": "L273",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25605,7 +25694,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L298",
+      "source_location": "L299",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25641,7 +25730,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L293",
+      "source_location": "L294",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25653,7 +25742,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L294",
+      "source_location": "L295",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -25677,7 +25766,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L375",
+      "source_location": "L376",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_refresh",
@@ -25689,7 +25778,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/web_assets/dashboard.js",
-      "source_location": "L299",
+      "source_location": "L300",
       "weight": 1.0,
       "_origin": "ast",
       "source": "app_web_assets_dashboard_render",
@@ -30950,5 +31039,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "8636711c4e81a0aa365d8d55347b83b0009a78a9"
+  "built_at_commit": "7fb629acb69614d47c6923df6ad52a2c2e367f84"
 }
