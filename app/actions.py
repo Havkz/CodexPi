@@ -3,6 +3,52 @@ import json
 import time
 import uuid
 
+CONTROLLED_WORKFLOW = '.github/workflows/codexpi-ci.yml'
+
+
+async def dispatch_ci(controller, project, commit):
+    """One durable submission per commit; an uncertain POST is never retried."""
+    from .controller import command
+    from .prompts import active
+    db, ident = controller.db, project['project_id']
+    key = 'ci_dispatch/' + ident
+    receipts = db.setting(key, {})
+    if commit in receipts:
+        if receipts[commit]['phase'] == 'submitted' and time.time() - receipts[commit]['requested_at'] > 900:
+            receipts[commit].update(phase='uncertain', error='GitHub did not confirm the submitted run within 15 minutes; inspect Actions before retrying')
+            db.set_setting(key, receipts)
+        return receipts[commit]
+
+    def allowed():
+        try:
+            current = db.get(ident)
+        except KeyError:
+            return False
+        return (db.setting('self_hosted_actions', False) and current['lifecycle'] == 'ready'
+                and not db.setting('pause_all', False) and not controller.account_switch_pending
+                and not db.setting('manual_pause/' + ident, False)
+                and (current['goal_status'] == 'active' or active(controller, current)
+                     or db.setting('completion_check/' + ident)) and not busy(controller))
+
+    if not allowed():
+        return
+    branch = (await command('git', 'symbolic-ref', '--short', 'HEAD', cwd=project['project_path']))['stdout'].strip()
+    remote = (await command('git', 'ls-remote', 'origin', 'refs/heads/' + branch,
+                            cwd=project['project_path'], timeout=30))['stdout'].split()
+    if not remote or remote[0] != commit or not allowed():
+        return  # Only a pushed, still-admitted milestone can enqueue CI.
+    receipt = {'phase': 'submitted', 'commit': commit, 'branch': branch, 'requested_at': time.time()}
+    receipts[commit] = receipt
+    db.set_setting(key, receipts)  # Persist before POST, including across controller power loss.
+    try:
+        await command('gh', 'api', '-X', 'POST',
+                      'repos/' + project['github_repo'] + '/actions/workflows/codexpi-ci.yml/dispatches',
+                      '-f', 'ref=' + branch, '-f', 'inputs[commit]=' + commit, timeout=20)
+    except Exception as exc:
+        receipt.update(phase='uncertain', error=controller.redactor.clean(str(exc)))
+        db.set_setting(key, receipts)
+    return receipt
+
 
 def registrations(controller):
     return [(p, controller.db.setting('actions_registration/' + p['project_id'], {}))

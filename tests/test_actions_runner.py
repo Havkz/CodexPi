@@ -1,4 +1,5 @@
 import importlib.util
+import contextlib
 from pathlib import Path
 import unittest
 import tempfile
@@ -16,6 +17,50 @@ from tests import test_power
 
 
 class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_controlled_ci_honors_pause_and_never_retries_uncertain_dispatch(self):
+        with tempfile.TemporaryDirectory() as directory, contextlib.ExitStack() as cleanup:
+            c = test_power.PowerTests().controller(directory)
+            cleanup.callback(c.db.conn.close)
+            c.redactor = SimpleNamespace(clean=str)
+            c.db.update('project', github_repo='Havkz/Project', goal_status='active')
+            c.db.set_setting('self_hosted_actions', True)
+            c.db.set_setting('github_actions', {'checked_at': time.time(), 'jobs': []})
+            sha = 'a' * 40
+            command = AsyncMock(return_value={'stdout': 'main'})
+            with patch('app.controller.command', command):
+                for hold in ('pause_all', 'manual_pause/project'):
+                    c.db.set_setting(hold, True)
+                    await actions.dispatch_ci(c, c.db.get('project'), sha)
+                    command.assert_not_awaited()
+                    c.db.set_setting(hold, False)
+                async def response(*args, **kwargs):
+                    if args[:2] == ('git', 'ls-remote'):
+                        return {'stdout': sha + '\trefs/heads/main'}
+                    if args[:2] == ('gh', 'api'):
+                        raise TimeoutError('response lost after submission')
+                    return {'stdout': 'main'}
+                command.side_effect = response
+                await actions.dispatch_ci(c, c.db.get('project'), sha)
+                receipt = c.db.setting('ci_dispatch/project')[sha]
+                self.assertEqual(receipt['phase'], 'uncertain')
+                self.assertIn('response lost', receipt['error'])
+                before = command.await_count
+                await actions.dispatch_ci(c, c.db.get('project'), sha)
+                self.assertEqual(command.await_count, before)
+                next_sha = 'b' * 40
+                command.side_effect = None
+                command.return_value = {'stdout': next_sha + '\trefs/heads/main'}
+                await actions.dispatch_ci(c, c.db.get('project'), next_sha)
+                self.assertEqual(c.db.setting('ci_dispatch/project')[next_sha]['phase'], 'submitted')
+                before = command.await_count
+                await actions.dispatch_ci(c, c.db.get('project'), next_sha)
+                self.assertEqual(command.await_count, before)
+                with patch('app.actions.time.time', return_value=time.time() + 901):
+                    await actions.dispatch_ci(c, c.db.get('project'), next_sha)
+                self.assertEqual(c.db.setting('ci_dispatch/project')[next_sha]['phase'], 'uncertain')
+                self.assertEqual(command.await_count, before)
+            c.db.conn.close()
+
     async def test_setup_is_journaled_idempotent_and_only_github_confirms_ready(self):
         with tempfile.TemporaryDirectory() as directory:
             c = test_power.PowerTests().controller(directory)
@@ -145,15 +190,25 @@ class RunnerInstallationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'repository root'):
                 install_guard(directory)
             self.assertFalse((Path(directory) / '.git').exists())
-        validate({'jobs': {'test': {'runs-on': ['self-hosted', 'Windows', 'X64', 'codexpi']}}}, set())
+        validate({'on': 'workflow_dispatch', 'jobs': {'test': {'runs-on': ['self-hosted', 'Windows', 'X64', 'codexpi']}}}, set())
         local = '.github/workflows/checks.yml'
-        validate({'jobs': {'test': {'uses': './' + local}}}, {local})
+        validate({'on': 'workflow_call', 'jobs': {'test': {'uses': './' + local}}}, {local})
         for job in ({'runs-on': 'ubuntu-latest'}, {'runs-on': '${{ matrix.runner }}'},
                     {'runs-on': ['self-hosted', 'Windows']},
                     {'uses': 'other/repository/.github/workflows/tests.yml@main'},
                     {'uses': './' + local}):
             with self.subTest(job=job), self.assertRaises(ValueError):
-                validate({'jobs': {'test': job}}, set())
+                validate({'on': 'workflow_dispatch', 'jobs': {'test': job}}, set())
+
+    def test_managed_workflows_cannot_trigger_push_pr_timer_or_cancel_running_ci(self):
+        job = {'runs-on': ['self-hosted', 'Windows', 'X64', 'codexpi']}
+        for trigger in ('push', ['push', 'pull_request'], {'schedule': [{'cron': '* * * * *'}]}):
+            with self.subTest(trigger=trigger), self.assertRaisesRegex(ValueError, 'controlled'):
+                validate({'on': trigger, 'jobs': {'test': job}}, set())
+        validate({'on': {'workflow_dispatch': {}}, 'jobs': {'test': job}}, set())
+        with self.assertRaisesRegex(ValueError, 'cancel'):
+            validate({'on': 'workflow_dispatch', 'concurrency': {'cancel-in-progress': True},
+                      'jobs': {'test': job}}, set())
 
     def test_linux_distribution_cannot_be_registered_under_an_interactive_account(self):
         spec = importlib.util.spec_from_file_location('linux_ci',

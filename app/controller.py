@@ -79,7 +79,14 @@ class Controller:
 
     async def start(self):
         from .accounts import notification
-        self.native = await Native(self.root / 'state/native.sock', lambda value: notification(self, value)).connect()
+        # Type=simple starts before the app-server's socket is ready at boot.
+        async with asyncio.timeout(30):
+            while True:
+                try:
+                    self.native = await Native(self.root / 'state/native.sock', lambda value: notification(self, value)).connect()
+                    break
+                except NativeError:
+                    await asyncio.sleep(0.5)
         async with self.lock:
             if not self.account_switch_pending:
                 from .accounts import refresh
@@ -686,6 +693,18 @@ class Controller:
         data = list(latest.values())
         observed = {r['path'].split('@', 1)[0] for r in data}
         missing = workflows - observed
+        from .actions import CONTROLLED_WORKFLOW, dispatch_ci
+        if CONTROLLED_WORKFLOW in missing:
+            receipt = await dispatch_ci(self, project, commit)
+            if receipt and receipt.get('phase') == 'uncertain':
+                self.db.update(project['project_id'], last_commit=commit, last_ci_status='pending')
+                raise RuntimeError('CI submission is uncertain; no automatic retry: ' + receipt['error'])
+        elif CONTROLLED_WORKFLOW in observed:
+            receipts = self.db.setting('ci_dispatch/' + project['project_id'], {})
+            if commit in receipts and receipts[commit]['phase'] != 'confirmed':
+                receipts[commit].update(phase='confirmed')
+                receipts[commit].pop('error', None)
+                self.db.set_setting('ci_dispatch/' + project['project_id'], receipts)
         pr_only = set()
         for workflow in missing:
             text = (await command('git', 'show', commit + ':' + workflow, cwd=project['project_path']))['stdout']

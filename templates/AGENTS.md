@@ -12,8 +12,14 @@ Important work must never exist only on the Pi. Use local Linux tests and suitab
 GitHub Actions workflows. All jobs must use `runs-on: [self-hosted, Windows, X64, codexpi]`;
 GitHub-hosted runners and paid fallbacks are forbidden. CodexPi registers the project's
 official pre-login Windows runner automatically and gives CI priority over Windows jobs.
-For pull-request jobs require `github.event.pull_request.head.repo.full_name == github.repository`
-before checking out or executing code; do not run untrusted forks on the personal PC.
+Use one `.github/workflows/codexpi-ci.yml` with only `workflow_dispatch`, an optional
+`commit` input and checkout `ref: ${{ inputs.commit || github.sha }}`. CodexPi submits
+one run per pushed milestone while the project is admitted and existing CI is idle.
+No push/PR/timer/workflow_run triggers, automatic reruns, direct `gh workflow run`,
+or cancellation of a running run. Pausing prevents new submissions; an already
+running run finishes. On failure fix the cause and push a new meaningful commit;
+never retry the same commit or create empty commits merely to retrigger CI.
+Do not run untrusted forks on the personal PC.
 Run genuine Linux checks in the runner service's WSL distribution `CodexPi-CI`, not
 as Windows commands with a Linux label. Preserve relevant platform checks; never claim
 an unavailable OS passed and do not create pointless platform matrices.

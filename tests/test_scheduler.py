@@ -17,6 +17,22 @@ from app.native import tui_proxy
 
 
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_boot_waits_for_native_socket_without_a_controller_restart(self):
+        from app.native import NativeError
+        c = self.controller
+        c.recover = AsyncMock()
+        c.scheduler = AsyncMock()
+        connection = AsyncMock(side_effect=[NativeError('socket not ready'), c.native])
+        with patch('app.controller.Native', return_value=SimpleNamespace(connect=connection)), \
+                patch('app.controller.asyncio.sleep', AsyncMock()) as sleep, \
+                patch('app.accounts.refresh', AsyncMock()):
+            await c.start()
+        c.task.cancel()
+        await asyncio.gather(c.task, return_exceptions=True)
+        self.assertEqual(connection.await_count, 2)
+        sleep.assert_awaited_once_with(0.5)
+        c.recover.assert_awaited_once()
+
     async def test_discord_wait_does_not_hold_the_worker_controller_lock(self):
         c = self.controller
         c.native.ws = SimpleNamespace(closed=False)

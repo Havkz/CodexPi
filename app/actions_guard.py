@@ -11,9 +11,21 @@ import yaml
 def validate(workflow, files):
     if not isinstance(workflow, dict) or not isinstance(workflow.get('jobs'), dict):
         raise ValueError('Workflow must declare jobs')
+    triggers = workflow.get('on', workflow.get(True))
+    if not isinstance(triggers, (str, dict, list)):
+        raise ValueError('Workflow must declare controlled CI triggers')
+    events = {triggers} if isinstance(triggers, str) else set(triggers)
+    if not events or not events <= {'workflow_dispatch', 'workflow_call'}:
+        raise ValueError('Only controlled workflow_dispatch/workflow_call CI is allowed; no push/PR/timer loops')
+    if (isinstance(workflow.get('concurrency'), dict)
+            and workflow['concurrency'].get('cancel-in-progress', False) is not False):
+        raise ValueError('CI must not cancel an already running run')
     for job in workflow['jobs'].values():
         if not isinstance(job, dict):
             raise ValueError('Invalid workflow job')
+        if (isinstance(job.get('concurrency'), dict)
+                and job['concurrency'].get('cancel-in-progress', False) is not False):
+            raise ValueError('CI must not cancel an already running job')
         if 'uses' in job:
             target = job['uses']
             if not isinstance(target, str) or not target.startswith('./.github/workflows/') or target[2:] not in files:
@@ -53,7 +65,7 @@ def install(path):
         effective = Path(custom.stdout.strip())
         if not effective.is_absolute():
             effective = path / effective
-        if effective.exists():
+        if effective.exists() and effective.resolve() != (path / '.git/hooks').resolve():
             raise ValueError('Existing custom Git hook path must be integrated before enabling managed pushes')
         # Keep the user's global config intact; only shadow a missing path in this managed repo.
         backup = path / '.git/config.before-actions-guard'

@@ -1,13 +1,16 @@
 name: Regression tests
+run-name: CodexPi CI · ${{ inputs.commit || github.sha }}
 on:
-  push:
-  pull_request:
   workflow_dispatch:
+    inputs:
+      commit:
+        description: Exact pushed commit to verify
+        required: false
+        type: string
 permissions:
   contents: read
 jobs:
   tests:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -19,6 +22,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          ref: ${{ inputs.commit || github.sha }}
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
         if: matrix.platform == 'windows'
         with:
