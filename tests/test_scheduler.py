@@ -265,6 +265,44 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         await c.poll_goals()
         self.assertEqual(c.db.conn.execute("SELECT count(*) FROM events WHERE kind='complete'").fetchone()[0], count)
 
+    async def test_completed_prompt_waits_for_explicit_resume_after_restart(self):
+        from app.prompts import submit
+        c = self.controller
+        self.native_status = 'complete'
+        upstream = SimpleNamespace(rpc=AsyncMock(return_value={'turn': {'id': 'unexpected', 'status': 'inProgress'}}))
+        for selected in (None, 'second', 'first'):
+            for stored_status in ('complete', 'active'):
+                with self.subTest(selected=selected, stored_status=stored_status):
+                    c.native.rpc.reset_mock()
+                    c.db.set_setting('selected', selected)
+                    c.db.set_setting('prompts/second', [])
+                    c.db.set_setting('manual_pause/second', False)
+                    c.db.set_setting('manual_pause/first', True)
+                    c.db.update('first', goal_status='paused', queue_position=2)
+                    c.db.update('second', goal_status=stored_status, queue_position=1, completion_notified=1)
+                    params = {'threadId': 'second', 'clientUserMessageId': str(time.time_ns()),
+                              'input': [{'type': 'text', 'text': 'Wait for my Resume'}]}
+                    for _ in range(2):
+                        with self.assertRaisesRegex(ValueError, 'Prompt saved'):
+                            await submit(c, c.db.get('second'), params, upstream)
+                    upstream.rpc.assert_not_awaited()
+                    self.assertEqual(c.db.get('second')['goal_status'], 'complete')
+                    self.assertEqual(c.db.get('second')['queue_position'], 2)
+                    self.assertTrue(c.db.setting('manual_pause/second'))
+                    self.assertEqual(len(c.db.setting('prompts/second')), 1)
+                    self.assertEqual(c.db.setting('selected'), None if selected == 'second' else selected)
+                    c.db.conn.close()
+                    c.db = Database(self.root / 'test.db')
+                    c.db.set_setting('auto_continue', True)
+                    c.db.set_setting('advance_queue', True)
+                    c.source = SimpleNamespace(rows=lambda: {'second': {'status': 'complete'}})
+                    await c.recover()
+                    await c.poll_goals()
+                    await c.advance_queue()
+                    self.assertEqual(len(c.db.setting('prompts/second')), 1)
+                    self.assertFalse(any(call.args[0] in ('turn/start', 'thread/resume', 'thread/goal/set')
+                                         for call in c.native.rpc.await_args_list))
+
     async def test_completed_goal_pending_prompt_resume_is_queued_then_started_once(self):
         from app.prompts import submit
         c = self.controller

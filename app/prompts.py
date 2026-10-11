@@ -31,14 +31,27 @@ async def submit(controller, project, params, upstream):
         if current.get('result'):
             return current['result']
         raise ValueError('Prompt delivery is being reconciled; do not submit it again')
+    completed = not current and project['goal_status'] == 'complete'
+    if not current and not completed:
+        goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+        completed = bool(goal and goal['status'] == 'complete')
     if not any(item['id'] == ident for item in queue):
         if len(queue) >= 100 or len(json.dumps(queue + [params]).encode()) > 8 * 1024 * 1024:
             raise ValueError('Project prompt queue is full')
         queue.append({'id': ident, 'params': turn_params(project, params), 'created_at': time.time()})
         with controller.db.transaction():
             controller.db.set_setting(key(project), queue)
-            controller.db.set_setting('manual_pause/' + project['project_id'], False)
+            controller.db.set_setting('manual_pause/' + project['project_id'], bool(completed))
+            if completed:
+                # A saved follow-up is not permission to restart a completed project.
+                controller.db.update(project['project_id'], goal_status='complete',
+                                     **({'queue_position': None} if len(queue) == 1 else {}))
+                controller.db.compact_queue()
+                if controller.db.setting('selected') == project['project_id']:
+                    controller.db.set_setting('selected', None)
             controller.db.enqueue(project['project_id'])
+    if completed:
+        raise ValueError('Prompt saved in the CodexPi queue; use Resume or Run now to start it. Do not resend this prompt.')
     selected = controller.db.setting('selected')
     if not controller.db.setting('pause_all', False) and (not selected or selected == project['project_id']):
         if not current and not project['operation']:
