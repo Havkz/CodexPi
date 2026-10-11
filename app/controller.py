@@ -679,12 +679,20 @@ class Controller:
                              cwd=project['project_path'])
         workflows = {p for p in tree['stdout'].split('\0')
                      if p.count('/') == 2 and p.endswith(('.yml', '.yaml'))}
+        from .actions import CONTROLLED_WORKFLOW, dispatch_ci
+        endpoint = (f"repos/{project['github_repo']}/actions/workflows/codexpi-ci.yml/runs?per_page=100"
+                    if CONTROLLED_WORKFLOW in workflows else
+                    f"repos/{project['github_repo']}/actions/runs?head_sha={commit}&per_page=100")
         runs = await command('gh', 'api', '--paginate', '--slurp',
-                             f"repos/{project['github_repo']}/actions/runs?head_sha={commit}&per_page=100")
+                             endpoint)
         latest = {}
         for page in json.loads(runs['stdout']):
             for run in page['workflow_runs']:
-                if run['head_sha'] != commit:
+                if run['path'].split('@', 1)[0] == CONTROLLED_WORKFLOW:
+                    # Dispatch metadata follows the branch; checkout follows the pinned input.
+                    if run.get('display_title') != 'CodexPi CI · ' + commit:
+                        continue
+                elif run['head_sha'] != commit:
                     continue
                 key = (run['workflow_id'], run['event'])
                 previous = latest.get(key)
@@ -693,7 +701,6 @@ class Controller:
         data = list(latest.values())
         observed = {r['path'].split('@', 1)[0] for r in data}
         missing = workflows - observed
-        from .actions import CONTROLLED_WORKFLOW, dispatch_ci
         if CONTROLLED_WORKFLOW in missing:
             receipt = await dispatch_ci(self, project, commit)
             if receipt and receipt.get('phase') == 'uncertain':

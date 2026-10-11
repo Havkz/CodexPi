@@ -754,6 +754,11 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                  (['.github/workflows/tests.yml'], [run, {**run, 'id': 11, 'status': 'in_progress', 'conclusion': None}], 'pending'),
                  (['.github/workflows/tests.yml'], [{**run, 'conclusion': 'failure'},
                     {**run, 'event': 'workflow_dispatch', 'id': 12}], 'failure')]
+        controlled = {**run, 'event': 'workflow_dispatch', 'path': '.github/workflows/codexpi-ci.yml'}
+        cases.extend([
+            ([controlled['path']], [{**controlled, 'display_title': 'CodexPi CI · ' + 'b' * 40}], 'pending'),
+            ([controlled['path']], [{**controlled, 'head_sha': 'b' * 40,
+                                    'display_title': 'CodexPi CI · ' + sha}], 'passed')])
         for workflows, runs, expected in cases:
             with self.subTest(expected=expected, runs=runs):
                 async def command(*args, **kwargs):
