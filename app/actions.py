@@ -9,7 +9,6 @@ CONTROLLED_WORKFLOW = '.github/workflows/codexpi-ci.yml'
 async def dispatch_ci(controller, project, commit):
     """One durable submission per commit; an uncertain POST is never retried."""
     from .controller import command
-    from .prompts import active
     db, ident = controller.db, project['project_id']
     key = 'ci_dispatch/' + ident
     receipts = db.setting(key, {})
@@ -27,8 +26,8 @@ async def dispatch_ci(controller, project, commit):
         return (db.setting('self_hosted_actions', False) and current['lifecycle'] == 'ready'
                 and not db.setting('pause_all', False) and not controller.account_switch_pending
                 and not db.setting('manual_pause/' + ident, False)
-                and (current['goal_status'] == 'active' or active(controller, current)
-                     or db.setting('completion_check/' + ident)) and not busy(controller))
+                and current['goal_status'] == 'complete'
+                and db.setting('completion_check/' + ident) and not busy(controller))
 
     if not allowed():
         return

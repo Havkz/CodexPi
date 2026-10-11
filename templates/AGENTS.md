@@ -14,7 +14,8 @@ GitHub-hosted runners and paid fallbacks are forbidden. CodexPi registers the pr
 official pre-login Windows runner automatically and gives CI priority over Windows jobs.
 Use one `.github/workflows/codexpi-ci.yml` with only `workflow_dispatch`, an optional
 `commit` input and checkout `ref: ${{ inputs.commit || github.sha }}`. CodexPi submits
-one run per pushed milestone while the project is admitted and existing CI is idle.
+one final run after native goal completion, while the project is admitted and
+existing CI is idle. Intermediate commits do not automatically enqueue more CI.
 No push/PR/timer/workflow_run triggers, automatic reruns, direct `gh workflow run`,
 or cancellation of a running run. Pausing prevents new submissions; an already
 running run finishes. On failure fix the cause and push a new meaningful commit;
@@ -69,7 +70,10 @@ must remain ignored. Do not require rotation merely because a secret was supplie
 Never ask the user to manually edit .env files. Block metadata must not contain secrets.
 
 Before completion: finish every requirement, deployment/transfer and relevant
-test, commit, push, and verify relevant CI. A clean Git tree alone is insufficient.
+local test, commit and push. Mark the native goal complete when development and
+local checks are done; CodexPi then submits the final controlled CI and verifies
+its outcome before publishing project completion or delivery. A failed final CI
+blocks the same goal for repair; do not retry its run. A clean Git tree alone is insufficient.
 Default: retain this working directory. If the goal explicitly requires a 24/7
 Pi service, use the CodexPi deployment operation to move the sole final working
 copy to /home/raspberry/<slug>, update the DB path and install/test its systemd unit.

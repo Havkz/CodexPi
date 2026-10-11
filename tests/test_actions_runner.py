@@ -28,6 +28,10 @@ class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
             sha = 'a' * 40
             command = AsyncMock(return_value={'stdout': 'main'})
             with patch('app.controller.command', command):
+                await actions.dispatch_ci(c, c.db.get('project'), sha)
+                command.assert_not_awaited()  # Intermediate pushes are not CI requests.
+                c.db.update('project', goal_status='complete')
+                c.db.set_setting('completion_check/project', {'checked_at': time.time()})
                 for hold in ('pause_all', 'manual_pause/project'):
                     c.db.set_setting(hold, True)
                     await actions.dispatch_ci(c, c.db.get('project'), sha)
