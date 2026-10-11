@@ -84,6 +84,11 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual((await client.post('/api/action', json=body)).status, 403)
                     self.assertEqual((await client.post('/api/action', json=body, headers={'X-CSRF-Token': csrf})).status, 200)
                     switch.assert_awaited_once()
+                controller.set_queue_status = AsyncMock(return_value={'ok': True, 'queue_status': 'queued'})
+                queue_change = {'action': 'queue-status', 'project_id': 'project1', 'expected_status': 'paused', 'status': 'queued'}
+                self.assertEqual((await client.post('/api/action', json=queue_change)).status, 403)
+                self.assertEqual((await client.post('/api/action', json=queue_change, headers={'X-CSRF-Token': csrf})).status, 200)
+                controller.set_queue_status.assert_awaited_once_with('project1', 'paused', 'queued')
                 for enabled, expected in [('true', 400), (True, 200), (False, 200)]:
                     result = await client.post('/api/action', json={'action': 'auto-continue', 'enabled': enabled},
                         headers={'X-CSRF-Token': csrf})

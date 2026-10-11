@@ -16,6 +16,15 @@ def active(controller, project):
     return controller.db.setting('prompt_active/' + project['project_id'])
 
 
+def queue_status(controller, project):
+    if project['queue_position'] is None or project['lifecycle'] != 'ready' or project['operation']:
+        return None
+    if project['goal_status'] == 'paused' or (project['goal_status'] == 'complete'
+            and controller.db.setting(key(project), []) and not active(controller, project)):
+        return 'paused' if controller.db.setting('manual_pause/' + project['project_id'], False) else 'queued'
+    return None
+
+
 async def submit(controller, project, params, upstream):
     if not isinstance(params.get('input'), list) or not params['input']:
         raise ValueError('A user prompt is required')
@@ -41,9 +50,10 @@ async def submit(controller, project, params, upstream):
         queue.append({'id': ident, 'params': turn_params(project, params), 'created_at': time.time()})
         with controller.db.transaction():
             controller.db.set_setting(key(project), queue)
-            controller.db.set_setting('manual_pause/' + project['project_id'], bool(completed))
+            controller.db.set_setting('manual_pause/' + project['project_id'], False)
             if completed:
                 # A saved follow-up is not permission to restart a completed project.
+                controller.db.set_setting('prompt_resume_required/' + project['project_id'], True)
                 controller.db.update(project['project_id'], goal_status='complete',
                                      **({'queue_position': None} if len(queue) == 1 else {}))
                 controller.db.compact_queue()
@@ -67,6 +77,7 @@ async def dispatch(controller, project, native, *, allow_limited=False):
             or controller.account_switch_pending
             or controller.db.setting('pause_all', False)
             or controller.db.setting('manual_pause/' + project['project_id'], False)
+            or controller.db.setting('prompt_resume_required/' + project['project_id'], False)
             or project['goal_status'] == 'usage limited' and not allow_limited):
         return None
     selected = controller.db.setting('selected')

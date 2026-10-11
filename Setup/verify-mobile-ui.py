@@ -74,7 +74,20 @@ def main():
             page = context.new_page()
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.on('console', lambda message: errors.append(message.text) if message.type == 'error' else None)
+            changes = []
+            def confirm_status(route):
+                body = route.request.post_data_json
+                assert body['action'] == 'queue-status'
+                project = next(p for p in state['projects'] if p['project_id'] == body['project_id'])
+                assert body['expected_status'] == project['queue_status']
+                project['queue_status'] = body['status']
+                project['manual_paused'] = body['status'] == 'paused'
+                changes.append(body)
+                route.fulfill(json={'ok': True, 'queue_status': body['status']})
+            page.route('**/api/action', confirm_status)
             for width in (*WIDTHS, 1440):
+                queued = next(p for p in state['projects'] if p['project_id'] == 'new-work')
+                queued.update(queue_status='queued', manual_paused=False)
                 page.set_viewport_size({'width': width, 'height': 900})
                 page.goto(base)
                 expect(page.locator('body')).to_have_class('dashboard-ready')
@@ -105,6 +118,32 @@ def main():
                 snapshot('dashboard')
                 page.locator('#infra').screenshot(path=str(OUTPUT / f'infrastructure-{width}.png'))
                 page.locator('.table-panel').screenshot(path=str(OUTPUT / f'queue-{width}.png'))
+                toggle = page.locator('#queue tr[data-id="new-work"] .queue-status-button')
+                before = len(changes)
+                toggle.click()
+                expect(toggle).to_contain_text('Sure?')
+                assert len(changes) == before
+                snapshot('queue-confirm')
+                toggle.press('Escape')
+                expect(toggle).to_have_text('queued')
+                toggle.click()
+                toggle.click()
+                expect(toggle).to_have_text('paused')
+                assert len(changes) == before + 1
+                toggle.click()
+                toggle.click()
+                expect(toggle).to_have_text('queued')
+                assert len(changes) == before + 2
+                assert page.locator('#queue tr[data-id="running"] .queue-status-button').count() == 0
+                if width == 320:
+                    toggle.click()
+                    queued.update(goal_status='active', queue_status=None)
+                    page.evaluate('refresh()')
+                    expect(toggle).to_have_count(0)
+                    assert len(changes) == before + 2
+                    queued.update(goal_status='complete', queue_status='queued')
+                    page.evaluate('refresh()')
+                    expect(toggle).to_have_text('queued')
                 page.locator('#account-menu > summary').click()
                 expect(page.locator('#account-options')).to_be_visible()
                 page.wait_for_function("() => document.querySelector('#account-options').getAnimations().every(a => a.playState === 'finished')")

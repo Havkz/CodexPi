@@ -168,7 +168,8 @@ async def state(request):
                       'online' if actions.get('checked_at') else 'unknown',
             'checked_at': actions.get('checked_at'), 'error': actions.get('error'),
             'detail': 'Local Windows runners · CI priority'})
-    projects = [{**p, 'block_summary': block_summary(p),
+    from .prompts import queue_status
+    projects = [{**p, 'block_summary': block_summary(p), 'queue_status': queue_status(controller, p),
                  'pending_prompt_count': len(controller.db.setting('prompts/' + p['project_id'], [])),
                  'completion_check': controller.db.setting('completion_check/' + p['project_id']),
                  'manual_paused': bool(controller.db.setting('manual_pause/' + p['project_id'], False))}
@@ -217,9 +218,13 @@ async def usage(request):
 
 async def project_detail(request):
     from .controller import command
+    from .prompts import key, queue_status
     controller = request.app['controller']
     project = controller.db.get(request.match_info['project_id'])
     project['block_summary'] = block_summary(project)
+    project['queue_status'] = queue_status(controller, project)
+    project['pending_prompt_count'] = len(controller.db.setting(key(project), []))
+    project['manual_paused'] = bool(controller.db.setting('manual_pause/' + project['project_id'], False))
     events = [dict(row) for row in controller.db.conn.execute(
         'SELECT event_id,kind,payload,created_at,sent_at FROM events WHERE project_id=? ORDER BY event_id DESC LIMIT 30',
         (project['project_id'],))]
@@ -278,6 +283,8 @@ async def action(request):
             return response
     elif action_name in ('run-now', 'resume'):
         return safe_json(controller, await controller.resume(ident, promote=action_name == 'run-now'))
+    elif action_name == 'queue-status':
+        return safe_json(controller, await controller.set_queue_status(ident, body.get('expected_status'), body.get('status')))
     elif action_name == 'pause':
         async with controller.lock:
             project = controller.db.get(ident)

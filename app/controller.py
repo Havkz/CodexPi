@@ -172,6 +172,7 @@ class Controller:
     def can_auto_resume(self, project):
         return (project['lifecycle'] == 'ready' and not self.db.setting('pause_all', False)
                 and not self.db.setting('manual_pause/' + project['project_id'], False)
+                and not self.db.setting('prompt_resume_required/' + project['project_id'], False)
                 and not json.loads(project['block_reason'] or '{}').get('requires_user'))
 
     async def create(self, name):
@@ -389,6 +390,28 @@ class Controller:
     async def run_now(self, project_id):
         return await self.resume(project_id, promote=True)
 
+    async def set_queue_status(self, project_id, expected, target):
+        from .prompts import key, queue_status
+        async with self.lock:
+            project = self.db.get(project_id)
+            if self.account_switch_pending or getattr(self, 'maintenance', False):
+                raise ValueError('Wait for account or CLI maintenance before changing queue status')
+            current = queue_status(self, project)
+            if expected not in ('paused', 'queued') or target not in ('paused', 'queued') or expected == target:
+                raise ValueError('Only paused and queued can be switched')
+            if current != expected:
+                raise ValueError('Queue status changed; review it and confirm again')
+            goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+            if (goal and goal['status'] != project['goal_status'] or
+                    not await idle_thread(self.native, project['codex_session_id'])):
+                raise ValueError('Native project state changed; refresh before changing queue status')
+            with self.db.transaction():
+                self.db.set_setting('manual_pause/' + project_id, target == 'paused')
+                if project['goal_status'] == 'complete' and self.db.setting(key(project), []):
+                    # Queue eligibility does not authorize execution of a new completed-goal prompt.
+                    self.db.set_setting('prompt_resume_required/' + project_id, True)
+            return {'ok': True, 'queue_status': target}
+
     async def resume(self, project_id, *, promote=False):
         async with self.lock:
             if self.account_switch_pending:
@@ -415,6 +438,7 @@ class Controller:
                 ident = queue[0]['id']
                 with self.db.transaction():
                     self.db.set_setting('manual_pause/' + project_id, False)
+                    self.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_resume_required/' + project_id,))
                     self.db.update(project_id, resume_result=json.dumps({'id': ident, 'status': 'queued',
                         'message': 'Saved prompt queued; the current project keeps its execution slot'}))
                 if promote or (not selected or selected == project_id) and project['queue_position'] == 1:
@@ -859,6 +883,7 @@ class Controller:
         # active/limited/blocked project still retains its slot above.
         for candidate in self.db.all():
             if (candidate['queue_position'] is None or candidate['lifecycle'] != 'ready'
+                    or self.db.setting('prompt_resume_required/' + candidate['project_id'], False)
                     or self.db.setting('manual_pause/' + candidate['project_id'], False)):
                 continue
             operation = json.loads(candidate['operation'] or '{}')

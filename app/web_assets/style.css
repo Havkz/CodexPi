@@ -138,6 +138,8 @@ tbody tr:hover { background: rgb(120 129 255 / .045); }
 .grip-dots i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
 .table-scroll .queue-actions { flex-wrap: nowrap; }
 .queue-actions button { white-space: nowrap; }
+.queue-status-button { min-height: 36px; white-space: normal; text-align: left; }
+.queue-status-button[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(120 129 255 / .08); }
 .dragging { opacity: .4; }
 .drop-target { outline: 1px solid var(--accent); outline-offset: -1px; }
 .project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
@@ -257,6 +259,7 @@ input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var
   .queue-name { max-width: 100%; }
   .table-scroll .queue-actions { flex-wrap: wrap; }
   .queue-actions button { flex: 1 1 auto; min-height: 44px; }
+  .queue-status-button { min-height: 44px; max-width: 180px; }
 }
 @media (max-width: 520px) {
   :root { --space: 20px; --gap: 16px; }

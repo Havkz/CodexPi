@@ -288,7 +288,8 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                     upstream.rpc.assert_not_awaited()
                     self.assertEqual(c.db.get('second')['goal_status'], 'complete')
                     self.assertEqual(c.db.get('second')['queue_position'], 2)
-                    self.assertTrue(c.db.setting('manual_pause/second'))
+                    self.assertTrue(c.db.setting('prompt_resume_required/second'))
+                    self.assertFalse(c.db.setting('manual_pause/second'))
                     self.assertEqual(len(c.db.setting('prompts/second')), 1)
                     self.assertEqual(c.db.setting('selected'), None if selected == 'second' else selected)
                     c.db.conn.close()
@@ -302,6 +303,45 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(len(c.db.setting('prompts/second')), 1)
                     self.assertFalse(any(call.args[0] in ('turn/start', 'thread/resume', 'thread/goal/set')
                                          for call in c.native.rpc.await_args_list))
+
+    async def test_queue_status_confirmation_is_durable_and_never_starts_completed_prompts(self):
+        from app.prompts import queue_status, submit
+        c = self.controller
+        self.native_status = 'complete'
+        c.db.update('second', goal_status='complete')
+        upstream = SimpleNamespace(rpc=AsyncMock())
+        with self.assertRaisesRegex(ValueError, 'Prompt saved'):
+            await submit(c, c.db.get('second'), {'threadId': 'second',
+                'input': [{'type': 'text', 'text': 'Wait for Resume'}]}, upstream)
+        for expected, target in (('queued', 'paused'), ('paused', 'queued')):
+            self.assertEqual(queue_status(c, c.db.get('second')), expected)
+            await c.set_queue_status('second', expected, target)
+            self.assertEqual(queue_status(c, c.db.get('second')), target)
+            with self.assertRaisesRegex(ValueError, 'changed'):
+                await c.set_queue_status('second', expected, target)
+            c.db.conn.close()
+            c.db = Database(self.root / 'test.db')
+            await c.advance_queue()
+            self.assertEqual(queue_status(c, c.db.get('second')), target)
+            self.assertTrue(c.db.setting('prompt_resume_required/second'))
+        upstream.rpc.assert_not_awaited()
+        self.assertFalse(any(call.args[0] in ('turn/start', 'thread/resume', 'thread/goal/set')
+                             for call in c.native.rpc.await_args_list))
+        for status in ('active', 'stalled', 'usage limited', 'complete'):
+            c.db.update('first', goal_status=status)
+            with self.assertRaisesRegex(ValueError, 'changed'):
+                await c.set_queue_status('first', 'paused', 'queued')
+        c.db.update('first', goal_status='paused')
+        self.native_status = 'active'
+        with self.assertRaisesRegex(ValueError, 'Native project state'):
+            await c.set_queue_status('first', 'queued', 'paused')
+        self.native_status = 'paused'
+        await c.set_queue_status('first', 'queued', 'paused')
+        await c.set_queue_status('first', 'paused', 'queued')
+        self.assertIsNone(c.db.setting('selected'))
+        for expected, target in (('active', 'queued'), ('queued', 'queued'), ('queued', 'active')):
+            with self.assertRaisesRegex(ValueError, 'Only paused and queued'):
+                await c.set_queue_status('first', expected, target)
 
     async def test_completed_goal_pending_prompt_resume_is_queued_then_started_once(self):
         from app.prompts import submit

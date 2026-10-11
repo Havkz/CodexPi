@@ -312,9 +312,9 @@ async def finish(controller, project):
                 controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('ci_dispatch/' + ident,))
                 if (controller.db.setting('account_wait') or {}).get('project_id') == ident:
                     controller.db.set_setting('account_wait', None)
-                controller.db.conn.execute('DELETE FROM settings WHERE key IN (?,?,?,?)',
-                                          ('prompts/' + ident, 'prompt_active/' + ident, 'prompt_receipts/' + ident,
-                                           'prompt_limit/' + ident))
+                controller.db.conn.execute('DELETE FROM settings WHERE key IN (?,?,?,?,?)',
+                    ('prompts/' + ident, 'prompt_active/' + ident, 'prompt_receipts/' + ident,
+                     'prompt_resume_required/' + ident, 'prompt_limit/' + ident))
                 controller.db.compact_queue()
 
 

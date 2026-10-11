@@ -1,6 +1,7 @@
 'use strict';
 let state, dragging, refreshing = false, busy = false, connected = false, detailId = null, lifecycleIntent, pendingAction, submittingProject;
 let accountSubmitting = false, pendingAccount, removingAccount, accountOptionsSignature;
+let queueConfirmation;
 const $ = id => document.getElementById(id);
 const node = (tag, text = '', cls = '') => {
   const el = document.createElement(tag); el.textContent = text; el.className = cls; return el;
@@ -12,6 +13,7 @@ function icon(path) {
 const date = stamp => stamp ? new Date(stamp * 1000).toLocaleString('en-GB') : 'Not available yet';
 const badge = status => node('span', status || 'unknown', 'badge status-' + (status || 'unknown').replaceAll(' ', '-'));
 const projectStatus = p => {
+  if (p.queue_status) return p.queue_status;
   if (p.pending_prompt_count && p.goal_status === 'complete') return 'queued';
   if (p.queue_position > 1 && p.goal_status === 'paused' && !p.manual_paused) return 'queued';
   return p.goal_status === 'complete' && !p.completion_notified ? 'verifying' : p.goal_status;
@@ -240,7 +242,21 @@ function renderQueue(queue) {
     controls.append(grip);
     position.append(controls);
     const name = node('td'); name.append(button(p.display_name, () => showDetail(p.project_id), p.project_id + ':name', 'queue-name'), node('span', p.github_repo || 'Repository unavailable', 'queue-repo mono'));
-    const status = node('td'); status.append(badge(projectStatus(p)));
+    const status = node('td'), currentStatus = projectStatus(p);
+    if (queueConfirmation?.id === p.project_id && queueConfirmation.from !== currentStatus) queueConfirmation = null;
+    if (['paused', 'queued'].includes(currentStatus) && p.lifecycle === 'ready' && !p.operation) {
+      const target = currentStatus === 'paused' ? 'queued' : 'paused';
+      const confirming = queueConfirmation?.id === p.project_id;
+      const toggle = button(confirming ? currentStatus + ' → ' + target + ' · Sure?' : currentStatus, () => {
+        if (queueConfirmation?.id === p.project_id && queueConfirmation.from === currentStatus) {
+          queueConfirmation = null; act('queue-status', p.project_id, {expected_status: currentStatus, status: target});
+        } else { queueConfirmation = {id: p.project_id, from: currentStatus}; render(); }
+      }, p.project_id + ':queue-status', 'badge status-' + currentStatus + ' queue-status-button');
+      toggle.setAttribute('aria-label', confirming ? 'Confirm ' + p.display_name + ' as ' + target : 'Change ' + p.display_name + ' from ' + currentStatus + ' to ' + target);
+      toggle.setAttribute('aria-pressed', String(confirming));
+      toggle.disabled = busy || !connected || accountPending();
+      status.append(toggle);
+    } else status.append(badge(currentStatus));
     const actionCell = node('td'); actionCell.append(actions(p, true, true));
     row.append(position, name, status, node('td', date(p.last_activity), 'muted'), node('td', p.windows_required ? 'Required' : '—'), actionCell);
     ['Priority', 'Project', 'Status', 'Last activity', 'Windows', 'Actions'].forEach((label, i) => { row.children[i].dataset.label = label; });
@@ -264,6 +280,8 @@ function renderQueue(queue) {
 }
 function render() {
   if (!state) return;
+  if (queueConfirmation && !state.projects.some(p => p.project_id === queueConfirmation.id &&
+      projectStatus(p) === queueConfirmation.from && p.lifecycle === 'ready' && !p.operation)) queueConfirmation = null;
   const expandedServices = new Set([...document.querySelectorAll('.infra-diagnostics[open]')].map(el => el.dataset.service));
   const expandedBlocks = new Set([...document.querySelectorAll('.block-reason details[open]')].map(el => el.dataset.project));
   const focused = document.activeElement, focus = focused?.dataset.key;
@@ -469,6 +487,12 @@ $('account-menu').addEventListener('keydown', event => {
   if (event.key === 'Escape') { event.preventDefault(); $('account-menu').open = false; $('account-menu').querySelector('summary').focus(); }
 });
 document.addEventListener('pointerdown', event => { if (!$('account-menu').contains(event.target)) $('account-menu').open = false; });
+document.addEventListener('click', event => {
+  if (queueConfirmation && !event.target.closest('.queue-status-button')) { queueConfirmation = null; render(); }
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && queueConfirmation) { queueConfirmation = null; render(); }
+});
 for (const event of ['pointerup', 'pointercancel']) document.addEventListener(event, () => {
   if (!document.querySelector('#queue .dragging')) dragging = null;
 });
