@@ -64,6 +64,7 @@ class PowerTests(unittest.IsolatedAsyncioTestCase):
             await tool.windows_ready(client, 'project')
         client.post.assert_called_once()
         self.assertEqual(client.post.call_args.kwargs['json'], {'project_id': 'project'})
+        self.assertGreaterEqual(client.post.call_args.kwargs['timeout'].total, 30)
         self.assertEqual(client.get.call_count, 2)
         for status, message in (({**offline, 'auto_boot_windows': False}, 'disabled'),
                                 ({**offline, 'windows_power': {'phase': 'failed', 'message': 'Wake timed out'}}, 'timed out')):

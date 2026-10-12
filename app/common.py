@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import hmac
 import json
@@ -14,6 +15,16 @@ STATUSES = ('active', 'paused', 'stalled', 'usage limited', 'limited by budget',
 NATIVE_STATUS = {'active': 'active', 'paused': 'paused', 'blocked': 'stalled',
                  'usageLimited': 'usage limited', 'budgetLimited': 'limited by budget',
                  'complete': 'complete'}
+
+
+async def durable_io(function, *args):
+    task = asyncio.create_task(asyncio.to_thread(function, *args))
+    try:
+        return await asyncio.shield(task)
+    except asyncio.CancelledError:
+        # Keep the caller's controller lock until the write has actually finished.
+        await task
+        raise
 
 
 def codex_login_url(value):

@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "app/common.py": {
-    "mtime": 1791821953.4704213,
-    "ast_hash": "758cb461bb7b09ef82096c17fc6fdfdd",
+    "mtime": 1791840498.5184228,
+    "ast_hash": "5942eda0341bc72d395de75c1e137b38",
     "semantic_hash": ""
   },
   "app/controller.py": {
@@ -80,13 +80,13 @@
     "semantic_hash": ""
   },
   "app/db.py": {
-    "mtime": 1791833143.3327286,
-    "ast_hash": "0d3c2334ced819a317f9192fe4898e5e",
+    "mtime": 1791840498.5209255,
+    "ast_hash": "57f17bc3c0e9399c9fec00e73ef8f2a7",
     "semantic_hash": ""
   },
   "app/discord_bot.py": {
-    "mtime": 1791822000.0938058,
-    "ast_hash": "52543c178998d6bfb005ae5cfa214280",
+    "mtime": 1791840572.4089875,
+    "ast_hash": "bd6f69c26079a22a8abc8ad738ab9f9d",
     "semantic_hash": ""
   },
   "app/main.py": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "app/worker_server.py": {
-    "mtime": 1791574339.8179042,
-    "ast_hash": "7a977cfa8f7898e62885c4874365ad61",
+    "mtime": 1791840498.5219288,
+    "ast_hash": "bd08e6b366a056a45738983b4b071528",
     "semantic_hash": ""
   },
   "bin/codexpi": {
@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "bin/codexpi-tool": {
-    "mtime": 1791562231.6213903,
-    "ast_hash": "c24710bc890dbb05e1af42d9356c5b2c",
+    "mtime": 1791840498.5219288,
+    "ast_hash": "1d0c12ddc4ba0a838c00c008b82ef845",
     "semantic_hash": ""
   },
   "config/goal-hooks.json": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1791835026.757041,
-    "ast_hash": "f4992263d339bc82f74b3f55f8e98557",
+    "mtime": 1791840887.20244,
+    "ast_hash": "d049d2d13d46dc669be065a77bc8d3e0",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "tests/test_discord.py": {
-    "mtime": 1791663386.0120122,
-    "ast_hash": "c635420616983d5183df69b07a5b0c6a",
+    "mtime": 1791840233.213933,
+    "ast_hash": "d55acfee1275568a5f55049ebd8fab2b",
     "semantic_hash": ""
   },
   "docs/design-verification.md": {
@@ -380,8 +380,8 @@
     "semantic_hash": ""
   },
   "tests/test_worker_server.py": {
-    "mtime": 1791563509.8046174,
-    "ast_hash": "5888c969339c1a7f915c80829d57cd84",
+    "mtime": 1791840586.5760808,
+    "ast_hash": "56a22b90fe6c8cf487284d017428ddf6",
     "semantic_hash": ""
   },
   "docs/optimization.md": {
@@ -440,13 +440,13 @@
     "semantic_hash": ""
   },
   "app/accounts.py": {
-    "mtime": 1791833316.0216837,
-    "ast_hash": "b722bea63ce0402d8dc3dd5b58d255dc",
+    "mtime": 1791840498.5194232,
+    "ast_hash": "fc18b28fe8f2f80979ce29b2587c30e2",
     "semantic_hash": ""
   },
   "tests/test_accounts.py": {
-    "mtime": 1791833143.331197,
-    "ast_hash": "0b8439ec8a6e571c10be6608c92bd91a",
+    "mtime": 1791840586.5760808,
+    "ast_hash": "61c93c901b91e74e480f072eea6eb1c5",
     "semantic_hash": ""
   },
   "Setup/verify-account-ui.py": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "tests/test_power.py": {
-    "mtime": 1791662649.980926,
-    "ast_hash": "1a7fe7f617c30ddae047860e1c6f29c0",
+    "mtime": 1791840887.1994302,
+    "ast_hash": "39bbfa53ea0d07213f560f369c8508cc",
     "semantic_hash": ""
   },
   "Setup/repair-wol.ps1": {

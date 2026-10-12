@@ -139,7 +139,14 @@ class DiscordTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('Offline', text)
         self.assertNotIn('unavailable', text)
         controller.windows_online = True
-        self.assertIn('Online', status_embed(controller, project, event, payload).description)
+        embed = status_embed(controller, project, event, payload)
+        self.assertEqual(embed.title, 'CodexPi — Project Stalled')
+        self.assertIn('At event: **Offline**', embed.description)
+        self.assertIn('Current connection: **Online**', embed.description)
+        payload['reason']['last_heartbeat'] = 1791370000
+        db.set_setting('windows_last_heartbeat', 1791370060)
+        self.assertIn('<t:1791370000:F>', status_embed(controller, project, event, payload).description)
+        del payload['reason']['last_heartbeat']
         db.set_setting('windows_last_heartbeat', None)
         self.assertIn('unavailable', status_embed(controller, project, event, payload).description)
 

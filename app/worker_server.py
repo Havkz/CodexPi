@@ -71,12 +71,13 @@ async def worker_socket(request):
                 controller.worker_draining = body.get('draining', False)
                 was_online = controller.windows_online
                 controller.worker_seen = time.monotonic()
-                controller.db.set_setting('windows_last_heartbeat', time.time())
-                if not was_online:
-                    controller.db.set_setting('windows_availability', {'id': str(uuid.uuid4()), 'attempted': []})
-                if 'power' in body:
-                    from .power import observe
-                    async with controller.lock:
+                received_at = time.time()
+                async with controller.lock:
+                    controller.db.set_setting('windows_last_heartbeat', received_at)
+                    if not was_online:
+                        controller.db.set_setting('windows_availability', {'id': str(uuid.uuid4()), 'attempted': []})
+                    if 'power' in body:
+                        from .power import observe
                         await observe(controller, body['power'])
                 # The first heartbeat may arrive while another project owns the
                 # slot. Recheck later signed heartbeats without repeating a wake.
@@ -234,8 +235,13 @@ async def unblock_windows(controller):
 
 
 async def submit_job(controller, body):
-    async with controller.lock:
-        result = await _submit_job(controller, body)
+    for attempt in range(4):
+        async with controller.lock:
+            result = await _submit_job(controller, body, offline_confirmed=attempt == 3)
+        if result is not None:
+            break
+        logging.getLogger('worker').info('Waiting for Windows heartbeat before job admission (%s/3)', attempt + 1)
+        await asyncio.sleep(10)  # Release admission lock so signed heartbeats can recover.
     try:
         await dispatch_pending(controller)
     except Exception as exc:
@@ -246,6 +252,15 @@ async def submit_job(controller, body):
 
 
 async def request_windows(controller, body):
+    for attempt in range(3):
+        async with controller.lock:
+            project = controller.db.get(body['project_id'])
+            denial = await job_denial(controller, project, waking=True)
+            if denial:
+                raise ValueError(denial)
+            if controller.windows_online:
+                return {'online': True}
+        await asyncio.sleep(10)
     async with controller.lock:
         project = controller.db.get(body['project_id'])
         denial = await job_denial(controller, project, waking=True)
@@ -269,7 +284,7 @@ async def request_windows(controller, body):
         return {'online': False, 'operation_id': state['id'], 'message': state['message']}
 
 
-async def _submit_job(controller, body):
+async def _submit_job(controller, body, offline_confirmed=False):
     project = controller.db.get(body['project_id'])
     denial = await job_denial(controller, project)
     if denial:
@@ -290,10 +305,14 @@ async def _submit_job(controller, body):
             for p in artifacts)):
         raise ValueError('Artifact paths must be relative to the project checkout')
     if not controller.windows_online:
+        if not offline_confirmed:
+            return None
         reason = {'reason': 'Windows offline', 'details': str(body.get('reason', 'Native Windows test required')),
                   'explanation': 'Der native Windows-Auftrag kann ohne verbundenen Windows-Worker nicht ausgeführt werden.',
                   'solution': 'Windows-PC und CodexPi-Worker starten; nach gültigem Heartbeat setzt der Controller das berechtigte Queue-Projekt fort.',
-                  'requires_user': False}
+                  'requires_user': False, 'observed_at': time.time(),
+                  'last_heartbeat': controller.db.setting('windows_last_heartbeat'),
+                  'confirmation_seconds': 30}
         clean = controller.redactor.clean(json.dumps(reason))
         atomic_write(__import__('pathlib').Path(project['project_path']) / '.codexpi/block.json', clean)
         await controller.native.rpc('thread/goal/set', {'threadId': project['codex_session_id'], 'status': 'blocked'})

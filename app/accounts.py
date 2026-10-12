@@ -12,7 +12,7 @@ import tempfile
 import time
 import uuid
 
-from .common import atomic_write, codex_login_url
+from .common import atomic_write, codex_login_url, durable_io
 from .usage import number, windows
 
 
@@ -146,7 +146,9 @@ class AccountVault:
         email = native_account.get('email')
         if email and claims.get('email') and email != claims['email']:
             raise ValueError('Native account does not match the saved login')
-        atomic_write(self.path(ident), raw)
+        destination = self.path(ident)
+        if not destination.exists() or self.read(destination) != raw:
+            atomic_write(destination, raw)
         return {'account_id': ident, 'name': str(email or claims.get('email') or ('Account ' + ident[:8])),
                 'plan': native_account.get('planType'), 'status': 'ready'}
 
@@ -193,7 +195,7 @@ async def observe_account(native, vault, expected_id=None):
             raise LoginRequired('Native Codex rejected the saved login; sign in again') from None
         raise  # Network/provider failures never invalidate a stored account.
     try:
-        metadata = vault.checkpoint(account, {**proof, 'accountId': limits.get('accountId')}, expected_id)
+        metadata = await durable_io(vault.checkpoint, account, {**proof, 'accountId': limits.get('accountId')}, expected_id)
     finally:
         proof.clear()
     usage = {key: limits.get(key) for key in ('ordinaryUsageAllowed', 'rateLimits', 'rateLimitsByLimitId')}
@@ -260,13 +262,13 @@ def vault(controller):
     return controller.account_vault
 
 
-def remember(controller, metadata, usage):
+async def remember(controller, metadata, usage):
     accounts = controller.db.setting('accounts', [])
     accounts = [metadata if item['account_id'] == metadata['account_id'] else item for item in accounts]
     if not any(item['account_id'] == metadata['account_id'] for item in accounts):
         accounts.append(metadata)
     controller.db.set_setting('accounts', accounts)
-    controller.db.record_usage(usage, metadata['account_id'])
+    await controller.db.record_usage_async(usage, metadata['account_id'])
 
 
 async def refresh(controller):
@@ -280,7 +282,7 @@ async def refresh(controller):
     if not expected:
         controller.db.bind_legacy_usage(metadata['account_id'])
         bind_legacy_limits(controller, metadata['account_id'])
-    remember(controller, metadata, usage)
+    await remember(controller, metadata, usage)
     if not expected:
         controller.db.activate_account(metadata['account_id'])
     controller.persist_usage_resets()  # Checkpoint the old account's reset before a switch can hide it.
@@ -368,7 +370,7 @@ async def refresh_saved_accounts(controller):
         controller.db.set_setting(key, state)
         try:
             metadata, usage = await observe_saved_account(controller, ident)
-            remember(controller, metadata, usage)
+            await remember(controller, metadata, usage)
         except Exception:
             # Do not expose credential-bearing provider errors or turn an outage into a logout.
             state['error'] = 'Live usage could not be confirmed; showing the last measurement.'
@@ -729,7 +731,7 @@ async def tick(controller):
             if state.get('kind') == 'add' and controller.windows_online:
                 from .worker_server import send
                 await send(controller, {'type': 'account_login_close', 'operation_id': state['id']})
-            remember(controller, metadata, usage)
+            await remember(controller, metadata, usage)
             for index, project in enumerate(controller.db.all()):
                 # Upstream Snooze entries are keyed by session, not account. Retain
                 # their DB reset history, but disarm timers from the previous login.

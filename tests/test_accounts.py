@@ -1,9 +1,11 @@
+import asyncio
 import base64
 import json
 import os
 from pathlib import Path
 import stat
 import tempfile
+import threading
 import time
 import unittest
 from types import SimpleNamespace
@@ -74,6 +76,9 @@ class AccountTests(unittest.TestCase):
             vault = AccountVault(root, codex_home)
             proof = {'authMethod': 'chatgpt', 'authToken': 'test-access-first', 'accountId': 'workspace'}
             one = vault.checkpoint({'type': 'chatgpt', 'email': 'first@example.test', 'planType': 'plus'}, proof)
+            with patch('app.accounts.atomic_write') as write:
+                vault.checkpoint({'type': 'chatgpt'}, proof, expected_id=one['account_id'])
+                write.assert_not_called()
             with self.assertRaisesRegex(ValueError, 'identity changed'):
                 vault.checkpoint({'type': 'chatgpt'}, proof, expected_id='0' * 64)
             atomic_write(codex_home / 'auth.json', second)
@@ -152,6 +157,43 @@ class AccountTests(unittest.TestCase):
 
 
 class AccountObservationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_slow_usage_commit_keeps_loop_responsive_and_finishes_before_cancellation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            db = Database(Path(directory) / 'test.db')
+            started, release = threading.Event(), threading.Event()
+            original = Database.record_usage
+            caller_thread = threading.get_ident()
+
+            def slow_write(writer, sample, account_id):
+                self.assertNotEqual(threading.get_ident(), caller_thread)
+                self.assertEqual(writer.conn.execute('PRAGMA synchronous').fetchone()[0], 2)
+                started.set()
+                if not release.wait(3):
+                    raise RuntimeError('Test did not release the durable writer')
+                original(writer, sample, account_id)
+
+            task = None
+            try:
+                with patch.object(Database, 'record_usage', slow_write):
+                    task = asyncio.create_task(db.record_usage_async(account(1800000, daily=25), 'first'))
+                    self.assertTrue(await asyncio.to_thread(started.wait, 2))
+                    self.assertIsNone(db.setting('account_usage/first'))
+                    task.cancel()
+                    await asyncio.sleep(0.01)
+                    self.assertFalse(task.done())
+                    release.set()
+                    with self.assertRaises(asyncio.CancelledError):
+                        await task
+                    self.assertEqual(db.setting('account_usage/first')['account_id'], 'first')
+                    with db.transaction():
+                        with self.assertRaisesRegex(RuntimeError, 'outside an existing transaction'):
+                            await db.record_usage_async(account(1800060), 'first')
+            finally:
+                release.set()
+                if task is not None and not task.done():
+                    await asyncio.gather(task, return_exceptions=True)
+                db.conn.close()
+
     async def test_inactive_live_usage_is_isolated_bounded_and_failure_keeps_history(self):
         from app.accounts import refresh_saved_accounts
         from app.native import NativeError
@@ -304,7 +346,7 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             for index in reversed(range(2)):
                 atomic_write(home / 'auth.json', raws[index]); loaded['raw'] = raws[index]
                 metadata, sample = await observe_account(c.native, c.account_vault)
-                remember(c, metadata, sample)
+                await remember(c, metadata, sample)
             c.db.activate_account(ids[0]); c.select('first')
             c.record_status(c.db.get('first'), 'usage limited')
             c.native.rpc.reset_mock()
@@ -663,7 +705,7 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
                 # Initially confirm/save both without pretending they are simultaneously active.
                 metadata, usage = await observe_account(c.native, c.account_vault)
                 from app.accounts import remember
-                remember(c, metadata, usage)
+                await remember(c, metadata, usage)
             c.db.activate_account(ids[0])
             c.select('first')
             c.db.update('first', goal_status='active')

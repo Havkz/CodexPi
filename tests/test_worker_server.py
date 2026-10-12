@@ -41,6 +41,11 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
                  status, 'ready', position, 1, 1))
         c.db.set_setting('selected', 'first')
         self.c = c
+        self.delay = AsyncMock()
+        delay = patch('app.worker_server.asyncio', SimpleNamespace(
+            sleep=self.delay, wait_for=asyncio.wait_for, TimeoutError=asyncio.TimeoutError))
+        delay.start()
+        self.addCleanup(delay.stop)
         self.body = {'project_id': 'first', 'commit': 'a' * 40, 'argv': ['python', '--version']}
 
     def pending(self, ident, project):
@@ -154,11 +159,46 @@ class WorkerAdmissionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(c.db.get('first')['goal_status'], 'active')
         with self.assertRaisesRegex(ValueError, 'Windows offline'):
             await submit_job(c, self.body)
+        self.assertEqual(self.delay.await_count, 3)
+        self.assertEqual([call.args[0] for call in self.delay.await_args_list], [10, 10, 10])
         p = c.db.get('first')
         self.assertEqual(p['goal_status'], 'stalled')
         self.assertTrue(p['windows_required'])
         self.assertFalse(json.loads(p['block_reason'])['requires_user'])
         c.native.rpc.assert_any_await('thread/goal/set', {'threadId': 'first', 'status': 'blocked'})
+
+    async def test_late_heartbeat_recovers_without_stall_and_pause_stops_wait(self):
+        c = self.c
+        c.worker_seen = time.monotonic() - 61
+        async def recover(_):
+            self.assertFalse(c.lock.locked())
+            self.assertEqual(c.db.get('first')['goal_status'], 'active')
+            c.worker_seen = time.monotonic()
+        self.delay.side_effect = recover
+        result = await submit_job(c, self.body)
+        self.assertIn('job_id', result)
+        self.assertEqual(c.db.conn.execute('SELECT count(*) FROM events').fetchone()[0], 0)
+        self.assertFalse((c.root / 'first/.codexpi/block.json').exists())
+        c.worker_seen = time.monotonic() - 61
+        async def pause(_):
+            c.db.set_setting('manual_pause/first', True)
+        self.delay.side_effect = pause
+        with self.assertRaisesRegex(ValueError, 'selected, executing'):
+            await submit_job(c, self.body)
+        self.assertEqual(c.db.get('first')['goal_status'], 'active')
+
+    async def test_transient_heartbeat_loss_does_not_wake_an_already_running_pc(self):
+        from app.worker_server import request_windows
+        c = self.c
+        c.worker_seen = time.monotonic() - 61
+        async def recover(_):
+            self.assertFalse(c.lock.locked())
+            c.worker_seen = time.monotonic()
+        self.delay.side_effect = recover
+        with patch('app.power.request_wake') as wake:
+            self.assertEqual(await request_windows(c, {'project_id': 'first'}), {'online': True})
+            wake.assert_not_called()
+        self.assertEqual(self.delay.await_count, 1)
 
     async def test_executing_user_prompt_can_use_windows_without_an_active_goal(self):
         c = self.c

@@ -5,6 +5,7 @@ import sqlite3
 import time
 
 from .usage import number, windows
+from .common import durable_io
 
 
 SCHEMA = (
@@ -169,6 +170,24 @@ class Database:
                     '(SELECT observed_at FROM usage_samples WHERE account_id=? AND series=? '
                     'ORDER BY observed_at DESC LIMIT -1 OFFSET 12000)',
                     (account_id, series, account_id, series))
+
+    async def record_usage_async(self, account, account_id=None):
+        if self.conn.in_transaction:
+            raise RuntimeError('Usage persistence must run outside an existing transaction')
+
+        def write():
+            # A thread-owned connection preserves FULL durability without blocking heartbeats.
+            writer = Database.__new__(Database)
+            writer.conn = sqlite3.connect(self.path, isolation_level=None, timeout=15)
+            writer.conn.row_factory = sqlite3.Row
+            try:
+                writer.conn.execute('PRAGMA synchronous=FULL')
+                writer.conn.execute('PRAGMA foreign_keys=ON')
+                writer.record_usage(account, account_id)
+            finally:
+                writer.conn.close()
+
+        await durable_io(write)
 
     def activate_account(self, account_id):
         with self.transaction():

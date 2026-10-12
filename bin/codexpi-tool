@@ -13,7 +13,7 @@ ROOT = Path('/home/raspberry/CodexPi')
 
 
 async def windows_ready(client, project_id):
-    async with client.post('http://localhost/windows-wake', json={'project_id': project_id}, timeout=ClientTimeout(total=15)) as response:
+    async with client.post('http://localhost/windows-wake', json={'project_id': project_id}, timeout=ClientTimeout(total=120)) as response:
         result = await response.json()
         if response.status != 200:
             raise SystemExit(result.get('error', 'Windows wake failed'))

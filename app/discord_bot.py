@@ -34,7 +34,7 @@ def status_embed(controller, project, event, payload):
     titles = {'active': 'Project Status', 'paused': 'Project Paused', 'stalled': 'Project Stalled',
               'usage limited': 'Usage Limited', 'limited by budget': 'Budget Limited',
               'complete': 'Project Complete', 'critical': 'Infrastructure Alert', 'question': 'Question'}
-    title = 'Windows Worker Offline' if offline else titles.get(kind, 'Project Status')
+    title = titles.get(kind, 'Project Status')
     label = {'active': 'Running', 'paused': 'Paused', 'stalled': 'Attention required',
              'usage limited': 'Waiting for reset', 'limited by budget': 'Budget reached',
              'complete': 'Finished', 'critical': 'Attention required', 'question': 'Waiting for your answer'}.get(kind, 'Updated')
@@ -60,10 +60,12 @@ def status_embed(controller, project, event, payload):
         if summary['requires_user']:
             sections[-1] += '\nKein automatisches Resume ohne Nutzerfreigabe.'
     if offline:
-        heartbeat = controller.db.setting('windows_last_heartbeat')
+        heartbeat = reason.get('last_heartbeat') if 'last_heartbeat' in reason else controller.db.setting('windows_last_heartbeat')
         last_seen = f'<t:{int(heartbeat)}:F> (<t:{int(heartbeat)}:R>)' if heartbeat else '`unavailable`'
-        sections.append('**Windows Worker**\n- ' + ('Online' if getattr(controller, 'windows_online', False) else 'Offline') + '\n'
-            '│ Last heartbeat: ' + last_seen + '\n'
+        heartbeat_label = 'Last heartbeat at event' if 'last_heartbeat' in reason else 'Latest heartbeat'
+        sections.append('**Windows Worker**\n- At event: **Offline**\n'
+            '│ Current connection: **' + ('Online' if getattr(controller, 'windows_online', False) else 'Offline') + '**\n'
+            '│ ' + heartbeat_label + ': ' + last_seen + '\n'
             '│ Required: **yes**\n│ Auto resume: **' + ('enabled' if reason.get('requires_user') is False else 'disabled') + '**')
     lines = ['**Project**', '- ' + label, '│ Name: ' + code(project['display_name']),
              '│ Status: **' + plain(status) + '**']
