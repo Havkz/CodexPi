@@ -17,6 +17,89 @@ from app.native import tui_proxy
 
 
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_capacity_wait_persists_five_minutes_and_resumes_once_with_holds(self):
+        from app.common import block_summary
+        from app.prompts import queue_status
+        c = self.controller
+        clock = 1800000100
+        turn = {'id': 'capacity-1', 'status': 'failed', 'completedAt': clock,
+                'error': {'codexErrorInfo': 'serverOverloaded', 'message': 'Selected model is at capacity.'}}
+        row = {'status': 'stalled', 'updated_at_ms': clock * 1000}
+        c.source = SimpleNamespace(rows=lambda: {'first': row})
+        self.native_status = 'blocked'
+        original_rpc = c.native.rpc.side_effect
+        async def rpc(method, params, **kwargs):
+            if method == 'thread/turns/list':
+                return {'data': [turn]}
+            return await original_rpc(method, params, **kwargs)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        c.attach_ready = AsyncMock()
+        c.slash = AsyncMock()
+        c.db.set_setting('auto_continue', True)
+        with patch('app.controller.time.time', side_effect=lambda: clock), \
+                patch('app.controller.command', AsyncMock(return_value={'stdout': '', 'exit_code': 0})):
+            await c.poll_goals()
+            deadline = block_summary(c.db.get('first'))['resume_at']
+            self.assertEqual(deadline, clock + 300)
+            self.assertEqual(queue_status(c, c.db.get('first')), 'waiting')
+            await c.retry_capacity()
+            clock += 299
+            await c.advance_queue()
+            await c.retry_capacity()
+            self.assertIsNone(c.db.get('first')['operation'])
+            self.assertEqual(c.db.setting('selected'), 'first')
+            self.assertEqual(c.db.get('second')['goal_status'], 'paused')
+            c.db.conn.close()
+            c.db = Database(c.root / 'test.db')
+            self.assertEqual(block_summary(c.db.get('first'))['resume_at'], deadline)
+            clock += 1
+            for hold in ('pause_all', 'manual_pause/first'):
+                c.db.set_setting(hold, True)
+                await c.retry_capacity()
+                self.assertIsNone(c.db.get('first')['operation'])
+                c.db.set_setting(hold, False)
+            c.select('second')
+            await c.retry_capacity()
+            self.assertIsNone(c.db.get('first')['operation'])
+            c.select('first')
+            self.thread_status = 'active'
+            await c.retry_capacity()
+            self.assertIsNone(c.db.get('first')['operation'])
+            self.thread_status = 'idle'
+            reason = json.loads(c.db.get('first')['block_reason'])
+            c.db.update('first', block_reason=json.dumps({**reason, 'requires_user': True}))
+            await c.retry_capacity()
+            self.assertIsNone(c.db.get('first')['operation'])
+            c.db.update('first', block_reason=json.dumps(reason))
+            self.native_status = 'usageLimited'
+            await c.retry_capacity()
+            self.assertIsNone(c.db.get('first')['operation'])
+            self.native_status = 'blocked'
+            c.db.conn.execute("INSERT INTO jobs(job_id,project_id,payload,status,created_at,updated_at) VALUES('busy','first','{}','running',1,1)")
+            await c.retry_capacity()
+            self.assertIsNone(c.db.get('first')['operation'])
+            c.db.conn.execute("DELETE FROM jobs WHERE job_id='busy'")
+            await c.retry_capacity()
+            operation = json.loads(c.db.get('first')['operation'])
+            self.assertEqual(operation['source'], 'capacity')
+            self.assertEqual(queue_status(c, c.db.get('first')), 'waiting')
+            c.tui_connections['first'] = {1: time.monotonic() - 2}
+            await c.resume_ready()
+            await c.resume_ready()
+            await c.retry_capacity()
+            c.slash.assert_awaited_once()
+            self.assertEqual(c.slash.await_args.args[1], '/goal resume')
+            self.assertTrue(json.loads(c.db.get('first')['block_reason'])['retry_attempted'])
+            await c.poll_goals()
+            self.assertTrue(json.loads(c.db.get('first')['block_reason'])['retry_attempted'])
+            c.db.update('first', operation=None)
+            clock += 2
+            turn = {**turn, 'id': 'capacity-2', 'completedAt': clock}
+            row['updated_at_ms'] = clock * 1000
+            await c.poll_goals()
+            self.assertEqual(block_summary(c.db.get('first'))['resume_at'], clock + 300)
+            self.assertFalse(json.loads(c.db.get('first')['block_reason'])['retry_attempted'])
+
     async def test_missing_block_reason_uses_current_native_error_without_replay_or_stale_evidence(self):
         from app.common import atomic_write, block_summary
         from app.native import NativeError
@@ -35,8 +118,8 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         summary = block_summary(project)
         self.assertEqual(summary['reasons'], ['Codex model at capacity'])
         self.assertIn('temporarily at capacity', summary['explanation'])
-        self.assertIn('click Resume', summary['solution'][0])
-        self.assertIn('another available model', summary['solution'][1])
+        self.assertIn('five minutes', summary['solution'][0])
+        self.assertIn('automatically resumes', summary['solution'][0])
         self.assertIn('[REDACTED]', summary['details'])
         self.assertNotIn('private-test-value', project['block_reason'])
         self.assertFalse(summary['requires_user'])
@@ -46,7 +129,8 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(events), 1)
         embed = status_embed(c, project, events[0], {**json.loads(events[0]['payload']), 'embed_color': EMBED_COLORS[0]})
         self.assertIn('Codex model at capacity', embed.description)
-        self.assertIn('click Resume', embed.description)
+        self.assertIn('automatically resumes', embed.description)
+        self.assertIn('Status: **waiting**', embed.description)
         self.assertNotIn('private-test-value', embed.description)
 
         c.clear_block(project)

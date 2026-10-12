@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import discord
 
-from .common import block_summary
+from .common import block_summary, capacity_wait
 
 
 EMBED_COLORS = (0x8B5CF6, 0x5865F2, 0x00A8DD, 0x00B894, 0xD9A520, 0xF2994A, 0xE64964, 0xD65DB1)
@@ -39,6 +39,9 @@ def status_embed(controller, project, event, payload):
              'usage limited': 'Waiting for reset', 'limited by budget': 'Budget reached',
              'complete': 'Finished', 'critical': 'Attention required', 'question': 'Waiting for your answer'}.get(kind, 'Updated')
     status = kind if kind in titles and kind not in ('critical', 'question') else project['goal_status']
+    waiting = capacity_wait({**project, 'goal_status': status, 'block_reason': json.dumps(reason)})
+    if waiting and kind == 'stalled':
+        title, label, status = 'Waiting for model capacity', 'Automatic resume scheduled', 'waiting'
     event_project = project
     if kind == 'usage limited' and payload.get('account_id'):
         # An old outbox event may be delivered after the project changed account.
@@ -90,6 +93,8 @@ def status_embed(controller, project, event, payload):
         policy = 'New prompt required after reset; failed prompt is not replayed' if prompt_limit else 'Unsnooze'
         sections.append('**Resume**\n- Scheduler-controlled\n│ Policy: ' + code(policy) + '\n│ Queue position: ' +
                         code(project['queue_position']))
+    elif waiting:
+        sections.append(f'**Resume**\n<t:{int(waiting["retry_at"])}:F> (<t:{int(waiting["retry_at"])}:R>)')
     if kind in ('active', 'complete'):
         waiting = [p for p in controller.db.all() if p['project_id'] != project['project_id']
                    and p['queue_position'] is not None and p['goal_status'] == 'paused']

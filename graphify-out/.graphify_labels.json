@@ -36,6 +36,8 @@
   "34": "migration.py",
   "35": "Bot",
   "36": "usage.js",
+  "37": "controller.py",
+  "38": "Native",
   "39": "Bot",
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
@@ -48,5 +50,10 @@
   "48": "verify-account-ui.py",
   "49": "export",
   "50": "test-live-lifecycle.py",
-  "54": "Bot"
+  "51": ".rpc",
+  "52": "GoalSource",
+  "53": "NativeError",
+  "54": "Bot",
+  "55": "build_audit.py",
+  "56": "verify-pause-policy.py"
 }

@@ -99,6 +99,7 @@ main > section { margin-top: 32px; }
 .status-active, .status-online, .status-connected { --status: var(--active); }
 .status-paused, .status-unknown { --status: var(--paused); }
 .status-stalled, .status-error { --status: var(--stalled); }
+.status-waiting { --status: var(--accent); }
 .status-usage-limited, .status-offline { --status: var(--usage-limited); }
 .status-limited-by-budget { --status: var(--limited-by-budget); }
 .status-complete, .status-passed { --status: var(--complete); }

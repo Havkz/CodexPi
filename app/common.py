@@ -36,6 +36,21 @@ def codex_login_url(value):
     return value
 
 
+def capacity_wait(project):
+    if project.get('goal_status') != 'stalled':
+        return None
+    try:
+        reason = json.loads(project.get('block_reason') or '{}')
+    except (ValueError, TypeError):
+        return None
+    if (isinstance(reason, dict) and reason.get('native_error_code') == 'serverOverloaded'
+            and isinstance(reason.get('native_turn_id'), str) and reason['native_turn_id']
+            and isinstance(reason.get('retry_at'), (int, float)) and not reason.get('requires_user')
+            and not reason.get('retry_attempted')):
+        return reason
+    return None
+
+
 def block_summary(project, reason=None, status=None):
     """Presentation only: never change native status or resume authorization."""
     status = status or project.get('goal_status')
@@ -101,7 +116,11 @@ def block_summary(project, reason=None, status=None):
         solution += items(raw.get('solution'), 240) or ['Die zusätzlich erforderliche Nutzerentscheidung klären; der Reset hebt diese Sperre nicht auf.']
     if any(isinstance(raw.get(key), list) and len(raw[key]) > 6 for key in ('reasons', 'solution')):
         details = details + '\n\nVollständige strukturierte Meldung:\n' + json.dumps(raw, ensure_ascii=False)
-    return {'reasons': reasons, 'explanation': explanation, 'solution': solution,
+    resume_at = raw.get('retry_at') if raw.get('native_error_code') == 'serverOverloaded' and not raw.get('retry_attempted') else None
+    operation = json.loads(project.get('operation') or '{}')
+    if raw.get('retry_attempted') and operation.get('source') == 'capacity' and operation.get('error'):
+        solution = ['Automatic resume could not be confirmed. Open this project with codexpi --all and inspect the resume error before retrying.']
+    return {'reasons': reasons, 'explanation': explanation, 'solution': solution, 'resume_at': resume_at,
             'details': details, 'reset_at': reset, 'requires_user': bool(raw.get('requires_user'))}
 
 

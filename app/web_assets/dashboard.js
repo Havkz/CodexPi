@@ -72,6 +72,7 @@ function block(p, compact = false) {
   if (!compact) section('Explanation', [summary.explanation]);
   const solutions = [...summary.solution];
   if (summary.reset_at) solutions.push('Reset: ' + new Date(summary.reset_at).toLocaleString('en-GB'));
+  if (summary.resume_at) solutions.push('Automatic resume: ' + new Date(summary.resume_at * 1000).toLocaleString('en-GB'));
   if (!compact || summary.requires_user) section('Next step', solutions);
   if (summary.requires_user) box.append(node('p', 'Your decision is required before automatic resume.', 'muted'));
   if (!compact && summary.details) {

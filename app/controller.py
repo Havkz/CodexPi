@@ -12,7 +12,7 @@ import uuid
 
 import yaml
 
-from .common import NATIVE_STATUS, Redactor, atomic_write, block_summary, slugify
+from .common import NATIVE_STATUS, Redactor, atomic_write, block_summary, capacity_wait, slugify
 from .db import Database
 from .native import GoalSource, Native, NativeError, idle_thread, process_in_pane, project_thread_config
 
@@ -584,7 +584,9 @@ class Controller:
         previous = self.db.setting(key, {})
         stamp = row.get('updated_at_ms', 0)
         if previous.get('goal_updated_at') == stamp and time.time() - previous.get('checked_at', 0) < 30:
-            return previous.get('reason')
+            cached = json.loads(previous.get('reason') or '{}')
+            current = json.loads(project['block_reason'] or '{}')
+            return project['block_reason'] if cached.get('native_turn_id') and current.get('native_turn_id') == cached['native_turn_id'] else previous.get('reason')
         check = {'checked_at': time.time(), 'goal_updated_at': stamp}
         self.db.set_setting(key, check)
         try:
@@ -602,14 +604,20 @@ class Controller:
         if turn.get('status') != 'failed' or not updated or ended < int(updated) or not error.get('message'):
             return None
         overloaded = error.get('codexErrorInfo') == 'serverOverloaded'
-        reason = self.redactor.clean(json.dumps({
+        previous_reason = json.loads(project['block_reason'] or '{}')
+        same_turn = previous_reason.get('native_turn_id') == turn.get('id')
+        reason = {
             'reason': 'Codex model at capacity' if overloaded else 'Native Codex request failed',
             'explanation': ('The selected Codex model is temporarily at capacity, so Codex could not continue. '
                 'This is not a Windows worker failure or a reported usage limit.') if overloaded else error['message'],
-            'solution': ['Wait for model capacity to return, then click Resume.',
-                'Alternatively, choose another available model in this project session, then Resume.'] if overloaded else
+            'solution': ['CodexPi waits five minutes, then automatically resumes this project. No action is required.'] if overloaded else
                 ['Open this project with codexpi --all, check the reported Codex error and resolve it before Resume.'],
-            'details': error['message'], 'requires_user': False}))
+            'details': error['message'], 'requires_user': False,
+            'native_error_code': error.get('codexErrorInfo'), 'native_turn_id': turn.get('id')}
+        if overloaded:
+            reason.update(retry_at=previous_reason.get('retry_at', time.time() + 300) if same_turn else time.time() + 300,
+                          retry_attempted=bool(same_turn and previous_reason.get('retry_attempted')))
+        reason = self.redactor.clean(json.dumps(reason))
         self.db.set_setting(key, {**check, 'reason': reason})
         return reason
 
@@ -644,8 +652,9 @@ class Controller:
                     raise ValueError('Invalid block reason file')
                 reason = self.redactor.clean(json.dumps({k: value[k] for k in
                     ('reason', 'reasons', 'explanation', 'solution', 'question', 'details', 'requires_user') if k in value}))
-            if status == 'stalled' and not reason:
-                reason = await self.native_block_reason(project, row)
+            if status == 'stalled' and not block.exists() and (not reason or
+                    json.loads(reason).get('reason') == 'Codex model at capacity'):
+                reason = await self.native_block_reason(project, row) or reason
             if status == 'complete':
                 if old != 'complete' or not project['completion_notified']:
                     await self.complete(project)
@@ -830,6 +839,7 @@ class Controller:
                         self.db.backup(self.root / 'backups/sqlite')
                         self.last_backup = time.monotonic()
                     if not self.account_switch_pending:
+                        await self.retry_capacity()
                         await self.advance_queue()
                         await self.resume_ready()
                         await self.selective_wake()
@@ -870,6 +880,36 @@ class Controller:
                 self.health_errors['discord'] = self.redactor.clean(str(exc))
             await asyncio.sleep(2)
 
+    async def retry_capacity(self):
+        if self.db.setting('pause_all', False) or self.account_switch_pending or getattr(self, 'maintenance', False):
+            return
+        project = next((p for p in self.db.all() if p['queue_position'] == 1), None)
+        if not project or not (wait := capacity_wait(project)) or not self.can_auto_resume(project) or project['operation']:
+            return
+        selected = self.db.setting('selected')
+        if selected and selected != project['project_id']:
+            return
+        if self.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone():
+            return
+        if any(p['goal_status'] == 'active' for p in self.db.all() if p['project_id'] != project['project_id']):
+            return
+        self.db.set_setting('selected', project['project_id'])
+        if time.time() < wait['retry_at']:
+            return
+        goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
+        if not goal or goal['status'] != 'blocked' or not await idle_thread(self.native, project['codex_session_id']):
+            return
+        turns = (await self.native.rpc('thread/turns/list', {
+            'threadId': project['codex_session_id'], 'limit': 1, 'sortDirection': 'desc'})).get('data', [])
+        if (not turns or turns[0].get('id') != wait['native_turn_id'] or turns[0].get('status') != 'failed'
+                or (turns[0].get('error') or {}).get('codexErrorInfo') != 'serverOverloaded'):
+            return
+        with self.db.transaction():
+            self.db.update(project['project_id'], block_reason=json.dumps({**wait, 'retry_attempted': True}),
+                operation=json.dumps({'kind': 'resume', 'source': 'capacity', 'id': str(uuid.uuid4()),
+                                      'requested_at': time.time()}), resume_result=None)
+            self.db.conn.execute('DELETE FROM settings WHERE key=?', ('native_block_check/' + project['project_id'],))
+
     async def advance_queue(self):
         if self.db.setting('pause_all', False) or self.account_switch_pending:
             return
@@ -893,6 +933,8 @@ class Controller:
                 selected = None
         if selected:
             project = self.db.get(selected)
+            if capacity_wait(project) and self.can_auto_resume(project):
+                return  # Capacity cooldown retains its slot, just like a usage-reset wait.
             operation = json.loads(project['operation'] or '{}')
             if (not self.db.setting('auto_continue', False) or project['lifecycle'] != 'ready'
                     or project['operation'] and not (operation.get('kind') == 'resume' and operation.get('error'))
@@ -964,7 +1006,7 @@ class Controller:
                 continue
             if (self.db.setting('manual_pause/' + project['project_id'], False) or
                     operation.get('source') == 'auto-continue' and not self.db.setting('auto_continue', False) or
-                    operation.get('source') in ('unsnooze', 'queue', 'auto-continue', 'windows', 'recovery', 'account-switch', 'account-reset') and not self.can_auto_resume(project)):
+                    operation.get('source') in ('capacity', 'unsnooze', 'queue', 'auto-continue', 'windows', 'recovery', 'account-switch', 'account-reset') and not self.can_auto_resume(project)):
                 self.finish_resume(project, operation, 'cancelled', 'Automatic resume is no longer authorized')
                 continue
             try:

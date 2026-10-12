@@ -3,7 +3,7 @@ import json
 import time
 import uuid
 
-from .common import NATIVE_STATUS
+from .common import NATIVE_STATUS, capacity_wait
 from .native import idle_thread, project_thread_config, turn_params
 from .usage import number
 
@@ -17,7 +17,14 @@ def active(controller, project):
 
 
 def queue_status(controller, project):
-    if project['queue_position'] is None or project['lifecycle'] != 'ready' or project['operation']:
+    if project['queue_position'] is None or project['lifecycle'] != 'ready':
+        return None
+    operation = json.loads(project['operation'] or '{}')
+    if (not controller.db.setting('manual_pause/' + project['project_id'], False)
+            and (capacity_wait(project) or project['goal_status'] == 'stalled'
+                 and operation.get('source') == 'capacity' and not operation.get('error'))):
+        return 'waiting'
+    if project['operation']:
         return None
     if project['goal_status'] == 'paused' or (project['goal_status'] == 'complete'
             and controller.db.setting(key(project), []) and not active(controller, project)):
