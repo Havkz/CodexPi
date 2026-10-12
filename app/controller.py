@@ -837,7 +837,7 @@ class Controller:
         if self.db.setting('pause_all', False) or self.account_switch_pending:
             return
         selected = self.db.setting('selected')
-        from .prompts import active, dispatch, key
+        from .prompts import active, dispatch, key, queue_status
         head = next((p for p in self.db.all() if p['queue_position'] == 1), None)
         if selected and head and selected != head['project_id'] and self.can_auto_resume(head):
             pending = json.loads(head['operation'] or '{}')
@@ -884,6 +884,7 @@ class Controller:
         for candidate in self.db.all():
             if (candidate['queue_position'] is None or candidate['lifecycle'] != 'ready'
                     or self.db.setting('prompt_resume_required/' + candidate['project_id'], False)
+                       and not (self.db.setting('auto_continue', False) and queue_status(self, candidate) == 'queued')
                     or self.db.setting('manual_pause/' + candidate['project_id'], False)):
                 continue
             operation = json.loads(candidate['operation'] or '{}')
@@ -891,7 +892,7 @@ class Controller:
                 self.select(candidate['project_id'])
                 return
             if self.db.setting(key(candidate), []):
-                await dispatch(self, candidate, self.native)
+                await dispatch(self, candidate, self.native, allow_queued=True)
                 return
         if not advance or advance == 'blocked' and not self.db.setting('auto_continue', False):
             return

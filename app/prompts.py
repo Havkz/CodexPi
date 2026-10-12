@@ -61,7 +61,7 @@ async def submit(controller, project, params, upstream):
                     controller.db.set_setting('selected', None)
             controller.db.enqueue(project['project_id'])
     if completed:
-        raise ValueError('Prompt saved in the CodexPi queue; use Resume or Run now to start it. Do not resend this prompt.')
+        raise ValueError('Prompt saved in the CodexPi queue; Auto Continue or Resume/Run now can start it. Do not resend this prompt.')
     selected = controller.db.setting('selected')
     if not controller.db.setting('pause_all', False) and (not selected or selected == project['project_id']):
         if not current and not project['operation']:
@@ -71,13 +71,15 @@ async def submit(controller, project, params, upstream):
     raise ValueError('Prompt saved in the CodexPi queue; the running project keeps working. Do not resend this prompt.')
 
 
-async def dispatch(controller, project, native, *, allow_limited=False):
+async def dispatch(controller, project, native, *, allow_limited=False, allow_queued=False):
     queue = controller.db.setting(key(project), [])
     if (not queue or active(controller, project) or project['operation'] or project['lifecycle'] != 'ready'
             or controller.account_switch_pending
             or controller.db.setting('pause_all', False)
             or controller.db.setting('manual_pause/' + project['project_id'], False)
             or controller.db.setting('prompt_resume_required/' + project['project_id'], False)
+               and not (allow_queued and controller.db.setting('auto_continue', False)
+                        and queue_status(controller, project) == 'queued')
             or project['goal_status'] == 'usage limited' and not allow_limited):
         return None
     selected = controller.db.setting('selected')
@@ -109,7 +111,8 @@ async def dispatch(controller, project, native, *, allow_limited=False):
         item.update(phase='active', result=result, turn_id=result['turn']['id'])
         with controller.db.transaction():
             controller.db.set_setting('prompt_active/' + project['project_id'], item)
-            controller.db.conn.execute('DELETE FROM settings WHERE key=?', ('prompt_limit/' + project['project_id'],))
+            controller.db.conn.execute('DELETE FROM settings WHERE key IN (?,?)',
+                ('prompt_limit/' + project['project_id'], 'prompt_resume_required/' + project['project_id']))
             controller.db.update(project['project_id'], goal_status='active', usage_limit=None, last_activity=time.time())
             receipt = json.loads(project['resume_result'] or '{}')
             if receipt.get('id') == item['id']:

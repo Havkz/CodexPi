@@ -294,7 +294,7 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(c.db.setting('selected'), None if selected == 'second' else selected)
                     c.db.conn.close()
                     c.db = Database(self.root / 'test.db')
-                    c.db.set_setting('auto_continue', True)
+                    c.db.set_setting('auto_continue', False)
                     c.db.set_setting('advance_queue', True)
                     c.source = SimpleNamespace(rows=lambda: {'second': {'status': 'complete'}})
                     await c.recover()
@@ -342,6 +342,58 @@ class SchedulerTests(unittest.IsolatedAsyncioTestCase):
         for expected, target in (('active', 'queued'), ('queued', 'queued'), ('queued', 'active')):
             with self.assertRaisesRegex(ValueError, 'Only paused and queued'):
                 await c.set_queue_status('first', expected, target)
+
+    async def test_auto_continue_starts_queued_followup_but_keeps_pause_and_single_slot(self):
+        from app.prompts import submit, queue_status
+        c = self.controller
+        self.native_status = 'complete'
+        params = {'threadId': 'second', 'clientUserMessageId': 'automatic-followup',
+                  'input': [{'type': 'text', 'text': 'Queued followup'}]}
+        upstream = SimpleNamespace(rpc=AsyncMock())
+        with self.assertRaisesRegex(ValueError, 'Prompt saved'):
+            await submit(c, c.db.get('second'), params, upstream)
+        upstream.rpc.assert_not_awaited()
+        c.source = SimpleNamespace(rows=lambda: {})
+        c.db.set_setting('manual_pause/first', True)
+        c.db.set_setting('auto_continue', False)
+        await c.advance_queue()
+        self.assertTrue(c.db.setting('prompt_resume_required/second'))
+        c.db.set_setting('auto_continue', True)
+        await c.set_queue_status('second', 'queued', 'paused')
+        c.db.conn.close()
+        c.db = Database(self.root / 'test.db')
+        await c.advance_queue()
+        self.assertEqual(queue_status(c, c.db.get('second')), 'paused')
+        self.assertIsNone(c.db.setting('selected'))
+        await c.set_queue_status('second', 'paused', 'queued')
+        c.db.set_setting('pause_all', True)
+        await c.advance_queue()
+        self.assertIsNone(c.db.setting('selected'))
+        c.db.set_setting('pause_all', False)
+        c.db.set_setting('manual_pause/first', False)
+        c.select('first')
+        for stored, native, thread in (('active', 'active', 'active'),
+                                       ('usage limited', 'usageLimited', 'idle'),
+                                       ('stalled', 'blocked', 'active')):
+            c.db.update('first', goal_status=stored)
+            self.native_status, self.thread_status = native, thread
+            await c.advance_queue()
+            self.assertEqual(c.db.setting('selected'), 'first')
+            self.assertTrue(c.db.setting('prompt_resume_required/second'))
+        original_rpc = c.native.rpc
+        async def rpc(method, args, **kwargs):
+            if method == 'turn/start':
+                return {'turn': {'id': 'automatic-turn', 'status': 'inProgress'}}
+            return await original_rpc(method, args, **kwargs)
+        c.native.rpc = AsyncMock(side_effect=rpc)
+        self.native_status, self.thread_status = 'blocked', 'idle'
+        await c.advance_queue()
+        await c.advance_queue()
+        self.assertEqual(c.db.setting('selected'), 'second')
+        self.assertEqual(c.db.get('second')['goal_status'], 'active')
+        self.assertIsNone(c.db.setting('prompt_resume_required/second'))
+        self.assertEqual(sum(call.args[0] == 'turn/start' for call in c.native.rpc.await_args_list), 1)
+        self.assertFalse(any(call.args[0] == 'thread/goal/set' for call in c.native.rpc.await_args_list))
 
     async def test_completed_goal_pending_prompt_resume_is_queued_then_started_once(self):
         from app.prompts import submit
