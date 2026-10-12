@@ -2,9 +2,36 @@
 // Only measured samples; dashed bridges mark unobserved intervals, not a predicted refill.
 let usageView = 'weekly', usageData, usageLoading = false, usageRetryAt = 0;
 let usageAccount = null, usageChartSignature, usageChartContext, usageHoverIndex = null;
+let usageSelectedAccount = null, usageAccountsSignature;
 const usageElement = id => document.getElementById('usage-' + id);
 const usagePercent = value => Number.isFinite(value) ? value.toLocaleString('en-GB', {maximumFractionDigits: 1}) + '%' : '—';
 const usageDate = stamp => new Date(stamp * 1000).toLocaleString('en-GB', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+function refreshUsageAccounts(state) {
+  const accounts = state.accounts || [];
+  if (!accounts.some(account => account.account_id === usageSelectedAccount)) usageSelectedAccount = null;
+  const selected = usageSelectedAccount || state.active_account;
+  usageElement('account-current').textContent = accounts.find(account => account.account_id === selected)?.name || 'Awaiting account';
+  const signature = JSON.stringify([accounts.map(account => [account.account_id, account.name]), selected]);
+  if (signature !== usageAccountsSignature) {
+    usageAccountsSignature = signature;
+    usageElement('account-options').replaceChildren(...accounts.map(account => {
+      const option = document.createElement('button');
+      option.type = 'button'; option.textContent = account.name;
+      option.className = 'usage-account-option';
+      option.setAttribute('aria-pressed', String(account.account_id === selected));
+      option.onclick = () => {
+        usageSelectedAccount = account.account_id; usageElement('account-menu').open = false;
+        refreshUsageAccounts(state);
+      };
+      return option;
+    }));
+  }
+  usageElement('account-menu').hidden = !accounts.length;
+  refreshUsage(selected === state.active_account ? state.account_usage?.checked_at : undefined, selected);
+}
+usageElement('account-menu').onkeydown = event => {
+  if (event.key === 'Escape') { usageElement('account-menu').open = false; usageElement('account-menu').querySelector('summary').focus(); }
+};
 function usageSvg(tag, attributes) {
   const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
   for (const [name, value] of Object.entries(attributes)) element.setAttribute(name, value);
@@ -145,7 +172,7 @@ async function refreshUsage(checked, accountId = null) {
   if (usageLoading || Date.now() < usageRetryAt || (usageData && checked === usageData.checked_at && Date.now() < usageData.refreshAfter)) return;
   usageLoading = true;
   try {
-    const response = await fetch('/api/usage', {signal: AbortSignal.timeout(10000)});
+    const response = await fetch('/api/usage' + (accountId ? '?account_id=' + encodeURIComponent(accountId) : ''), {signal: AbortSignal.timeout(10000)});
     if (!response.ok) throw new Error('Usage history unavailable (' + response.status + ')');
     const data = await response.json();
     if ((data.account_id ?? null) !== usageAccount) return;
@@ -155,6 +182,9 @@ async function refreshUsage(checked, accountId = null) {
     if (accountId !== usageAccount) return;
     usageElement('freshness').textContent = 'Usage unavailable · cached values'; usageElement('freshness').title = error.message;
     usageElement('freshness').classList.add('account-warning'); usageRetryAt = Date.now() + 60000;
-  } finally { usageLoading = false; }
+  } finally {
+    usageLoading = false;
+    if (accountId !== usageAccount) refreshUsage(undefined, usageAccount);
+  }
 }
 for (const series of ['weekly', 'daily']) usageElement(series).onclick = () => { usageView = series; renderUsage(); };

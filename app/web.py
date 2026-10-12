@@ -208,12 +208,18 @@ def safe_json(controller, value, *, csrf=None):
 
 async def usage(request):
     controller = request.app['controller']
-    account = controller.db.setting('account_usage', {})
+    active = controller.db.setting('active_account')
+    account_id = request.query.get('account_id', active)
+    if account_id != active and account_id not in {a['account_id'] for a in controller.db.setting('accounts', [])}:
+        raise ValueError('Unknown saved account')
+    account = controller.db.setting('account_usage', {}) if account_id == active else controller.db.setting('account_usage/' + account_id, {})
     now = time.time()
-    return safe_json(controller, {'windows': windows(account), 'history': controller.db.usage_history(now),
-        'account_id': controller.db.setting('active_account'),
+    error = (getattr(controller, 'health_errors', {}).get('account_usage') if account_id == active
+             else controller.db.setting('account_telemetry/' + account_id, {}).get('error'))
+    return safe_json(controller, {'windows': windows(account), 'history': controller.db.usage_history(now, account_id),
+        'account_id': account_id,
         'checked_at': account.get('checked_at'), 'server_time': now,
-        'error': getattr(controller, 'health_errors', {}).get('account_usage')})
+        'error': error})
 
 
 async def project_detail(request):

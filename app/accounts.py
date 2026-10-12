@@ -7,6 +7,8 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
+import tempfile
 import time
 import uuid
 
@@ -284,6 +286,93 @@ async def refresh(controller):
     controller.persist_usage_resets()  # Checkpoint the old account's reset before a switch can hide it.
     controller.health_errors.pop('account_usage', None)
     return usage
+
+
+async def observe_saved_account(controller, account_id):
+    """Controller lock required: isolated telemetry, never load a project or change active auth."""
+    from .native import NativeError
+    saved = vault(controller)
+    raw = saved.read(saved.path(account_id))
+    if auth_identity(raw)[0] != account_id:
+        raise ValueError('Saved login identity does not match the selected account')
+    with tempfile.TemporaryDirectory(prefix='.usage-', dir=saved.directory) as directory:
+        home = Path(directory)
+        atomic_write(home / 'auth.json', raw)
+        environment = {key: value for key, value in os.environ.items()
+                       if key not in ('OPENAI_API_KEY', 'CODEX_API_KEY', 'CODEX_ACCESS_TOKEN')}
+        process = await asyncio.create_subprocess_exec(
+            shutil.which('codex') or str(Path.home() / '.local/bin/codex'),
+            'app-server', '--stdio', '-c', 'cli_auth_credentials_store="file"',
+            '--disable', 'multi_agent', cwd=home, env={**environment, 'CODEX_HOME': str(home)},
+            stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.DEVNULL)
+        class Telemetry:
+            sequence = 0
+
+            async def rpc(self, method, params, timeout=20):
+                if method not in ('initialize', 'account/read', 'account/rateLimits/read', 'getAuthStatus'):
+                    raise ValueError('Only account telemetry RPCs are permitted')
+                self.sequence += 1
+                process.stdin.write((json.dumps({'id': self.sequence, 'method': method, 'params': params}) + '\n').encode())
+                await process.stdin.drain()
+                async with asyncio.timeout(timeout):
+                    while True:
+                        line = await process.stdout.readline()
+                        if not line:
+                            raise NativeError('Account telemetry process closed')
+                        packet = json.loads(line)
+                        if packet.get('id') != self.sequence:
+                            continue
+                        if 'error' in packet:
+                            raise NativeError(packet['error'].get('message', 'Account telemetry failed'))
+                        return packet.get('result', {})
+        try:
+            async with asyncio.timeout(30):
+                native = Telemetry()
+                await native.rpc('initialize', {'clientInfo': {'name': 'codexpi_usage', 'version': '0.1'},
+                                                'capabilities': {'experimentalApi': True}})
+                process.stdin.write(b'{"method":"initialized","params":{}}\n')
+                await process.stdin.drain()
+                # Checkpoint any native token renewal in this account's private slot only.
+                return await observe_account(native, AccountVault(controller.root, home), account_id)
+        finally:
+            if process.returncode is None:
+                try:
+                    process.terminate()
+                except ProcessLookupError:
+                    pass
+            try:
+                await asyncio.wait_for(process.wait(), 5)
+            except TimeoutError:
+                process.kill()
+                await process.wait()
+            # Native token rotation can precede a failed quota read; do not lose the renewed login.
+            if (home / 'auth.json').is_file():
+                renewed = saved.read(home / 'auth.json')
+                if renewed != raw and auth_identity(renewed)[0] == account_id and saved.read(saved.path(account_id)) == raw:
+                    atomic_write(saved.path(account_id), renewed)
+
+
+async def refresh_saved_accounts(controller):
+    if switching(controller) or getattr(controller, 'maintenance', False):
+        return
+    now = time.time()
+    for account in controller.db.setting('accounts', []):
+        ident = account['account_id']
+        if ident == controller.db.setting('active_account') or account.get('status') != 'ready':
+            continue
+        key = 'account_telemetry/' + ident
+        if now - controller.db.setting(key, {}).get('attempted_at', 0) < 60:
+            continue
+        state = {'attempted_at': now}
+        controller.db.set_setting(key, state)
+        try:
+            metadata, usage = await observe_saved_account(controller, ident)
+            remember(controller, metadata, usage)
+        except Exception:
+            # Do not expose credential-bearing provider errors or turn an outage into a logout.
+            state['error'] = 'Live usage could not be confirmed; showing the last measurement.'
+        controller.db.set_setting(key, state)
 
 
 def failed_resume(project):

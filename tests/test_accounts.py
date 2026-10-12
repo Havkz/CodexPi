@@ -152,6 +152,76 @@ class AccountTests(unittest.TestCase):
 
 
 class AccountObservationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_inactive_live_usage_is_isolated_bounded_and_failure_keeps_history(self):
+        from app.accounts import refresh_saved_accounts
+        from app.native import NativeError
+        with tempfile.TemporaryDirectory() as directory:
+            root, now = Path(directory), time.time()
+            home = root / 'active-home'
+            first, second = login('first'), login('second')
+            ids = [auth_identity(raw)[0] for raw in (first, second)]
+            atomic_write(home / 'auth.json', first)
+            saved = AccountVault(root, home)
+            atomic_write(saved.path(ids[1]), second)
+            db = Database(root / 'test.db')
+            c = SimpleNamespace(root=root, db=db, account_vault=saved)
+            db.set_setting('accounts', [{'account_id': ident, 'status': 'ready', 'name': 'Account'} for ident in ids])
+            db.activate_account(ids[0]); db.record_usage(account(now, daily=30))
+            before = db.setting('account_usage')
+            messages, packets = [], []
+            process = SimpleNamespace(returncode=None, wait=AsyncMock(return_value=0), terminate=Mock(), kill=Mock())
+            def write(raw):
+                packet = json.loads(raw)
+                messages.append(packet['method'])
+                if packet['method'] == 'initialized':
+                    return
+                result = {'initialize': {}, 'account/read': {'account': {'type': 'chatgpt', 'email': 'second@example.test'}},
+                          'account/rateLimits/read': {**account(now, daily=90), 'accountId': 'workspace'},
+                          'getAuthStatus': {'authMethod': 'chatgpt', 'authToken': 'rotated-access'}}[packet['method']]
+                packets.append((json.dumps({'id': packet['id'], 'result': result}) + '\n').encode())
+            process.stdin = SimpleNamespace(write=write, drain=AsyncMock())
+            process.stdout = SimpleNamespace(readline=AsyncMock(side_effect=lambda: packets.pop(0)))
+            async def spawn(*args, **kwargs):
+                isolated = Path(kwargs['env']['CODEX_HOME'])
+                self.assertNotEqual(isolated, home)
+                self.assertEqual(isolated.joinpath('auth.json').read_text(), second)
+                self.assertIn('cli_auth_credentials_store="file"', args)
+                atomic_write(isolated / 'auth.json', login('second', 'rotated-access'))
+                return process
+            try:
+                with patch('app.accounts.asyncio.create_subprocess_exec', AsyncMock(side_effect=spawn)) as start:
+                    await refresh_saved_accounts(c)
+                    await refresh_saved_accounts(c)
+                    start.assert_awaited_once()
+                self.assertEqual(messages, ['initialize', 'initialized', 'account/read', 'account/rateLimits/read', 'getAuthStatus'])
+                self.assertEqual(home.joinpath('auth.json').read_text(), first)
+                self.assertEqual(saved.path(ids[1]).read_text(), login('second', 'rotated-access'))
+                self.assertFalse(list(saved.directory.glob('.usage-*')))
+                self.assertEqual(db.setting('active_account'), ids[0])
+                self.assertEqual(db.setting('account_usage'), before)
+                history = db.usage_history(time.time(), ids[1])
+                self.assertEqual(history['daily'][0]['remaining'], 10)
+                key = 'account_telemetry/' + ids[1]
+                db.set_setting(key, {'attempted_at': now - 61})
+                with patch('app.accounts.observe_saved_account', AsyncMock(side_effect=NativeError('private-token'))) as observe:
+                    await refresh_saved_accounts(c)
+                    await refresh_saved_accounts(c)
+                    observe.assert_awaited_once()
+                    self.assertNotIn('private-token', json.dumps(db.setting(key)))
+                    self.assertEqual(db.usage_history(time.time(), ids[1]), history)
+                    db.set_setting(key, {'attempted_at': now - 61})
+                    db.set_setting('account_switch', {'phase': 'waiting_turn'})
+                    await refresh_saved_accounts(c)
+                    db.set_setting('account_switch', {})
+                    c.maintenance = True
+                    await refresh_saved_accounts(c)
+                    observe.assert_awaited_once()
+                self.assertEqual(db.setting('accounts')[1]['status'], 'ready')
+                self.assertEqual(db.setting('active_account'), ids[0])
+                process.terminate.assert_called_once()
+            finally:
+                db.conn.close()
+
     async def test_loaded_identity_and_fresh_limits_are_required_without_exporting_credentials(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -245,6 +315,19 @@ class AccountSwitchTests(unittest.IsolatedAsyncioTestCase):
             await automatic_change(c)
             self.assertFalse(switching(c))  # No inference from DB status, stale usage or inactivity.
             loaded['goal'] = 'usageLimited'
+            c.db.set_setting('account_selection', {**c.db.setting('account_selection'), 'next_check': 0})
+            # A stale empty weekly snapshot must not pin the project when B has refilled.
+            c.db.record_usage({**account(now - 1000, daily=20, weekly=100, reset=now + 120),
+                               'ordinaryUsageAllowed': False}, ids[1])
+            await automatic_change(c)
+            self.assertFalse(switching(c))
+            from app.accounts import refresh_saved_accounts
+            async def inactive_observation(controller, ident):
+                self.assertEqual(ident, ids[1])
+                return (next(a for a in c.db.setting('accounts') if a['account_id'] == ident),
+                        {**samples[ident], 'account_id': ident, 'checked_at': time.time()})
+            with patch('app.accounts.observe_saved_account', AsyncMock(side_effect=inactive_observation)):
+                await refresh_saved_accounts(c)
             c.db.set_setting('account_selection', {**c.db.setting('account_selection'), 'next_check': 0})
             await automatic_change(c)
             self.assertEqual(c.db.setting('account_switch')['target_account'], ids[1])

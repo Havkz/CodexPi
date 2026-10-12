@@ -1135,6 +1135,8 @@ class Controller:
             self.health_errors.pop('account_usage', None)
         except Exception as exc:
             self.health_errors['account_usage'] = self.redactor.clean(str(exc))
+        from .accounts import refresh_saved_accounts
+        await refresh_saved_accounts(self)
         try:
             status = await command('unsnooze', 'status', '--json')
         except Exception as exc:

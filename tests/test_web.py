@@ -122,6 +122,18 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(usage['windows']['daily']['remaining'], 0)
                 self.assertEqual(usage['history']['weekly'][0]['remaining'], 80)
                 self.assertEqual(usage_response.headers['Cache-Control'], 'no-store')
+                db.activate_account('current')
+                db.record_usage({'checked_at': __import__('time').time(), 'rateLimits': {
+                    'primary': {'usedPercent': 10, 'windowDurationMins': 300}}})
+                db.record_usage({'checked_at': __import__('time').time(), 'rateLimits': {
+                    'primary': {'usedPercent': 85, 'windowDurationMins': 300}}}, 'saved')
+                selected_usage = await (await client.get('/api/usage?account_id=saved')).json()
+                self.assertEqual(selected_usage['account_id'], 'saved')
+                self.assertEqual(selected_usage['windows']['daily']['remaining'], 15)
+                self.assertEqual(selected_usage['history']['daily'][-1]['remaining'], 15)
+                self.assertEqual((await (await client.get('/api/usage')).json())['windows']['daily']['remaining'], 90)
+                self.assertEqual(db.setting('active_account'), 'current')
+                self.assertEqual((await client.get('/api/usage?account_id=unknown')).status, 400)
                 secret = 'test-quoted-"private-key'
                 (Path(temp) / '.env').write_text('TEST_SECRET=' + secret)
                 db.conn.execute('''INSERT INTO projects(project_id,display_name,slug,project_path,
@@ -184,6 +196,7 @@ class WebTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual((await client.post('/api/action', json=body,
                     headers={'X-CSRF-Token': state['csrf']})).status, 200)
                 self.assertEqual((await client.get('/api/state')).status, 401)
+                self.assertEqual((await client.get('/api/usage?account_id=saved')).status, 401)
                 self.assertEqual((await client.get('/api/projects/project1')).status, 401)
 
                 async def attempt(index):

@@ -88,7 +88,7 @@ def main():
             assert page.request.get(BASE + '/favicon.ico').body() == (ASSETS / 'favicon.ico').read_bytes()
         else:
             def route(request):
-                path = request.request.url.removeprefix('http://codexpi.test')
+                path = request.request.url.removeprefix('http://codexpi.test').split('?', 1)[0]
                 headers = {'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'"}
                 if path == '/api/state':
                     request.fulfill(json=state, headers=headers)

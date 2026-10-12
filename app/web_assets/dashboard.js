@@ -393,7 +393,7 @@ async function refresh() {
       }
     }
     $('freshness').textContent = 'Live · ' + new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'}); render();
-    refreshUsage(state.account_usage?.checked_at, state.active_account);
+    refreshUsageAccounts(state);
   } catch (err) {
     connected = false; $('freshness').textContent = 'Disconnected · cached data';
     if (pendingAction && Date.now() > pendingAction.deadline) { pendingAction = null; busy = false; }

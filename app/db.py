@@ -198,6 +198,7 @@ class Database:
         with contextlib.nullcontext() if self.conn.in_transaction else self.transaction():
             self.conn.execute('DELETE FROM usage_samples WHERE account_id=?', (account_id,))
             self.conn.execute('DELETE FROM settings WHERE key=?', ('account_usage/' + account_id,))
+            self.conn.execute('DELETE FROM settings WHERE key=?', ('account_telemetry/' + account_id,))
 
     def usage_history(self, now, account_id=None):
         account_id = self.setting('active_account', '') if account_id is None else account_id

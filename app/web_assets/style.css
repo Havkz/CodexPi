@@ -81,6 +81,13 @@ main { max-width: 1520px; margin: auto; padding: 36px 40px 20px; }
 .account-option > button:last-child { flex-shrink: 0; width: 34px; min-height: 34px; padding: 4px; background: transparent; border-color: transparent; box-shadow: none; }
 .account-options > button { width: 100%; text-align: left; margin-top: 8px; padding: 11px 12px; border-color: transparent; border-top-color: #484d6340; border-radius: 0 0 7px 7px; background: transparent; box-shadow: none; }
 .account-warning { color: var(--orange); }
+.usage-section-heading { flex-wrap: wrap; }
+.usage-account-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; min-width: 0; max-width: 100%; }
+.usage-account-controls .account-menu { min-width: 0; }
+.usage-account-controls summary strong { min-width: 0; }
+.usage-account-controls .account-options { left: auto; right: 0; width: 100%; min-width: 0; }
+.account-options > .usage-account-option { margin-top: 0; border: 0; border-radius: 7px; overflow-wrap: anywhere; }
+.usage-account-option[aria-pressed="true"] { color: var(--accent); background: rgb(120 129 255 / .08); }
 main > section { margin-top: 32px; }
 .section-heading { margin-bottom: 18px; }
 .section-heading .muted { margin-top: 7px; font-size: 12px; }
