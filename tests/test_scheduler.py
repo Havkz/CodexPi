@@ -17,6 +17,63 @@ from app.native import tui_proxy
 
 
 class SchedulerTests(unittest.IsolatedAsyncioTestCase):
+    async def test_missing_block_reason_uses_current_native_error_without_replay_or_stale_evidence(self):
+        from app.common import atomic_write, block_summary
+        from app.native import NativeError
+        from app.discord_bot import status_embed, EMBED_COLORS
+        c = self.controller
+        c.source = SimpleNamespace(rows=lambda: {'first': {'status': 'stalled', 'updated_at_ms': 1800000000000}})
+        c.db.update('first', goal_status='stalled')  # An already-notified generic blocker is corrected once.
+        turn = {'id': 'failed-turn', 'status': 'failed', 'completedAt': 1800000000,
+                'error': {'codexErrorInfo': 'serverOverloaded', 'message': 'Selected model is at capacity. private-test-value'}}
+        atomic_write(c.root / '.env', 'SECRET=private-test-value\n')
+        c.native.rpc = AsyncMock(return_value={'data': [turn]})
+        await c.poll_goals()
+        await c.poll_goals()
+        c.native.rpc.assert_awaited_once_with('thread/turns/list', {'threadId': 'first', 'limit': 1, 'sortDirection': 'desc'})
+        project = c.db.get('first')
+        summary = block_summary(project)
+        self.assertEqual(summary['reasons'], ['Codex model at capacity'])
+        self.assertIn('temporarily at capacity', summary['explanation'])
+        self.assertIn('click Resume', summary['solution'][0])
+        self.assertIn('another available model', summary['solution'][1])
+        self.assertIn('[REDACTED]', summary['details'])
+        self.assertNotIn('private-test-value', project['block_reason'])
+        self.assertFalse(summary['requires_user'])
+        self.assertEqual(project['goal_status'], 'stalled')
+        self.assertIsNone(c.db.setting('selected'))
+        events = c.db.conn.execute('SELECT * FROM events').fetchall()
+        self.assertEqual(len(events), 1)
+        embed = status_embed(c, project, events[0], {**json.loads(events[0]['payload']), 'embed_color': EMBED_COLORS[0]})
+        self.assertIn('Codex model at capacity', embed.description)
+        self.assertIn('click Resume', embed.description)
+        self.assertNotIn('private-test-value', embed.description)
+
+        c.clear_block(project)
+        self.assertIsNone(c.db.setting('native_block_check/first'))
+        # Do not blame a previous failure or a successful/in-progress turn for a new blocker.
+        for change in ({'completedAt': 1799999999}, {'status': 'completed'}, {'status': 'inProgress'}):
+            with self.subTest(change=change):
+                c.clear_block(c.db.get('first'))
+                c.native.rpc = AsyncMock(return_value={'data': [{**turn, **change}]})
+                await c.poll_goals()
+                await c.poll_goals()
+                self.assertIsNone(c.db.get('first')['block_reason'])
+                c.native.rpc.assert_awaited_once()
+        c.clear_block(c.db.get('first'))
+        c.native.rpc = AsyncMock(side_effect=NativeError('Bridge unavailable'))
+        await c.poll_goals()
+        self.assertEqual(c.db.get('first')['goal_status'], 'stalled')
+        self.assertIsNone(c.db.get('first')['block_reason'])
+        # Explicit questions retain their exact wording and human hold; no fallback RPC.
+        reason = {'reason': 'Decision needed', 'question': 'Choose A or B?', 'requires_user': True}
+        atomic_write(c.root / 'first/.codexpi/block.json', json.dumps(reason))
+        c.native.rpc.reset_mock()
+        await c.poll_goals()
+        c.native.rpc.assert_not_awaited()
+        self.assertEqual(block_summary(c.db.get('first'))['solution'], ['Choose A or B?'])
+        self.assertFalse(c.can_auto_resume(c.db.get('first')))
+
     async def test_boot_waits_for_native_socket_without_a_controller_restart(self):
         from app.native import NativeError
         c = self.controller

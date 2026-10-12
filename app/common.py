@@ -76,7 +76,7 @@ def block_summary(project, reason=None, status=None):
         explanation = 'Das native Goal kann innerhalb seines gesetzten Tokenbudgets nicht weiterarbeiten.'
         solution = ['Das Goal-Budget prüfen und bei Bedarf ausdrücklich erhöhen; danach Resume verwenden.']
     else:
-        reasons = items(raw.get('reasons') or raw.get('reason'), 140) or ['Native Goal blockiert']
+        reasons = items(raw.get('reasons') or raw.get('reason'), 140) or ['Blocker details were not reported']
         explanation = short(raw.get('explanation'), 320)
         solution = [short(raw['question'], 1000)] if isinstance(raw.get('question'), str) and raw['question'].strip() else items(raw.get('solution'), 240)
         if raw.get('reason') == 'Windows offline':
@@ -95,8 +95,8 @@ def block_summary(project, reason=None, status=None):
             explanation = explanation or 'Die Auslieferungsprüfung ist fehlgeschlagen; das Projekt gilt nicht als erfolgreich ausgeliefert.'
             solution = solution or ['Den Auslieferungsfehler in den technischen Details prüfen und in derselben Projekt-Session beheben; danach erneut verifizieren.']
         else:
-            explanation = explanation or 'Das native Goal wartet auf die gemeldete Voraussetzung; Details sind separat verfügbar.'
-            solution = solution or ['Die gemeldete Voraussetzung anhand der technischen Details prüfen und beheben; danach Resume verwenden.']
+            explanation = explanation or short(details, 320) or 'Codex marked this goal as blocked without providing a reason.'
+            solution = solution or ['Open this project with codexpi --all and read its last message. Resolve any reported blocker before Resume.']
     if raw.get('requires_user') and status in ('usage limited', 'limited by budget'):
         solution += items(raw.get('solution'), 240) or ['Die zusätzlich erforderliche Nutzerentscheidung klären; der Reset hebt diese Sperre nicht auf.']
     if any(isinstance(raw.get(key), list) and len(raw[key]) > 6 for key in ('reasons', 'solution')):

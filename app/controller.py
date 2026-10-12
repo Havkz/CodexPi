@@ -131,7 +131,7 @@ class Controller:
                    and self.db.setting('usage_account/' + project['project_id']) != self.db.setting('active_account'))
         summary = block_summary(project, fields.get('block_reason', project['block_reason']), status)
         question = status == 'stalled' and summary and summary['requires_user']
-        if question:
+        if status == 'stalled' and summary:
             previous = block_summary(project)
             changed = changed or not previous or any(summary[key] != previous[key] for key in
                 ('reasons', 'explanation', 'solution', 'requires_user'))
@@ -168,6 +168,7 @@ class Controller:
     def clear_block(self, project):
         (Path(project['project_path']) / '.codexpi/block.json').unlink(missing_ok=True)
         self.db.update(project['project_id'], block_reason=None, windows_required=0)
+        self.db.conn.execute('DELETE FROM settings WHERE key=?', ('native_block_check/' + project['project_id'],))
 
     def can_auto_resume(self, project):
         return (project['lifecycle'] == 'ready' and not self.db.setting('pause_all', False)
@@ -578,6 +579,40 @@ class Controller:
                 await self.attach_ready(project)
         logging.getLogger('recovery').info('SQLite and native goals reconciled')
 
+    async def native_block_reason(self, project, row):
+        key = 'native_block_check/' + project['project_id']
+        previous = self.db.setting(key, {})
+        stamp = row.get('updated_at_ms', 0)
+        if previous.get('goal_updated_at') == stamp and time.time() - previous.get('checked_at', 0) < 30:
+            return previous.get('reason')
+        check = {'checked_at': time.time(), 'goal_updated_at': stamp}
+        self.db.set_setting(key, check)
+        try:
+            turns = (await self.native.rpc('thread/turns/list', {
+                'threadId': project['codex_session_id'], 'limit': 1, 'sortDirection': 'desc'})).get('data', [])
+        except NativeError as exc:
+            logging.getLogger('scheduler').warning('Cannot read blocker for %s: %s', project['slug'], self.redactor.clean(exc))
+            return None
+        turn = turns[0] if turns else {}
+        ended = turn.get('completedAt') or 0
+        ended = ended / 1000 if ended > 1e12 else ended
+        updated = stamp / 1000 if stamp > 1e12 else stamp
+        error = turn.get('error') or {}
+        # Never attach an old turn's failure to a newer blocked goal.
+        if turn.get('status') != 'failed' or not updated or ended < int(updated) or not error.get('message'):
+            return None
+        overloaded = error.get('codexErrorInfo') == 'serverOverloaded'
+        reason = self.redactor.clean(json.dumps({
+            'reason': 'Codex model at capacity' if overloaded else 'Native Codex request failed',
+            'explanation': ('The selected Codex model is temporarily at capacity, so Codex could not continue. '
+                'This is not a Windows worker failure or a reported usage limit.') if overloaded else error['message'],
+            'solution': ['Wait for model capacity to return, then click Resume.',
+                'Alternatively, choose another available model in this project session, then Resume.'] if overloaded else
+                ['Open this project with codexpi --all, check the reported Codex error and resolve it before Resume.'],
+            'details': error['message'], 'requires_user': False}))
+        self.db.set_setting(key, {**check, 'reason': reason})
+        return reason
+
     async def poll_goals(self):
         rows = self.source.rows()
         # Reconcile finished goals before admitting another native active row.
@@ -609,6 +644,8 @@ class Controller:
                     raise ValueError('Invalid block reason file')
                 reason = self.redactor.clean(json.dumps({k: value[k] for k in
                     ('reason', 'reasons', 'explanation', 'solution', 'question', 'details', 'requires_user') if k in value}))
+            if status == 'stalled' and not reason:
+                reason = await self.native_block_reason(project, row)
             if status == 'complete':
                 if old != 'complete' or not project['completion_notified']:
                     await self.complete(project)
