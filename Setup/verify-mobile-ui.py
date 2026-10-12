@@ -95,6 +95,27 @@ def main():
                 page.wait_for_function("() => [...document.getAnimations()].every(a => a.playState === 'finished')")
                 expect(page.locator('#infra img')).to_have_count(7)
                 page.wait_for_function("() => [...document.querySelectorAll('#infra img')].every(i => i.complete && i.naturalWidth > 0)")
+                geometry = page.evaluate("""() => {
+                    const center = el => { const r = el.getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; };
+                    const issues = [];
+                    for (const summary of document.querySelectorAll('.account-menu > summary')) {
+                        for (const child of summary.children) {
+                            const offset = Math.abs(center(summary)[1] - center(child)[1]);
+                            if (offset > 1.1) issues.push('Account control is not centered: ' + offset);
+                        }
+                    }
+                    for (const icon of document.querySelectorAll('.infra-icon')) {
+                        const box = icon.getBoundingClientRect(), image = icon.querySelector('img');
+                        if (box.width !== box.height) issues.push('Icon well is not square');
+                        if (center(icon).some((v, i) => Math.abs(v - center(image)[i]) > .5)) issues.push('Logo is not centered');
+                    }
+                    for (const input of document.querySelectorAll('input[role="switch"]')) {
+                        const box = input.getBoundingClientRect(), thumb = getComputedStyle(input, '::before');
+                        if (box.width !== 48 || box.height !== 28 || thumb.width !== '20px' || thumb.height !== '20px') issues.push('Switch geometry differs');
+                    }
+                    return issues;
+                }""")
+                assert not geometry, geometry
 
                 def snapshot(name, full=True):
                     overflow = page.evaluate("""() => {
@@ -148,15 +169,35 @@ def main():
                 expect(page.locator('#account-options')).to_be_visible()
                 page.wait_for_function("() => document.querySelector('#account-options').getAnimations().every(a => a.playState === 'finished')")
                 snapshot('accounts', False)
-                page.locator('#account-menu > summary').click()
+                page.locator('#account-options .account-option').last.get_by_role('button', name='Remove ', exact=False).click()
+                expect(page.locator('#account-remove-dialog')).to_be_visible()
+                snapshot('remove-account', False)
+                page.locator('#account-remove-cancel').click()
+                page.locator('#usage-account-menu > summary').click()
+                expect(page.locator('#usage-account-options')).to_be_visible()
+                page.wait_for_function("() => document.querySelector('#usage-account-options').getAnimations().every(a => a.playState === 'finished')")
+                snapshot('chart-accounts', False)
+                page.locator('#usage-account-menu > summary').click()
                 page.locator('#projects article').first.get_by_role('button', name='Details', exact=True).click()
                 expect(page.locator('#detail-overview')).to_be_visible()
                 assert page.locator('#project-dialog').get_by_role('button', name='Details', exact=True).count() == 0
                 snapshot('details', False)
                 page.locator('#close-detail').click()
+                # Render the existing destructive dialogs, never confirm an action.
+                page.evaluate("showLifecycle(state.projects[0], 'delete')")
+                snapshot('delete-project', False)
+                page.locator('#lifecycle-cancel').click()
+                page.evaluate("showLifecycle(state.projects[0], 'rename')")
+                snapshot('rename-project', False)
+                page.locator('#lifecycle-cancel').click()
                 page.locator('#usage-daily').click()
                 expect(page.locator('#usage-chart-title')).to_contain_text('Daily')
                 snapshot('daily')
+                page.goto(base + '/login.html')
+                expect(page.get_by_role('button', name='Sign in', exact=True)).to_be_visible()
+                assert page.locator('form').get_attribute('action') == '/login'
+                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+                page.screenshot(path=str(OUTPUT / f'login-{width}.png'), full_page=True)
             browser.close()
     finally:
         server.shutdown()

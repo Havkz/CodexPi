@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1791833753.9825344,
-    "ast_hash": "4b922265da8bec3461d8d15a31142600",
+    "mtime": 1791835026.757041,
+    "ast_hash": "f4992263d339bc82f74b3f55f8e98557",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -160,8 +160,8 @@
     "semantic_hash": ""
   },
   "app/web_assets/login.html": {
-    "mtime": 1791489760.1729705,
-    "ast_hash": "b3706082cc1acd7e436ce2db47f49d84",
+    "mtime": 1791834732.0340574,
+    "ast_hash": "61051db9516f6feb57b0733786166a18",
     "semantic_hash": ""
   },
   "docs/progress.md": {
@@ -555,8 +555,8 @@
     "semantic_hash": ""
   },
   "Setup/verify-mobile-ui.py": {
-    "mtime": 1791741823.443274,
-    "ast_hash": "cb98931dd5f4a0141f7887d801552588",
+    "mtime": 1791834812.8257751,
+    "ast_hash": "54b2f89a16063a582ab16008fda56125",
     "semantic_hash": ""
   },
   "requirements-ui.txt": {
