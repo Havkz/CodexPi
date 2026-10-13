@@ -414,6 +414,18 @@ class Controller:
                     self.db.set_setting('prompt_resume_required/' + project_id, True)
             return {'ok': True, 'queue_status': target}
 
+    async def require_trusted_hooks(self, project):
+        listing = await self.native.rpc('hooks/list', {'cwds': [project['project_path']]}, timeout=15)
+        groups = listing.get('data', [])
+        if any(group.get('errors') or group.get('warnings') for group in groups):
+            raise ValueError('Native hooks could not be loaded; inspect /hooks before Resume')
+        pending = [h for group in groups for h in group.get('hooks', [])
+                   if h.get('enabled') and not h.get('isManaged')
+                   and h.get('trustStatus') in ('untrusted', 'modified')]
+        if pending:
+            raise ValueError(f'Resume needs hook review: {len(pending)} new or changed hooks. '
+                             'Open this project TUI and review /hooks before Resume.')
+
     async def resume(self, project_id, *, promote=False):
         async with self.lock:
             if self.account_switch_pending:
@@ -461,6 +473,7 @@ class Controller:
                 raise ValueError('Project has a pending lifecycle operation')
             if promote and (project['queue_position'] in (None, 1) or self.db.setting('selected') == project_id):
                 raise ValueError('Run now is only available when promoting another queued project')
+            await self.require_trusted_hooks(project)
             goal = (await self.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
             if goal and goal['status'] == 'complete':
                 raise ValueError('Completed goals are never automatically restarted')
@@ -1064,6 +1077,7 @@ class Controller:
                         await command('tmux', 'send-keys', '-t', project['tmux_session_name'] + ':0.0', 'Escape')
                         await self.slash(project, '/goal resume')
                 elif not operation.get('sent_at'):
+                    await self.require_trusted_hooks(project)
                     if (time.time() - operation['started_at'] > 10 and not operation.get('tui_reopened_at')
                             and await self.pane_exists(project) and await idle_thread(self.native, project['codex_session_id'])
                             and not self.db.conn.execute("SELECT 1 FROM jobs WHERE status IN ('sent','running')").fetchone()):

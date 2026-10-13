@@ -4,6 +4,7 @@ import contextlib
 import importlib.util
 import json
 import logging
+import re
 import socket
 import struct
 import time
@@ -61,6 +62,33 @@ async def idle_thread(native, session):
     turns = (await native.rpc('thread/turns/list', {'threadId': session, 'limit': 1,
                                                  'sortDirection': 'desc'}))['data']
     return bool(turns) and turns[0]['status'] in ('completed', 'failed', 'interrupted')
+
+
+async def validate_hook_trust(controller, native, params):
+    if (set(params) - {'edits', 'filePath', 'expectedVersion', 'reloadUserConfig'}
+            or params.get('filePath') is not None or params.get('expectedVersion') is not None
+            or params.get('reloadUserConfig') is not True):
+        raise ValueError('Hook trust must update only the default user config')
+    edits = params.get('edits')
+    if not isinstance(edits, list) or len(edits) != 1 or not isinstance(edits[0], dict):
+        raise ValueError('Hook trust requires one native hooks.state update')
+    edit = edits[0]
+    values = edit.get('value')
+    if (set(edit) != {'keyPath', 'value', 'mergeStrategy'} or edit.get('keyPath') != 'hooks.state'
+            or edit.get('mergeStrategy') != 'upsert' or not isinstance(values, dict) or not values):
+        raise ValueError('Hook trust may only merge exact reviewed hashes')
+    cwds = [str(controller.root)] + [p['project_path'] for p in controller.db.all() if p['lifecycle'] == 'ready']
+    listing = await native.rpc('hooks/list', {'cwds': list(dict.fromkeys(cwds))})
+    if any(group.get('errors') or group.get('warnings') for group in listing['data']):
+        raise ValueError('Resolve hook loading errors before granting trust')
+    hooks = {h['key']: h for group in listing['data'] for h in group['hooks']}
+    for key, value in values.items():
+        hook = hooks.get(key)
+        if (not hook or not hook['enabled'] or hook['isManaged'] or not isinstance(value, dict)
+                or set(value) != {'trusted_hash'} or value['trusted_hash'] != hook['currentHash']
+                or not isinstance(value['trusted_hash'], str)
+                or not re.fullmatch(r'sha256:[0-9a-f]{64}', value['trusted_hash'])):
+            raise ValueError('Hook trust must match an enabled, non-managed current hook')
 
 
 def validate_model_selection(params):
@@ -330,9 +358,15 @@ async def tui_proxy(request):
                     controller.tui_connections.get(project['project_id'], {}).pop(connection_id, None)
             elif method == 'config/batchWrite':
                 async with controller.lock:
-                    if not any(p['project_id'] in resumed and p['lifecycle'] == 'ready' for p in controller.db.all()):
-                        raise ValueError('Model selection requires a mapped ready TUI session')
-                    validate_model_selection(params)
+                    edits = params.get('edits')
+                    if (isinstance(edits, list) and edits and isinstance(edits[0], dict)
+                            and edits[0].get('keyPath') == 'hooks.state'):
+                        # Startup hook review happens before thread/resume; validate native hashes, not a fake mapping.
+                        await validate_hook_trust(controller, upstream, params)
+                    else:
+                        if not any(p['project_id'] in resumed and p['lifecycle'] == 'ready' for p in controller.db.all()):
+                            raise ValueError('Model selection requires a mapped ready TUI session')
+                        validate_model_selection(params)
                     result = await upstream.rpc(method, params)
             elif method == 'thread/name/set':
                 project = controller.db.by_session(params.get('threadId'))

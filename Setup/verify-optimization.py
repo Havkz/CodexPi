@@ -151,7 +151,8 @@ async def main():
     hashes = {h['currentHash'] for h in hooks}
     assert len(hooks) == len(hashes) == 10 and hashes in (
         reviewed['REVIEWED'] | reviewed['TOKEN_OPTIMIZER_REVIEWED'],
-        reviewed['REVIEWED_4_12'] | reviewed['TOKEN_OPTIMIZER_REVIEWED'])
+        reviewed['REVIEWED_4_12'] | reviewed['TOKEN_OPTIMIZER_REVIEWED'],
+        reviewed['REVIEWED_5_2'] | reviewed['TOKEN_OPTIMIZER_REVIEWED'])
     assert all(h['enabled'] and h['trustStatus'] == 'trusted' for h in hooks)
     assert len({h['key'] for h in hooks}) == len(hooks), 'Duplicate hook definition'
     installed_hooks = json.loads((Path.home() / '.codex/hooks.json').read_text())
@@ -191,7 +192,7 @@ async def main():
             result, elapsed = invoke('ponytail-activate.js', 'SessionStart')
             context = result['hookSpecificOutput']['additionalContext']
             assert 'PONYTAIL MODE ACTIVE' in context and 'level: full' in context
-            assert 'YAGNI' in context and 'full' in context and 'security' in context.lower()
+            assert ('YAGNI' in context or 'No abstraction' in context) and 'full' in context and 'security' in context.lower()
             assert (Path(scratch) / '.ponytail-active').read_text() == 'full'
             measurements.setdefault('session_start_ms', []).append(round(elapsed, 2))
             result, elapsed = invoke('ponytail-mode-tracker.js', 'UserPromptSubmit', 'ordinary project request')

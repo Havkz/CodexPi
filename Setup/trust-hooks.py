@@ -34,6 +34,11 @@ REVIEWED_4_12 = (REVIEWED - {
     'sha256:8c9efc5a5e649c8cdca3f0b7bf4cba81d9717d1bc930c7dbc18b6efd66c7c58c',
     'sha256:7954d675ef3bafd5e5a6073ae51d7de57a08f21340f241c332f99078e955675d',
 }
+REVIEWED_5_2 = (REVIEWED & REVIEWED_4_12) | {
+    'sha256:55a39116e94ed8399271043701d3e9b8859aee77c30ef85529e7eab067d8acd9',
+    'sha256:29dcb3bf3cd3d77af301058521d2fd4e414c523345f8fe70942f7f30027acc94',
+    'sha256:6e210f506560ddd14e490c7dd80623572d504b8f0cfcf8c64c4d4c2ab4d23ae1',
+}
 
 
 async def main():
@@ -46,7 +51,8 @@ async def main():
             raise RuntimeError('Resolve hook loading errors before granting trust')
         hashes = {h['currentHash'] for h in hooks}
         accepted = (REVIEWED, REVIEWED | TOKEN_OPTIMIZER_REVIEWED,
-                    REVIEWED_4_12, REVIEWED_4_12 | TOKEN_OPTIMIZER_REVIEWED)
+                    REVIEWED_4_12, REVIEWED_4_12 | TOKEN_OPTIMIZER_REVIEWED,
+                    REVIEWED_5_2, REVIEWED_5_2 | TOKEN_OPTIMIZER_REVIEWED)
         if len(hooks) != len(hashes) or hashes not in accepted:
             raise RuntimeError('Hook definitions changed; review them before updating this allowlist')
         config = Path.home() / '.codex/config.toml'
