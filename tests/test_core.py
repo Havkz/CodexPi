@@ -12,6 +12,15 @@ from app.db import Database
 
 
 class CoreTests(unittest.TestCase):
+    def test_native_unit_survives_child_oom_without_disabling_main_process_recovery(self):
+        from configparser import ConfigParser
+        unit = ConfigParser(interpolation=None, strict=False)
+        unit.read(Path(__file__).resolve().parents[1] / 'config/codexpi-native.service')
+        self.assertEqual(unit['Service']['OOMPolicy'], 'continue')
+        self.assertEqual(unit['Service']['Restart'], 'always')
+        self.assertEqual(unit['Service']['RestartSec'], '5')
+        self.assertNotIn('MemoryMax', unit['Service'])
+
     def test_auth_and_replay(self):
         hashed = password_hash('test-only-password')
         self.assertTrue(password_valid('test-only-password', hashed))

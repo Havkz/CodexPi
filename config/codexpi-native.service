@@ -13,6 +13,8 @@ UMask=0077
 ExecStart=/home/raspberry/.local/bin/codex app-server --listen unix:///home/raspberry/CodexPi/state/native.sock --disable multi_agent -c thread_unload_delay_secs=5
 Restart=always
 RestartSec=5
+# A tool child running out of memory must not stop the shared native bridge.
+OOMPolicy=continue
 TimeoutStopSec=30
 
 [Install]
