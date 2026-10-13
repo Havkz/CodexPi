@@ -37,8 +37,8 @@
   "35": "Bot",
   "36": "usage.js",
   "37": "controller.py",
-  "38": "Native",
-  "39": "Bot",
+  "38": "web.py",
+  "39": "WorkerAdmissionTests",
   "40": "build-favicon.py",
   "41": "Recovery and operator runbook",
   "42": "Architecture and data ownership",
@@ -51,6 +51,11 @@
   "49": "export",
   "50": "test-live-lifecycle.py",
   "51": "Redactor",
+  "52": "tick",
+  "53": "main.py",
   "54": "Bot",
-  "55": "build_audit.py"
+  "55": "build_audit.py",
+  "56": "build_audit.py",
+  "57": "verify-backup-restore.py",
+  "58": "verify-pause-policy.py"
 }

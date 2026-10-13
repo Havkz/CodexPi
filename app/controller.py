@@ -70,7 +70,8 @@ class Controller:
 
     def account_holds_goal(self, project):
         from .accounts import holds_goal
-        return holds_goal(self, project)
+        from .compaction import holds_goal as compact_holds_goal
+        return holds_goal(self, project) or compact_holds_goal(project)
 
     @property
     def windows_online(self):
@@ -831,6 +832,8 @@ class Controller:
                     from .lifecycle import recover
                     await recover(self)
                     await self.poll_goals()
+                    from .compaction import tick as compact_tick
+                    await compact_tick(self)
                     from .accounts import tick
                     await tick(self)
                     from .power import tick as power_tick

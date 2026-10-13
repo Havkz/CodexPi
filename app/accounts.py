@@ -461,6 +461,9 @@ async def automatic_change(controller):
 
 async def request_switch(controller, account_id, *, automatic=False, adding=False):
     """Called under the controller lock; persist intent before stopping continuation."""
+    from .compaction import holds_goal as compact_holds_goal
+    if any(compact_holds_goal(p) for p in controller.db.all()):
+        raise ValueError('Context compaction is pending; wait before changing accounts')
     if switching(controller):
         raise ValueError('An account change is already pending')
     if adding:

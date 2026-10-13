@@ -164,11 +164,13 @@ async def job_denial(controller, project, *, waking=False):
         return 'Windows shutdown is in progress; wait for the next confirmed worker boot'
     account_hold = controller.account_holds_goal(project)
     switch = controller.db.setting('account_switch', {})
+    operation = json.loads(project['operation'] or '{}')
+    compact_waiting = operation.get('kind') == 'compact' and operation.get('phase') == 'waiting'
     if controller.account_switch_pending and switch.get('phase') != 'waiting_turn':
         return 'Windows work must wait until the Codex account change is confirmed'
     if (controller.db.setting('selected') != project['project_id'] or project['queue_position'] != 1
             or project['goal_status'] != 'active' and not (account_hold and project['goal_status'] == 'paused')
-            or project['operation'] or not controller.can_auto_resume(project)):
+            or project['operation'] and not compact_waiting or not controller.can_auto_resume(project)):
         return 'Only the selected, executing project may request Windows jobs'
     goal = (await controller.native.rpc('thread/goal/get', {'threadId': project['codex_session_id']})).get('goal')
     if not goal or goal['status'] != 'active':
@@ -186,7 +188,8 @@ async def job_denial(controller, project, *, waking=False):
                 return None
         # An account switch pauses only FUTURE goal continuation, never the
         # current turn. Allow its Windows tools to finish, not idle/new work.
-        if not (account_hold and switch.get('phase') == 'waiting_turn' and goal and goal['status'] == 'paused'):
+        waiting = switch.get('phase') == 'waiting_turn' or compact_waiting
+        if not (account_hold and waiting and goal and goal['status'] == 'paused'):
             return 'An active native goal or confirmed executing user prompt is required for Windows jobs'
         thread = (await controller.native.rpc('thread/read', {'threadId': project['codex_session_id'],
                                                              'includeTurns': False}))['thread']

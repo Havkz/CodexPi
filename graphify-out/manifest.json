@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "app/controller.py": {
-    "mtime": 1791832897.8418238,
-    "ast_hash": "713ed556e9af9210769d94fe85ea1fd4",
+    "mtime": 1791901970.4609532,
+    "ast_hash": "800eda90fb4f3f7669ba14235f1cf95c",
     "semantic_hash": ""
   },
   "app/db.py": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/native.py": {
-    "mtime": 1791562882.8335545,
-    "ast_hash": "08b56113a9e1dd5887e40923fae135cb",
+    "mtime": 1791903436.7111938,
+    "ast_hash": "00fa03d513e2c102f21be8817ce0d256",
     "semantic_hash": ""
   },
   "app/web.py": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "app/worker_server.py": {
-    "mtime": 1791840498.5219288,
-    "ast_hash": "bd08e6b366a056a45738983b4b071528",
+    "mtime": 1791902164.5382328,
+    "ast_hash": "87526e55ad81394f49e48d7ba56e415c",
     "semantic_hash": ""
   },
   "bin/codexpi": {
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1791840887.20244,
-    "ast_hash": "d049d2d13d46dc669be065a77bc8d3e0",
+    "mtime": 1791903890.8072836,
+    "ast_hash": "824c96cc44b61477715675bdb77e13c7",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -440,8 +440,8 @@
     "semantic_hash": ""
   },
   "app/accounts.py": {
-    "mtime": 1791840498.5194232,
-    "ast_hash": "fc18b28fe8f2f80979ce29b2587c30e2",
+    "mtime": 1791901970.4646583,
+    "ast_hash": "09a0f0aad0ea45f0c41c49b68964b239",
     "semantic_hash": ""
   },
   "tests/test_accounts.py": {
@@ -567,6 +567,16 @@
   "Setup/verify-account-usage-ui.py": {
     "mtime": 1791833505.871878,
     "ast_hash": "d85d67b2e76788d5b8480cc31e26fbb0",
+    "semantic_hash": ""
+  },
+  "app/compaction.py": {
+    "mtime": 1791903734.0694363,
+    "ast_hash": "7f01fcf28faec3fe610faed22f6c2385",
+    "semantic_hash": ""
+  },
+  "tests/test_compaction.py": {
+    "mtime": 1791903734.0764647,
+    "ast_hash": "1dbf7c3bd15b2f2360529529ca19d296",
     "semantic_hash": ""
   }
 }

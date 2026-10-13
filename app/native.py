@@ -17,7 +17,7 @@ MAX_NATIVE_MESSAGE = 128 * 1024 * 1024
 
 
 class NativeError(RuntimeError):
-    pass
+    rejected = False
 
 
 def process_in_pane(pid, pane_pid):
@@ -154,7 +154,9 @@ class Native:
         finally:
             self.pending.pop(request_id, None)
         if 'error' in value:
-            raise NativeError(str(value['error'].get('message', 'Native request failed')))
+            error = NativeError(str(value['error'].get('message', 'Native request failed')))
+            error.rejected = True
+            raise error
         return value.get('result', {})
 
     async def close(self):
@@ -365,6 +367,10 @@ async def tui_proxy(request):
                             method in ('turn/steer', 'thread/compact/start', 'thread/shellCommand', 'thread/inject_items')
                             or method == 'thread/goal/set' and params.get('status') != 'paused'):
                         raise ValueError('Account change is pending; no new native work may start until the controller confirms it')
+                    from .compaction import holds_goal as compact_holds_goal
+                    if compact_holds_goal(project) and (method in ('turn/steer', 'thread/compact/start', 'thread/shellCommand', 'thread/inject_items')
+                            or method == 'thread/goal/set' and params.get('status') == 'active'):
+                        raise ValueError('Context compaction is pending; wait for it to finish')
                     if method == 'thread/goal/set':
                         status = params.get('status')
                         if status == 'paused':
