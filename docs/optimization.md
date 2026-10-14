@@ -173,6 +173,14 @@ The skill copy is at
 `~/.codex/plugins/cache/alexgreensh-token-optimizer/token-optimizer/5.13.28`.
 Do not move/remove/update the source checkout while these hooks are installed.
 
+The additional `Setup/token-optimizer-memory.patch` repairs two verbosity
+measurement readers that materialized entire transcripts. They reuse the existing
+bounded JSONL iterator, retaining the full timeline rather than sampling a tail
+that would invalidate pre-nudge turn indexes. Malformed/non-object and oversized
+records use the iterator's existing skip behavior. The isolated
+`Setup/verify-optimizer-memory.py` checks both measurement paths, accurate baseline
+counts and once-only savings without writing production optimizer state.
+
 Reproduce in a clean checkout of the exact commit above (check `git status`
 first; never overwrite unrelated edits):
 
@@ -182,7 +190,12 @@ git apply --check ../../token-optimizer-codex.patch
 git apply ../../token-optimizer-codex.patch
 git apply --check --directory=plugins/token-optimizer ../../token-optimizer-codex.patch
 git apply --directory=plugins/token-optimizer ../../token-optimizer-codex.patch
+git apply --check ../../token-optimizer-memory.patch
+git apply ../../token-optimizer-memory.patch
+git apply --check --directory=plugins/token-optimizer ../../token-optimizer-memory.patch
+git apply --directory=plugins/token-optimizer ../../token-optimizer-memory.patch
 cd /home/raspberry/CodexPi
+.venv/bin/python Setup/verify-optimizer-memory.py
 .venv/bin/python Setup/verify-optimization.py --token-preflight
 ```
 

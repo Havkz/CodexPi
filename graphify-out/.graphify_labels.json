@@ -39,6 +39,7 @@
   "37": "controller.py",
   "38": "web.py",
   "39": "WorkerAdmissionTests",
+  "40": "db.py",
   "41": "Recovery and operator runbook",
   "42": "Architecture and data ownership",
   "43": "CodexPi",
@@ -49,9 +50,16 @@
   "48": "verify-account-ui.py",
   "49": "export",
   "50": "test-live-lifecycle.py",
+  "51": "main.py",
   "52": "tick",
+  "53": "GoalSource",
   "54": "Bot",
   "55": "build_audit.py",
   "56": "build_audit.py",
-  "57": "verify-backup-restore.py"
+  "57": "verify-backup-restore.py",
+  "58": "VerbosityMemoryTests",
+  "59": "test-live-lifecycle.py",
+  "60": "verify-backup-restore.py",
+  "61": "verify-pause-policy.py",
+  "62": "verify-lifecycle-fixes.py"
 }

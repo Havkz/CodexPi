@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "docs/optimization.md": {
-    "mtime": 1791236314.6205294,
-    "ast_hash": "9071d415714bfbc22f174185002249d6",
+    "mtime": 1791955860.1778185,
+    "ast_hash": "1d291001563978da60da3d0b8596c010",
     "semantic_hash": ""
   },
   "Setup/export-migration.py": {
@@ -582,6 +582,11 @@
   "tests/test_hooks.py": {
     "mtime": 1791928384.275493,
     "ast_hash": "e2f1bee5962f8bc25f8b869ea61d8c02",
+    "semantic_hash": ""
+  },
+  "Setup/verify-optimizer-memory.py": {
+    "mtime": 1791955812.885162,
+    "ast_hash": "6ca42c168cc0ca0bf32329dfad82de0e",
     "semantic_hash": ""
   }
 }

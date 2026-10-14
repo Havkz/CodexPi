@@ -1,0 +1,43 @@
+diff --git a/skills/token-optimizer/scripts/measure.py b/skills/token-optimizer/scripts/measure.py
+--- a/skills/token-optimizer/scripts/measure.py
++++ b/skills/token-optimizer/scripts/measure.py
+@@ -48213,16 +48213,9 @@ def _calibrate_prior_verbosity_nudges(session_id, filepath):
+ 
+         # Collect assistant output_tokens in transcript order.
+         outputs = []
+-        for line in Path(filepath).read_text(encoding="utf-8").splitlines():
+-            line = line.strip()
+-            if not line:
+-                continue
+-            try:
+-                entry = json.loads(line)
+-            except (json.JSONDecodeError, ValueError):
+-                continue
+-            if not isinstance(entry, dict):
+-                continue
++        from codex_session import _iter_json_records
++        # Stream bounded records, but keep the full timeline for pre_turns.
++        for entry in _iter_json_records(filepath, skip_large_file=False):
+             if entry.get("type") == "assistant" and "message" in entry:
+                 out = _safe_int(entry["message"].get("usage", {}).get("output_tokens", 0))
+                 if out > 0:
+@@ -48470,16 +48463,9 @@ def run_verbosity_steer(transcript_path=None, quiet=True, session_id=None):
+             try:
+                 if filepath and filepath.exists():
+                     _turn_outputs = []
+-                    for _line in filepath.read_text(encoding="utf-8").splitlines():
+-                        _line = _line.strip()
+-                        if not _line:
+-                            continue
+-                        try:
+-                            _entry = json.loads(_line)
+-                        except (json.JSONDecodeError, ValueError):
+-                            continue
+-                        if not isinstance(_entry, dict):
+-                            continue
++                    from codex_session import _iter_json_records
++                    # Do not materialize the transcript or sample away early turns.
++                    for _entry in _iter_json_records(filepath, skip_large_file=False):
+                         if _entry.get("type") == "assistant" and "message" in _entry:
+                             _msg = _entry["message"]
+                             _usage = _msg.get("usage", {})
