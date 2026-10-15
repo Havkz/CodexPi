@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import patch, AsyncMock
 
 from app import actions, power
-from app.actions_guard import validate, install as install_guard
+from app.actions_guard import validate, install as install_guard, LOCAL_FIRST_RUNNERS
 from app.windows_ci import ExecutionSlot
 from app.windows_worker import Worker
 from tests import test_power
@@ -123,6 +123,7 @@ class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(actions.busy(c))  # Missing/stale observation cannot mean idle.
             queued = True
             job_status = 'queued'
+            job_labels = ['self-hosted', 'Windows', 'codexpi']
             async def api(*args, **kwargs):
                 self.assertIn('--header', args)
                 self.assertIn('Cache-Control: no-cache', args)
@@ -131,7 +132,7 @@ class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
                     data = {'runners': [{'id': 21, 'os': 'Windows', 'labels': [{'name': 'codexpi'}]}]}
                 elif '/jobs?' in endpoint:
                     data = [{'jobs': [{'id': 11, 'name': 'tests', 'status': job_status, 'runner_id': None,
-                                       'labels': ['self-hosted', 'Windows', 'codexpi']}]}]
+                                       'labels': job_labels}]}]
                 else:
                     data = [{'workflow_runs': [{'id': 10}]}] if queued and 'status=queued' in endpoint else [{'workflow_runs': []}]
                 return {'stdout': json.dumps(data)}
@@ -178,6 +179,15 @@ class ActionsCoordinationTests(unittest.IsolatedAsyncioTestCase):
                     await actions.poll(c)
                     self.assertNotIn('error', c.db.setting('github_actions'))
                     self.assertTrue(actions.busy(c))  # Confirmed running CI still owns priority.
+                    for job_labels in [['ubuntu-latest'], ['windows-latest']]:
+                        c.db.set_setting('github_actions', {'checked_at': 0})
+                        await actions.poll(c)
+                        self.assertNotIn('error', c.db.setting('github_actions'))
+                        self.assertFalse(actions.busy(c))
+                    job_labels = ['unexpected-runner']
+                    c.db.set_setting('github_actions', {'checked_at': 0})
+                    await actions.poll(c)
+                    self.assertIn('Non-local', c.db.setting('github_actions')['error'])
             finally:
                 c.db.conn.close()
 
@@ -189,6 +199,17 @@ spec.loader.exec_module(installer)
 
 
 class RunnerInstallationTests(unittest.TestCase):
+    def test_explicit_local_first_fallback_preserves_controlled_triggers(self):
+        for expression in LOCAL_FIRST_RUNNERS:
+            job = {'runs-on': expression}
+            validate({'on': 'workflow_dispatch', 'jobs': {'test': job}}, set())
+            with self.assertRaises(ValueError):
+                validate({'on': 'push', 'jobs': {'test': job}}, set())
+        job = {'runs-on': 'ubuntu-latest', 'if': "vars.CI_WINDOWS_RUNNER == ''"}
+        validate({'on': 'workflow_dispatch', 'jobs': {'test': job}}, set())
+        with self.assertRaises(ValueError):
+            validate({'on': 'workflow_dispatch', 'jobs': {'test': dict(job, **{'if': 'always()'})}}, set())
+
     def test_push_guard_rejects_hosted_dynamic_and_external_reusable_jobs(self):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaisesRegex(ValueError, 'repository root'):

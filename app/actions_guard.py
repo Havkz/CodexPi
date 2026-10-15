@@ -1,4 +1,4 @@
-"""Reject paid-runner workflows before a managed Git push can trigger them."""
+"""Keep managed CI controlled, with explicitly authorized offline-PC fallback."""
 from pathlib import Path
 import shlex
 import shutil
@@ -6,6 +6,11 @@ import subprocess
 import sys
 
 import yaml
+
+LOCAL_FIRST_RUNNERS = {
+    "${{ fromJSON(vars.CI_WINDOWS_RUNNER || '\"windows-latest\"') }}",
+    "${{ fromJSON(vars.CI_WINDOWS_RUNNER || (matrix.platform == 'linux' && '\"ubuntu-latest\"' || '\"windows-latest\"')) }}",
+}
 
 
 def validate(workflow, files):
@@ -32,11 +37,15 @@ def validate(workflow, files):
                 raise ValueError('Only checked local reusable workflows are allowed')
             continue
         labels = job.get('runs-on')
+        if isinstance(labels, str) and labels in LOCAL_FIRST_RUNNERS:
+            continue
+        if labels == 'ubuntu-latest' and job.get('if') == "vars.CI_WINDOWS_RUNNER == ''":
+            continue  # Linux parity accompanies a Windows hosted fallback.
         if isinstance(labels, dict):
             labels = labels.get('labels')
         if (not isinstance(labels, list) or any(not isinstance(label, str) for label in labels)
                 or not {'self-hosted', 'windows', 'x64', 'codexpi'} <= {label.lower() for label in labels}):
-            raise ValueError('Every job must select [self-hosted, Windows, X64, codexpi]; no hosted fallback')
+            raise ValueError('Every job must select a registered local runner or the approved local-first fallback')
 
 
 def check(commit):

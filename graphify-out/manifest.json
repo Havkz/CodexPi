@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "docs/requirement-audit.json": {
-    "mtime": 1791928798.7592163,
-    "ast_hash": "3c061c2117d63b4cf333680897a5ceea",
+    "mtime": 1791956279.056978,
+    "ast_hash": "14a120d9ab6d84ff8011e7bb68e5808d",
     "semantic_hash": ""
   },
   "tests/test_core.py": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "docs/optimization.md": {
-    "mtime": 1791955860.1778185,
-    "ast_hash": "1d291001563978da60da3d0b8596c010",
+    "mtime": 1791956214.9406588,
+    "ast_hash": "917b0e20ac34c10ffd9734d32d1257b8",
     "semantic_hash": ""
   },
   "Setup/export-migration.py": {
@@ -490,8 +490,8 @@
     "semantic_hash": ""
   },
   "app/actions.py": {
-    "mtime": 1791735516.9349935,
-    "ast_hash": "68f5b3d2f7f7164f5c4c893f6d0af46c",
+    "mtime": 1792088238.0622263,
+    "ast_hash": "ebdf136e70c5edf1ccd6644959a1d531",
     "semantic_hash": ""
   },
   "app/windows_ci.py": {
@@ -500,8 +500,8 @@
     "semantic_hash": ""
   },
   "tests/test_actions_runner.py": {
-    "mtime": 1791735516.9359984,
-    "ast_hash": "e6662dabb5b8307003f91f6fdb6bbb1f",
+    "mtime": 1792088274.6748514,
+    "ast_hash": "dae895b26e0f25cb27764aea57e90ce7",
     "semantic_hash": ""
   },
   "Setup/run-linux-ci.py": {
@@ -510,8 +510,8 @@
     "semantic_hash": ""
   },
   "app/actions_guard.py": {
-    "mtime": 1791735235.0147333,
-    "ast_hash": "2a49d7de39beef4b5ba81aef2efd752c",
+    "mtime": 1792088238.0586548,
+    "ast_hash": "cd46614f035625a80a3be4ef3f3ff150",
     "semantic_hash": ""
   },
   "app/web_assets/brands/codex.png": {

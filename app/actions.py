@@ -169,6 +169,8 @@ async def poll(controller):
                             if job['status'] == 'completed':
                                 continue
                             labels = {label.lower() for label in job['labels']}
+                            if labels and labels <= {'ubuntu-latest', 'windows-latest'}:
+                                continue  # Hosted fallback has no claim on the local Windows execution slot.
                             if not {'self-hosted', 'windows', 'codexpi'} <= labels:
                                 raise RuntimeError('Non-local GitHub job detected in ' + repo + ': ' + job['name'])
                             if job.get('runner_id') and job['runner_id'] not in local:

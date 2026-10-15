@@ -17,14 +17,14 @@ jobs:
       matrix:
         platform: [linux, windows]
         python: ['3.11', '3.13']
-    runs-on: [self-hosted, Windows, X64, codexpi]
+    runs-on: ${{ fromJSON(vars.CI_WINDOWS_RUNNER || (matrix.platform == 'linux' && '"ubuntu-latest"' || '"windows-latest"')) }}
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
           ref: ${{ inputs.commit || github.sha }}
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-        if: matrix.platform == 'windows'
+        if: matrix.platform == 'windows' || runner.environment == 'github-hosted'
         with:
           python-version: ${{ matrix.python }}
           version: '0.10.7'
@@ -32,9 +32,9 @@ jobs:
           no-project: true
           enable-cache: false
       - run: uv pip install -r requirements.txt
-        if: matrix.platform == 'windows'
+        if: matrix.platform == 'windows' || runner.environment == 'github-hosted'
       - run: python -m unittest discover -s tests
-        if: matrix.platform == 'windows'
+        if: matrix.platform == 'windows' || runner.environment == 'github-hosted'
       - name: Install Chromium layout checks
         if: matrix.platform == 'windows' && matrix.python == '3.13'
         run: |
@@ -51,5 +51,5 @@ jobs:
           path: state/mobile-ui/
           if-no-files-found: ignore
       - name: Linux tests on this PC (service-owned WSL)
-        if: matrix.platform == 'linux'
+        if: matrix.platform == 'linux' && runner.environment == 'self-hosted'
         run: python C:/CodexPi/Setup/run-linux-ci.py --project codexpi --python '${{ matrix.python }}'
