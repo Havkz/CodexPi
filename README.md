@@ -1,87 +1,119 @@
 # CodexPi
 
-Ein zentraler Codex-Worker auf dem Raspberry Pi, eine persistente Projektqueue
-und ein Windows-Worker für ausdrücklich erforderliche native Windows-Jobs.
-Dashboard, Discord und Scheduler teilen sich einen schlanken Python-Prozess.
+> Persistent AI development workflows. One queue. Two machines.
 
-## Alltag
+CodexPi coordinates long-running Codex projects on a Raspberry Pi, with a Windows
+worker for native builds and tests. A browser dashboard and Discord notifications
+keep project status visible without keeping a terminal open.
 
-Im Windows-Terminal:
+![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-0284C7?style=flat)
+![Platforms: Linux and Windows](https://img.shields.io/badge/Platforms-Linux%20%2F%20Windows-0284C7?style=flat)
+![Status: active development](https://img.shields.io/badge/Status-Active%20development-0284C7?style=flat)
+
+[Architecture](docs/architecture.md) · [Operations & recovery](docs/recovery.md) · [Windows worker](docs/windows-worker.md)
+
+---
+
+## What it does
+
+- **Persistent project queue** — prioritize projects, pause work across restarts,
+  and resume the original Codex session without replacing its goal or history.
+- **Browser dashboard** — manage the queue, inspect infrastructure and job status,
+  switch saved accounts, and view account-specific usage history.
+- **Background automation** — configurable queue continuation, usage-reset
+  recovery and account switching, while respecting manual pauses and user blockers.
+- **Discord updates** — project channels, status notifications and questions,
+  backed by a persistent delivery outbox.
+- **Windows execution** — run jobs against an exact Git commit, collect results
+  and artifacts, and reconcile interrupted or disconnected workers.
+- **Local CI coordination** — coordinate self-hosted GitHub Actions runners,
+  including Linux tests through WSL, with a shared Windows execution slot.
+
+CodexPi orchestrates the official Codex runtime; it is not a model, a replacement
+for Codex, or a second AI agent on the Windows PC.
+
+## How it works
+
+The Raspberry Pi hosts one native Codex app-server. A single asynchronous Python
+controller connects the dashboard, scheduler, Discord bot and Windows worker.
+Native Codex owns session history and goals; SQLite stores infrastructure state,
+queue mappings, job results and recovery journals.
+
+**Stack:** Python · asyncio · aiohttp · SQLite · discord.py · JavaScript/CSS/SVG ·
+systemd · tmux · PowerShell · GitHub Actions · Playwright (UI checks).
+
+The Windows worker connects outbound to the Pi. Authenticated messages and
+durable job IDs support reconnects without blindly repeating side effects.
+See the [architecture](docs/architecture.md) for process boundaries and recovery.
+
+## Getting started
+
+### Development
+
+Clone the repository using an account with access. In a Python 3.11+ virtual
+environment, install the runtime dependencies and run the regression suite:
+
+```sh
+git clone https://github.com/Havkz/CodexPi.git
+cd CodexPi
+python -m pip install -r requirements.txt
+python -m unittest discover -s tests
+```
+
+Optional Chromium layout checks use a separate development dependency set:
+
+```sh
+python -m pip install -r requirements-ui.txt
+python -m playwright install chromium
+python Setup/verify-mobile-ui.py
+```
+
+### Deployment
+
+A running installation additionally needs a Linux host with systemd, tmux, SSH,
+Git, GitHub CLI, an authenticated Codex CLI with app-server support, the upstream
+goal hooks and Unsnooze, plus Discord bot credentials. Windows jobs require a
+configured Windows 11 worker; local Linux CI also requires WSL.
+
+The deployment scripts target `/home/raspberry/CodexPi` and `C:\CodexPi` and
+contain installation-specific assumptions. They are **not a portable one-click
+installer**. Review the [architecture](docs/architecture.md),
+[recovery guide](docs/recovery.md) and [worker setup](docs/windows-worker.md)
+before configuring another machine. Keep secrets and runtime state out of Git.
+
+## Usage
+
+With the controller and terminal entrypoint configured:
 
 ```text
 codexpi
-/rename Mein Projekt
-/goal Die vollständige Aufgabe
+/rename My Project
+/goal Describe the task
 ```
 
-`codexpi` verbindet per SSH mit dem Pi. Einen vorhandenen Projektnamen erneut
-anzugeben öffnet dessen gespeicherte native Session; es entsteht kein neues Goal.
-Das Terminal kann geschlossen werden, die Pi-Arbeit läuft in tmux weiter.
+Reusing a project name opens its saved native session. `codexpi --all` opens the
+session browser. Detach with **Ctrl+B, then D**; work continues in tmux.
 
-Dashboard: **http://192.168.2.105:8787/**, nur im privaten LAN, mit Passwort.
-Neue Projekte werden ausschließlich über `codexpi` angelegt, nicht im Browser
-oder über Discord.
+Use the configured private-LAN dashboard for queue management. **Resume** does
+not preempt another running project; **Run now** changes priority. A successful
+resume requires native confirmation, not just an accepted browser request.
+New projects are created through the terminal entrypoint.
 
-- **Resume** setzt fort oder reiht ein, ohne ein anderes laufendes Projekt zu
-  verdrängen. Ohne ursprüngliches `/goal` wird nur die richtige Session geöffnet.
-- **Pause** bleibt nach Neustarts wirksam. **Pause all** sperrt automatische Arbeit.
-- **Run now** erscheint nur für eine tatsächliche Änderung der Queue-Reihenfolge.
-- **Details** zeigt Session, Pfad, Repo, Commit-/CI- und Worker-Informationen.
-- **Delete** verlangt den exakten Namen, beendet die Zuordnung, archiviert die
-  Session und entfernt den Discord-Channel. Privates GitHub-Repo und lokales
-  Recovery-Backup bleiben erhalten; Windows-Checkouts werden nicht gelöscht.
-- **Usage / Limits** zeigt verbleibende Nutzung: 100% verfügbar, 0% aufgebraucht.
-  Weekly ist Standard; die History enthält ausschließlich gespeicherte Messwerte.
+## Status & boundaries
 
-Ein Resume gilt erst nach Controller-Bestätigung als erfolgreich. Bei einem
-Timeout nicht wiederholt klicken oder `/goal resume` in weitere Sessions tippen;
-den konkreten Fehler und die gespeicherte Session prüfen.
+**Active development, with deployment-specific acceptance checks still open.**
+Regression tests and targeted UI verifiers live in `tests/` and `Setup/`;
+[verification records](docs/requirement-audit.json) distinguish implemented work
+from hardware-dependent acceptance.
 
-## Installation und Betrieb
+- Wake-on-LAN and boot-ownership checks are implemented, but physical wake from
+  full shutdown and the complete unattended shutdown cycle remain unverified.
+- The current LAN HTTP/WebSocket deployment is not encrypted. Worker message
+  authentication is not transport encryption. Do not expose the dashboard port
+  directly to the internet.
+- GitHub Actions is manually dispatched. Runner selection is configurable;
+  confirm the self-hosted configuration before dispatching to avoid hosted usage.
 
-Installationspfad Pi: `/home/raspberry/CodexPi`. Windows: `C:\CodexPi`.
-Die benutzerspezifischen systemd-Dienste laufen als `raspberry` mit aktiviertem
-Linger: `codexpi`, `codexpi-native`, `codexpi-unsnooze`.
-
-```sh
-systemctl --user status codexpi codexpi-native codexpi-unsnooze
-/home/raspberry/CodexPi/bin/codexpi-tool windows-status
-```
-
-Die vorhandenen `Setup/`-Skripte dokumentieren die geprüfte Installation; sie sind
-**kein ungeprüfter One-click-Installer für einen anderen Rechner**. Sie enthalten
-die festen Pfade, ARM64-/Versionsannahmen und bestehende Benutzerzuordnungen.
-Vor Neuinstallation oder Updates Versionen und lokale Konfiguration prüfen,
-Backups erstellen und keine laufenden Goals unterbrechen. Secrets nicht in
-Argumente, Screenshots, Logs oder Git übernehmen.
-
-## Dokumentation
-
-- [Architektur, Module und Datenmodell](docs/architecture.md)
-- [Recovery, Backup/Restore und sichere Diagnose](docs/recovery.md)
-- [Windows-Worker, Autostart und Protokoll](docs/windows-worker.md)
-- [Queue-Pause und Freigaben](docs/manual-pause.md)
-- [Rename/Delete](docs/lifecycle.md), [24/7-Pi-Deployment](docs/deployment.md)
-- [Unsnooze und native Resume-Grenzen](docs/unsnooze.md)
-- [Usage-History und Favicon](docs/usage-history.md)
-- [Installations-/Prüfstand](docs/progress.md), [Requirement-Audit](docs/requirement-audit.json)
-
-## Entwicklung und Prüfung
-
-```powershell
-cd C:\CodexPi
-.venv\Scripts\python.exe -m unittest discover -s tests
-.venv\Scripts\python.exe Setup\verify-secrets.py
-py -3.11 Setup\verify-controller-recovery.py
-py -3.11 Setup\verify-usage-ui.py --live
-```
-
-Der Recovery-Aufruf ohne `--crash` ist ein lesender Vorabcheck. Mit `--crash`
-beendet er bewusst ausschließlich den inaktiven Controller-Prozess; vorher die
-Beschreibung in `docs/recovery.md` lesen. UI-Prüfungen verwenden die vorhandene
-isolierte Edge/Playwright-Testumgebung, keine neue Laufzeitabhängigkeit des Pi.
-
-Der Gesamtauftrag ist noch **nicht abgeschlossen**. Einzelne bestandene Tests
-ersetzen keinen vollständigen Audit. Reale Reboot-/Active-Goal-Recovery,
-automatisches Unsnooze nach Provider-Reset und ausgewählte Windows-Migration
-haben jeweils eigene Nachweispflichten; die Migration findet erst am Ende statt.
+For operational detail, see [manual pauses](docs/manual-pause.md),
+[session lifecycle](docs/lifecycle.md), [usage history](docs/usage-history.md) and
+[reset recovery](docs/unsnooze.md).
